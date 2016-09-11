@@ -1,4 +1,4 @@
-package io.wandr_app.collegebasketballcoach;
+package io.coachapps.collegebasketballcoach;
 
 import org.junit.Test;
 

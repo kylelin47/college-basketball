@@ -5,7 +5,7 @@ android {
     buildToolsVersion "24.0.0"
 
     defaultConfig {
-        applicationId "io.wandr_app.collegebasketballcoach"
+        applicationId "io.coachapps.collegebasketballcoach"
         minSdkVersion 15
         targetSdkVersion 24
         versionCode 1
