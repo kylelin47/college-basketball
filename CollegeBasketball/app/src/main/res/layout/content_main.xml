@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="10dp"
+    app:layout_behavior="@string/appbar_scrolling_view_behavior"
+    tools:context="io.coachapps.collegebasketballcoach.MainActivity"
+    tools:showIn="@layout/activity_main">
+
+    <LinearLayout
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+        <TextView
+            android:text="Team:"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:layout_height="wrap_content"
+            android:id="@+id/examineTeamText"
+            android:layout_width="0dip"
+            android:layout_weight="2" />
+        <Spinner
+            android:layout_height="wrap_content"
+            android:id="@+id/examineConfSpinner"
+            android:layout_width="0dip"
+            android:layout_weight="4" />
+        <Spinner
+            android:layout_height="wrap_content"
+            android:id="@+id/examineTeamSpinner"
+            android:layout_width="0dip"
+            android:layout_weight="6" />
+    </LinearLayout>
+
+    <TextView
+        android:text="Current Team (W - L) "
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:textAlignment="gravity"
+        android:gravity="center"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/currentTeamText"
+        android:textStyle="bold" />
+    <LinearLayout
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center"
+        android:paddingTop="5sp">
+        <Button
+            android:text="Stats"
+            android:layout_width="0dip"
+            android:layout_weight="1"
+            android:layout_height="wrap_content"
+            android:id="@+id/teamStatsButton" />
+        <Button
+            android:text="Roster"
+            android:layout_width="0dip"
+            android:layout_weight="1"
+            android:layout_height="wrap_content"
+            android:id="@+id/playerStatsButton" />
+        <Button
+            android:text="Games"
+            android:layout_width="0dip"
+            android:layout_weight="1"
+            android:layout_height="wrap_content"
+            android:id="@+id/teamScheduleButton" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:orientation="vertical"
+        android:layout_height="0dip"
+        android:layout_weight="6">
+        <ListView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:id="@+id/mainList"
+            android:paddingTop="5dp"
+            android:paddingBottom="5dp" >
+        </ListView>
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dip"
+        android:layout_weight="1"
+        android:gravity="center|bottom"
+        android:orientation="vertical" >
+        <Button
+            android:text="Play Week"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/simGameButton"
+            android:textColor="#ffffff"/>
+    </LinearLayout>
+
+</LinearLayout>

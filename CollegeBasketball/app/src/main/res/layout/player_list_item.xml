@@ -1,0 +1,140 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="10dp">
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:text="Lebron James [Sr]"
+        android:textSize="20sp"
+        android:textStyle="bold"
+        android:id="@+id/textViewName"
+        android:layout_alignParentTop="true"
+        android:layout_marginStart="15dp"
+        android:layout_marginLeft="15dp"
+        android:layout_toRightOf="@+id/textViewPosition"
+        android:layout_toEndOf="@+id/textViewPosition" />
+
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:text="SF"
+        android:textColor="#999"
+        android:textSize="20sp"
+        android:textStyle="bold"
+        android:id="@+id/textViewPosition"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:text="99 / A"
+        android:textColor="#999"
+        android:textSize="20sp"
+        android:textStyle="bold"
+        android:id="@+id/textViewOvrPot"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/textViewName">
+
+        <RelativeLayout
+            android:layout_width="0dip"
+            android:layout_weight="1"
+            android:layout_height="wrap_content"
+            android:gravity="center">
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="3dp"
+                android:text="27.7"
+                android:textColor="#000"
+                android:textSize="25sp"
+                android:textStyle="bold"
+                android:id="@+id/textViewPPG"
+                />
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="PPG"
+                android:textColor="#999"
+                android:textSize="15sp"
+                android:textStyle="bold"
+                android:layout_toEndOf="@+id/textViewPPG"
+                android:layout_alignBottom="@+id/textViewPPG"
+                android:id="@+id/textViewPPGlabel"
+                />
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:layout_width="0dip"
+            android:layout_weight="1"
+            android:layout_height="wrap_content"
+            android:gravity="center">
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="3dp"
+                android:text="6.5"
+                android:textColor="#000"
+                android:textSize="25sp"
+                android:textStyle="bold"
+                android:id="@+id/textViewRPG"
+                />
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="RPG"
+                android:textColor="#999"
+                android:textSize="15sp"
+                android:textStyle="bold"
+                android:layout_toEndOf="@+id/textViewRPG"
+                android:layout_alignBottom="@+id/textViewRPG"
+                android:id="@+id/textViewRPGlabel"
+                />
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:layout_width="0dip"
+            android:layout_weight="1"
+            android:layout_height="wrap_content"
+            android:gravity="center">
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="3dp"
+                android:text="8.1"
+                android:textColor="#000"
+                android:textSize="25sp"
+                android:textStyle="bold"
+                android:id="@+id/textViewAPG"
+                />
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="APG"
+                android:textColor="#999"
+                android:textSize="15sp"
+                android:textStyle="bold"
+                android:layout_toEndOf="@+id/textViewAPG"
+                android:layout_alignBottom="@+id/textViewAPG"
+                android:id="@+id/textViewAPGlabel"
+                />
+        </RelativeLayout>
+
+    </LinearLayout>
+
+</RelativeLayout>
