@@ -1,45 +1,28 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
-package my.basketballsim;
+package io.coachapps.collegebasketballcoach.basketballsim;
 
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Paths;
 import java.util.ArrayList;
-import java.util.List;
 
 /**
- *
+ * Class that encapsulates the player generation engine.
  * @author Achi Jones
  */
 public class PlayerGen {
     
-    ArrayList<String> listNames;
+    String[] listFirstNames;
+    String[] listLastNames;
     
-    public PlayerGen() {
+    public PlayerGen(String firstCSV, String lastCSV) {
         //get list of names from file
-        listNames = new ArrayList<String>();
-        try {
-            List<String> nameList = Files.readAllLines(Paths.get("player_names.txt"));
-            for ( String name : nameList ) {
-                listNames.add(name);
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        listFirstNames = firstCSV.split(",");
+        listLastNames = lastCSV.split(",");
     }
     
     public String getRandName() {
         // get random name from list and remove it so it won't be used again
-        int firstName = (int)(Math.random() * listNames.size());
-        String fName = listNames.get(firstName);
-        listNames.remove(firstName);
-        int lastName = (int)(Math.random() * listNames.size());
-        String lName = listNames.get(lastName);
-        listNames.remove(lastName);
+        int firstName = (int)(Math.random() * listFirstNames.length);
+        String fName = listFirstNames[firstName];
+        int lastName = (int)(Math.random() * listLastNames.length);
+        String lName = listLastNames[lastName];
         return ( fName + " " + lName );        
     }
     
@@ -303,12 +286,10 @@ public class PlayerGen {
                                        Math.pow(ratings[7], 1.1) + Math.pow(ratings[8], 1.1) + Math.pow(ratings[9], 1.2) + Math.pow(ratings[10], 1.2) + Math.pow(ratings[11], 1.2) );
         ratings[1] = 100*ratings[1] / 2500;
         
-        Player p = new Player( name, ratings, att );
-        
-        return p;
+        return new Player( name, ratings, att );
     }
     
-    public ArrayList<Player> getPlayersFromFile() {
+    /*public ArrayList<Player> getPlayersFromFile() {
         ArrayList<Player> PlayerList = new ArrayList<Player>();
         try {
             List<String> playerLine = Files.readAllLines(Paths.get("player_stats.txt"));
@@ -372,6 +353,6 @@ public class PlayerGen {
             e.printStackTrace();
         }
         return PlayerList;
-    }
+    }*/
     
 }

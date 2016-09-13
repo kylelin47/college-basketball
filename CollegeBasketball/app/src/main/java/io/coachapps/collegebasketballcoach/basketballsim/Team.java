@@ -1,9 +1,4 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
-package my.basketballsim;
+package io.coachapps.collegebasketballcoach.basketballsim;
 
 import java.util.ArrayList;
 
@@ -36,19 +31,29 @@ public class Team {
         }
     }
     
-    public Team( String name ) {
+    public Team( String name, PlayerGen gen ) {
         this.name = name;
         wins = 0;
         losses = 0;
         games = 0;
         playersArray = new Player[10];
+
+        // Set so all the starters are in for now
         startersIn = new int[5];
         benchIn = new int[5];
         for (int i = 0; i < 5; ++i) {
             startersIn[i] = 1;
             benchIn[i] = 0;
         }
+
+        // Make the players
+        for (int i = 0; i < 5; ++i) {
+            playersArray[i] = gen.genPlayer(i+1);
+            playersArray[i+5] = gen.genPlayer(i+1);
+        }
     }
+
+    public String getName() { return name; }
     
     public int getWins82() {
         return (int)( wins * (float)82/games );
@@ -190,7 +195,7 @@ public class Team {
             playersArray[5] = tmp;
             startersIn[0] = 0;
             benchIn[0] = 1;
-            if ( "PLAYER TEAM".equals(name) && games == 0) System.out.println("Subbed out " + playersArray[5].name + " for " + getPG().name + " at time " + time);
+            if ("PLAYER TEAM".equals(name) && games == 0) System.out.println("Subbed out " + playersArray[5].name + " for " + getPG().name + " at time " + time);
         } else if ( startersIn[0] == 0 && benchIn[0] == 1 && time >= 48 - (double)getPG().getPlayingTime()/2 ) {
             //sub in starting PG
             Player tmp = playersArray[0];
@@ -198,7 +203,7 @@ public class Team {
             playersArray[5] = tmp;
             startersIn[0] = 1;
             benchIn[0] = 0;
-            if ( "PLAYER TEAM".equals(name) && games == 0) System.out.println("Subbed out " + playersArray[5].name + " for " + getPG().name + " at time " + time);
+            if ("PLAYER TEAM".equals(name) && games == 0) System.out.println("Subbed out " + playersArray[5].name + " for " + getPG().name + " at time " + time);
         }
         //SG
         if ( startersIn[1] == 1 && benchIn[1] == 0 && time >= (double)getSG().getPlayingTime()/2 && time < 47 - (double)getSG().getPlayingTime()/2 ) {
@@ -290,7 +295,7 @@ public class Team {
                 }
             }
         }
-        System.out.println(name + " DIDNT PICK ENOUGH PEOPLE!");
+        System.out.println(name + " DIDN'T PICK ENOUGH PEOPLE!");
     }
     
     

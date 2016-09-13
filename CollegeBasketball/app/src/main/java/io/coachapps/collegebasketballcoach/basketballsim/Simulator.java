@@ -1,9 +1,4 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
-package my.basketballsim;
+package io.coachapps.collegebasketballcoach.basketballsim;
 
 import static java.lang.Math.random;
 import java.util.ArrayList;
@@ -12,6 +7,7 @@ import java.util.List;
 
 /**
  * Has all the code responsible for simulating games.
+ * Pretty sure this class should be static :^)
  * @author Achi Jones
  */
 public class Simulator {
@@ -144,7 +140,7 @@ public class Simulator {
                 whoDef = defense.playersArray[ whoPoss.getPosition() - 1 ];
             } else if ( fastbreak_possibility * Math.random() > 60 ) {
                 //punish all-bigs lineup, they give up fast break points
-                System.out.println("FAST BREAK");
+                //System.out.println("FAST BREAK");
                 whoPoss.addPts(2);
                 whoPoss.addFGA();
                 whoPoss.addFGM();
