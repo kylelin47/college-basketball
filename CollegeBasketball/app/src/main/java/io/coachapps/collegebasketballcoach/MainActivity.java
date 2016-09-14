@@ -1,8 +1,10 @@
 package io.coachapps.collegebasketballcoach;
 
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
@@ -11,13 +13,18 @@ import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import org.w3c.dom.Text;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.concurrent.ExecutionException;
 
+import io.coachapps.collegebasketballcoach.adapters.PlayerRatingsListArrayAdapter;
 import io.coachapps.collegebasketballcoach.adapters.PlayerStatsListArrayAdapter;
+import io.coachapps.collegebasketballcoach.basketballsim.Player;
 import io.coachapps.collegebasketballcoach.basketballsim.PlayerGen;
 import io.coachapps.collegebasketballcoach.basketballsim.Simulator;
 import io.coachapps.collegebasketballcoach.basketballsim.Team;
@@ -82,6 +89,69 @@ public class MainActivity extends AppCompatActivity {
                         //heh
                     }
                 });
+
+        // Make players clickable
+        mainList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                Player p  = ((PlayerStatsListArrayAdapter) mainList.getAdapter()).getItem(position);
+                showPlayerDialog(p);
+            }
+        });
+
+    }
+
+    public void showPlayerDialog(Player p) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        //do nothing?
+                    }
+                })
+                .setView(getLayoutInflater().inflate(R.layout.player_stats, null));
+        AlertDialog dialog = builder.create();
+        dialog.show();
+
+        TextView textViewName = (TextView) dialog.findViewById(R.id.textViewName);
+        TextView textViewPosition = (TextView) dialog.findViewById(R.id.textViewPosition);
+        TextView textViewYear = (TextView) dialog.findViewById(R.id.textViewYear);
+        TextView textViewOvrPot = (TextView) dialog.findViewById(R.id.textViewOvrPot);
+        TextView textViewVitals = (TextView) dialog.findViewById(R.id.textViewVitals);
+        TextView textViewAttributes = (TextView) dialog.findViewById(R.id.textViewAttributes);
+
+        try {
+            textViewName.setText(p.name);
+            textViewPosition.setText(Player.getPositionStr(p.getPosition()));
+            textViewYear.setText("Sr");
+            textViewOvrPot.setText(String.valueOf(p.getOverall()));
+            textViewVitals.setText("6'7\", 250 lbs");
+            textViewAttributes.setText("Attributes: " + p.attributes);
+
+            ListView list = (ListView) dialog.findViewById(R.id.listView);
+            ArrayList<String> ratings = new ArrayList<>();
+            List<String> ratCSVs = p.getRatingsCSVs();
+            int i = 0;
+            StringBuilder sb = new StringBuilder();
+            for (String rat : ratCSVs) {
+                if (i == 3) {
+                    ratings.add(sb.toString());
+                    sb.setLength(0);
+                    i = 0;
+                }
+
+                sb.append(rat + ",");
+
+                i++;
+            }
+            ratings.add(sb.toString());
+
+            list.setAdapter(new PlayerRatingsListArrayAdapter(MainActivity.this, ratings));
+
+
+        } catch (java.lang.NullPointerException e) {
+            // lol
+        }
 
     }
 

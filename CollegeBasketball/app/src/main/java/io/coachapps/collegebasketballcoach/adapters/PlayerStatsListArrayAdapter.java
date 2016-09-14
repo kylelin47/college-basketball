@@ -43,8 +43,8 @@ public class PlayerStatsListArrayAdapter extends ArrayAdapter<Player> {
         Player p = players.get(position);
 
         playerName.setText(p.name);
-        playerPosition.setText("" + p.getPosition());
-        playerOvrPot.setText("" + p.getOverall());
+        playerPosition.setText(Player.getPositionStr(p.getPosition()));
+        playerOvrPot.setText(String.valueOf(p.getOverall()));
 
         playerPPG.setText(String.valueOf(p.getPPG()));
         playerRPG.setText(String.valueOf(p.getRPG()));
@@ -52,4 +52,9 @@ public class PlayerStatsListArrayAdapter extends ArrayAdapter<Player> {
 
         return rowView;
     }
+
+    public Player getItem(int position) {
+        return players.get(position);
+    }
+
 }

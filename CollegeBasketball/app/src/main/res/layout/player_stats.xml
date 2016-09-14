@@ -14,10 +14,7 @@
         android:id="@+id/textViewName"
         android:layout_alignParentTop="true"
         android:layout_marginStart="15dp"
-        android:layout_marginLeft="15dp"
-        android:layout_toRightOf="@+id/textViewPosition"
         android:layout_toEndOf="@+id/textViewPosition" />
-
 
     <TextView
         android:layout_width="wrap_content"
@@ -29,7 +26,6 @@
         android:textStyle="bold"
         android:id="@+id/textViewPosition"
         android:layout_alignParentTop="true"
-        android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true" />
 
     <TextView
@@ -40,9 +36,8 @@
         android:textColor="#999"
         android:textSize="30sp"
         android:textStyle="bold"
-        android:id="@+id/textView2"
+        android:id="@+id/textViewYear"
         android:layout_alignParentTop="true"
-        android:layout_alignParentRight="true"
         android:layout_alignParentEnd="true" />
 
     <TextView
@@ -62,7 +57,28 @@
         android:text="6&apos;7&quot;, 250 lbs"
         android:id="@+id/textViewVitals"
         android:layout_alignTop="@+id/textViewOvrPot"
-        android:layout_alignParentRight="true"
         android:layout_alignParentEnd="true" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:text="Attributes: Ps 3p"
+        android:id="@+id/textViewAttributes"
+        android:layout_below="@+id/textViewOvrPot"
+        android:layout_centerHorizontal="true" />
+
+    <Spinner
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/spinnerPlayerStats"
+        android:layout_below="@+id/textViewAttributes"
+        android:spinnerMode="dropdown" />
+
+    <ListView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/listView"
+        android:layout_below="@+id/spinnerPlayerStats" />
 
 </RelativeLayout>

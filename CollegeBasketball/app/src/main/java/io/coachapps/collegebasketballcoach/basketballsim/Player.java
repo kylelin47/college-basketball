@@ -1,6 +1,9 @@
 package io.coachapps.collegebasketballcoach.basketballsim;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  *
@@ -191,7 +194,43 @@ public class Player {
         return (double)((int)((double)stats_tot[3]/games_played * 10))/10;
     }
     
-    
+    public static String getPositionStr(int pos) {
+        if (pos == 1) return "PG";
+        if (pos == 2) return "SG";
+        if (pos == 3) return "SF";
+        if (pos == 4) return "PF";
+        return "C";
+    }
+
+    public Map<String, Integer> getRatingsMap() {
+        HashMap<String, Integer> map = new HashMap<>();
+        map.put("IntS", getIntS());
+        map.put("MidS", getMidS());
+        map.put("OutS", getOutS());
+        map.put("Pass", getPass());
+        map.put("Stl", getStl());
+        map.put("PerD", getOutD());
+        map.put("Reb", getReb());
+        map.put("Blk", getBlk());
+        map.put("IntD", getIntD());
+
+        return map;
+    }
+
+    public List<String> getRatingsCSVs() {
+        ArrayList<String> list = new ArrayList<>();
+        list.add("IntS,"+getIntS());
+        list.add("MidS,"+getMidS());
+        list.add("OutS,"+getOutS());
+        list.add("Pass,"+getPass());
+        list.add("Stl,"+getStl());
+        list.add("PerD,"+getOutD());
+        list.add("Reb,"+getReb());
+        list.add("Blk,"+getBlk());
+        list.add("IntD,"+getIntD());
+
+        return list;
+    }
     
     
     

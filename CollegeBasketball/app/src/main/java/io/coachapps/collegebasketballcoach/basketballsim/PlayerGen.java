@@ -28,7 +28,7 @@ public class PlayerGen {
     
     public ArrayList<Player> genRandPlayers( int number ) {
         // generate number of players, with an equal number of each position
-        ArrayList<Player> PlayerList = new ArrayList<Player>();
+        ArrayList<Player> PlayerList = new ArrayList<>();
         for (int i = 0; i < number/5; ++i) {
             Player genPG = genPlayer(1);
             Player genSG = genPlayer(2);
@@ -80,7 +80,6 @@ public class PlayerGen {
             int_d -= 8*Math.random() + 8;
             out_d += 10*Math.random() - 5;
             rebounding -= 20*Math.random() + 10;
-            name += " PG";
         } else if ( position == 2 ) {
             // Shooting Guard
             height += 4*Math.random() - 3;
@@ -96,7 +95,6 @@ public class PlayerGen {
             int_d -= 5*Math.random() + 5;
             out_d += 10*Math.random() - 5;
             rebounding -= 10*Math.random() + 5;
-            name += " SG";
         } else if ( position == 3 ) {
             // Small Forward
             height += 6*Math.random() - 2;
@@ -112,7 +110,6 @@ public class PlayerGen {
             int_d += 15*Math.random() - 5;
             out_d += 15*Math.random() - 5;
             rebounding += 15*Math.random() - 5;
-            name += " SF";
         } else if ( position == 4 ) {
             // Power Forward
             height += 6*Math.random() + 1;
@@ -128,7 +125,6 @@ public class PlayerGen {
             int_d += 20*Math.random() - 5;
             out_d += 10*Math.random() - 8;
             rebounding += 20*Math.random() - 5;
-            name += " PF";
         } else if ( position == 5 ) {
             // Center
             height += 8*Math.random() + 2;
@@ -144,7 +140,6 @@ public class PlayerGen {
             int_d += 10*Math.random() + 5;
             out_d += 20*Math.random() - 20;
             rebounding += 12*Math.random() + 5;
-            name += " C";
         }
         
         // Assign attributes to boost or lower stats
