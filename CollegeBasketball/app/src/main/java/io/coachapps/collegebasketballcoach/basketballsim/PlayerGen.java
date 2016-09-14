@@ -20,9 +20,9 @@ public class PlayerGen {
     public String getRandName() {
         // get random name from list and remove it so it won't be used again
         int firstName = (int)(Math.random() * listFirstNames.length);
-        String fName = listFirstNames[firstName];
+        String fName = listFirstNames[firstName].trim();
         int lastName = (int)(Math.random() * listLastNames.length);
-        String lName = listLastNames[lastName];
+        String lName = listLastNames[lastName].trim();
         return ( fName + " " + lName );        
     }
     

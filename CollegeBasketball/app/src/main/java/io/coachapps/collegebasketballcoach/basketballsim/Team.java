@@ -1,6 +1,7 @@
 package io.coachapps.collegebasketballcoach.basketballsim;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 
 /**
  *
@@ -51,6 +52,10 @@ public class Team {
             playersArray[i] = gen.genPlayer(i+1);
             playersArray[i+5] = gen.genPlayer(i+1);
         }
+    }
+
+    public ArrayList<Player> getPlayers() {
+        return new ArrayList<>(Arrays.asList(playersArray));
     }
 
     public String getName() { return name; }

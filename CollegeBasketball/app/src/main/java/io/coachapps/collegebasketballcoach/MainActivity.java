@@ -8,13 +8,16 @@ import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.ListView;
 import android.widget.Spinner;
 import android.widget.TextView;
 
 import org.w3c.dom.Text;
 
 import java.util.ArrayList;
+import java.util.List;
 
+import io.coachapps.collegebasketballcoach.adapters.PlayerStatsListArrayAdapter;
 import io.coachapps.collegebasketballcoach.basketballsim.PlayerGen;
 import io.coachapps.collegebasketballcoach.basketballsim.Simulator;
 import io.coachapps.collegebasketballcoach.basketballsim.Team;
@@ -27,6 +30,8 @@ public class MainActivity extends AppCompatActivity {
 
     Spinner teamSpinner;
     TextView currTeamTextView;
+
+    ListView mainList;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -52,6 +57,9 @@ public class MainActivity extends AppCompatActivity {
         // Set up UI components
         currTeamTextView = (TextView) findViewById(R.id.currentTeamText);
 
+        // Set up ListView
+        mainList = (ListView) findViewById(R.id.mainList);
+
         teamSpinner = (Spinner) findViewById(R.id.examineTeamSpinner);
         ArrayList<String> teamStrList = new ArrayList<>();
         for (int i = 0; i < 10; i++) {
@@ -67,13 +75,13 @@ public class MainActivity extends AppCompatActivity {
                             AdapterView<?> parent, View view, int position, long id) {
                         currTeamTextView.setText(teamList.get(position).getName() +
                                 " Wins: " + teamList.get(position).getWins82());
+                        mainList.setAdapter(new PlayerStatsListArrayAdapter(MainActivity.this, teamList.get(position).getPlayers()));
                     }
 
                     public void onNothingSelected(AdapterView<?> parent) {
                         //heh
                     }
                 });
-
 
     }
 
