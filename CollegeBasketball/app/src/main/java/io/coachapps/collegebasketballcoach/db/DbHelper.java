@@ -5,6 +5,17 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
 public class DbHelper extends SQLiteOpenHelper {
+    private static DbHelper singletonInstance;
+    public static synchronized DbHelper getInstance(Context context) {
+        if (singletonInstance == null) {
+            singletonInstance = new DbHelper(context.getApplicationContext());
+        }
+        return singletonInstance;
+    }
+    private DbHelper(Context context) {
+        super(context, DATABASE_NAME, null, DATABASE_VERSION);
+    }
+
     public static final int DATABASE_VERSION = 1;
     public static final String DATABASE_NAME = "CollegeBasketball.db";
 
@@ -20,7 +31,7 @@ public class DbHelper extends SQLiteOpenHelper {
                     Schemas.GameEntry.AWAY_STATS + BLOB_TYPE + COMMA_SEP +
                     Schemas.GameEntry.HOME_STATS + BLOB_TYPE + COMMA_SEP +
                     Schemas.GameEntry.AWAY_TEAM + TEXT_TYPE + COMMA_SEP +
-                    Schemas.GameEntry.HOME_TEAM + TEXT_TYPE + COMMA_SEP +
+                    Schemas.GameEntry.HOME_TEAM + TEXT_TYPE +
                     " );";
 
     private static final String SQL_CREATE_ENTRIES_PLAYER =
@@ -28,7 +39,7 @@ public class DbHelper extends SQLiteOpenHelper {
                     Schemas.PlayerEntry._ID + " INTEGER PRIMARY KEY," +
                     Schemas.PlayerEntry.NAME + TEXT_TYPE + COMMA_SEP +
                     Schemas.PlayerEntry.TEAM + TEXT_TYPE + COMMA_SEP +
-                    Schemas.PlayerEntry.YEAR + INTEGER_TYPE + COMMA_SEP +
+                    Schemas.PlayerEntry.YEAR + INTEGER_TYPE +
                     " );";
 
     private static final String SQL_CREATE_ENTRIES_TEAM =
@@ -36,35 +47,45 @@ public class DbHelper extends SQLiteOpenHelper {
                     Schemas.TeamEntry._ID + " INTEGER PRIMARY KEY," +
                     Schemas.TeamEntry.NAME + TEXT_TYPE + COMMA_SEP +
                     Schemas.TeamEntry.CONFERENCE + TEXT_TYPE + COMMA_SEP +
+                    Schemas.TeamEntry.IS_PLAYER + INTEGER_TYPE +
                     " );";
 
     private static final String SQL_CREATE_ENTRIES_BOX_SCORE =
             "CREATE TABLE " + Schemas.BoxScoreEntry.TABLE_NAME + " (" +
                     Schemas.BoxScoreEntry._ID + " INTEGER PRIMARY KEY," +
-                    Schemas.BoxScoreEntry.PLAYER + INTEGER_TYPE +
-                    Schemas.BoxScoreEntry.GAME + INTEGER_TYPE +
-                    Schemas.BoxScoreEntry.POINTS + INTEGER_TYPE +
-                    Schemas.BoxScoreEntry.ASSISTS + INTEGER_TYPE +
-                    Schemas.BoxScoreEntry.FIELD_GOALS_MADE + INTEGER_TYPE +
+                    Schemas.BoxScoreEntry.PLAYER + INTEGER_TYPE + COMMA_SEP +
+                    Schemas.BoxScoreEntry.GAME + INTEGER_TYPE + COMMA_SEP +
+                    Schemas.BoxScoreEntry.POINTS + INTEGER_TYPE + COMMA_SEP +
+                    Schemas.BoxScoreEntry.ASSISTS + INTEGER_TYPE + COMMA_SEP +
+                    Schemas.BoxScoreEntry.FIELD_GOALS_MADE + INTEGER_TYPE + COMMA_SEP +
                     Schemas.BoxScoreEntry.REBOUNDS + INTEGER_TYPE +
                     " );";
 
     private static final String SQL_CREATE_ENTRIES_LEAGUE_RESULTS =
             "CREATE TABLE " + Schemas.LeagueResultsEntry.TABLE_NAME + " (" +
-                    Schemas.LeagueResultsEntry._ID + " INTEGER PRIMARY KEY" +
-                    Schemas.LeagueResultsEntry.CHAMPION + TEXT_TYPE +
-                    Schemas.LeagueResultsEntry.MVP + INTEGER_TYPE +
-                    Schemas.LeagueResultsEntry.DPOY + INTEGER_TYPE +
+                    Schemas.LeagueResultsEntry._ID + " INTEGER PRIMARY KEY," +
+                    Schemas.LeagueResultsEntry.CHAMPION + TEXT_TYPE + COMMA_SEP +
+                    Schemas.LeagueResultsEntry.MVP + INTEGER_TYPE + COMMA_SEP +
+                    Schemas.LeagueResultsEntry.DPOY + INTEGER_TYPE + COMMA_SEP +
                     Schemas.LeagueResultsEntry.YEAR + INTEGER_TYPE +
                     " );";
 
     private static final String SQL_CREATE_ENTRIES_YEARLY_TEAM_STATS =
             "CREATE TABLE " + Schemas.YearlyTeamStatsEntry.TABLE_NAME + " (" +
-                    Schemas.YearlyTeamStatsEntry._ID + " INTEGER PRIMARY KEY" +
-                    Schemas.YearlyTeamStatsEntry.LOSSES + INTEGER_TYPE +
-                    Schemas.YearlyTeamStatsEntry.WINS + INTEGER_TYPE +
-                    Schemas.YearlyTeamStatsEntry.YEAR + INTEGER_TYPE +
+                    Schemas.YearlyTeamStatsEntry._ID + " INTEGER PRIMARY KEY," +
+                    Schemas.YearlyTeamStatsEntry.LOSSES + INTEGER_TYPE + COMMA_SEP +
+                    Schemas.YearlyTeamStatsEntry.WINS + INTEGER_TYPE + COMMA_SEP +
+                    Schemas.YearlyTeamStatsEntry.YEAR + INTEGER_TYPE + COMMA_SEP +
                     Schemas.YearlyTeamStatsEntry.TEAM + TEXT_TYPE +
+                    " );";
+
+    private static final String SQL_CREATE_ENTRIES_YEARLY_PLAYER_STATS =
+            "CREATE TABLE " + Schemas.YearlyPlayerStatsEntry.TABLE_NAME + " (" +
+                    Schemas.YearlyPlayerStatsEntry._ID + " INTEGER PRIMARY KEY," +
+                    Schemas.YearlyPlayerStatsEntry.PLAYER + INTEGER_TYPE + COMMA_SEP +
+                    Schemas.YearlyPlayerStatsEntry.YEAR + INTEGER_TYPE + COMMA_SEP +
+                    Schemas.YearlyPlayerStatsEntry.POINTS + INTEGER_TYPE +
+                    Schemas.YearlyPlayerStatsEntry.GAMES_PLAYED + INTEGER_TYPE +
                     " );";
 
     private static final String SQL_DELETE_ENTRIES_GAME =
@@ -85,9 +106,8 @@ public class DbHelper extends SQLiteOpenHelper {
     private static final String SQL_DELETE_ENTRIES_YEARLY_TEAM_STATS =
             "DROP TABLE IF EXISTS " + Schemas.YearlyTeamStatsEntry.TABLE_NAME + ";";
 
-    public DbHelper(Context context) {
-        super(context, DATABASE_NAME, null, DATABASE_VERSION);
-    }
+    private static final String SQL_DELETE_ENTRIES_YEARLY_PLAYER_STATS =
+            "DROP TABLE IF EXISTS " + Schemas.YearlyPlayerStatsEntry.TABLE_NAME + ";";
 
     @Override
     public void onCreate(SQLiteDatabase db) {
@@ -97,6 +117,7 @@ public class DbHelper extends SQLiteOpenHelper {
         db.execSQL(SQL_CREATE_ENTRIES_BOX_SCORE);
         db.execSQL(SQL_CREATE_ENTRIES_LEAGUE_RESULTS);
         db.execSQL(SQL_CREATE_ENTRIES_YEARLY_TEAM_STATS);
+        db.execSQL(SQL_CREATE_ENTRIES_YEARLY_PLAYER_STATS);
     }
 
     @Override
@@ -107,6 +128,7 @@ public class DbHelper extends SQLiteOpenHelper {
         db.execSQL(SQL_DELETE_ENTRIES_BOX_SCORE);
         db.execSQL(SQL_DELETE_ENTRIES_LEAGUE_RESULTS);
         db.execSQL(SQL_DELETE_ENTRIES_YEARLY_TEAM_STATS);
+        db.execSQL(SQL_DELETE_ENTRIES_YEARLY_PLAYER_STATS);
         onCreate(db);
     }
 }

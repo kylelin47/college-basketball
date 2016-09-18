@@ -7,21 +7,18 @@ import android.database.sqlite.SQLiteDatabase;
 import io.coachapps.collegebasketballcoach.models.BoxScore;
 
 public class BoxScoreDao {
-    private DbHelper dbHelper;
+    private Context context;
 
     public BoxScoreDao(Context context) {
-        dbHelper = new DbHelper(context);
+        this.context = context;
     }
 
-    public void close() {
-        if (dbHelper != null) {
-            dbHelper.close();
-        }
-    }
     public void save(BoxScore boxScore) {
-        SQLiteDatabase db = dbHelper.getWritableDatabase();
-        ContentValues values = new ContentValues();
-        values.put(Schemas.BoxScoreEntry.POINTS, boxScore.points);
-        db.insert(Schemas.BoxScoreEntry.TABLE_NAME, null, values);
+        try (SQLiteDatabase db = DbHelper.getInstance(context).getWritableDatabase()) {
+            ContentValues values = new ContentValues();
+            values.put(Schemas.BoxScoreEntry.PLAYER, boxScore.playerId);
+            values.put(Schemas.BoxScoreEntry.POINTS, boxScore.points);
+            db.insert(Schemas.BoxScoreEntry.TABLE_NAME, null, values);
+        }
     }
 }

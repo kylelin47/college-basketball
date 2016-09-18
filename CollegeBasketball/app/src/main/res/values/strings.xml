@@ -354,4 +354,5 @@
         Graham,
         Beckham
     </string>
+    <string name="title_activity_team_stats">Team Stats</string>
 </resources>

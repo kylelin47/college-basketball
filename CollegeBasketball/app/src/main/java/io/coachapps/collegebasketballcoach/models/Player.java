@@ -1,6 +1,8 @@
 package io.coachapps.collegebasketballcoach.models;
 
-import java.io.Serializable;
-
-public class Player implements Serializable {
+public class Player {
+    public String name;
+    public Player(String name) {
+        this.name = name;
+    }
 }

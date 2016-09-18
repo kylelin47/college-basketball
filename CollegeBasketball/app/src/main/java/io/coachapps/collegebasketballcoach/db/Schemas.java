@@ -17,6 +17,7 @@ public final class Schemas {
         public static final String TABLE_NAME = "teams";
         public static final String NAME = "name";
         public static final String CONFERENCE = "conference";
+        public static final String IS_PLAYER = "isPlayer";
     }
 
     public static abstract class YearlyTeamStatsEntry implements BaseColumns {
@@ -25,6 +26,14 @@ public final class Schemas {
         public static final String YEAR = "year";
         public static final String WINS = "wins";
         public static final String LOSSES = "losses";
+    }
+
+    public static abstract class YearlyPlayerStatsEntry implements BaseColumns {
+        public static final String TABLE_NAME = "yearlyPlayerStats";
+        public static final String PLAYER = "player";
+        public static final String YEAR = "year";
+        public static final String POINTS = "points";
+        public static final String GAMES_PLAYED = "gamesPlayed";
     }
 
     public static abstract class GameEntry implements BaseColumns {
