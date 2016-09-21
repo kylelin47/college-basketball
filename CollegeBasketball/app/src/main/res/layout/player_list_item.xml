@@ -62,7 +62,7 @@
                 android:layout_marginEnd="3dp"
                 android:text="27.7"
                 android:textColor="#000"
-                android:textSize="25sp"
+                android:textSize="22sp"
                 android:textStyle="bold"
                 android:id="@+id/textViewPPG"
                 />
@@ -90,7 +90,7 @@
                 android:layout_marginEnd="3dp"
                 android:text="6.5"
                 android:textColor="#000"
-                android:textSize="25sp"
+                android:textSize="22sp"
                 android:textStyle="bold"
                 android:id="@+id/textViewRPG"
                 />
@@ -118,7 +118,7 @@
                 android:layout_marginEnd="3dp"
                 android:text="8.1"
                 android:textColor="#000"
-                android:textSize="25sp"
+                android:textSize="22sp"
                 android:textStyle="bold"
                 android:id="@+id/textViewAPG"
                 />
@@ -132,6 +132,34 @@
                 android:layout_toEndOf="@+id/textViewAPG"
                 android:layout_alignBottom="@+id/textViewAPG"
                 android:id="@+id/textViewAPGlabel"
+                />
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:layout_width="0dip"
+            android:layout_weight="1"
+            android:layout_height="wrap_content"
+            android:gravity="center">
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="3dp"
+                android:text="51%"
+                android:textColor="#000"
+                android:textSize="22sp"
+                android:textStyle="bold"
+                android:id="@+id/textViewFGP"
+                />
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="FG%"
+                android:textColor="#999"
+                android:textSize="15sp"
+                android:textStyle="bold"
+                android:layout_toEndOf="@+id/textViewFGP"
+                android:layout_alignBottom="@+id/textViewFGP"
+                android:id="@+id/textViewFGPlabel"
                 />
         </RelativeLayout>
 

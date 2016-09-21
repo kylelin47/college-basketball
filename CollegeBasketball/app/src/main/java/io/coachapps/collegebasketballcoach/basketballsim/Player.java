@@ -162,7 +162,9 @@ public class Player {
         return (double)((int)((double)stats_tot[0]/games_played * 10))/10;
     }
     public double getFGP() {
-        return (double)((int)((double)stats_tot[2]/stats_tot[1] * 1000))/10;
+        if (stats_tot[1] > 0 ) {
+            return (double) ((int) ((double) stats_tot[2] / stats_tot[1] * 1000)) / 10;
+        } else return 0;
     }
     public double get3GP() {
         if ( stats_tot[3] > 0 ) {
@@ -193,6 +195,12 @@ public class Player {
     public double get3GAPG() {
         return (double)((int)((double)stats_tot[3]/games_played * 10))/10;
     }
+    public double getFGMPG() {
+        return (double)((int)((double)stats_tot[2]/games_played * 10))/10;
+    }
+    public double get3GMPG() {
+        return (double)((int)((double)stats_tot[4]/games_played * 10))/10;
+    }
     
     public static String getPositionStr(int pos) {
         if (pos == 1) return "PG";
@@ -222,16 +230,52 @@ public class Player {
         list.add("IntS,"+getIntS());
         list.add("MidS,"+getMidS());
         list.add("OutS,"+getOutS());
+
         list.add("Pass,"+getPass());
         list.add("Stl,"+getStl());
         list.add("PerD,"+getOutD());
+
         list.add("Reb,"+getReb());
         list.add("Blk,"+getBlk());
         list.add("IntD,"+getIntD());
 
+        list.add("InsT,"+getInsT());
+        list.add("MidT,"+getMidT());
+        list.add("OutT,"+getOutT());
+
+        list.addAll(getAvgStatsCSV());
+
         return list;
     }
-    
+
+    public List<String> getAvgStatsCSV() {
+        ArrayList<String> list = new ArrayList<>();
+        list.add("GP,82");
+        list.add("GS,82");
+        list.add("MPG,"+getPlayingTime());
+
+        list.add("USG,"+getUsage());
+        list.add("MSM,"+getMSM());
+        list.add("POS,"+getPosition());
+
+        list.add("PPG,"+getPPG());
+        list.add("RPG,"+getRPG());
+        list.add("APG,"+getAPG());
+
+        list.add("SPG,"+getSPG());
+        list.add("BPG,"+getBPG());
+        list.add("OFG%,"+getOFP());
+
+        list.add("FGM,"+getFGMPG());
+        list.add("FGA,"+getFGAPG());
+        list.add("FG%,"+getFGP());
+
+        list.add("3GM,"+get3GMPG());
+        list.add("3GA,"+get3GAPG());
+        list.add("3FG%,"+get3GP());
+
+        return list;
+    }
     
     
 }

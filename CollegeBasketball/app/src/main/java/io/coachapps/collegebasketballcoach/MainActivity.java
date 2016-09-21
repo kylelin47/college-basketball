@@ -70,7 +70,7 @@ public class MainActivity extends AppCompatActivity {
         teamSpinner = (Spinner) findViewById(R.id.examineTeamSpinner);
         ArrayList<String> teamStrList = new ArrayList<>();
         for (int i = 0; i < 10; i++) {
-            teamStrList.add(teamList.get(i).getName());
+            teamStrList.add(teamList.get(i).getName() + " Wins: " + teamList.get(i).getWins82());
         }
         ArrayAdapter<String> dataAdapterTeam = new ArrayAdapter<>(this,
                 android.R.layout.simple_spinner_item, teamStrList);

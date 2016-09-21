@@ -256,9 +256,10 @@ public class PlayerGen {
         }
         
         int usage = (int) (Math.round( Math.pow(int_s, 2) + Math.pow(mid_s, 2) + Math.pow(out_s, 2) ) + extra_usage)/1000;
-        int ins_t = (int) (1000*Math.pow(int_s, 1.2) / (Math.pow(int_s, 1.2) + Math.pow(mid_s, 1.2) + Math.pow(out_s, 1.2)) );
-        int mid_t = (int) (1000*Math.pow(mid_s, 1.2) / (Math.pow(int_s, 1.2) + Math.pow(mid_s, 1.2) + Math.pow(out_s, 1.2)) );
-        int out_t = (int) (1000*Math.pow(out_s, 1.2) / (Math.pow(int_s, 1.2) + Math.pow(mid_s, 1.2) + Math.pow(out_s, 1.2)) );
+        double factor = 1.8;
+        int ins_t = (int) (1000*Math.pow(int_s, factor) / (Math.pow(int_s, factor) + Math.pow(mid_s, factor) + Math.pow(out_s, factor)) );
+        int mid_t = (int) (1000*Math.pow(mid_s, factor) / (Math.pow(int_s, factor) + Math.pow(mid_s, factor) + Math.pow(out_s, factor)) );
+        int out_t = (int) (1000*Math.pow(out_s, factor) / (Math.pow(int_s, factor) + Math.pow(mid_s, factor) + Math.pow(out_s, factor)) );
         
         int[] ratings = new int[16];
         ratings[0] = position;

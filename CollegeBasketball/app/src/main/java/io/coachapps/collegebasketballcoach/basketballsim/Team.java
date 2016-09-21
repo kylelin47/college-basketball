@@ -49,8 +49,15 @@ public class Team {
 
         // Make the players
         for (int i = 0; i < 5; ++i) {
-            playersArray[i] = gen.genPlayer(i+1);
-            playersArray[i+5] = gen.genPlayer(i+1);
+            Player a = gen.genPlayer(i+1);
+            Player b = gen.genPlayer(i+1);
+            if (a.getOverall() > b.getOverall()) {
+                playersArray[i] = a;
+                playersArray[i+5] = b;
+            } else {
+                playersArray[i] = b;
+                playersArray[i+5] = a;
+            }
         }
     }
 

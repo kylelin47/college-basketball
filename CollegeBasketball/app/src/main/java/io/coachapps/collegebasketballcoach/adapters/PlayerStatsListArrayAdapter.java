@@ -39,6 +39,7 @@ public class PlayerStatsListArrayAdapter extends ArrayAdapter<Player> {
         TextView playerPPG = (TextView) rowView.findViewById(R.id.textViewPPG);
         TextView playerRPG = (TextView) rowView.findViewById(R.id.textViewRPG);
         TextView playerAPG = (TextView) rowView.findViewById(R.id.textViewAPG);
+        TextView playerFGP = (TextView) rowView.findViewById(R.id.textViewFGP);
 
         Player p = players.get(position);
 
@@ -49,6 +50,7 @@ public class PlayerStatsListArrayAdapter extends ArrayAdapter<Player> {
         playerPPG.setText(String.valueOf(p.getPPG()));
         playerRPG.setText(String.valueOf(p.getRPG()));
         playerAPG.setText(String.valueOf(p.getAPG()));
+        playerFGP.setText(String.valueOf((int)p.getFGP())+"/"+String.valueOf((int)p.get3GP()));
 
         return rowView;
     }

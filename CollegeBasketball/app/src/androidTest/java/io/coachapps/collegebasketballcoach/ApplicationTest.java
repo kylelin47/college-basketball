@@ -34,7 +34,7 @@ public class ApplicationTest {
     @Test
     public void canSaveBoxScores() {
         BoxScoreDao boxScoreDao = new BoxScoreDao(context);
-        boxScoreDao.save(new BoxScore());
+        boxScoreDao.save(new BoxScore(0, 0));
         SQLiteDatabase db = DbHelper.getInstance(context).getReadableDatabase();
         String[] projection = {
                 Schemas.BoxScoreEntry.POINTS
