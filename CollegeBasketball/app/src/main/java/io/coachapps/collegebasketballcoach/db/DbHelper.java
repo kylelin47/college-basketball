@@ -81,12 +81,13 @@ public class DbHelper extends SQLiteOpenHelper {
 
     private static final String SQL_CREATE_ENTRIES_YEARLY_PLAYER_STATS =
             "CREATE TABLE " + Schemas.YearlyPlayerStatsEntry.TABLE_NAME + " (" +
-                    Schemas.YearlyPlayerStatsEntry._ID + " INTEGER PRIMARY KEY," +
+                    Schemas.YearlyPlayerStatsEntry._ID + INTEGER_TYPE + COMMA_SEP +
                     Schemas.YearlyPlayerStatsEntry.PLAYER + INTEGER_TYPE + COMMA_SEP +
                     Schemas.YearlyPlayerStatsEntry.YEAR + INTEGER_TYPE + COMMA_SEP +
-                    Schemas.YearlyPlayerStatsEntry.POINTS + INTEGER_TYPE +
-                    Schemas.YearlyPlayerStatsEntry.GAMES_PLAYED + INTEGER_TYPE +
-                    " );";
+                    Schemas.YearlyPlayerStatsEntry.POINTS + INTEGER_TYPE + COMMA_SEP +
+                    Schemas.YearlyPlayerStatsEntry.GAMES_PLAYED + INTEGER_TYPE + COMMA_SEP +
+                    "PRIMARY KEY (" + Schemas.YearlyPlayerStatsEntry.PLAYER + COMMA_SEP + Schemas
+                    .YearlyPlayerStatsEntry.YEAR + "));";
 
     private static final String SQL_DELETE_ENTRIES_GAME =
             "DROP TABLE IF EXISTS " + Schemas.GameEntry.TABLE_NAME + ";";
