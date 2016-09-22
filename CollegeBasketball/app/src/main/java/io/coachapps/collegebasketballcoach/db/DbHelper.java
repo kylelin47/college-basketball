@@ -16,7 +16,7 @@ public class DbHelper extends SQLiteOpenHelper {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
     }
 
-    public static final int DATABASE_VERSION = 1;
+    public static final int DATABASE_VERSION = 2;
     public static final String DATABASE_NAME = "CollegeBasketball.db";
 
     private static final String INTEGER_TYPE = " INTEGER";
@@ -123,6 +123,10 @@ public class DbHelper extends SQLiteOpenHelper {
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
+        resetDb(db);
+    }
+
+    public void resetDb(SQLiteDatabase db) {
         db.execSQL(SQL_DELETE_ENTRIES_GAME);
         db.execSQL(SQL_DELETE_ENTRIES_PLAYER);
         db.execSQL(SQL_DELETE_ENTRIES_TEAM);

@@ -5,8 +5,7 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 
-import java.util.Locale;
-
+import io.coachapps.collegebasketballcoach.models.YearlyPlayerStats;
 import io.coachapps.collegebasketballcoach.models.BoxScore;
 
 public class BoxScoreDao {
@@ -18,33 +17,53 @@ public class BoxScoreDao {
 
     public void save(BoxScore boxScore) {
         try (SQLiteDatabase db = DbHelper.getInstance(context).getWritableDatabase()) {
-            ContentValues values = new ContentValues();
-            values.put(Schemas.BoxScoreEntry.PLAYER, boxScore.playerId);
-            values.put(Schemas.BoxScoreEntry.POINTS, boxScore.points);
-            db.insert(Schemas.BoxScoreEntry.TABLE_NAME, null, values);
+            updateBoxScore(boxScore, db);
             updateYearlyPlayerStats(boxScore, db);
         }
     }
 
+    private void updateBoxScore(BoxScore boxScore, SQLiteDatabase db) {
+        ContentValues values = new ContentValues();
+        values.put(Schemas.BoxScoreEntry.PLAYER, boxScore.playerId);
+        values.put(Schemas.BoxScoreEntry.POINTS, boxScore.points);
+        db.insert(Schemas.BoxScoreEntry.TABLE_NAME, null, values);
+    }
+
     private void updateYearlyPlayerStats(BoxScore boxScore, SQLiteDatabase db) {
-        try (Cursor cursor = db.rawQuery(String.format(Locale.ENGLISH, "SELECT 1 FROM %s WHERE %s" +
-                "= ? AND %s = ?", Schemas.YearlyPlayerStatsEntry.TABLE_NAME, Schemas
-                .YearlyPlayerStatsEntry.PLAYER, Schemas.YearlyPlayerStatsEntry.YEAR), new
-                String[] {String.valueOf(boxScore.playerId), String.valueOf(boxScore.year)})) {
-            if (cursor.getCount() == 0) {
-                ContentValues values = new ContentValues();
-                values.put(Schemas.YearlyPlayerStatsEntry.YEAR, boxScore.year);
-                values.put(Schemas.YearlyPlayerStatsEntry.PLAYER, boxScore.playerId);
-                values.put(Schemas.YearlyPlayerStatsEntry.POINTS, boxScore.points);
-                db.insert(Schemas.YearlyPlayerStatsEntry.TABLE_NAME, null, values);
-                return;
+        String[] projection = {
+                Schemas.YearlyPlayerStatsEntry.POINTS,
+                Schemas.YearlyPlayerStatsEntry.GAMES_PLAYED
+        };
+        String whereClause = Schemas.YearlyPlayerStatsEntry.PLAYER + "=? AND " + Schemas
+                .YearlyPlayerStatsEntry.YEAR + "=?";
+        String[] whereArgs = {
+                String.valueOf(boxScore.playerId),
+                String.valueOf(boxScore.year)
+        };
+        YearlyPlayerStats stats = new YearlyPlayerStats(boxScore);
+        try (Cursor cursor = db.query(Schemas.YearlyPlayerStatsEntry.TABLE_NAME, projection,
+                whereClause, whereArgs, null, null, null, null)) {
+            if (cursor.moveToNext()) {
+                addPreviousYearlyPlayerStats(cursor, stats);
             }
         }
-        db.execSQL(String.format(Locale.ENGLISH, "UPDATE %s SET %s = %s + %d, %s = %s + 1 WHERE " +
-                "%s = %d AND %s = %d", Schemas.YearlyPlayerStatsEntry.TABLE_NAME, Schemas.YearlyPlayerStatsEntry.POINTS,
-                Schemas.YearlyPlayerStatsEntry.POINTS, boxScore.points, Schemas
-                        .YearlyPlayerStatsEntry.GAMES_PLAYED, Schemas.YearlyPlayerStatsEntry.GAMES_PLAYED,
-                Schemas.YearlyPlayerStatsEntry.YEAR, boxScore.year, Schemas
-                        .YearlyPlayerStatsEntry.PLAYER, boxScore.playerId));
+        ContentValues values = populateYearlyPlayerStatsEntry(stats);
+        db.replace(Schemas.YearlyPlayerStatsEntry.TABLE_NAME, null, values);
+    }
+
+    private ContentValues populateYearlyPlayerStatsEntry(YearlyPlayerStats stats) {
+        ContentValues values = new ContentValues();
+        values.put(Schemas.YearlyPlayerStatsEntry.YEAR, stats.year);
+        values.put(Schemas.YearlyPlayerStatsEntry.PLAYER, stats.playerId);
+        values.put(Schemas.YearlyPlayerStatsEntry.POINTS, stats.points);
+        values.put(Schemas.YearlyPlayerStatsEntry.GAMES_PLAYED, stats.gamesPlayed);
+        return values;
+    }
+
+    private void addPreviousYearlyPlayerStats(Cursor cursor, YearlyPlayerStats stats) {
+        stats.points += cursor.getInt(cursor.getColumnIndexOrThrow(Schemas.YearlyPlayerStatsEntry
+                .POINTS));
+        stats.gamesPlayed += cursor.getInt(cursor.getColumnIndexOrThrow(Schemas
+                .YearlyPlayerStatsEntry.GAMES_PLAYED));
     }
 }

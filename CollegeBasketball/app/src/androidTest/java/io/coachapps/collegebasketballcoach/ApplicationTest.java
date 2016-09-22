@@ -34,8 +34,14 @@ public class ApplicationTest {
     @Test
     public void canSaveBoxScores() {
         BoxScoreDao boxScoreDao = new BoxScoreDao(context);
-        boxScoreDao.save(new BoxScore(0, 0));
+        BoxScore boxScore = new BoxScore(0, 2000);
+        boxScore.points = 25;
+        boxScoreDao.save(new BoxScore(0, 2000));
+        boxScoreDao.save(boxScore);
+        boxScoreDao.save(new BoxScore(0, 2001));
+        boxScoreDao.save(new BoxScore(0, 2002));
         SQLiteDatabase db = DbHelper.getInstance(context).getReadableDatabase();
+        //DbHelper.getInstance(context).resetDb(db);
         String[] projection = {
                 Schemas.BoxScoreEntry.POINTS
         };
@@ -46,8 +52,21 @@ public class ApplicationTest {
                 points.add(c.getInt(c.getColumnIndexOrThrow(Schemas.BoxScoreEntry.POINTS)));
             }
         }
+        int num = 0;
+        List<Integer> yearlyPoints = new ArrayList<>();
+        try (Cursor c = db.query(Schemas.YearlyPlayerStatsEntry.TABLE_NAME, null, null, null, null,
+                null, null, null)) {
+            while (c.moveToNext()) {
+                yearlyPoints.add(c.getInt(c.getColumnIndexOrThrow(Schemas
+                        .YearlyPlayerStatsEntry.POINTS)));
+                num++;
+            }
+        }
+        //DbHelper.getInstance(context).resetDb(db);
         db.close();
-        assertThat(points.size(), is(1));
+        assertThat(yearlyPoints.get(0), is(25));
+        assertThat(num, is(3));
+        assertThat(points.size(), is(4));
         assertThat(points.get(0), is(20));
     }
 }
