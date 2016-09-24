@@ -1,32 +1,32 @@
 package io.coachapps.collegebasketballcoach.models;
 
 public class YearlyPlayerStats {
-    public int gamesPlayed;
-    public int year;
     public int playerId;
-    public int points;
+    public int year;
 
-    public YearlyPlayerStats(){};
+    public int gamesPlayed;
+
+    public PlayerStats playerStats;
+
+    public YearlyPlayerStats(int playerId){
+        this.playerId = playerId;
+        this.gamesPlayed = 0;
+
+        this.playerStats = new PlayerStats();
+    }
 
     public YearlyPlayerStats(BoxScore boxScore) {
         this.year = boxScore.year;
-        this.playerId = boxScore.playerId;
-        this.points = boxScore.points;
         this.gamesPlayed = 1;
-    }
-
-    public YearlyPlayerStats(int gamesPlayed, int year, int playerId, int points) {
-        this.gamesPlayed = gamesPlayed;
-        this.year = year;
-        this.playerId = playerId;
-        this.points = points;
+        this.playerId = boxScore.playerId;
+        this.playerStats = new PlayerStats(boxScore.playerStats);
     }
 
     public float getPPG() {
         if (gamesPlayed == 0) {
             return 0;
         } else {
-            return (float)points/gamesPlayed;
+            return (float)playerStats.points/gamesPlayed;
         }
     }
 }

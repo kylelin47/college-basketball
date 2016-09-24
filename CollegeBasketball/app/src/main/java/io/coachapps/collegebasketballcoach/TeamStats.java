@@ -50,7 +50,7 @@ public class TeamStats extends AppCompatActivity {
         YearlyPlayerStatsDao yearlyPlayerStatsDao = new YearlyPlayerStatsDao(this);
         List<YearlyPlayerStats> stats = yearlyPlayerStatsDao.getPlayerStatsFromYears(0, 2000, 2005);
         Log.i(TAG, "Size : " + stats.size());
-        Log.i(TAG, "Points : " + stats.get(0).points);
+        Log.i(TAG, "Points : " + stats.get(0).playerStats.points);
         Log.i(TAG, "Games Played : " + stats.get(0).gamesPlayed);
 
         for (YearlyPlayerStats data : stats) {
@@ -58,16 +58,19 @@ public class TeamStats extends AppCompatActivity {
         }
         LineDataSet dataSet = new LineDataSet(entries, "PPG");
         dataSet.setLineWidth(1.75f);
-        dataSet.setCircleRadius(5f);
-        dataSet.setCircleHoleRadius(2.5f);
+        dataSet.setCircleRadius(4f);
+        dataSet.setCircleHoleRadius(2.0f);
         dataSet.setColor(Color.BLACK);
-        dataSet.setCircleColor(Color.BLUE);
-        dataSet.setHighLightColor(Color.GREEN);
+        dataSet.setCircleColor(Color.GRAY);
+        dataSet.setHighLightColor(Color.CYAN);
+        dataSet.setValueTextSize(20);
         LineData lineData = new LineData(dataSet);
         chart.setData(lineData);
         chart.getXAxis().setValueFormatter(new MyXAxisValueFormatter());
         chart.getXAxis().setGranularity(1f);
         chart.getLegend().setYOffset(20);
+        chart.setDescription("Player stats");
+        chart.setDrawBorders(false);
         chart.invalidate();
     }
 

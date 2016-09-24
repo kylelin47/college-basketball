@@ -33,6 +33,20 @@ public final class Schemas {
         public static final String PLAYER = "player";
         public static final String YEAR = "year";
         public static final String POINTS = "points";
+        public static final String MINUTES = "minutes";
+        public static final String OFFENSIVE_REBOUNDS = "offensiveRebounds";
+        public static final String DEFENSIVE_REBOUNDS = "defensiveRebounds";
+        public static final String ASSISTS = "assists";
+        public static final String STEALS = "steals";
+        public static final String BLOCKS = "blocks";
+        public static final String TURNOVERS = "turnovers";
+        public static final String FOULS = "fouls";
+        public static final String FGM = "fgm";
+        public static final String FGA = "fga";
+        public static final String THREE_POINTS_MADE = "3pm";
+        public static final String THREE_POINTS_ATTEMPTED = "3pa";
+        public static final String FTA = "fta";
+        public static final String FTM = "ftm";
         public static final String GAMES_PLAYED = "gamesPlayed";
     }
 

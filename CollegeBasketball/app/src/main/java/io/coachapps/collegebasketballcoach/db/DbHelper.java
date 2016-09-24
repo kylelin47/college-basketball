@@ -44,8 +44,8 @@ public class DbHelper extends SQLiteOpenHelper {
 
     private static final String SQL_CREATE_ENTRIES_TEAM =
             "CREATE TABLE " + Schemas.TeamEntry.TABLE_NAME + " (" +
-                    Schemas.TeamEntry._ID + " INTEGER PRIMARY KEY," +
-                    Schemas.TeamEntry.NAME + TEXT_TYPE + COMMA_SEP +
+                    Schemas.TeamEntry._ID + INTEGER_TYPE + COMMA_SEP +
+                    Schemas.TeamEntry.NAME + " TEXT PRIMARY KEY," +
                     Schemas.TeamEntry.CONFERENCE + TEXT_TYPE + COMMA_SEP +
                     Schemas.TeamEntry.IS_PLAYER + INTEGER_TYPE +
                     " );";
@@ -85,7 +85,20 @@ public class DbHelper extends SQLiteOpenHelper {
                     Schemas.YearlyPlayerStatsEntry.PLAYER + INTEGER_TYPE + COMMA_SEP +
                     Schemas.YearlyPlayerStatsEntry.YEAR + INTEGER_TYPE + COMMA_SEP +
                     Schemas.YearlyPlayerStatsEntry.POINTS + INTEGER_TYPE + COMMA_SEP +
-                    Schemas.YearlyPlayerStatsEntry.GAMES_PLAYED + INTEGER_TYPE + COMMA_SEP +
+                    Schemas.YearlyPlayerStatsEntry.ASSISTS + INTEGER_TYPE + COMMA_SEP +
+                    Schemas.YearlyPlayerStatsEntry.BLOCKS + INTEGER_TYPE + COMMA_SEP +
+                    Schemas.YearlyPlayerStatsEntry.DEFENSIVE_REBOUNDS + INTEGER_TYPE + COMMA_SEP +
+                    Schemas.YearlyPlayerStatsEntry.OFFENSIVE_REBOUNDS + INTEGER_TYPE + COMMA_SEP +
+                    Schemas.YearlyPlayerStatsEntry.THREE_POINTS_ATTEMPTED + INTEGER_TYPE + COMMA_SEP +
+                    Schemas.YearlyPlayerStatsEntry.THREE_POINTS_MADE + INTEGER_TYPE + COMMA_SEP +
+                    Schemas.YearlyPlayerStatsEntry.FGA + INTEGER_TYPE + COMMA_SEP +
+                    Schemas.YearlyPlayerStatsEntry.FGM + INTEGER_TYPE + COMMA_SEP +
+                    Schemas.YearlyPlayerStatsEntry.FOULS + INTEGER_TYPE + COMMA_SEP +
+                    Schemas.YearlyPlayerStatsEntry.FTA + INTEGER_TYPE + COMMA_SEP +
+                    Schemas.YearlyPlayerStatsEntry.FTM + INTEGER_TYPE + COMMA_SEP +
+                    Schemas.YearlyPlayerStatsEntry.MINUTES + INTEGER_TYPE + COMMA_SEP +
+                    Schemas.YearlyPlayerStatsEntry.STEALS + INTEGER_TYPE + COMMA_SEP +
+                    Schemas.YearlyPlayerStatsEntry.TURNOVERS + INTEGER_TYPE + COMMA_SEP +
                     "PRIMARY KEY (" + Schemas.YearlyPlayerStatsEntry.PLAYER + COMMA_SEP + Schemas
                     .YearlyPlayerStatsEntry.YEAR + "));";
 
