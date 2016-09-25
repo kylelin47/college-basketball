@@ -10,11 +10,13 @@ public class PlayerGen {
     
     String[] listFirstNames;
     String[] listLastNames;
+    int currID;
     
     public PlayerGen(String firstCSV, String lastCSV) {
         //get list of names from file
         listFirstNames = firstCSV.split(",");
         listLastNames = lastCSV.split(",");
+        currID = 1;
     }
     
     public String getRandName() {
@@ -282,7 +284,7 @@ public class PlayerGen {
                                        Math.pow(ratings[7], 1.1) + Math.pow(ratings[8], 1.1) + Math.pow(ratings[9], 1.2) + Math.pow(ratings[10], 1.2) + Math.pow(ratings[11], 1.2) );
         ratings[1] = 100*ratings[1] / 2500;
         
-        return new Player( name, ratings, att );
+        return new Player( name, ratings, att, currID++ );
     }
     
     /*public ArrayList<Player> getPlayersFromFile() {

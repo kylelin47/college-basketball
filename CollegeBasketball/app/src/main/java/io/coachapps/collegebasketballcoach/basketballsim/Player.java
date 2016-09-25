@@ -5,6 +5,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import io.coachapps.collegebasketballcoach.models.BoxScore;
+import io.coachapps.collegebasketballcoach.models.PlayerStats;
+
 /**
  *
  * @author Achi Jones
@@ -22,6 +25,9 @@ public class Player {
     // ratings = { 0 Position,    1 Overall, 2 Int_S,  3 Mid_S,  4 Out_S, 5 Passing, 
     //             6 Handling,    7 Steal,   8 Block,  9 Int_D, 10 Out_D, 
     //            11 Rebounding, 12 Usage,  13 Ins_T, 14 Mid_T, 15 Out_T }
+
+    private PlayerStats gmStats;
+    private int id;
     
     public Player( String name, int[] ratings ) {
         stats_gm = new int[11];
@@ -34,10 +40,11 @@ public class Player {
             stats_tot[i] = 0;
         }
         stats_tot[11] = 0;
+        gmStats = new PlayerStats();
         attributes = "";
     }
     
-    public Player( String name, int[] ratings, String att ) {
+    public Player( String name, int[] ratings, String att, int id ) {
         stats_gm = new int[11];
         stats_tot = new int[12];
         games_played = 0;
@@ -48,7 +55,13 @@ public class Player {
             stats_tot[i] = 0;
         }
         stats_tot[11] = 0;
+        gmStats = new PlayerStats();
         attributes = att;
+        this.id = id;
+    }
+
+    public BoxScore getGameBoxScore() {
+        return new BoxScore(id, 2016, gmStats);
     }
     
     //Ratings getters
@@ -109,30 +122,39 @@ public class Player {
     //Stats getters/setters
     // stats = { 0 points, 1 fga, 2 fgm, 3 3ga, 4 3gm, 5 ass, 6 reb, 7 stl, 8 blk, 9 ofa, 10 ofm }
     public void addPts(int points) {
+        gmStats.points += points;
         stats_gm[0] += points;
     }
     public void addFGA() {
+        gmStats.fieldGoalsAttempted++;
         stats_gm[1]++;
     }
     public void addFGM() {
+        gmStats.fieldGoalsMade++;
         stats_gm[2]++;
     }
     public void add3GA() {
+        gmStats.threePointsAttempted++;
         stats_gm[3]++;
     }
     public void add3GM() {
+        gmStats.threePointsMade++;
         stats_gm[4]++;
     }
     public void addAss() {
+        gmStats.assists++;
         stats_gm[5]++;
     }
     public void addReb() {
+        gmStats.defensiveRebounds++;
         stats_gm[6]++;
     }
     public void addStl() {
+        gmStats.steals++;
         stats_gm[7]++;
     }
     public void addBlk() {
+        gmStats.blocks++;
         stats_gm[8]++;
     }
     public void addOFA() {

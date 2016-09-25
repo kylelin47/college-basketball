@@ -58,7 +58,7 @@ public class MainActivity extends AppCompatActivity {
         }
 
         // Sim games
-        bballSim = new Simulator();
+        bballSim = new Simulator(MainActivity.this);
         bballSim.playSeason(teamList);
 
         // Set up UI components

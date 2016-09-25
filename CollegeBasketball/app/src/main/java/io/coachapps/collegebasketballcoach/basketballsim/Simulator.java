@@ -1,9 +1,13 @@
 package io.coachapps.collegebasketballcoach.basketballsim;
 
+import android.content.Context;
+
 import static java.lang.Math.random;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+
+import io.coachapps.collegebasketballcoach.db.BoxScoreDao;
 
 /**
  * Has all the code responsible for simulating games.
@@ -11,6 +15,12 @@ import java.util.List;
  * @author Achi Jones
  */
 public class Simulator {
+
+    public Context context;
+
+    public Simulator(Context c) {
+        context = c;
+    }
     
     public void playSeason( ArrayList<Team> league ) {
         //each team plays 4 games against each other team, and then is normalized to 82 games
@@ -85,11 +95,16 @@ public class Simulator {
                 }
             }
         }
+
+        BoxScoreDao bsd = new BoxScoreDao(context);
         
         //add each players stats to his career total
         for (int p = 0; p < 10; ++p) {
             home.playersArray[p].addGameStatsToTotal();
             away.playersArray[p].addGameStatsToTotal();
+
+            bsd.save(home.playersArray[p].getGameBoxScore());
+            bsd.save(away.playersArray[p].getGameBoxScore());
         }
         
         home.pointsFor += hscore;

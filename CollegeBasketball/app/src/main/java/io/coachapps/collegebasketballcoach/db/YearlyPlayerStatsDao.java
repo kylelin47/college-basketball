@@ -90,6 +90,7 @@ public class YearlyPlayerStatsDao {
         }
         return stats;
     }
+
     private void addToYearlyPlayerStats(Cursor cursor, YearlyPlayerStats existingStats) {
         existingStats.year = cursor.getInt(cursor.getColumnIndexOrThrow(Schemas
                 .YearlyPlayerStatsEntry.YEAR));

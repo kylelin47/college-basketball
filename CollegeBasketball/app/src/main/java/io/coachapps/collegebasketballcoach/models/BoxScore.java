@@ -11,4 +11,10 @@ public class BoxScore {
         this.year = year;
         this.playerStats = new PlayerStats();
     }
+
+    public BoxScore(int playerId, int year, PlayerStats playerStats) {
+        this.playerId = playerId;
+        this.year = year;
+        this.playerStats = playerStats;
+    }
 }
