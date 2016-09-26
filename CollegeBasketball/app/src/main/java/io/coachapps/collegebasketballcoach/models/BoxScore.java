@@ -4,15 +4,15 @@ public class BoxScore {
     public int playerId;
     public int year;
 
-    public PlayerStats playerStats;
+    public Stats playerStats;
 
     public BoxScore(int playerId, int year) {
         this.playerId = playerId;
         this.year = year;
-        this.playerStats = new PlayerStats();
+        this.playerStats = new Stats();
     }
 
-    public BoxScore(int playerId, int year, PlayerStats playerStats) {
+    public BoxScore(int playerId, int year, Stats playerStats) {
         this.playerId = playerId;
         this.year = year;
         this.playerStats = playerStats;

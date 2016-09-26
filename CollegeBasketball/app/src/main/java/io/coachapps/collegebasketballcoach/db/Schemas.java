@@ -10,7 +10,7 @@ public final class Schemas {
         public static final String TABLE_NAME = "players";
         public static final String TEAM = "teamName";
         public static final String NAME = "name";
-        public static final String YEAR = "year";
+        public static final String RATINGS = "ratings";
     }
 
     public static abstract class TeamEntry implements BaseColumns {
@@ -43,8 +43,8 @@ public final class Schemas {
         public static final String FOULS = "fouls";
         public static final String FGM = "fgm";
         public static final String FGA = "fga";
-        public static final String THREE_POINTS_MADE = "3pm";
-        public static final String THREE_POINTS_ATTEMPTED = "3pa";
+        public static final String THREE_POINTS_MADE = "threePM";
+        public static final String THREE_POINTS_ATTEMPTED = "threePA";
         public static final String FTA = "fta";
         public static final String FTM = "ftm";
         public static final String GAMES_PLAYED = "gamesPlayed";

@@ -6,20 +6,20 @@ public class YearlyPlayerStats {
 
     public int gamesPlayed;
 
-    public PlayerStats playerStats;
+    public Stats playerStats;
 
     public YearlyPlayerStats(int playerId){
         this.playerId = playerId;
         this.gamesPlayed = 0;
 
-        this.playerStats = new PlayerStats();
+        this.playerStats = new Stats();
     }
 
     public YearlyPlayerStats(BoxScore boxScore) {
         this.year = boxScore.year;
         this.gamesPlayed = 1;
         this.playerId = boxScore.playerId;
-        this.playerStats = new PlayerStats(boxScore.playerStats);
+        this.playerStats = new Stats(boxScore.playerStats);
     }
 
     public float getPPG() {

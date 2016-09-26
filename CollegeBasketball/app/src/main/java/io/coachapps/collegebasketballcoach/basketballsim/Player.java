@@ -6,7 +6,7 @@ import java.util.List;
 import java.util.Map;
 
 import io.coachapps.collegebasketballcoach.models.BoxScore;
-import io.coachapps.collegebasketballcoach.models.PlayerStats;
+import io.coachapps.collegebasketballcoach.models.Stats;
 
 /**
  *
@@ -26,7 +26,7 @@ public class Player {
     //             6 Handling,    7 Steal,   8 Block,  9 Int_D, 10 Out_D, 
     //            11 Rebounding, 12 Usage,  13 Ins_T, 14 Mid_T, 15 Out_T }
 
-    private PlayerStats gmStats;
+    private Stats gmStats;
     private int id;
     
     public Player( String name, int[] ratings ) {
@@ -40,7 +40,7 @@ public class Player {
             stats_tot[i] = 0;
         }
         stats_tot[11] = 0;
-        gmStats = new PlayerStats();
+        gmStats = new Stats();
         attributes = "";
     }
     
@@ -55,7 +55,7 @@ public class Player {
             stats_tot[i] = 0;
         }
         stats_tot[11] = 0;
-        gmStats = new PlayerStats();
+        gmStats = new Stats();
         attributes = att;
         this.id = id;
     }

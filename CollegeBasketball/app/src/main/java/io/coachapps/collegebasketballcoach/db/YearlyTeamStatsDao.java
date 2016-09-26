@@ -17,7 +17,7 @@ public class YearlyTeamStatsDao {
         this.context = context;
     }
 
-    public void recordTeamRecord(String team, int year, int numWins, int numLosses) {
+    public void recordRelativeTeamRecord(String team, int year, int numWins, int numLosses) {
         try (SQLiteDatabase db = DbHelper.getInstance(context).getWritableDatabase()) {
             String[] projection = {
                     Schemas.YearlyTeamStatsEntry.WINS,

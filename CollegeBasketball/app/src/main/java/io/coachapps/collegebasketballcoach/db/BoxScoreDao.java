@@ -4,6 +4,8 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 
+import java.util.List;
+
 import io.coachapps.collegebasketballcoach.models.BoxScore;
 
 public class BoxScoreDao {
@@ -15,17 +17,25 @@ public class BoxScoreDao {
         yearlyPlayerStatsDao = new YearlyPlayerStatsDao(context);
     }
 
-    public void save(BoxScore boxScore) {
+    public void save(List<BoxScore> boxScores) {
         try (SQLiteDatabase db = DbHelper.getInstance(context).getWritableDatabase()) {
-            updateBoxScore(boxScore, db);
+            db.beginTransaction();
+            try {
+                for (BoxScore boxScore : boxScores) {
+                    updateBoxScore(boxScore, db);
+                }
+                db.setTransactionSuccessful();
+            } finally {
+                db.endTransaction();
+            }
         }
-        yearlyPlayerStatsDao.updateYearlyPlayerStats(boxScore);
+        yearlyPlayerStatsDao.updateYearlyPlayerStats(boxScores);
     }
 
     private void updateBoxScore(BoxScore boxScore, SQLiteDatabase db) {
         ContentValues values = new ContentValues();
         values.put(Schemas.BoxScoreEntry.PLAYER, boxScore.playerId);
         values.put(Schemas.BoxScoreEntry.POINTS, boxScore.playerStats.points);
-        db.insert(Schemas.BoxScoreEntry.TABLE_NAME, null, values);
+        db.insertOrThrow(Schemas.BoxScoreEntry.TABLE_NAME, null, values);
     }
 }

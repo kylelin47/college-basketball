@@ -18,23 +18,31 @@ public class YearlyPlayerStatsDao {
         this.context = context;
     }
 
-    public void updateYearlyPlayerStats(BoxScore boxScore) {
+    public void updateYearlyPlayerStats(List<BoxScore> boxScores) {
         try (SQLiteDatabase db = DbHelper.getInstance(context).getWritableDatabase()) {
-            String whereClause = Schemas.YearlyPlayerStatsEntry.PLAYER + "=? AND " + Schemas
-                    .YearlyPlayerStatsEntry.YEAR + "=?";
-            String[] whereArgs = {
-                    String.valueOf(boxScore.playerId),
-                    String.valueOf(boxScore.year)
-            };
-            YearlyPlayerStats stats = new YearlyPlayerStats(boxScore);
-            try (Cursor cursor = db.query(Schemas.YearlyPlayerStatsEntry.TABLE_NAME, null,
-                    whereClause, whereArgs, null, null, null, null)) {
-                if (cursor.moveToNext()) {
-                    addToYearlyPlayerStats(cursor, stats);
+            db.beginTransaction();
+            try {
+                for (BoxScore boxScore : boxScores) {
+                    String whereClause = Schemas.YearlyPlayerStatsEntry.PLAYER + "=? AND " + Schemas
+                            .YearlyPlayerStatsEntry.YEAR + "=?";
+                    String[] whereArgs = {
+                            String.valueOf(boxScore.playerId),
+                            String.valueOf(boxScore.year)
+                    };
+                    YearlyPlayerStats stats = new YearlyPlayerStats(boxScore);
+                    try (Cursor cursor = db.query(Schemas.YearlyPlayerStatsEntry.TABLE_NAME, null,
+                            whereClause, whereArgs, null, null, null, null)) {
+                        if (cursor.moveToNext()) {
+                            addToYearlyPlayerStats(cursor, stats);
+                        }
+                    }
+                    ContentValues values = populateYearlyPlayerStatsEntry(stats, boxScore.playerId);
+                    db.replaceOrThrow(Schemas.YearlyPlayerStatsEntry.TABLE_NAME, null, values);
                 }
+                db.setTransactionSuccessful();
+            } finally {
+                db.endTransaction();
             }
-            ContentValues values = populateYearlyPlayerStatsEntry(stats, boxScore.playerId);
-            db.replace(Schemas.YearlyPlayerStatsEntry.TABLE_NAME, null, values);
         }
     }
 
