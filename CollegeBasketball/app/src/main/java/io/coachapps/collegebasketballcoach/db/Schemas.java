@@ -10,6 +10,7 @@ public final class Schemas {
         public static final String TABLE_NAME = "players";
         public static final String TEAM = "teamName";
         public static final String NAME = "name";
+        public static final String YEAR = "year";
         public static final String RATINGS = "ratings";
     }
 

@@ -2,9 +2,6 @@ package io.coachapps.collegebasketballcoach.basketballsim;
 
 import android.content.Context;
 
-import static java.lang.Math.random;
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 import io.coachapps.collegebasketballcoach.db.BoxScoreDao;
@@ -22,7 +19,7 @@ public class Simulator {
         context = c;
     }
     
-    public void playSeason( ArrayList<Team> league ) {
+    public void playSeason( List<Team> league ) {
         //each team plays 4 games against each other team, and then is normalized to 82 games
         int inner_itr = 0;
         int outer_itr = 0;
@@ -100,8 +97,8 @@ public class Simulator {
         
         //add each players stats to his career total
         for (int p = 0; p < 10; ++p) {
-            home.playersArray[p].addGameStatsToTotal();
-            away.playersArray[p].addGameStatsToTotal();
+            home.players.get(p).addGameStatsToTotal();
+            away.players.get(p).addGameStatsToTotal();
 
             //bsd.save(home.playersArray[p].getGameBoxScore());
             //bsd.save(away.playersArray[p].getGameBoxScore());
@@ -144,7 +141,7 @@ public class Simulator {
         int totPasses = 0;
         int offPoss = 1;
         Player whoPoss = getBallCarrier(offense);
-        Player whoDef = defense.playersArray[ whoPoss.getPosition() - 1 ];
+        Player whoDef = defense.players.get( whoPoss.getPosition() - 1 );
         Player assister = whoPoss;
          
         while ( offPoss == 1 ) {
@@ -159,7 +156,7 @@ public class Simulator {
                 //get receiver of pass
                 assister = whoPoss;
                 whoPoss = intelligentPass(whoPoss, offense, defense, matches);
-                whoDef = defense.playersArray[ whoPoss.getPosition() - 1 ];
+                whoDef = defense.players.get( whoPoss.getPosition() - 1 );
             } else if ( fastbreak_possibility * Math.random() > 60 ) {
                 //punish all-bigs lineup, they give up fast break points
                 //System.out.println("FAST BREAK");
@@ -194,7 +191,8 @@ public class Simulator {
                     int[] rebAdvArr = new int[3];
                     for (int r = 0; r < 3; ++r) {
                         //calculate each players rebounding advantage
-                        rebAdvArr[r] = offense.playersArray[r+2].getReb() - defense.playersArray[r+2].getReb();
+                        rebAdvArr[r] = offense.players.get(r+2).getReb() - defense
+                                .players.get(r+2).getReb();
                     }
                     double rebAdv = 0.175 * (rebAdvArr[ (int)(Math.random() * 3) ] + rebAdvArr[ (int)(Math.random() * 3) ]);
                     if ( Math.random()*100 + rebAdv > 25 ) {
@@ -330,7 +328,7 @@ public class Simulator {
     public int[] detectMismatch( Team offense, Team defense ) {
         int[] mismatches = new int[5];
         for ( int i = 0; i < 5; ++i ) {
-            mismatches[i] = calcMismatch( offense.playersArray[i], defense.playersArray[i] );
+            mismatches[i] = calcMismatch( offense.players.get(i), defense.players.get(i) );
         }
         return mismatches;
     }

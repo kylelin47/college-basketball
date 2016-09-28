@@ -4,19 +4,15 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
-import android.util.Log;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutput;
-import java.io.ObjectOutputStream;
 import java.util.ArrayList;
 import java.util.List;
 
+import io.coachapps.collegebasketballcoach.basketballsim.Player;
 import io.coachapps.collegebasketballcoach.models.PlayerModel;
 import io.coachapps.collegebasketballcoach.models.PlayerRatings;
+import io.coachapps.collegebasketballcoach.util.SerializationUtil;
 
 public class PlayerDao {
     private Context context;
@@ -24,8 +20,8 @@ public class PlayerDao {
         this.context = context;
     }
 
-    public List<PlayerModel> getPlayers(String teamName) throws IOException, ClassNotFoundException {
-        List<PlayerModel> players = new ArrayList<>();
+    public List<Player> getPlayers(String teamName) throws IOException, ClassNotFoundException {
+        List<Player> players = new ArrayList<>();
         try (SQLiteDatabase db = DbHelper.getInstance(context).getReadableDatabase()) {
             String[] projection = {
                     Schemas.PlayerEntry._ID,
@@ -39,7 +35,7 @@ public class PlayerDao {
             try (Cursor c = db.query(Schemas.PlayerEntry.TABLE_NAME, projection, whereClause,
                     whereArgs, null, null, null, null)) {
                 while (c.moveToNext()) {
-                    players.add(createPlayer(c, teamName));
+                    players.add(createPlayer(c));
                 }
             }
         }
@@ -52,26 +48,17 @@ public class PlayerDao {
             values.put(Schemas.PlayerEntry._ID, player.id);
             values.put(Schemas.PlayerEntry.NAME, player.name);
             values.put(Schemas.PlayerEntry.TEAM, player.team);
-            ByteArrayOutputStream bos = new ByteArrayOutputStream();
-            try (ObjectOutput out = new ObjectOutputStream(bos)) {
-                out.writeObject(player.ratings);
-                out.flush();
-                values.put(Schemas.PlayerEntry.RATINGS, bos.toByteArray());
-            } catch (IOException e) {
-                Log.e("PlayerDao", "Could not serialize PlayerRatings", e);
-            }
+            values.put(Schemas.PlayerEntry.RATINGS, SerializationUtil.serialize(player.ratings));
             db.insert(Schemas.PlayerEntry.TABLE_NAME, null, values);
         }
     }
 
-    private PlayerModel createPlayer(Cursor cursor, String teamName) throws IOException, ClassNotFoundException {
+    private Player createPlayer(Cursor cursor) throws IOException,
+            ClassNotFoundException {
         int id = cursor.getInt(cursor.getColumnIndexOrThrow(Schemas.PlayerEntry._ID));
         String name = cursor.getString(cursor.getColumnIndexOrThrow(Schemas.PlayerEntry.NAME));
-        PlayerRatings ratings;
-        try (ObjectInputStream ois = new ObjectInputStream(new ByteArrayInputStream(cursor.getBlob(cursor
-                .getColumnIndexOrThrow(Schemas.PlayerEntry.RATINGS))))) {
-            ratings = (PlayerRatings) ois.readObject();
-        }
-        return new PlayerModel(id, name, teamName, ratings);
+        PlayerRatings ratings = (PlayerRatings) SerializationUtil.deserialize(cursor.getBlob(cursor
+                    .getColumnIndexOrThrow(Schemas.PlayerEntry.RATINGS)));
+        return new Player(name, ratings, null, id);
     }
 }

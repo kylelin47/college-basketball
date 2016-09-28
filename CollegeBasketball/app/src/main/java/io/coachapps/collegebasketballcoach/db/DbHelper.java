@@ -39,6 +39,7 @@ public class DbHelper extends SQLiteOpenHelper {
                     Schemas.PlayerEntry._ID + " INTEGER PRIMARY KEY," +
                     Schemas.PlayerEntry.NAME + TEXT_TYPE + COMMA_SEP +
                     Schemas.PlayerEntry.TEAM + TEXT_TYPE + COMMA_SEP +
+                    Schemas.PlayerEntry.YEAR + INTEGER_TYPE + COMMA_SEP +
                     Schemas.PlayerEntry.RATINGS + BLOB_TYPE +
                     " );";
 

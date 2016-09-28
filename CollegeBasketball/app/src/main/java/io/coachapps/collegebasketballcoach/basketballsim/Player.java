@@ -24,7 +24,7 @@ public class Player {
     private double midrangeTend;
     private double outsideTend;
 
-    private PlayerRatings ratings;
+    public PlayerRatings ratings;
     private Stats gmStats;
     private int id;
     
@@ -43,7 +43,9 @@ public class Player {
     public BoxScore getGameBoxScore() {
         return new BoxScore(id, 2016, gmStats);
     }
-    
+    public int getId() {
+        return id;
+    }
     //Ratings getters
     public int getPosition() {
         return ratings.position;

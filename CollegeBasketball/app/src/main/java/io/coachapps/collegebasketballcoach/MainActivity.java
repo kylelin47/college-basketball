@@ -2,25 +2,20 @@ package io.coachapps.collegebasketballcoach;
 
 import android.content.DialogInterface;
 import android.os.Bundle;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.Spinner;
 import android.widget.TextView;
-import android.widget.Toast;
 
-import org.w3c.dom.Text;
-
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
-import java.util.concurrent.ExecutionException;
 
 import io.coachapps.collegebasketballcoach.adapters.PlayerRatingsListArrayAdapter;
 import io.coachapps.collegebasketballcoach.adapters.PlayerStatsListArrayAdapter;
@@ -28,12 +23,13 @@ import io.coachapps.collegebasketballcoach.basketballsim.Player;
 import io.coachapps.collegebasketballcoach.basketballsim.PlayerGen;
 import io.coachapps.collegebasketballcoach.basketballsim.Simulator;
 import io.coachapps.collegebasketballcoach.basketballsim.Team;
+import io.coachapps.collegebasketballcoach.db.TeamDao;
 
 public class MainActivity extends AppCompatActivity {
 
     Simulator bballSim;
     PlayerGen playerGen;
-    ArrayList<Team> teamList;
+    List<Team> teamList;
 
     Spinner teamSpinner;
     TextView currTeamTextView;
@@ -46,15 +42,24 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+        TeamDao teamDao = new TeamDao(this);
+        try {
+            teamList = teamDao.getAllTeams();
+        } catch (IOException | ClassNotFoundException e) {
+            Log.e("MainActivity", "Could not retrieve teams", e);
+            // PROBABLY JUST CRASH
+        }
+        if (teamList.size() == 0) {
+            // Make generator, passing in possible player names
+            playerGen = new PlayerGen(getString(R.string.league_player_names),
+                    getString(R.string.league_last_names));
 
-        // Make generator, passing in possible player names
-        playerGen = new PlayerGen(getString(R.string.league_player_names),
-                                  getString(R.string.league_last_names));
-
-        // Make 10 teams;
-        teamList = new ArrayList<>();
-        for (int i = 0; i < 10; ++i) {
-            teamList.add(new Team("Team " + i, playerGen));
+            // Make 10 teams;
+            teamList = new ArrayList<>();
+            for (int i = 0; i < 10; ++i) {
+                teamList.add(new Team("Team " + i, playerGen));
+            }
+            teamDao.saveTeams(teamList, "player team name");
         }
 
         // Sim games
@@ -82,7 +87,8 @@ public class MainActivity extends AppCompatActivity {
                             AdapterView<?> parent, View view, int position, long id) {
                         currTeamTextView.setText(teamList.get(position).getName() +
                                 " Wins: " + teamList.get(position).getWins82());
-                        mainList.setAdapter(new PlayerStatsListArrayAdapter(MainActivity.this, teamList.get(position).getPlayers()));
+                        mainList.setAdapter(new PlayerStatsListArrayAdapter(MainActivity.this,
+                                teamList.get(position).players));
                     }
 
                     public void onNothingSelected(AdapterView<?> parent) {
@@ -152,7 +158,5 @@ public class MainActivity extends AppCompatActivity {
         } catch (java.lang.NullPointerException e) {
             // lol
         }
-
     }
-
 }

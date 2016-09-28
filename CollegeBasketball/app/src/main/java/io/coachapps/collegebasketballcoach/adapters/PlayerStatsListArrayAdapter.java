@@ -7,7 +7,7 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.TextView;
 
-import java.util.ArrayList;
+import java.util.List;
 
 import io.coachapps.collegebasketballcoach.R;
 import io.coachapps.collegebasketballcoach.basketballsim.Player;
@@ -18,9 +18,9 @@ import io.coachapps.collegebasketballcoach.basketballsim.Player;
  */
 public class PlayerStatsListArrayAdapter extends ArrayAdapter<Player> {
     private final Context context;
-    public final ArrayList<Player> players;
+    public final List<Player> players;
 
-    public PlayerStatsListArrayAdapter(Context context, ArrayList<Player> values) {
+    public PlayerStatsListArrayAdapter(Context context, List<Player> values) {
         super(context, R.layout.player_list_item, values);
         this.context = context;
         this.players = values;
