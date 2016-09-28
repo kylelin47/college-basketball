@@ -6,58 +6,38 @@ import java.util.List;
 import java.util.Map;
 
 import io.coachapps.collegebasketballcoach.models.BoxScore;
+import io.coachapps.collegebasketballcoach.models.PlayerRatings;
 import io.coachapps.collegebasketballcoach.models.Stats;
 
 /**
- *
+ * Player class used in the application layer.
  * @author Achi Jones
  */
 public class Player {
     
     public String name;
     public String attributes;
-    // attributes = "3p ID DNK CHU WALL"
     public int games_played;
-    public int[] stats_gm;
-    public int[] stats_tot;
-    // stats = { 0 points, 1 fga, 2 fgm, 3 3ga, 4 3gm, 5 ass, 6 reb, 7 stl, 8 blk, 9 ofa, 10 ofm, (11 MSM) }
-    public int[] ratingsArray;
-    // ratings = { 0 Position,    1 Overall, 2 Int_S,  3 Mid_S,  4 Out_S, 5 Passing, 
-    //             6 Handling,    7 Steal,   8 Block,  9 Int_D, 10 Out_D, 
-    //            11 Rebounding, 12 Usage,  13 Ins_T, 14 Mid_T, 15 Out_T }
 
+    private int overall;
+    private double insideTend;
+    private double midrangeTend;
+    private double outsideTend;
+
+    private PlayerRatings ratings;
     private Stats gmStats;
     private int id;
     
-    public Player( String name, int[] ratings ) {
-        stats_gm = new int[11];
-        stats_tot = new int[12];
-        games_played = 0;
-        ratingsArray = ratings;
+    public Player( String name, PlayerRatings ratings, String att, int id ) {
         this.name = name;
-        for (int i = 0; i < 10; ++i) {
-            stats_gm[i] = 0;
-            stats_tot[i] = 0;
-        }
-        stats_tot[11] = 0;
-        gmStats = new Stats();
-        attributes = "";
-    }
-    
-    public Player( String name, int[] ratings, String att, int id ) {
-        stats_gm = new int[11];
-        stats_tot = new int[12];
-        games_played = 0;
-        ratingsArray = ratings;
-        this.name = name;
-        for (int i = 0; i < 10; ++i) {
-            stats_gm[i] = 0;
-            stats_tot[i] = 0;
-        }
-        stats_tot[11] = 0;
-        gmStats = new Stats();
-        attributes = att;
+        this.attributes = att;
         this.id = id;
+
+        overall = (int) Math.round( Math.pow(getIntS(), 1.3) + Math.pow(getMidS(), 1.3) + Math.pow(getOutS(), 1.3) + Math.pow(getPass(), 1.1) + getHand() +
+                Math.pow(getStl(), 1.1) + Math.pow(getBlk(), 1.1) + Math.pow(getIntD(), 1.2) + Math.pow(getOutD(), 1.2) + Math.pow(getReb(), 1.2) );
+
+        gmStats = new Stats();
+        games_played = 0;
     }
 
     public BoxScore getGameBoxScore() {
@@ -66,54 +46,58 @@ public class Player {
     
     //Ratings getters
     public int getPosition() {
-        return ratingsArray[0];
+        return ratings.position;
     }
     public int getOverall() {
-        return ratingsArray[1];
+        return 90;
     }
     public int getIntS() {
-        return ratingsArray[2];
+        return ratings.insideShooting;
     }
     public int getMidS() {
-        return ratingsArray[3];
+        return ratings.midrangeShooting;
     }
     public int getOutS() {
-        return ratingsArray[4];
+        return ratings.outsideShooting;
     }
     public int getPass() {
-        return ratingsArray[5];
+        return ratings.passing;
     }
     public int getHand() {
-       return ratingsArray[6]; 
+        return ratings.handling;
     }
     public int getStl() {
-       return ratingsArray[7]; 
+        return ratings.steal;
     }
     public int getBlk() {
-       return ratingsArray[8]; 
+        return ratings.block;
     }
     public int getIntD() {
-       return ratingsArray[9]; 
+        return ratings.insideDefense;
     }
     public int getOutD() {
-       return ratingsArray[10]; 
+        return ratings.perimeterDefense;
     }
     public int getReb() {
-       return ratingsArray[11]; 
+        return ratings.rebounding;
     }
     public int getUsage() {
-       return ratingsArray[12]; 
+        return ratings.usage;
     }
     public double getInsT() {
-       return (double)ratingsArray[13]/1000; 
+        double factor = 1.8;
+        return Math.pow(getIntS(), factor) / (Math.pow(getIntS(), factor) + Math.pow(getMidS(), factor) + Math.pow(getOutS(), factor));
     }
     public double getMidT() {
-       return (double)ratingsArray[14]/1000; 
+        double factor = 1.8;
+        return Math.pow(getMidS(), factor) / (Math.pow(getIntS(), factor) + Math.pow(getMidS(), factor) + Math.pow(getOutS(), factor));
     }
     public double getOutT() {
-       return (double)ratingsArray[15]/1000; 
+        double factor = 1.8;
+        return Math.pow(getOutS(), factor) / (Math.pow(getIntS(), factor) + Math.pow(getMidS(), factor) + Math.pow(getOutS(), factor));
     }
-    
+
+
     public int getPlayingTime() {
         //playing time in minutes
         return 25 + getOverall()/8;
@@ -123,45 +107,36 @@ public class Player {
     // stats = { 0 points, 1 fga, 2 fgm, 3 3ga, 4 3gm, 5 ass, 6 reb, 7 stl, 8 blk, 9 ofa, 10 ofm }
     public void addPts(int points) {
         gmStats.points += points;
-        stats_gm[0] += points;
     }
     public void addFGA() {
         gmStats.fieldGoalsAttempted++;
-        stats_gm[1]++;
     }
     public void addFGM() {
         gmStats.fieldGoalsMade++;
-        stats_gm[2]++;
     }
     public void add3GA() {
         gmStats.threePointsAttempted++;
-        stats_gm[3]++;
     }
     public void add3GM() {
         gmStats.threePointsMade++;
-        stats_gm[4]++;
     }
     public void addAss() {
         gmStats.assists++;
-        stats_gm[5]++;
     }
     public void addReb() {
         gmStats.defensiveRebounds++;
-        stats_gm[6]++;
     }
     public void addStl() {
         gmStats.steals++;
-        stats_gm[7]++;
     }
     public void addBlk() {
         gmStats.blocks++;
-        stats_gm[8]++;
     }
     public void addOFA() {
-        stats_gm[9]++;
+        //stats_gm[9]++;
     }
     public void addOFM() {
-        stats_gm[10]++;
+        //stats_gm[10]++;
     }
     public void make3ptShot() {
         addPts(3);
@@ -173,55 +148,59 @@ public class Player {
     
     public void addGameStatsToTotal() {
         //Add stats from each game to total count
-        for (int i = 0; i <= 10; ++i) {
-            stats_tot[i] += stats_gm[i];
-            stats_gm[i] = 0;
-        }
+        //for (int i = 0; i <= 10; ++i) {
+        //    stats_tot[i] += stats_gm[i];
+        //    stats_gm[i] = 0;
+        //}
         games_played++;
     }
     // stats = { 0 points, 1 fga, 2 fgm, 3 3ga, 4 3gm, 5 ass, 6 reb, 7 stl, 8 blk, 9 ofa, 10 ofm }
     public double getPPG() {
-        return (double)((int)((double)stats_tot[0]/games_played * 10))/10;
+        return (double)((int)((double)gmStats.points/games_played * 10))/10;
     }
     public double getFGP() {
-        if (stats_tot[1] > 0 ) {
-            return (double) ((int) ((double) stats_tot[2] / stats_tot[1] * 1000)) / 10;
-        } else return 0;
+        //if (stats_tot[1] > 0 ) {
+        //    return (double) ((int) ((double) stats_tot[2] / stats_tot[1] * 1000)) / 10;
+        //} else return 0;
+        return 50.0;
     }
     public double get3GP() {
-        if ( stats_tot[3] > 0 ) {
-            return (double)((int)((double)stats_tot[4]/stats_tot[3] * 1000))/10;
-        } else return 0;
+        //if ( stats_tot[3] > 0 ) {
+        //    return (double)((int)((double)stats_tot[4]/stats_tot[3] * 1000))/10;
+        //} else return 0;
+        return 40.0;
     }
     public double getAPG() {
-        return (double)((int)((double)stats_tot[5]/games_played * 10))/10;
+        return (double)((int)((double)gmStats.assists/games_played * 10))/10;
     }
     public double getRPG() {
-        return (double)((int)((double)stats_tot[6]/games_played * 10))/10;
+        return (double)((int)((double)gmStats.defensiveRebounds/games_played * 10))/10;
     }
     public double getSPG() {
-        return (double)((int)((double)stats_tot[7]/games_played * 10))/10;
+        return (double)((int)((double)gmStats.steals/games_played * 10))/10;
     }
     public double getBPG() {
-        return (double)((int)((double)stats_tot[8]/games_played * 10))/10;
+        return (double)((int)((double)gmStats.blocks/games_played * 10))/10;
     }
     public double getOFP() {
-        return (double)((int)((double)stats_tot[10]/stats_tot[9] * 1000))/10;
+        //return (double)((int)((double)stats_tot[10]/stats_tot[9] * 1000))/10;
+        return 50.0;
     }
     public int getMSM() {
-        return (int)((double)stats_tot[11]/(games_played));
+        //return (int)((double)stats_tot[11]/(games_played));
+        return 100;
     }
     public double getFGAPG() {
-        return (double)((int)((double)stats_tot[1]/games_played * 10))/10;
+        return (double)((int)((double)gmStats.fieldGoalsAttempted/games_played * 10))/10;
     }
     public double get3GAPG() {
-        return (double)((int)((double)stats_tot[3]/games_played * 10))/10;
+        return (double)((int)((double)gmStats.threePointsAttempted/games_played * 10))/10;
     }
     public double getFGMPG() {
-        return (double)((int)((double)stats_tot[2]/games_played * 10))/10;
+        return (double)((int)((double)gmStats.fieldGoalsMade/games_played * 10))/10;
     }
     public double get3GMPG() {
-        return (double)((int)((double)stats_tot[4]/games_played * 10))/10;
+        return (double)((int)((double)gmStats.threePointsMade/games_played * 10))/10;
     }
     
     public static String getPositionStr(int pos) {

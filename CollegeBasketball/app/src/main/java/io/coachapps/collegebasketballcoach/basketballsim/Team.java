@@ -77,12 +77,12 @@ public class Team {
     
     public void addPlayer( Player player ) {
         //add player (used by AI)
-        if ( playersArray[ player.ratingsArray[0] - 1 ] == null ) {
+        if ( playersArray[ player.getPosition() - 1 ] == null ) {
             // no starter yet
-            playersArray[ player.ratingsArray[0] - 1 ] = player;
+            playersArray[ player.getPosition() - 1 ] = player;
         } else {
             // put in bench
-            playersArray[ player.ratingsArray[0] - 1 + 5 ] = player;
+            playersArray[ player.getPosition() - 1 + 5 ] = player;
         }
 
     }
@@ -175,8 +175,8 @@ public class Team {
         int tot_ofa = 0;
         int tot_ofm = 0;
         for (int p = 0; p < 10; p++) {
-            tot_ofa += playersArray[p].stats_tot[9];
-            tot_ofm += playersArray[p].stats_tot[10];
+            //tot_ofa += playersArray[p].stats_tot[9];
+            //tot_ofm += playersArray[p].stats_tot[10];
         }
         System.out.println(name + " " + tot_ofm + "/" + tot_ofa);
         return (double)((int)((float)tot_ofm/tot_ofa * 1000))/10;
@@ -288,7 +288,7 @@ public class Team {
         for (int p = 0; p < players.size(); ++p) {
             if ( playersArray[0] != null && playersArray[1] != null && playersArray[2] != null && playersArray[3] != null && playersArray[4] != null ) {
                 // starters all selected, need bench
-                if ( playersArray[ players.get(p).ratingsArray[0] - 1 + 5 ] == null ) {
+                if ( playersArray[ players.get(p).getPosition() - 1 + 5 ] == null ) {
                     //dont have bench guy in this position yet
                     Player selectedPlayer = players.get(p);
                     addPlayer(selectedPlayer);
@@ -297,7 +297,7 @@ public class Team {
                     return;
                 }
             } else {
-                if ( playersArray[ players.get(p).ratingsArray[0] - 1 ] == null ) {
+                if ( playersArray[ players.get(p).getPosition() - 1 ] == null ) {
                     //dont have starter in this position yet
                     Player selectedPlayer = players.get(p);
                     addPlayer(selectedPlayer);

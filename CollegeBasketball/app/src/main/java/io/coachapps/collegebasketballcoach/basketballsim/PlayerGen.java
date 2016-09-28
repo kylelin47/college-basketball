@@ -2,6 +2,8 @@ package io.coachapps.collegebasketballcoach.basketballsim;
 
 import java.util.ArrayList;
 
+import io.coachapps.collegebasketballcoach.models.PlayerRatings;
+
 /**
  * Class that encapsulates the player generation engine.
  * @author Achi Jones
@@ -262,9 +264,9 @@ public class PlayerGen {
         int ins_t = (int) (1000*Math.pow(int_s, factor) / (Math.pow(int_s, factor) + Math.pow(mid_s, factor) + Math.pow(out_s, factor)) );
         int mid_t = (int) (1000*Math.pow(mid_s, factor) / (Math.pow(int_s, factor) + Math.pow(mid_s, factor) + Math.pow(out_s, factor)) );
         int out_t = (int) (1000*Math.pow(out_s, factor) / (Math.pow(int_s, factor) + Math.pow(mid_s, factor) + Math.pow(out_s, factor)) );
-        
-        int[] ratings = new int[16];
-        ratings[0] = position;
+
+        PlayerRatings ratings = new PlayerRatings();
+        /*ratings[0] = position;
         ratings[2] = int_s;
         ratings[3] = mid_s;
         ratings[4] = out_s;
@@ -278,11 +280,24 @@ public class PlayerGen {
         ratings[12] = usage;
         ratings[13] = ins_t;
         ratings[14] = mid_t;
-        ratings[15] = out_t;
+        ratings[15] = out_t;*/
+
+        ratings.position = position;
+        ratings.insideShooting = int_s;
+        ratings.midrangeShooting = mid_s;
+        ratings.outsideShooting = out_s;
+        ratings.passing = passing;
+        ratings.handling = handling;
+        ratings.steal = steal;
+        ratings.block = block;
+        ratings.insideDefense = int_d;
+        ratings.perimeterDefense = out_d;
+        ratings.rebounding = rebounding;
+        ratings.usage = usage;
         
-        ratings[1] = (int) Math.round( Math.pow(ratings[2], 1.3) + Math.pow(ratings[3], 1.3) + Math.pow(ratings[4], 1.3) + Math.pow(ratings[5], 1.1) + ratings[6] + 
-                                       Math.pow(ratings[7], 1.1) + Math.pow(ratings[8], 1.1) + Math.pow(ratings[9], 1.2) + Math.pow(ratings[10], 1.2) + Math.pow(ratings[11], 1.2) );
-        ratings[1] = 100*ratings[1] / 2500;
+        //ratings[1] = (int) Math.round( Math.pow(ratings[2], 1.3) + Math.pow(ratings[3], 1.3) + Math.pow(ratings[4], 1.3) + Math.pow(ratings[5], 1.1) + ratings[6] +
+        //                               Math.pow(ratings[7], 1.1) + Math.pow(ratings[8], 1.1) + Math.pow(ratings[9], 1.2) + Math.pow(ratings[10], 1.2) + Math.pow(ratings[11], 1.2) );
+        //ratings[1] = 100*ratings[1] / 2500;
         
         return new Player( name, ratings, att, currID++ );
     }

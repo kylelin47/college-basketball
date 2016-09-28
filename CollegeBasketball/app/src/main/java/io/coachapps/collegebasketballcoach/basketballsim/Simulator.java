@@ -60,11 +60,11 @@ public class Simulator {
         //detect mismatches and add to total
         int[] matches_h = detectMismatch(home, away);
         for (int i = 0; i < 5; ++i) {
-            home.playersArray[i].stats_tot[11] += matches_h[i]; // add mismatch to total
+            //home.playersArray[i].stats_tot[11] += matches_h[i]; // add mismatch to total
         }
         int[] matches_a = detectMismatch(away, home);
         for (int i = 0; i < 5; ++i) {
-            away.playersArray[i].stats_tot[11] += matches_a[i]; // add mismatch to total
+            //away.playersArray[i].stats_tot[11] += matches_a[i]; // add mismatch to total
         }
         
         while (playing) {
@@ -103,8 +103,8 @@ public class Simulator {
             home.playersArray[p].addGameStatsToTotal();
             away.playersArray[p].addGameStatsToTotal();
 
-            bsd.save(home.playersArray[p].getGameBoxScore());
-            bsd.save(away.playersArray[p].getGameBoxScore());
+            //bsd.save(home.playersArray[p].getGameBoxScore());
+            //bsd.save(away.playersArray[p].getGameBoxScore());
         }
         
         home.pointsFor += hscore;

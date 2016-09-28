@@ -15,7 +15,7 @@ import java.io.ObjectOutputStream;
 import java.util.ArrayList;
 import java.util.List;
 
-import io.coachapps.collegebasketballcoach.models.Player;
+import io.coachapps.collegebasketballcoach.models.PlayerModel;
 import io.coachapps.collegebasketballcoach.models.PlayerRatings;
 
 public class PlayerDao {
@@ -24,8 +24,8 @@ public class PlayerDao {
         this.context = context;
     }
 
-    public List<Player> getPlayers(String teamName) throws IOException, ClassNotFoundException {
-        List<Player> players = new ArrayList<>();
+    public List<PlayerModel> getPlayers(String teamName) throws IOException, ClassNotFoundException {
+        List<PlayerModel> players = new ArrayList<>();
         try (SQLiteDatabase db = DbHelper.getInstance(context).getReadableDatabase()) {
             String[] projection = {
                     Schemas.PlayerEntry._ID,
@@ -46,7 +46,7 @@ public class PlayerDao {
         return players;
     }
 
-    public void save(Player player) {
+    public void save(PlayerModel player) {
         try (SQLiteDatabase db = DbHelper.getInstance(context).getWritableDatabase()) {
             ContentValues values = new ContentValues();
             values.put(Schemas.PlayerEntry._ID, player.id);
@@ -64,7 +64,7 @@ public class PlayerDao {
         }
     }
 
-    private Player createPlayer(Cursor cursor, String teamName) throws IOException, ClassNotFoundException {
+    private PlayerModel createPlayer(Cursor cursor, String teamName) throws IOException, ClassNotFoundException {
         int id = cursor.getInt(cursor.getColumnIndexOrThrow(Schemas.PlayerEntry._ID));
         String name = cursor.getString(cursor.getColumnIndexOrThrow(Schemas.PlayerEntry.NAME));
         PlayerRatings ratings;
@@ -72,6 +72,6 @@ public class PlayerDao {
                 .getColumnIndexOrThrow(Schemas.PlayerEntry.RATINGS))))) {
             ratings = (PlayerRatings) ois.readObject();
         }
-        return new Player(id, name, teamName, ratings);
+        return new PlayerModel(id, name, teamName, ratings);
     }
 }

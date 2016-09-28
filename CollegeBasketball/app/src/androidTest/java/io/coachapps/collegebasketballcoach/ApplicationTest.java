@@ -35,11 +35,11 @@ public class ApplicationTest {
     public void canSaveBoxScores() {
         BoxScoreDao boxScoreDao = new BoxScoreDao(context);
         BoxScore boxScore = new BoxScore(0, 2000);
-        boxScore.points = 25;
-        boxScoreDao.save(new BoxScore(0, 2000));
-        boxScoreDao.save(boxScore);
-        boxScoreDao.save(new BoxScore(0, 2001));
-        boxScoreDao.save(new BoxScore(0, 2002));
+        boxScore.playerStats.points = 25;
+        //boxScoreDao.save(new BoxScore(0, 2000));
+        //boxScoreDao.save(boxScore);
+        //boxScoreDao.save(new BoxScore(0, 2001));
+        //boxScoreDao.save(new BoxScore(0, 2002));
         SQLiteDatabase db = DbHelper.getInstance(context).getReadableDatabase();
         //DbHelper.getInstance(context).resetDb(db);
         String[] projection = {
