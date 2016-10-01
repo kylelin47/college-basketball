@@ -43,7 +43,7 @@ public class Simulator {
         boolean poss_home = true;
         boolean poss_away = false;
         double gametime = 0;
-        double max_gametime = 2880;
+        double max_gametime = 2400;
         int hscore = 0; //score of home team
         int ascore = 0; //score of away team
         boolean playing = true;
@@ -69,14 +69,14 @@ public class Simulator {
                 hscore += runPlay(home, away, matches_h);
                 poss_away = true;
                 poss_home = false;
-                gametime += hspeed + 19 * Math.random();
+                gametime += hspeed + 25 * Math.random();
                 home.subPlayers( gametime );
                 matches_h = detectMismatch(home, away);
             } else if (poss_away) {
                 ascore += runPlay(away, home, matches_a);
                 poss_away = false;
                 poss_home = true;
-                gametime += aspeed + 19 * Math.random();
+                gametime += aspeed + 25 * Math.random();
                 away.subPlayers( gametime );
                 matches_a = detectMismatch(away, home);
             }
@@ -130,7 +130,7 @@ public class Simulator {
      * @param matches array of mismatches, used to calculate who to pass the ball to
      * @return number of points scored by the offense (0, 2, or 3)
      */
-    public int runPlay( Team offense, Team defense, int[] matches ) {
+    public static int runPlay( Team offense, Team defense, int[] matches ) {
         
         int off_tot_outd = offense.getPG().getOutD() + offense.getSG().getOutD() + offense.getSF().getOutD() + 
                            offense.getPF().getOutD() + offense.getC().getOutD();
@@ -191,8 +191,7 @@ public class Simulator {
                     int[] rebAdvArr = new int[3];
                     for (int r = 0; r < 3; ++r) {
                         //calculate each players rebounding advantage
-                        rebAdvArr[r] = offense.players.get(r+2).getReb() - defense
-                                .players.get(r+2).getReb();
+                        rebAdvArr[r] = offense.players.get(r+2).getReb() - defense.players.get(r+2).getReb();
                     }
                     double rebAdv = 0.175 * (rebAdvArr[ (int)(Math.random() * 3) ] + rebAdvArr[ (int)(Math.random() * 3) ]);
                     if ( Math.random()*100 + rebAdv > 25 ) {
@@ -221,9 +220,9 @@ public class Simulator {
      * @param defender
      * @param defense
      * @param assister
-     * @return
+     * @return nubmer of points scored (0,2,3)
      */
-    public int takeShot( Player shooter, Player defender, Team defense, Player assister ) {
+    public static int takeShot( Player shooter, Player defender, Team defense, Player assister ) {
         int assBonus = 0;
         if ( assister != shooter ) {
             //shooter gets bonus for having a good passer
@@ -325,7 +324,7 @@ public class Simulator {
      * @param defense team on defense
      * @return int array of mismatches
      */
-    public int[] detectMismatch( Team offense, Team defense ) {
+    public static int[] detectMismatch( Team offense, Team defense ) {
         int[] mismatches = new int[5];
         for ( int i = 0; i < 5; ++i ) {
             mismatches[i] = calcMismatch( offense.players.get(i), defense.players.get(i) );
@@ -339,7 +338,7 @@ public class Simulator {
      * @param defender player who's defending
      * @return int value of the mismatch
      */
-    public int calcMismatch( Player shooter, Player defender ) {
+    public static int calcMismatch( Player shooter, Player defender ) {
         double intMis = ( 2 * shooter.getIntS() - defender.getIntD() ) * shooter.getInsT();
         double midMis = ( 2 * shooter.getMidS() - (float)(defender.getIntD() + defender.getOutD()) ) * shooter.getMidT();
         double outMis = ( 2 * shooter.getOutS() - defender.getOutD() ) * shooter.getOutT();
@@ -354,7 +353,7 @@ public class Simulator {
      * @param matches array of mismatches
      * @return player who gets the ball
      */
-    public Player intelligentPass( Player whoPoss, Team offense, Team defense, int[] matches ) {
+    public static Player intelligentPass( Player whoPoss, Team offense, Team defense, int[] matches ) {
         //pass intelligently
         int mismFactor = 18;
         double pgTen = offense.getPG().getUsage() + (float)matches[0]/mismFactor;
@@ -384,7 +383,7 @@ public class Simulator {
      * @param t team on offense
      * @return player who will get ball
      */
-    public Player getBallCarrier( Team t ) {
+    public static Player getBallCarrier( Team t ) {
         double sfBall = t.getSF().getPass() * Math.random();
         double sgBall = t.getSG().getPass() * Math.random();
         double pgBall = t.getPG().getPass() * Math.random();
@@ -403,7 +402,7 @@ public class Simulator {
      * @param t team getting the rebound
      * @return player who gets rebound
      */
-    public Player findRebounder( Team t ) {
+    public static Player findRebounder( Team t ) {
         double cnReb = t.getC().getReb() * Math.random();
         double pfReb = t.getPF().getReb() * Math.random();
         double sfReb = t.getSF().getReb() * Math.random();
@@ -428,7 +427,7 @@ public class Simulator {
      * @param def player on defense
      * @return true if the ball was stolen, else false
      */
-    public boolean potSteal( Player off, Player def ) {
+    public static boolean potSteal( Player off, Player def ) {
         if ( Math.random() < 0.1 ) {
             int stl = def.getStl()-75;
             if (stl < 0) {
