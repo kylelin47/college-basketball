@@ -5,4 +5,5 @@ public class Game {
     public String awayTeam;
     public Stats homeStats;
     public Stats awayStats;
+    public int year;
 }

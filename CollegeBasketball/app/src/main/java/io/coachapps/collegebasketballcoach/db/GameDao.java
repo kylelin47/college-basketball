@@ -15,11 +15,21 @@ public class GameDao {
     public void save(Game game) {
         try (SQLiteDatabase db = DbHelper.getInstance(context).getWritableDatabase()) {
             ContentValues values = new ContentValues();
+            values.put(Schemas.GameEntry.YEAR, game.year);
             values.put(Schemas.GameEntry.AWAY_TEAM, game.awayTeam);
             values.put(Schemas.GameEntry.HOME_TEAM, game.homeTeam);
             values.put(Schemas.GameEntry.AWAY_STATS, SerializationUtil.serialize(game.awayStats));
             values.put(Schemas.GameEntry.HOME_STATS, SerializationUtil.serialize(game.homeStats));
             db.insert(Schemas.GameEntry.TABLE_NAME, null, values);
+            YearlyTeamStatsDao yearlyTeamStatsDao = new YearlyTeamStatsDao(context);
+            // ties are impossible
+            if (game.awayStats.points > game.homeStats.points) {
+                yearlyTeamStatsDao.recordRelativeTeamRecord(game.awayTeam, game.year, 1, 0);
+                yearlyTeamStatsDao.recordRelativeTeamRecord(game.homeTeam, game.year, 0, 1);
+            } else {
+                yearlyTeamStatsDao.recordRelativeTeamRecord(game.awayTeam, game.year, 0, 1);
+                yearlyTeamStatsDao.recordRelativeTeamRecord(game.homeTeam, game.year, 1, 0);
+            }
         }
     }
 

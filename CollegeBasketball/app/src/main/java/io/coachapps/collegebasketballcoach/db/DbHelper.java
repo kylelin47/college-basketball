@@ -28,6 +28,7 @@ public class DbHelper extends SQLiteOpenHelper {
     private static final String SQL_CREATE_ENTRIES_GAME =
             "CREATE TABLE " + Schemas.GameEntry.TABLE_NAME + " (" +
                     Schemas.GameEntry._ID + " INTEGER PRIMARY KEY," +
+                    Schemas.GameEntry.YEAR + INTEGER_TYPE + COMMA_SEP +
                     Schemas.GameEntry.AWAY_STATS + BLOB_TYPE + COMMA_SEP +
                     Schemas.GameEntry.HOME_STATS + BLOB_TYPE + COMMA_SEP +
                     Schemas.GameEntry.AWAY_TEAM + TEXT_TYPE + COMMA_SEP +

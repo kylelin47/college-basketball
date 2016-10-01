@@ -65,6 +65,7 @@ public class TeamDao {
      * @return All teams and players found in the database. Empty list if none found
      */
     public List<Team> getAllTeams() throws IOException, ClassNotFoundException {
+        // inner joins would give better performance
         PlayerDao playerDao = new PlayerDao(context);
         List<Team> teams = new ArrayList<>();
         try (SQLiteDatabase db = DbHelper.getInstance(context).getReadableDatabase()) {
