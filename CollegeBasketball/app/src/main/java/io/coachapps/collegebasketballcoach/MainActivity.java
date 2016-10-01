@@ -7,9 +7,11 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
+import android.widget.ScrollView;
 import android.widget.Spinner;
 import android.widget.TextView;
 
@@ -19,6 +21,7 @@ import java.util.List;
 
 import io.coachapps.collegebasketballcoach.adapters.PlayerRatingsListArrayAdapter;
 import io.coachapps.collegebasketballcoach.adapters.PlayerStatsListArrayAdapter;
+import io.coachapps.collegebasketballcoach.basketballsim.GameSimThread;
 import io.coachapps.collegebasketballcoach.basketballsim.Player;
 import io.coachapps.collegebasketballcoach.basketballsim.PlayerGen;
 import io.coachapps.collegebasketballcoach.basketballsim.Simulator;
@@ -42,6 +45,9 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+
+        /*
+
         TeamDao teamDao = new TeamDao(this);
         try {
             teamList = teamDao.getAllTeams();
@@ -105,6 +111,10 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+        */
+
+        showGameSimDialog();
+
     }
 
     public void showPlayerDialog(Player p) {
@@ -118,6 +128,7 @@ public class MainActivity extends AppCompatActivity {
                 .setView(getLayoutInflater().inflate(R.layout.player_stats, null));
         AlertDialog dialog = builder.create();
         dialog.show();
+        dialog.getWindow().setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
 
         TextView textViewName = (TextView) dialog.findViewById(R.id.textViewName);
         TextView textViewPosition = (TextView) dialog.findViewById(R.id.textViewPosition);
@@ -158,5 +169,24 @@ public class MainActivity extends AppCompatActivity {
         } catch (java.lang.NullPointerException e) {
             // lol
         }
+    }
+
+    public void showGameSimDialog() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setView(getLayoutInflater().inflate(R.layout.play_game_layout, null));
+        AlertDialog dialog = builder.create();
+        dialog.show();
+
+        final TextView textViewGameLog = (TextView) dialog.findViewById(R.id.textViewGameLog);
+        final ScrollView scrollViewGameLog = (ScrollView) dialog.findViewById(R.id.scrollViewGameLog);
+
+        Team homeTeam = null;
+        Team awayTeam = null;
+
+        GameSimThread t = new GameSimThread(this, this, textViewGameLog, scrollViewGameLog, homeTeam, awayTeam);
+
+        t.start();
+
+
     }
 }

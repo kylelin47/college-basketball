@@ -32,6 +32,7 @@ public class Player {
         this.name = name;
         this.attributes = att;
         this.id = id;
+        this.ratings = ratings;
 
         overall = (int) Math.round( Math.pow(getIntS(), 1.3) + Math.pow(getMidS(), 1.3) + Math.pow(getOutS(), 1.3) + Math.pow(getPass(), 1.1) + getHand() +
                 Math.pow(getStl(), 1.1) + Math.pow(getBlk(), 1.1) + Math.pow(getIntD(), 1.2) + Math.pow(getOutD(), 1.2) + Math.pow(getReb(), 1.2) );
@@ -51,7 +52,7 @@ public class Player {
         return ratings.position;
     }
     public int getOverall() {
-        return 90;
+        return overall;
     }
     public int getIntS() {
         return ratings.insideShooting;

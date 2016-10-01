@@ -37,7 +37,7 @@ public class Team {
         wins = 0;
         losses = 0;
         games = 0;
-        players = new ArrayList<>();
+        players = new ArrayList<>(10);
 
         // Set so all the starters are in for now
         startersIn = new int[5];
@@ -52,11 +52,11 @@ public class Team {
             Player a = gen.genPlayer(i+1);
             Player b = gen.genPlayer(i+1);
             if (a.getOverall() > b.getOverall()) {
-                players.set(i, a);
-                players.set(i+5, b);
+                players.add(i, a);
+                players.add(b);
             } else {
-                players.set(i, b);
-                players.set(i+5, a);
+                players.add(i, b);
+                players.add(a);
             }
         }
     }
