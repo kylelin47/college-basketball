@@ -87,8 +87,9 @@ public class YearlyPlayerStatsDao {
                     String.valueOf(beginYear),
                     String.valueOf(endYear)
             };
+            String orderBy = Schemas.YearlyPlayerStatsEntry.YEAR + " ASC";
             try (Cursor cursor = db.query(Schemas.YearlyPlayerStatsEntry.TABLE_NAME, projection,
-                    whereClause, whereArgs, null, null, null, null)) {
+                    whereClause, whereArgs, null, null, orderBy, null)) {
                 while (cursor.moveToNext()) {
                     YearlyPlayerStats existingStats = new YearlyPlayerStats(playerId);
                     addToYearlyPlayerStats(cursor, existingStats);
