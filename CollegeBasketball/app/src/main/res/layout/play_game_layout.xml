@@ -76,10 +76,15 @@
             android:layout_weight="0.5" />
     </LinearLayout>
 
+    <Spinner
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/spinnerGameDialog">
+    </Spinner>
+
     <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="5"
+        android:layout_height="350dp"
         android:paddingStart="10dp"
         android:paddingEnd="10dp"
         android:id="@+id/scrollViewGameLog">
@@ -87,10 +92,17 @@
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:id="@+id/textViewGameLog"
-            android:text="Here is the game log haha Here is the game log haha Here is the game log haha Here is the game log haha"/>
+            android:gravity="bottom"
+            android:id="@+id/textViewGameLog" />
 
     </ScrollView>
+
+    <ListView
+        android:layout_width="match_parent"
+        android:layout_height="350dp"
+        android:id="@+id/listViewGameDialogStats"
+        android:visibility="gone">
+    </ListView>
 
     <TextView
         android:text="Simulation Speed:"
@@ -102,12 +114,14 @@
     <SeekBar
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:max="100"
         android:id="@+id/seekBarSimSpeed" />
 
     <Button
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1"
-        android:text="Call Timeout" />
+        android:text="Call Timeout"
+        android:id="@+id/buttonCallTimeout"/>
 
 </LinearLayout>

@@ -66,14 +66,14 @@ public class Simulator {
         
         while (playing) {
             if (poss_home) {
-                hscore += runPlay(home, away, matches_h);
+                hscore += runPlay(home, away, matches_h, null);
                 poss_away = true;
                 poss_home = false;
                 gametime += hspeed + 25 * Math.random();
                 home.subPlayers( gametime );
                 matches_h = detectMismatch(home, away);
             } else if (poss_away) {
-                ascore += runPlay(away, home, matches_a);
+                ascore += runPlay(away, home, matches_a, null);
                 poss_away = false;
                 poss_home = true;
                 gametime += aspeed + 25 * Math.random();
@@ -130,7 +130,7 @@ public class Simulator {
      * @param matches array of mismatches, used to calculate who to pass the ball to
      * @return number of points scored by the offense (0, 2, or 3)
      */
-    public static int runPlay( Team offense, Team defense, int[] matches ) {
+    public static int runPlay( Team offense, Team defense, int[] matches, StringBuilder gameLog ) {
         
         int off_tot_outd = offense.getPG().getOutD() + offense.getSG().getOutD() + offense.getSF().getOutD() + 
                            offense.getPF().getOutD() + offense.getC().getOutD();
@@ -146,25 +146,29 @@ public class Simulator {
          
         while ( offPoss == 1 ) {
             if ( (int)(6*Math.random()) + totPasses < 5 || (totPasses == 0 && Math.random() < 0.97) ) {
-                //pass the ball
+                // Pass the ball
                 totPasses++;
                 if ( potSteal(whoPoss, whoDef) ) {
-                    //ball stolen
+                    // Ball stolen
                     whoDef.addStl();
+                    addToLog(gameLog, "TURNOVER! " +  whoDef.name + " steals the ball from " + whoPoss.name + "! ");
                     return 0;
                 }
-                //get receiver of pass
+                // Get receiver of pass
                 assister = whoPoss;
                 whoPoss = intelligentPass(whoPoss, offense, defense, matches);
                 whoDef = defense.players.get( whoPoss.getPosition() - 1 );
+
             } else if ( fastbreak_possibility * Math.random() > 60 ) {
-                //punish all-bigs lineup, they give up fast break points
-                //System.out.println("FAST BREAK");
+                // Punish all-bigs lineup, they give up fast break points
                 whoPoss.addPts(2);
                 whoPoss.addFGA();
                 whoPoss.addFGM();
                 whoDef.addOFA();
                 whoDef.addOFM();
+
+                addToLog(gameLog, "Fast break! " + whoPoss.name + " scores easily as he runs down the court. ");
+
                 if ( assister == whoPoss ) {
                     return 2;
                 } else {
@@ -174,38 +178,41 @@ public class Simulator {
                     return 2;
                 }
             } else {
-                //whoPoss will shoot the ball
+                // whoPoss will shoot the ball
                 int points = takeShot(whoPoss, whoDef, defense, assister);
                 if ( points > 0 ) {
-                    //made the shot!
-                    if ( assister == whoPoss ) { //can't pass to yourself
+                    // Made the shot!
+                    addToLog(gameLog, whoPoss.name + " drains the " + points + " point shot! ");
+                    if ( assister == whoPoss ) { // Can't pass to yourself
                         return points;
                     } else {
                         if ( Math.pow(assister.getPass()/14, 2.4) * Math.random() > 20 ) {
-                            assister.addAss(); //give assist
+                            assister.addAss(); // Give assist
                         }
                         return points;
                     }
                 } else {
-                    //miss, scramble for rebound
+                    // Miss, scramble for rebound
                     int[] rebAdvArr = new int[3];
                     for (int r = 0; r < 3; ++r) {
-                        //calculate each players rebounding advantage
+                        // Calculate each players rebounding advantage
                         rebAdvArr[r] = offense.players.get(r+2).getReb() - defense.players.get(r+2).getReb();
                     }
                     double rebAdv = 0.175 * (rebAdvArr[ (int)(Math.random() * 3) ] + rebAdvArr[ (int)(Math.random() * 3) ]);
                     if ( Math.random()*100 + rebAdv > 25 ) {
-                        //defensive rebound
+                        // Defensive rebound
                         Player rebounder = findRebounder(defense);
                         rebounder.addReb();
-                        return 0; //exit without scoring any points
+                        addToLog(gameLog, whoPoss.name + " misses the shot and the other team grabs the rebound. ");
+                        return 0; // Exit without scoring any points
                     } else {
-                        //offensive rebound
+                        // Offensive rebound
                         Player rebounder = findRebounder(offense);
                         rebounder.addReb();
                         whoPoss = rebounder;
                         totPasses = 2;
-                        //goes back into loop to try another play
+                        addToLog(gameLog, whoPoss.name + " misses the shot, but his team grabs the offensive board! ");
+                        // Goes back into loop to try another play
                     }
                 }
             } 
@@ -438,6 +445,12 @@ public class Simulator {
                 return true;
             } else return false;
         } else return false;
+    }
+
+    private static void addToLog(StringBuilder gameLog, String event) {
+        if (gameLog != null) {
+            gameLog.append(event);
+        }
     }
     
     

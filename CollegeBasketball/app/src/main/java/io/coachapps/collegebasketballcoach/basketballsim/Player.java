@@ -25,7 +25,7 @@ public class Player {
     private double outsideTend;
 
     public PlayerRatings ratings;
-    private Stats gmStats;
+    public Stats gmStats;
     private int id;
     
     public Player( String name, PlayerRatings ratings, String att, int id ) {
@@ -36,6 +36,7 @@ public class Player {
 
         overall = (int) Math.round( Math.pow(getIntS(), 1.3) + Math.pow(getMidS(), 1.3) + Math.pow(getOutS(), 1.3) + Math.pow(getPass(), 1.1) + getHand() +
                 Math.pow(getStl(), 1.1) + Math.pow(getBlk(), 1.1) + Math.pow(getIntD(), 1.2) + Math.pow(getOutD(), 1.2) + Math.pow(getReb(), 1.2) );
+        overall = (100*overall)/2500;
 
         gmStats = new Stats();
         games_played = 0;

@@ -10,8 +10,10 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.ListView;
 import android.widget.ScrollView;
+import android.widget.SeekBar;
 import android.widget.Spinner;
 import android.widget.TextView;
 
@@ -177,16 +179,56 @@ public class MainActivity extends AppCompatActivity {
         AlertDialog dialog = builder.create();
         dialog.show();
 
-        final TextView textViewGameLog = (TextView) dialog.findViewById(R.id.textViewGameLog);
-        final ScrollView scrollViewGameLog = (ScrollView) dialog.findViewById(R.id.scrollViewGameLog);
+        final GameSimThread.GameDialogElements uiElements = new GameSimThread.GameDialogElements();
+        uiElements.textViewGameLog = (TextView) dialog.findViewById(R.id.textViewGameLog);
+        uiElements.scrollViewGameLog = (ScrollView) dialog.findViewById(R.id.scrollViewGameLog);
+        uiElements.listViewGameStats = (ListView) dialog.findViewById(R.id.listViewGameDialogStats);
+        uiElements.seekBarGameSpeed = (SeekBar) dialog.findViewById(R.id.seekBarSimSpeed);
+        uiElements.buttonCallTimeout = (Button) dialog.findViewById(R.id.buttonCallTimeout);
+        uiElements.textViewHomeAbbr = (TextView) dialog.findViewById(R.id.gameDialogAbbrHome);
+        uiElements.textViewAwayAbbr = (TextView) dialog.findViewById(R.id.gameDialogAbbrAway);
+        uiElements.textViewHomeScore = (TextView) dialog.findViewById(R.id.gameDialogScoreHome);
+        uiElements.textViewAwayScore = (TextView) dialog.findViewById(R.id.gameDialogScoreAway);
 
-        Team homeTeam = null;
-        Team awayTeam = null;
+        Spinner dialogSpinner = (Spinner) dialog.findViewById(R.id.spinnerGameDialog);
+        ArrayList<String> spinnerStrList = new ArrayList<>();
+        spinnerStrList.add("Game Log");
+        spinnerStrList.add("Player Stats");
+        ArrayAdapter<String> dataAdapter = new ArrayAdapter<>(this,
+                android.R.layout.simple_spinner_item, spinnerStrList);
+        dataAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        dialogSpinner.setAdapter(dataAdapter);
+        dialogSpinner.setOnItemSelectedListener(
+                new AdapterView.OnItemSelectedListener() {
+                    public void onItemSelected(
+                            AdapterView<?> parent, View view, int position, long id) {
+                        if (position == 0) {
+                            // Game log
+                            uiElements.listViewGameStats.setVisibility(View.GONE);
+                            uiElements.scrollViewGameLog.setVisibility(View.VISIBLE);
+                            uiElements.textViewGameLog.setVisibility(View.VISIBLE);
+                        } else {
+                            // Game stats
+                            uiElements.listViewGameStats.setVisibility(View.VISIBLE);
+                            uiElements.scrollViewGameLog.setVisibility(View.GONE);
+                            uiElements.textViewGameLog.setVisibility(View.GONE);
+                        }
+                    }
 
-        GameSimThread t = new GameSimThread(this, this, textViewGameLog, scrollViewGameLog, homeTeam, awayTeam);
+                    public void onNothingSelected(AdapterView<?> parent) {
+                        //heh
+                    }
+                });
+
+        playerGen = new PlayerGen(getString(R.string.league_player_names),
+                getString(R.string.league_last_names));
+
+        Team homeTeam = new Team("Warriors", playerGen);
+        Team awayTeam = new Team("Cavaliers", playerGen);
+
+        GameSimThread t = new GameSimThread(this, this, uiElements, homeTeam, awayTeam);
 
         t.start();
-
 
     }
 }
