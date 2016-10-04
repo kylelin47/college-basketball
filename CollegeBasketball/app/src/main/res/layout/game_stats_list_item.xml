@@ -41,6 +41,21 @@
         android:textStyle="bold"
         android:id="@+id/textViewOvrPot"
         android:layout_alignParentTop="true"
+        android:layout_toLeftOf="@+id/textViewOnCourt"
+        android:layout_toStartOf="@+id/textViewOnCourt"
+        android:layout_marginRight="10dp"
+        android:layout_marginEnd="10dp"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:text="ON COURT"
+        android:textColor="#42f48f"
+        android:textSize="15sp"
+        android:textStyle="bold"
+        android:id="@+id/textViewOnCourt"
+        android:layout_alignParentTop="true"
         android:layout_alignParentRight="true"
         android:layout_alignParentEnd="true" />
 

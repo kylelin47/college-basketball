@@ -16,6 +16,7 @@ public class Stats {
     public int threePointsMade = 0;
     public int freeThrowsAttempted = 0;
     public int freeThrowsMade = 0;
+    public int secondsPlayed = 0;
 
     public Stats() {}
 
@@ -35,5 +36,6 @@ public class Stats {
         this.threePointsMade = stats.fieldGoalsMade;
         this.freeThrowsAttempted = stats.freeThrowsAttempted;
         this.freeThrowsMade = stats.freeThrowsMade;
+        this.secondsPlayed = stats.secondsPlayed;
     }
 }

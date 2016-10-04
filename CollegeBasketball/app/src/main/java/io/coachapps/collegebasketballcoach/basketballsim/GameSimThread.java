@@ -66,6 +66,9 @@ public class GameSimThread extends Thread {
         this.home = home;
         this.away = away;
 
+        this.home.subPlayers(50);
+        this.away.subPlayers(50);
+
         allPlayers = new ArrayList<>();
         allPlayers.addAll(away.players);
         allPlayers.addAll(home.players);
@@ -119,6 +122,8 @@ public class GameSimThread extends Thread {
         double hspeed = 6 - (home_tot_outd - away_tot_outd)/8;
         double aspeed = 6 - (away_tot_outd - home_tot_outd)/8;
 
+        double playTime = 0;
+
         // Detect mismatches
         int[] matches_h = Simulator.detectMismatch(home, away);
         int[] matches_a = Simulator.detectMismatch(away, home);
@@ -128,19 +133,27 @@ public class GameSimThread extends Thread {
         while (playing) {
 
             if (poss_home) {
+                matches_h = Simulator.detectMismatch(home, away);
                 hscore += Simulator.runPlay(home, away, matches_h, gameLog);
                 poss_away = true;
                 poss_home = false;
-                gameTime += hspeed + 25 * Math.random();
-                home.subPlayers( gameTime );
-                matches_h = Simulator.detectMismatch(home, away);
+
+                playTime = hspeed + 25 * Math.random();
             } else if (poss_away) {
+                matches_a = Simulator.detectMismatch(away, home);
                 ascore += Simulator.runPlay(away, home, matches_a, gameLog);
                 poss_away = false;
                 poss_home = true;
-                gameTime += aspeed + 25 * Math.random();
-                away.subPlayers( gameTime );
-                matches_a = Simulator.detectMismatch(away, home);
+
+                playTime = aspeed + 25 * Math.random();
+            }
+
+            gameTime += (int)playTime;
+            away.addTimePlayed((int)playTime);
+            home.addTimePlayed((int)playTime);
+            if ((gameTime > 200 && Math.random() < 0.25) || (maxGameTime - gameTime < 120)) {
+                away.subPlayers(maxGameTime - gameTime);
+                home.subPlayers(maxGameTime - gameTime);
             }
 
             // Check if game has ended, or go to OT if needed

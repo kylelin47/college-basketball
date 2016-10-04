@@ -27,6 +27,8 @@ public class Player {
     public PlayerRatings ratings;
     public Stats gmStats;
     private int id;
+
+    public boolean onCourt;
     
     public Player( String name, PlayerRatings ratings, String att, int id ) {
         this.name = name;
@@ -104,7 +106,7 @@ public class Player {
 
     public int getPlayingTime() {
         //playing time in minutes
-        return 25 + getOverall()/8;
+        return 18 + getOverall()/6;
     }
     
     //Stats getters/setters
@@ -136,6 +138,7 @@ public class Player {
     public void addBlk() {
         gmStats.blocks++;
     }
+    public void addTimePlayed(int seconds) { gmStats.secondsPlayed += seconds; }
     public void addOFA() {
         //stats_gm[9]++;
     }

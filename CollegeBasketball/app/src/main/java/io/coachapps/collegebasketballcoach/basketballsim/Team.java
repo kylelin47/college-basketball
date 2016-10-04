@@ -15,8 +15,7 @@ public class Team {
     int pointsFor;
     int pointsAga;
     String name;
-    int[] startersIn;
-    int[] benchIn;
+    boolean[] startersIn;
 
     public Team( String name, List<Player> players ) {
         this.players = players;
@@ -24,11 +23,9 @@ public class Team {
         wins = 0;
         losses = 0;
         games = 0;
-        startersIn = new int[5];
-        benchIn = new int[5];
+        startersIn = new boolean[5];
         for (int i = 0; i < 5; ++i) {
-            startersIn[i] = 1;
-            benchIn[i] = 0;
+            startersIn[i] = true;
         }
     }
     
@@ -40,11 +37,9 @@ public class Team {
         players = new ArrayList<>(10);
 
         // Set so all the starters are in for now
-        startersIn = new int[5];
-        benchIn = new int[5];
+        startersIn = new boolean[5];
         for (int i = 0; i < 5; ++i) {
-            startersIn[i] = 1;
-            benchIn[i] = 0;
+            startersIn[i] = true;
         }
 
         // Make the players
@@ -193,89 +188,48 @@ public class Team {
             return "" + pd;
         }
     }
+
+    public void addTimePlayed( int seconds ) {
+        for (int i = 0; i < 5; i++) {
+            players.get(i).addTimePlayed(seconds);
+        }
+    }
+
+    private void subPosition( double remainingTime, int position ) {
+        if (startersIn[position] && remainingTime > 120) {
+            // See if should be subbed out (starters stay in for last 2 min)
+            if (remainingTime + players.get(position).gmStats.secondsPlayed > players.get(position).getPlayingTime()*60) {
+                // More time than needed to play, can sub out
+                if (Math.random() < 0.3) {
+                    // Sub
+                    startersIn[position] = false;
+                    Player tmp = players.get(position);
+                    players.set(position, players.get(position+5));
+                    players.set(position+5, tmp);
+                }
+            }
+        } else {
+            // Bench is in
+            if (remainingTime + players.get(position+5).gmStats.secondsPlayed < players.get(position).getPlayingTime()*60
+                    || Math.random() < 0.3 || remainingTime <= 120) {
+                // Sub starter in
+                startersIn[position] = true;
+                Player tmp = players.get(position);
+                players.set(position, players.get(position+5));
+                players.set(position+5, tmp);
+            }
+        }
+    }
     
-    public void subPlayers( double time ) {
+    public void subPlayers( double remainingTime ) {
         // sub players based on game time
-        time = time/60;
-        //PG
-        if ( startersIn[0] == 1 && benchIn[0] == 0 && time >= (double)getPG().getPlayingTime()/2 && time < 47 - (double)getPG().getPlayingTime()/2 ) {
-            //sub out starting PG
-            Player tmp = players.get(0);
-            players.set(0, players.get(5));
-            players.set(5, tmp);
-            startersIn[0] = 0;
-            benchIn[0] = 1;
-        } else if ( startersIn[0] == 0 && benchIn[0] == 1 && time >= 48 - (double)getPG().getPlayingTime()/2 ) {
-            //sub in starting PG
-            Player tmp = players.get(0);
-            players.set(0, players.get(5));
-            players.set(5, tmp);
-            startersIn[0] = 1;
-            benchIn[0] = 0;
-        }
-        //SG
-        if ( startersIn[1] == 1 && benchIn[1] == 0 && time >= (double)getSG().getPlayingTime()/2 && time < 47 - (double)getSG().getPlayingTime()/2 ) {
-            //sub out starting SG
-            Player tmp = players.get(1);
-            players.set(1, players.get(6));
-            players.set(6, tmp);
-            startersIn[1] = 0;
-            benchIn[1] = 1;
-        } else if ( startersIn[1] == 0 && benchIn[1] == 1 && time >= 48 - (double)getSG().getPlayingTime()/2 ) {
-            //sub in starting SG
-            Player tmp = players.get(1);
-            players.set(1, players.get(6));
-            players.set(6, tmp);
-            startersIn[1] = 1;
-            benchIn[1] = 0;
-        }
-        //SF
-        if ( startersIn[2] == 1 && benchIn[2] == 0 && time >= (double)getSF().getPlayingTime()/2 && time < 47 - (double)getSF().getPlayingTime()/2 ) {
-            //sub out starting SF
-            Player tmp = players.get(2);
-            players.set(2, players.get(7));
-            players.set(7, tmp);
-            startersIn[2] = 0;
-            benchIn[2] = 1;
-        } else if ( startersIn[2] == 0 && benchIn[2] == 1 && time >= 48 - (double)getSF().getPlayingTime()/2 ) {
-            //sub in starting SF
-            Player tmp = players.get(2);
-            players.set(2, players.get(7));
-            players.set(7, tmp);
-            startersIn[2] = 1;
-            benchIn[2] = 0;
-        }
-        //PF
-        if ( startersIn[3] == 1 && benchIn[3] == 0 && time >= (double)getPF().getPlayingTime()/2 && time < 47 - (double)getPF().getPlayingTime()/2 ) {
-            //sub out starting PF
-            Player tmp = players.get(3);
-            players.set(3, players.get(8));
-            players.set(8, tmp);
-            startersIn[3] = 0;
-            benchIn[3] = 1;
-        } else if ( startersIn[3] == 0 && benchIn[3] == 1 && time >= 48 - (double)getPF().getPlayingTime()/2 ) {
-            //sub in starting PF
-            Player tmp = players.get(3);
-            players.set(3, players.get(8));
-            players.set(8, tmp);
-            startersIn[3] = 1;
-            benchIn[3] = 0;
-        }
-        //C
-        if ( startersIn[4] == 1 && benchIn[4] == 0 && time >= (double)getC().getPlayingTime()/2 && time < 47 - (double)getC().getPlayingTime()/2 ) {
-            //sub out starting C
-            Player tmp = players.get(4);
-            players.set(4, players.get(9));
-            players.set(9, tmp);
-            startersIn[4] = 0;
-            benchIn[4] = 1;
-        } else if ( startersIn[4] == 0 && benchIn[4] == 1 && time >= 48 - (double)getPF().getPlayingTime()/2 ) {
-            //sub in starting C
-            Player tmp = players.get(4);
-            players.set(4, players.get(9));
-            players.set(9, tmp);
-            startersIn[4] = 1;
-            benchIn[4] = 0;
+
+        for (int i = 0; i < 5; ++i)
+            subPosition(remainingTime, i);
+
+        for (int i = 0; i < players.size(); ++i) {
+            if (i < 5) players.get(i).onCourt = true;
+            else players.get(i).onCourt = false;
         }
     }
     

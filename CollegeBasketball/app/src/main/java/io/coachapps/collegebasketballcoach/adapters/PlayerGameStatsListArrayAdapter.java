@@ -1,6 +1,7 @@
 package io.coachapps.collegebasketballcoach.adapters;
 
 import android.content.Context;
+import android.graphics.Color;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -44,11 +45,22 @@ public class PlayerGameStatsListArrayAdapter extends ArrayAdapter<Player> {
         TextView playerBLK  = (TextView) rowView.findViewById(R.id.textViewBLK);
         TextView playerSTL  = (TextView) rowView.findViewById(R.id.textViewSTL);
 
+        TextView courtOrBench = (TextView) rowView.findViewById(R.id.textViewOnCourt);
+        if (players.get(position).onCourt) {
+            // On Court
+            courtOrBench.setText("ON COURT");
+            courtOrBench.setTextColor(Color.RED);
+        } else {
+            // On Bench
+            courtOrBench.setText("ON BENCH");
+            courtOrBench.setTextColor(Color.GRAY);
+        }
+
         Player p = players.get(position);
 
         playerName.setText(p.name);
         playerPosition.setText(Player.getPositionStr(p.getPosition()));
-        playerOvrPot.setText(String.valueOf(p.getOverall()));
+        playerOvrPot.setText(String.valueOf(p.gmStats.secondsPlayed/60) + "min");
 
         playerPTS.setText(String.valueOf(p.gmStats.points));
         playerREB.setText(String.valueOf(p.gmStats.defensiveRebounds+p.gmStats.offensiveRebounds));
