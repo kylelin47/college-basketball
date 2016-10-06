@@ -125,8 +125,8 @@ public class GameSimThread extends Thread {
         double playTime = 0;
 
         // Detect mismatches
-        int[] matches_h = Simulator.detectMismatch(home, away);
-        int[] matches_a = Simulator.detectMismatch(away, home);
+        int[] matches_h;
+        int[] matches_a;
 
         gameLog = new StringBuilder();
 
