@@ -68,6 +68,7 @@ public class YearlyPlayerStatsDao {
                 .threePointsMade);
         values.put(Schemas.YearlyPlayerStatsEntry.FTM, stats.playerStats.freeThrowsMade);
         values.put(Schemas.YearlyPlayerStatsEntry.FTA, stats.playerStats.freeThrowsAttempted);
+        values.put(Schemas.YearlyPlayerStatsEntry.SECONDS_PLAYED, stats.playerStats.secondsPlayed);
         return values;
     }
 
@@ -75,11 +76,6 @@ public class YearlyPlayerStatsDao {
             endYear) {
         List<YearlyPlayerStats> stats = new ArrayList<>();
         try (SQLiteDatabase db = DbHelper.getInstance(context).getReadableDatabase()) {
-            String[] projection = {
-                    Schemas.YearlyPlayerStatsEntry.POINTS,
-                    Schemas.YearlyPlayerStatsEntry.GAMES_PLAYED,
-                    Schemas.YearlyPlayerStatsEntry.YEAR
-            };
             String whereClause = Schemas.YearlyPlayerStatsEntry.PLAYER + "=? AND " + Schemas
                     .YearlyPlayerStatsEntry.YEAR + " BETWEEN ? AND ?";
             String[] whereArgs = {
@@ -88,7 +84,7 @@ public class YearlyPlayerStatsDao {
                     String.valueOf(endYear)
             };
             String orderBy = Schemas.YearlyPlayerStatsEntry.YEAR + " ASC";
-            try (Cursor cursor = db.query(Schemas.YearlyPlayerStatsEntry.TABLE_NAME, projection,
+            try (Cursor cursor = db.query(Schemas.YearlyPlayerStatsEntry.TABLE_NAME, null,
                     whereClause, whereArgs, null, null, orderBy, null)) {
                 while (cursor.moveToNext()) {
                     YearlyPlayerStats existingStats = new YearlyPlayerStats(playerId);
@@ -136,5 +132,7 @@ public class YearlyPlayerStatsDao {
                 .YearlyPlayerStatsEntry.THREE_POINTS_ATTEMPTED));
         existingStats.playerStats.threePointsMade += cursor.getInt(cursor.getColumnIndexOrThrow(Schemas
                 .YearlyPlayerStatsEntry.THREE_POINTS_MADE));
+        existingStats.playerStats.secondsPlayed += cursor.getInt(cursor.getColumnIndexOrThrow
+                (Schemas.YearlyPlayerStatsEntry.SECONDS_PLAYED));
     }
 }

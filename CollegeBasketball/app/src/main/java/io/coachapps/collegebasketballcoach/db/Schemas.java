@@ -49,6 +49,7 @@ public final class Schemas {
         public static final String FTA = "fta";
         public static final String FTM = "ftm";
         public static final String GAMES_PLAYED = "gamesPlayed";
+        public static final String SECONDS_PLAYED = "secondsPlayed";
     }
 
     public static abstract class GameEntry implements BaseColumns {

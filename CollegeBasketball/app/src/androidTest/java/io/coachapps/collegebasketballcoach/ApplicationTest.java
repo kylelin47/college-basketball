@@ -18,8 +18,10 @@ import io.coachapps.collegebasketballcoach.db.BoxScoreDao;
 import io.coachapps.collegebasketballcoach.db.DbHelper;
 import io.coachapps.collegebasketballcoach.db.GameDao;
 import io.coachapps.collegebasketballcoach.db.Schemas;
+import io.coachapps.collegebasketballcoach.db.YearlyPlayerStatsDao;
 import io.coachapps.collegebasketballcoach.models.BoxScore;
 import io.coachapps.collegebasketballcoach.models.Game;
+import io.coachapps.collegebasketballcoach.models.YearlyPlayerStats;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
@@ -72,6 +74,25 @@ public class ApplicationTest {
         assertThat(points.size(), is(4));
         assertThat(points.get(0), is(20));
     }
+
+    @Test
+    public void canRetrieveYearlyPlayerStats() {
+        BoxScoreDao boxScoreDao = new BoxScoreDao(context);
+        BoxScore boxScore = new BoxScore(0, 2000);
+        boxScore.playerStats.assists = 20;
+        BoxScore boxScore2 = new BoxScore(0, 2000);
+        boxScore2.playerStats.assists = 5;
+
+        boxScoreDao.save(Arrays.asList(boxScore, boxScore2, new BoxScore(0, 2001),
+                new BoxScore(0, 2002)));
+
+        YearlyPlayerStatsDao yearlyPlayerStatsDao = new YearlyPlayerStatsDao(context);
+        List<YearlyPlayerStats> stats = yearlyPlayerStatsDao.getPlayerStatsFromYears(0, 2000, 2002);
+        assertThat(stats.get(0).gamesPlayed, is(2));
+        assertThat(stats.get(0).playerStats.assists, is(25));
+        assertThat(stats.size(), is(3));
+    }
+
     @Test
     public void canSaveGames() {
         GameDao gameDao = new GameDao(context);

@@ -102,6 +102,7 @@ public class DbHelper extends SQLiteOpenHelper {
                     Schemas.YearlyPlayerStatsEntry.MINUTES + INTEGER_TYPE + COMMA_SEP +
                     Schemas.YearlyPlayerStatsEntry.STEALS + INTEGER_TYPE + COMMA_SEP +
                     Schemas.YearlyPlayerStatsEntry.TURNOVERS + INTEGER_TYPE + COMMA_SEP +
+                    Schemas.YearlyPlayerStatsEntry.SECONDS_PLAYED + INTEGER_TYPE + COMMA_SEP +
                     "PRIMARY KEY (" + Schemas.YearlyPlayerStatsEntry.PLAYER + COMMA_SEP + Schemas
                     .YearlyPlayerStatsEntry.YEAR + "));";
 

@@ -29,7 +29,7 @@ public class YearlyTeamStatsDao {
                     team
             };
             YearlyTeamStats stats;
-            try (Cursor cursor = db.query(Schemas.YearlyPlayerStatsEntry.TABLE_NAME, projection,
+            try (Cursor cursor = db.query(Schemas.YearlyTeamStatsEntry.TABLE_NAME, projection,
                     whereClause, whereArgs, null, null, null, null)) {
                 if (cursor.moveToNext()) {
                     stats = fetchYearlyTeamStats(cursor, team);
