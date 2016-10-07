@@ -41,6 +41,7 @@ public class GameSimThread extends Thread {
     private GameDialogElements uiElements;
 
     private StringBuilder gameLog;
+    private StringBuilder gameEvents;
 
     private Team home;
     private Team away;
@@ -50,12 +51,15 @@ public class GameSimThread extends Thread {
     private int maxGameTime;
     private int hscore;
     private int ascore;
+    private int numOT;
 
     private int gameSpeed;
 
     private boolean poss_home;
     private boolean poss_away;
     private boolean playing;
+
+    private volatile boolean isPaused;
 
     public GameSimThread(Activity activity, Context context, GameDialogElements uiElements, Team home, Team away) {
         this.activity = activity;
@@ -78,7 +82,11 @@ public class GameSimThread extends Thread {
 
         hscore = 0;
         ascore = 0;
-        gameTime = 2400;
+        numOT = 0;
+    }
+
+    public void togglePause() {
+        isPaused = !isPaused;
     }
 
     @Override
@@ -128,76 +136,79 @@ public class GameSimThread extends Thread {
         int[] matches_h;
         int[] matches_a;
 
+        gameEvents = new StringBuilder();
         gameLog = new StringBuilder();
 
         while (playing) {
+            if (!isPaused) {
+                if (poss_home) {
+                    matches_h = Simulator.detectMismatch(home, away);
+                    hscore += Simulator.runPlay(home, away, matches_h, gameEvents);
+                    poss_away = true;
+                    poss_home = false;
 
-            if (poss_home) {
-                matches_h = Simulator.detectMismatch(home, away);
-                hscore += Simulator.runPlay(home, away, matches_h, gameLog);
-                poss_away = true;
-                poss_home = false;
-
-                playTime = hspeed + 25 * Math.random();
-            } else if (poss_away) {
-                matches_a = Simulator.detectMismatch(away, home);
-                ascore += Simulator.runPlay(away, home, matches_a, gameLog);
-                poss_away = false;
-                poss_home = true;
-
-                playTime = aspeed + 25 * Math.random();
-            }
-
-            gameTime += (int)playTime;
-            away.addTimePlayed((int)playTime);
-            home.addTimePlayed((int)playTime);
-            if ((gameTime > 200 && Math.random() < 0.25) || (maxGameTime - gameTime < 120)) {
-                away.subPlayers(maxGameTime - gameTime);
-                home.subPlayers(maxGameTime - gameTime);
-            }
-
-            // Check if game has ended, or go to OT if needed
-            if ( gameTime >= maxGameTime ) {
-                gameTime = maxGameTime;
-                if ( hscore != ascore ) {
-                    playing = false;
-                } else {
-                    poss_home = true;
+                    playTime = hspeed + 25 * Math.random();
+                } else if (poss_away) {
+                    matches_a = Simulator.detectMismatch(away, home);
+                    ascore += Simulator.runPlay(away, home, matches_a, gameEvents);
                     poss_away = false;
-                    maxGameTime += 300;
-                    gameLog.append("Tie game, advance to OVERTIME! ");
+                    poss_home = true;
+
+                    playTime = aspeed + 25 * Math.random();
                 }
-            }
 
-            activity.runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    // update TextView here!
-                    String log = gameLog.toString();
-                    gameLog.setLength(0);
-
-                    // Update the score headings
-                    uiElements.textViewHomeScore.setText(String.valueOf(hscore));
-                    uiElements.textViewAwayScore.setText(String.valueOf(ascore));
-
-                    // Add the game event to the game log
-                    uiElements.textViewGameLog.append("Speed = " + gameSpeed + " " + getEventPrefix() + log + "\n\n");
-                    uiElements.scrollViewGameLog.post(new Runnable() {
-                        public void run()
-                        {
-                            uiElements.scrollViewGameLog.fullScroll(View.FOCUS_DOWN);
-                        }
-                    });
-
-                    // Let the adapter know that values have changed
-                    statsAdapter.notifyDataSetChanged();
+                gameTime += (int) playTime;
+                away.addTimePlayed((int) playTime);
+                home.addTimePlayed((int) playTime);
+                if ((gameTime > 200 && Math.random() < 0.25) || (maxGameTime - gameTime < 120)) {
+                    away.subPlayers(maxGameTime - gameTime);
+                    home.subPlayers(maxGameTime - gameTime);
                 }
-            });
 
-            try {
-                sleep(30 * (100 - gameSpeed) + 100);
-            } catch (java.lang.InterruptedException e) {
-                // uh
+                // Check if game has ended, or go to OT if needed
+                if (gameTime >= maxGameTime) {
+                    gameTime = maxGameTime;
+                    if (hscore != ascore) {
+                        playing = false;
+                    } else {
+                        poss_home = true;
+                        poss_away = false;
+                        maxGameTime += 300;
+                        numOT++;
+                        gameEvents.append("Tie game, advance to OVERTIME! ");
+                    }
+                }
+
+                gameLog.append(getEventPrefix() + gameEvents.toString() + "\n\n");
+                gameEvents.setLength(0);
+
+                activity.runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        // Update the score headings
+                        uiElements.textViewHomeScore.setText(String.valueOf(hscore));
+                        uiElements.textViewAwayScore.setText(String.valueOf(ascore));
+
+                        // Add the game event to the game log
+                        uiElements.textViewGameLog.append(gameLog.toString());
+                        gameLog.setLength(0);
+                        uiElements.scrollViewGameLog.post(new Runnable() {
+                            public void run() {
+                                uiElements.scrollViewGameLog.fullScroll(View.FOCUS_DOWN);
+                            }
+                        });
+
+                        // Let the adapter know that values have changed
+                        statsAdapter.notifyDataSetChanged();
+                    }
+                });
+
+                try {
+                    sleep(30 * (100 - gameSpeed) + 100);
+                } catch (java.lang.InterruptedException e) {
+                    // uh
+                }
+
             }
 
         } // End playing loop
@@ -209,7 +220,28 @@ public class GameSimThread extends Thread {
      * @return
      */
     private String getEventPrefix() {
-        return "Time: " + (maxGameTime - gameTime) + " " + away.getAbbr() + " " + ascore + " - " + hscore + " " + home.getAbbr() + "\n";
+        return convertTime() + "\t\t" + away.getAbbr() + " " + ascore + " - " + hscore + " " + home.getAbbr() + "\n";
+    }
+
+    private String convertTime() {
+        if (numOT > 0) {
+            int minTime = (maxGameTime - gameTime) / 60;
+            int secTime = (maxGameTime - gameTime) - 60 * minTime;
+            if (secTime > 9)
+                return minTime + ":" + secTime + " OT" + numOT;
+            else
+                return minTime + ":0" + secTime + " OT" + numOT;
+        } else {
+            int halfNum = (gameTime / 1200) + 1;
+            if (halfNum > 2)
+                return "0:00 H2";
+            int minTime = (halfNum * (maxGameTime / 2) - gameTime) / 60;
+            int secTime = (halfNum * (maxGameTime / 2) - gameTime) - 60 * minTime;
+            if (secTime > 9)
+                return minTime + ":" + secTime + " H" + halfNum;
+            else
+                return minTime + ":0" + secTime + " H" + halfNum;
+        }
     }
 
 }

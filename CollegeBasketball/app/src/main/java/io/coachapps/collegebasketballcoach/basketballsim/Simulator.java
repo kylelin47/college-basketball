@@ -229,7 +229,7 @@ public class Simulator {
      * @param assister
      * @return nubmer of points scored (0,2,3)
      */
-    public static int takeShot( Player shooter, Player defender, Team defense, Player assister ) {
+    private static int takeShot( Player shooter, Player defender, Team defense, Player assister ) {
         int assBonus = 0;
         if ( assister != shooter ) {
             //shooter gets bonus for having a good passer
@@ -345,7 +345,7 @@ public class Simulator {
      * @param defender player who's defending
      * @return int value of the mismatch
      */
-    public static int calcMismatch( Player shooter, Player defender ) {
+    private static int calcMismatch( Player shooter, Player defender ) {
         double intMis = ( 2 * shooter.getIntS() - defender.getIntD() ) * shooter.getInsT();
         double midMis = ( 2 * shooter.getMidS() - (float)(defender.getIntD() + defender.getOutD()) ) * shooter.getMidT();
         double outMis = ( 2 * shooter.getOutS() - defender.getOutD() ) * shooter.getOutT();
@@ -360,7 +360,7 @@ public class Simulator {
      * @param matches array of mismatches
      * @return player who gets the ball
      */
-    public static Player intelligentPass( Player whoPoss, Team offense, Team defense, int[] matches ) {
+    private static Player intelligentPass( Player whoPoss, Team offense, Team defense, int[] matches ) {
         //pass intelligently
         int mismFactor = 18;
         double pgTen = offense.getPG().getUsage() + (float)matches[0]/mismFactor;
@@ -390,7 +390,7 @@ public class Simulator {
      * @param t team on offense
      * @return player who will get ball
      */
-    public static Player getBallCarrier( Team t ) {
+    private static Player getBallCarrier( Team t ) {
         double sfBall = t.getSF().getPass() * Math.random();
         double sgBall = t.getSG().getPass() * Math.random();
         double pgBall = t.getPG().getPass() * Math.random();
@@ -409,7 +409,7 @@ public class Simulator {
      * @param t team getting the rebound
      * @return player who gets rebound
      */
-    public static Player findRebounder( Team t ) {
+    private static Player findRebounder( Team t ) {
         double cnReb = t.getC().getReb() * Math.random();
         double pfReb = t.getPF().getReb() * Math.random();
         double sfReb = t.getSF().getReb() * Math.random();
@@ -434,7 +434,7 @@ public class Simulator {
      * @param def player on defense
      * @return true if the ball was stolen, else false
      */
-    public static boolean potSteal( Player off, Player def ) {
+    private static boolean potSteal( Player off, Player def ) {
         if ( Math.random() < 0.1 ) {
             int stl = def.getStl()-75;
             if (stl < 0) {
