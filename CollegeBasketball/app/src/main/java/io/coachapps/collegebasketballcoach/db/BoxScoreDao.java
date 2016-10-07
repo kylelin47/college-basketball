@@ -18,16 +18,15 @@ public class BoxScoreDao {
     }
 
     public void save(List<BoxScore> boxScores) {
-        try (SQLiteDatabase db = DbHelper.getInstance(context).getWritableDatabase()) {
-            db.beginTransaction();
-            try {
-                for (BoxScore boxScore : boxScores) {
-                    updateBoxScore(boxScore, db);
-                }
-                db.setTransactionSuccessful();
-            } finally {
-                db.endTransaction();
+        SQLiteDatabase db = DbHelper.getInstance(context).getWritableDatabase();
+        db.beginTransaction();
+        try {
+            for (BoxScore boxScore : boxScores) {
+                updateBoxScore(boxScore, db);
             }
+            db.setTransactionSuccessful();
+        } finally {
+            db.endTransaction();
         }
         yearlyPlayerStatsDao.updateYearlyPlayerStats(boxScores);
     }

@@ -22,35 +22,33 @@ public class PlayerDao {
 
     public List<Player> getPlayers(String teamName) throws IOException, ClassNotFoundException {
         List<Player> players = new ArrayList<>();
-        try (SQLiteDatabase db = DbHelper.getInstance(context).getReadableDatabase()) {
-            String[] projection = {
-                    Schemas.PlayerEntry._ID,
-                    Schemas.PlayerEntry.NAME,
-                    Schemas.PlayerEntry.RATINGS
-            };
-            String whereClause = Schemas.PlayerEntry.TEAM + " = ?";
-            String[] whereArgs = {
-                    teamName
-            };
-            try (Cursor c = db.query(Schemas.PlayerEntry.TABLE_NAME, projection, whereClause,
-                    whereArgs, null, null, null, null)) {
-                while (c.moveToNext()) {
-                    players.add(createPlayer(c));
-                }
+        SQLiteDatabase db = DbHelper.getInstance(context).getReadableDatabase();
+        String[] projection = {
+                Schemas.PlayerEntry._ID,
+                Schemas.PlayerEntry.NAME,
+                Schemas.PlayerEntry.RATINGS
+        };
+        String whereClause = Schemas.PlayerEntry.TEAM + " = ?";
+        String[] whereArgs = {
+                teamName
+        };
+        try (Cursor c = db.query(Schemas.PlayerEntry.TABLE_NAME, projection, whereClause,
+                whereArgs, null, null, null, null)) {
+            while (c.moveToNext()) {
+                players.add(createPlayer(c));
             }
         }
         return players;
     }
 
     public void save(PlayerModel player) {
-        try (SQLiteDatabase db = DbHelper.getInstance(context).getWritableDatabase()) {
-            ContentValues values = new ContentValues();
-            values.put(Schemas.PlayerEntry._ID, player.id);
-            values.put(Schemas.PlayerEntry.NAME, player.name);
-            values.put(Schemas.PlayerEntry.TEAM, player.team);
-            values.put(Schemas.PlayerEntry.RATINGS, SerializationUtil.serialize(player.ratings));
-            db.insert(Schemas.PlayerEntry.TABLE_NAME, null, values);
-        }
+        SQLiteDatabase db = DbHelper.getInstance(context).getWritableDatabase();
+        ContentValues values = new ContentValues();
+        values.put(Schemas.PlayerEntry._ID, player.id);
+        values.put(Schemas.PlayerEntry.NAME, player.name);
+        values.put(Schemas.PlayerEntry.TEAM, player.team);
+        values.put(Schemas.PlayerEntry.RATINGS, SerializationUtil.serialize(player.ratings));
+        db.insert(Schemas.PlayerEntry.TABLE_NAME, null, values);
     }
 
     private Player createPlayer(Cursor cursor) throws IOException,

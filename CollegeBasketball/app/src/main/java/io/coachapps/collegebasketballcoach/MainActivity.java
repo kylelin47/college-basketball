@@ -28,6 +28,7 @@ import io.coachapps.collegebasketballcoach.basketballsim.Player;
 import io.coachapps.collegebasketballcoach.basketballsim.PlayerGen;
 import io.coachapps.collegebasketballcoach.basketballsim.Simulator;
 import io.coachapps.collegebasketballcoach.basketballsim.Team;
+import io.coachapps.collegebasketballcoach.db.DbHelper;
 import io.coachapps.collegebasketballcoach.db.TeamDao;
 
 public class MainActivity extends AppCompatActivity {
@@ -42,13 +43,17 @@ public class MainActivity extends AppCompatActivity {
     ListView mainList;
 
     @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        DbHelper.getInstance(this).close();
+    }
+
+    @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-
-        /*
 
         TeamDao teamDao = new TeamDao(this);
         try {
@@ -112,8 +117,6 @@ public class MainActivity extends AppCompatActivity {
                 showPlayerDialog(p);
             }
         });
-
-        */
 
         showGameSimDialog();
 

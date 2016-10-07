@@ -7,6 +7,8 @@ public class PlayerRatings implements Serializable {
     public int year;
     public int potential;
     public int bballIQ;
+    public int heightInInches;
+    public int weightInPounds;
     public int insideShooting;
     public int midrangeShooting;
     public int outsideShooting;

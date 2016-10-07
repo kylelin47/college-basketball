@@ -19,30 +19,29 @@ public class YearlyPlayerStatsDao {
     }
 
     public void updateYearlyPlayerStats(List<BoxScore> boxScores) {
-        try (SQLiteDatabase db = DbHelper.getInstance(context).getWritableDatabase()) {
-            db.beginTransaction();
-            try {
-                for (BoxScore boxScore : boxScores) {
-                    String whereClause = Schemas.YearlyPlayerStatsEntry.PLAYER + "=? AND " + Schemas
-                            .YearlyPlayerStatsEntry.YEAR + "=?";
-                    String[] whereArgs = {
-                            String.valueOf(boxScore.playerId),
-                            String.valueOf(boxScore.year)
-                    };
-                    YearlyPlayerStats stats = new YearlyPlayerStats(boxScore);
-                    try (Cursor cursor = db.query(Schemas.YearlyPlayerStatsEntry.TABLE_NAME, null,
-                            whereClause, whereArgs, null, null, null, null)) {
-                        if (cursor.moveToNext()) {
-                            addToYearlyPlayerStats(cursor, stats);
-                        }
+        SQLiteDatabase db = DbHelper.getInstance(context).getWritableDatabase();
+        db.beginTransaction();
+        try {
+            for (BoxScore boxScore : boxScores) {
+                String whereClause = Schemas.YearlyPlayerStatsEntry.PLAYER + "=? AND " + Schemas
+                        .YearlyPlayerStatsEntry.YEAR + "=?";
+                String[] whereArgs = {
+                        String.valueOf(boxScore.playerId),
+                        String.valueOf(boxScore.year)
+                };
+                YearlyPlayerStats stats = new YearlyPlayerStats(boxScore);
+                try (Cursor cursor = db.query(Schemas.YearlyPlayerStatsEntry.TABLE_NAME, null,
+                        whereClause, whereArgs, null, null, null, null)) {
+                    if (cursor.moveToNext()) {
+                        addToYearlyPlayerStats(cursor, stats);
                     }
-                    ContentValues values = populateYearlyPlayerStatsEntry(stats, boxScore.playerId);
-                    db.replaceOrThrow(Schemas.YearlyPlayerStatsEntry.TABLE_NAME, null, values);
                 }
-                db.setTransactionSuccessful();
-            } finally {
-                db.endTransaction();
+                ContentValues values = populateYearlyPlayerStatsEntry(stats, boxScore.playerId);
+                db.replaceOrThrow(Schemas.YearlyPlayerStatsEntry.TABLE_NAME, null, values);
             }
+            db.setTransactionSuccessful();
+        } finally {
+            db.endTransaction();
         }
     }
 
@@ -75,22 +74,21 @@ public class YearlyPlayerStatsDao {
     public List<YearlyPlayerStats> getPlayerStatsFromYears(int playerId, int beginYear, int
             endYear) {
         List<YearlyPlayerStats> stats = new ArrayList<>();
-        try (SQLiteDatabase db = DbHelper.getInstance(context).getReadableDatabase()) {
-            String whereClause = Schemas.YearlyPlayerStatsEntry.PLAYER + "=? AND " + Schemas
-                    .YearlyPlayerStatsEntry.YEAR + " BETWEEN ? AND ?";
-            String[] whereArgs = {
-                    String.valueOf(playerId),
-                    String.valueOf(beginYear),
-                    String.valueOf(endYear)
-            };
-            String orderBy = Schemas.YearlyPlayerStatsEntry.YEAR + " ASC";
-            try (Cursor cursor = db.query(Schemas.YearlyPlayerStatsEntry.TABLE_NAME, null,
-                    whereClause, whereArgs, null, null, orderBy, null)) {
-                while (cursor.moveToNext()) {
-                    YearlyPlayerStats existingStats = new YearlyPlayerStats(playerId);
-                    addToYearlyPlayerStats(cursor, existingStats);
-                    stats.add(existingStats);
-                }
+        SQLiteDatabase db = DbHelper.getInstance(context).getReadableDatabase();
+        String whereClause = Schemas.YearlyPlayerStatsEntry.PLAYER + "=? AND " + Schemas
+                .YearlyPlayerStatsEntry.YEAR + " BETWEEN ? AND ?";
+        String[] whereArgs = {
+                String.valueOf(playerId),
+                String.valueOf(beginYear),
+                String.valueOf(endYear)
+        };
+        String orderBy = Schemas.YearlyPlayerStatsEntry.YEAR + " ASC";
+        try (Cursor cursor = db.query(Schemas.YearlyPlayerStatsEntry.TABLE_NAME, null,
+                whereClause, whereArgs, null, null, orderBy, null)) {
+            while (cursor.moveToNext()) {
+                YearlyPlayerStats existingStats = new YearlyPlayerStats(playerId);
+                addToYearlyPlayerStats(cursor, existingStats);
+                stats.add(existingStats);
             }
         }
         return stats;

@@ -5,19 +5,24 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.support.test.InstrumentationRegistry;
 import android.support.test.runner.AndroidJUnit4;
+import android.util.Log;
 
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import io.coachapps.collegebasketballcoach.basketballsim.PlayerGen;
+import io.coachapps.collegebasketballcoach.basketballsim.Team;
 import io.coachapps.collegebasketballcoach.db.BoxScoreDao;
 import io.coachapps.collegebasketballcoach.db.DbHelper;
 import io.coachapps.collegebasketballcoach.db.GameDao;
 import io.coachapps.collegebasketballcoach.db.Schemas;
+import io.coachapps.collegebasketballcoach.db.TeamDao;
 import io.coachapps.collegebasketballcoach.db.YearlyPlayerStatsDao;
 import io.coachapps.collegebasketballcoach.models.BoxScore;
 import io.coachapps.collegebasketballcoach.models.Game;
@@ -101,5 +106,29 @@ public class ApplicationTest {
         game.awayStats.blocks = 20;
         game.homeStats.fouls = 15;
         gameDao.save(game);
+    }
+
+    @Test
+    public void canSaveTeams() {
+        List<Team> teamList = new ArrayList<>();
+        TeamDao teamDao = new TeamDao(context);
+        try {
+            teamList = teamDao.getAllTeams();
+        } catch (IOException | ClassNotFoundException e) {
+            Log.e("MainActivity", "Could not retrieve teams", e);
+            // PROBABLY JUST CRASH
+        }
+        if (teamList.size() == 0) {
+            // Make generator, passing in possible player names
+            PlayerGen playerGen = new PlayerGen(context.getString(R.string.league_player_names),
+                    context.getString(R.string.league_last_names));
+
+            // Make 10 teams;
+            teamList = new ArrayList<>();
+            for (int i = 0; i < 10; ++i) {
+                teamList.add(new Team("Team " + i, playerGen));
+            }
+            teamDao.saveTeams(teamList, "player team name");
+        }
     }
 }

@@ -21,19 +21,18 @@ public class TeamDao {
     }
 
     public String getPlayerTeamName() {
-        try (SQLiteDatabase db = DbHelper.getInstance(context).getReadableDatabase()) {
-            String[] projection = {
-                    Schemas.TeamEntry.NAME
-            };
-            String whereClause = Schemas.TeamEntry.IS_PLAYER + " = ?";
-            String[] whereArgs = {
-                    "1"
-            };
-            try (Cursor c = db.query(Schemas.TeamEntry.TABLE_NAME, projection, whereClause,
-                    whereArgs, null, null, null, null)) {
-                if (c.moveToNext()) {
-                    return c.getString(c.getColumnIndexOrThrow(Schemas.TeamEntry.NAME));
-                }
+        SQLiteDatabase db = DbHelper.getInstance(context).getReadableDatabase();
+        String[] projection = {
+                Schemas.TeamEntry.NAME
+        };
+        String whereClause = Schemas.TeamEntry.IS_PLAYER + " = ?";
+        String[] whereArgs = {
+                "1"
+        };
+        try (Cursor c = db.query(Schemas.TeamEntry.TABLE_NAME, projection, whereClause,
+                whereArgs, null, null, null, null)) {
+            if (c.moveToNext()) {
+                return c.getString(c.getColumnIndexOrThrow(Schemas.TeamEntry.NAME));
             }
         }
         return null;
@@ -46,16 +45,15 @@ public class TeamDao {
      */
     public void saveTeams(List<Team> teams, String playerTeamName) {
         PlayerDao playerDao = new PlayerDao(context);
-        try (SQLiteDatabase db = DbHelper.getInstance(context).getWritableDatabase()) {
-            for (Team team : teams) {
-                ContentValues values = new ContentValues();
-                values.put(Schemas.TeamEntry.NAME, team.getName());
-                values.put(Schemas.TeamEntry.CONFERENCE, "garbage");
-                values.put(Schemas.TeamEntry.IS_PLAYER, team.getName().equals(playerTeamName));
-                db.insert(Schemas.TeamEntry.TABLE_NAME, null, values);
-                for (Player player : team.players) {
-                    playerDao.save(new PlayerModel(player, team.getName()));
-                }
+        SQLiteDatabase db = DbHelper.getInstance(context).getWritableDatabase();
+        for (Team team : teams) {
+            ContentValues values = new ContentValues();
+            values.put(Schemas.TeamEntry.NAME, team.getName());
+            values.put(Schemas.TeamEntry.CONFERENCE, "garbage");
+            values.put(Schemas.TeamEntry.IS_PLAYER, team.getName().equals(playerTeamName));
+            db.insert(Schemas.TeamEntry.TABLE_NAME, null, values);
+            for (Player player : team.players) {
+                playerDao.save(new PlayerModel(player, team.getName()));
             }
         }
     }
@@ -68,10 +66,12 @@ public class TeamDao {
         // inner joins would give better performance
         PlayerDao playerDao = new PlayerDao(context);
         List<Team> teams = new ArrayList<>();
-        try (SQLiteDatabase db = DbHelper.getInstance(context).getReadableDatabase()) {
-            String[] projection = {
-                    Schemas.TeamEntry.NAME,
-            };
+        SQLiteDatabase db = DbHelper.getInstance(context).getReadableDatabase();
+        String[] projection = {
+                Schemas.TeamEntry.NAME,
+        };
+        db.beginTransaction();
+        try {
             try (Cursor cursor = db.query(Schemas.TeamEntry.TABLE_NAME, projection, null, null,
                     null, null, null, null)) {
                 while (cursor.moveToNext()) {
@@ -100,6 +100,9 @@ public class TeamDao {
                 }
                 team.players = playerDao.getPlayers(team.getName());
             }
+            db.setTransactionSuccessful();
+        } finally {
+            db.endTransaction();
         }
         return teams;
     }

@@ -18,7 +18,8 @@ public class YearlyTeamStatsDao {
     }
 
     public void recordRelativeTeamRecord(String team, int year, int numWins, int numLosses) {
-        try (SQLiteDatabase db = DbHelper.getInstance(context).getWritableDatabase()) {
+        try {
+            SQLiteDatabase db = DbHelper.getInstance(context).getWritableDatabase();
             String[] projection = {
                     Schemas.YearlyTeamStatsEntry.WINS,
                     Schemas.YearlyTeamStatsEntry.LOSSES,
@@ -41,6 +42,8 @@ public class YearlyTeamStatsDao {
             }
             ContentValues values = populateYearlyTeamStatsEntry(stats, team);
             db.replace(Schemas.YearlyTeamStatsEntry.TABLE_NAME, null, values);
+        } finally {
+            DbHelper.getInstance(context).close();
         }
     }
     private ContentValues populateYearlyTeamStatsEntry(YearlyTeamStats stats, String team) {
@@ -55,24 +58,24 @@ public class YearlyTeamStatsDao {
     public List<YearlyTeamStats> getTeamStatsFromYears(String team, int beginYear, int
             endYear) {
         List<YearlyTeamStats> stats = new ArrayList<>();
-        try (SQLiteDatabase db = DbHelper.getInstance(context).getReadableDatabase()) {
-            String[] projection = {
-                    Schemas.YearlyTeamStatsEntry.WINS,
-                    Schemas.YearlyTeamStatsEntry.LOSSES,
-                    Schemas.YearlyTeamStatsEntry.YEAR
-            };
-            String whereClause = Schemas.YearlyTeamStatsEntry.TEAM + "=? AND " + Schemas
-                    .YearlyTeamStatsEntry.YEAR + " BETWEEN ? AND ?";
-            String[] whereArgs = {
-                    team,
-                    String.valueOf(beginYear),
-                    String.valueOf(endYear)
-            };
-            try (Cursor cursor = db.query(Schemas.YearlyTeamStatsEntry.TABLE_NAME, projection,
-                    whereClause, whereArgs, null, null, null, null)) {
-                while (cursor.moveToNext()) {
-                    stats.add(fetchYearlyTeamStats(cursor, team));
-                }
+        SQLiteDatabase db = DbHelper.getInstance(context).getReadableDatabase();
+        String[] projection = {
+                Schemas.YearlyTeamStatsEntry.WINS,
+                Schemas.YearlyTeamStatsEntry.LOSSES,
+                Schemas.YearlyTeamStatsEntry.YEAR
+        };
+        String whereClause = Schemas.YearlyTeamStatsEntry.TEAM + "=? AND " + Schemas
+                .YearlyTeamStatsEntry.YEAR + " BETWEEN ? AND ?";
+        String[] whereArgs = {
+                team,
+                String.valueOf(beginYear),
+                String.valueOf(endYear)
+        };
+        String orderBy = Schemas.YearlyTeamStatsEntry.YEAR + " ASC";
+        try (Cursor cursor = db.query(Schemas.YearlyTeamStatsEntry.TABLE_NAME, projection,
+                whereClause, whereArgs, null, null, orderBy, null)) {
+            while (cursor.moveToNext()) {
+                stats.add(fetchYearlyTeamStats(cursor, team));
             }
         }
         return stats;
