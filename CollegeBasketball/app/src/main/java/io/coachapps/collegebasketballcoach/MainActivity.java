@@ -226,7 +226,14 @@ public class MainActivity extends AppCompatActivity {
         Team homeTeam = new Team("Warriors", playerGen);
         Team awayTeam = new Team("Cavaliers", playerGen);
 
-        GameSimThread t = new GameSimThread(this, this, uiElements, homeTeam, awayTeam);
+        final GameSimThread t = new GameSimThread(this, this, uiElements, homeTeam, awayTeam);
+
+        uiElements.buttonCallTimeout.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                // Perform action on click
+                t.togglePause();
+            }
+        });
 
         t.start();
 
