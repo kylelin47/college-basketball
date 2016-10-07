@@ -4,7 +4,6 @@ import java.io.Serializable;
 
 public class PlayerRatings implements Serializable {
     public int position;
-    public int year;
     public int potential;
     public int bballIQ;
     public int heightInInches;

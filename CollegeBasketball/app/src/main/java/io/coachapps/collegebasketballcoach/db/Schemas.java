@@ -3,9 +3,7 @@ package io.coachapps.collegebasketballcoach.db;
 import android.provider.BaseColumns;
 
 public final class Schemas {
-    // For ratings: store BLOB that consists of serialized Ratings class
-
-    public Schemas() {}
+    private Schemas() {}
     public static abstract class PlayerEntry implements BaseColumns {
         public static final String TABLE_NAME = "players";
         public static final String TEAM = "teamName";
