@@ -57,6 +57,7 @@ public class Player {
     public int getPosition() {
         return ratings.position;
     }
+    public int getBBallIQ() { return ratings.bballIQ; }
     public int getOverall() {
         return overall;
     }
