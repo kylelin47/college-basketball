@@ -13,16 +13,12 @@ import io.coachapps.collegebasketballcoach.R;
 import io.coachapps.collegebasketballcoach.basketballsim.Player;
 import io.coachapps.collegebasketballcoach.util.DataDisplayer;
 
-/**
- * Array Adapter for displaying players in the roster tab in MainActivity.
- * Created by Achi Jones on 9/14/2016.
- */
-public class PlayerStatsListArrayAdapter extends ArrayAdapter<Player> {
+
+public class RosterListArrayAdapter extends ArrayAdapter<Player> {
     private final Context context;
     public final List<Player> players;
-
-    public PlayerStatsListArrayAdapter(Context context, List<Player> values) {
-        super(context, R.layout.player_list_item, values);
+    public RosterListArrayAdapter(Context context, List<Player> values) {
+        super(context, R.layout.roster, values);
         this.context = context;
         this.players = values;
     }
@@ -31,7 +27,7 @@ public class PlayerStatsListArrayAdapter extends ArrayAdapter<Player> {
     public View getView(final int position, View convertView, ViewGroup parent) {
         LayoutInflater inflater = (LayoutInflater) context
                 .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        View rowView = inflater.inflate(R.layout.player_list_item, parent, false);
+        View rowView = inflater.inflate(R.layout.roster_list_item, parent, false);
 
         TextView playerName = (TextView) rowView.findViewById(R.id.textViewName);
         TextView playerPosition = (TextView) rowView.findViewById(R.id.textViewPosition);
@@ -55,9 +51,4 @@ public class PlayerStatsListArrayAdapter extends ArrayAdapter<Player> {
 
         return rowView;
     }
-
-    public Player getItem(int position) {
-        return players.get(position);
-    }
-
 }

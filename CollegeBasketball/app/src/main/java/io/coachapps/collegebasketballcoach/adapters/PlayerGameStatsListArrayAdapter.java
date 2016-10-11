@@ -12,6 +12,7 @@ import java.util.List;
 
 import io.coachapps.collegebasketballcoach.R;
 import io.coachapps.collegebasketballcoach.basketballsim.Player;
+import io.coachapps.collegebasketballcoach.util.DataDisplayer;
 
 /**
  * Array Adapter for displaying player stats in the game dialog.
@@ -59,7 +60,7 @@ public class PlayerGameStatsListArrayAdapter extends ArrayAdapter<Player> {
         Player p = players.get(position);
 
         playerName.setText(p.name);
-        playerPosition.setText(Player.getPositionStr(p.getPosition()));
+        playerPosition.setText(DataDisplayer.getPositionAbbreviation(p.getPosition()));
         playerOvrPot.setText(String.valueOf(p.gmStats.secondsPlayed/60) + "min");
 
         playerPTS.setText(String.valueOf(p.gmStats.points));

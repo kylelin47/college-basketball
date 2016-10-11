@@ -23,6 +23,7 @@ import java.util.List;
 
 import io.coachapps.collegebasketballcoach.adapters.PlayerRatingsListArrayAdapter;
 import io.coachapps.collegebasketballcoach.adapters.PlayerStatsListArrayAdapter;
+import io.coachapps.collegebasketballcoach.adapters.RosterListArrayAdapter;
 import io.coachapps.collegebasketballcoach.basketballsim.GameSimThread;
 import io.coachapps.collegebasketballcoach.basketballsim.Player;
 import io.coachapps.collegebasketballcoach.basketballsim.PlayerGen;
@@ -30,6 +31,7 @@ import io.coachapps.collegebasketballcoach.basketballsim.Simulator;
 import io.coachapps.collegebasketballcoach.basketballsim.Team;
 import io.coachapps.collegebasketballcoach.db.DbHelper;
 import io.coachapps.collegebasketballcoach.db.TeamDao;
+import io.coachapps.collegebasketballcoach.util.DataDisplayer;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -122,6 +124,33 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
+    public void showRosterDialog(final List<Player> players) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                //do nothing?
+            }
+        })
+                .setView(getLayoutInflater().inflate(R.layout.roster, null));
+        AlertDialog dialog = builder.create();
+        dialog.show();
+        dialog.getWindow().setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
+        ListView list = (ListView) dialog.findViewById(R.id.listView);
+        list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int position, long id) {
+                Log.i("Roster dialog", "You clicked player with name " + players.get(position)
+                        .name);
+            }
+        });
+        try {
+            list.setAdapter(new RosterListArrayAdapter(MainActivity.this, players));
+        } catch (java.lang.NullPointerException e) {
+            Log.e("MainActivity", "Could not show roster", e);
+        }
+    }
+
     public void showPlayerDialog(Player p) {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
@@ -144,10 +173,11 @@ public class MainActivity extends AppCompatActivity {
 
         try {
             textViewName.setText(p.name);
-            textViewPosition.setText(Player.getPositionStr(p.getPosition()));
-            textViewYear.setText("Sr");
+            textViewPosition.setText(DataDisplayer.getPosition(p.getPosition()));
+            textViewYear.setText(DataDisplayer.getYear(p.year));
             textViewOvrPot.setText(String.valueOf(p.getOverall()));
-            textViewVitals.setText("6'7\", 250 lbs");
+            textViewVitals.setText(DataDisplayer.getHeight(p.ratings.heightInInches) + ", " +
+                    DataDisplayer.getWeight(p.ratings.weightInPounds));
             textViewAttributes.setText("Attributes: " + p.attributes);
 
             ListView list = (ListView) dialog.findViewById(R.id.listView);

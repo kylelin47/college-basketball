@@ -212,14 +212,6 @@ public class Player {
     public double get3GMPG() {
         return (double)((int)((double)gmStats.threePointsMade/games_played * 10))/10;
     }
-    
-    public static String getPositionStr(int pos) {
-        if (pos == 1) return "PG";
-        if (pos == 2) return "SG";
-        if (pos == 3) return "SF";
-        if (pos == 4) return "PF";
-        return "C";
-    }
 
     public Map<String, Integer> getRatingsMap() {
         HashMap<String, Integer> map = new HashMap<>();
