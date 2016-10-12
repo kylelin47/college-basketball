@@ -130,4 +130,19 @@ public class Strategy {
         return (double) iq/team.players.size();
     }
 
+    public double getInsideBonus() {
+        return insideBonus;
+    }
+
+    public double getMidrangeBonus() {
+        return midrangeBonus;
+    }
+
+    public double getOutsideBonus() {
+        return outsideBonus;
+    }
+
+    public double getStealBonus() {
+        return stealBonus;
+    }
 }

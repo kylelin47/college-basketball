@@ -148,7 +148,7 @@ public class Simulator {
             if ( (int)(6*Math.random()) + totPasses < 5 || (totPasses == 0 && Math.random() < 0.97) ) {
                 // Pass the ball
                 totPasses++;
-                if ( potSteal(whoPoss, whoDef) ) {
+                if ( potSteal(whoPoss, whoDef, offense, defense) ) {
                     // Ball stolen
                     whoDef.addStl();
                     addToLog(gameLog, "TURNOVER! " +  whoDef.name + " steals the ball from " + whoPoss.name + "! ");
@@ -179,7 +179,7 @@ public class Simulator {
                 }
             } else {
                 // whoPoss will shoot the ball
-                int points = takeShot(whoPoss, whoDef, defense, assister);
+                int points = takeShot(whoPoss, whoDef, offense, defense, assister);
                 if ( points > 0 ) {
                     // Made the shot!
                     addToLog(gameLog, whoPoss.name + " drains the " + points + " point shot! ");
@@ -229,7 +229,7 @@ public class Simulator {
      * @param assister
      * @return nubmer of points scored (0,2,3)
      */
-    private static int takeShot( Player shooter, Player defender, Team defense, Player assister ) {
+    private static int takeShot( Player shooter, Player defender, Team offense, Team defense, Player assister ) {
         int assBonus = 0;
         if ( assister != shooter ) {
             //shooter gets bonus for having a good passer
@@ -248,10 +248,11 @@ public class Simulator {
         if ( Math.abs(mismOut) > 30 ) {
             intelOutT += (int)((float)mismOut / 8);
         }
-        //System.out.println(shooter.name + " has " + shooter.getOutS() + "outS and " + shooter.getOutT() + "outT and " + intelOutT + "intelOutT");
+
         if ( selShot < intelOutT && intelOutT >= 0 && shooter.getOutS() > 50 ) {
             //3 point shot
-            double chance = 22 + (float)shooter.getOutS()/3 + assBonus - (float)defender.getOutD()/6;
+            double chance = 22 + (float)shooter.getOutS()/3 + assBonus - (float)defender.getOutD()/6 +
+                    offense.getOffStrat().getOutsideBonus() - defense.getDefStrat().getOutsideBonus();
             if ( chance > Math.random()*100 ) {
                 //made the shot!
                 shooter.make3ptShot();
@@ -267,7 +268,8 @@ public class Simulator {
         } else if ( selShot < intelMidT && intelMidT >= 0 ) {
             //mid range shot
             int defMidD = (int)( defender.getOutD()*0.5 + defender.getIntD()*0.5 );
-            double chance = 30 + (float)shooter.getOutS()/3 + assBonus - (float)defMidD/7;
+            double chance = 30 + (float)shooter.getOutS()/3 + assBonus - (float)defMidD/7 +
+                    offense.getOffStrat().getMidrangeBonus() - defense.getDefStrat().getMidrangeBonus();
             if ( chance > Math.random()*100 ) {
                 //made the shot!
                 shooter.addPts(2);
@@ -308,7 +310,8 @@ public class Simulator {
                 defenseBonus = (float)defense.getPF().getIntD()/25 + (float)defense.getC().getIntD()/25;
             }
 
-            double chance = 35 + (float)shooter.getIntS()/3 + assBonus - (float)defender.getIntD()/14 - defenseBonus;
+            double chance = 35 + (float)shooter.getIntS()/3 + assBonus - (float)defender.getIntD()/14 - defenseBonus +
+                    offense.getOffStrat().getInsideBonus() - defense.getDefStrat().getInsideBonus();
             if ( chance > Math.random() * 100 ) {
                 //made the shot!
                 shooter.addPts(2);
@@ -432,10 +435,12 @@ public class Simulator {
      * Check if the ball is being stolen
      * @param off player on offense
      * @param def player on defense
+     * @param offense team on offense
+     * @param defense team on defense
      * @return true if the ball was stolen, else false
      */
-    private static boolean potSteal( Player off, Player def ) {
-        if ( Math.random() < 0.1 ) {
+    private static boolean potSteal( Player off, Player def, Team offense, Team defense ) {
+        if ( Math.random() < 0.1 + offense.getOffStrat().getStealBonus()/200 + defense.getDefStrat().getStealBonus()/200) {
             int stl = def.getStl()-75;
             if (stl < 0) {
                 stl = 0;
