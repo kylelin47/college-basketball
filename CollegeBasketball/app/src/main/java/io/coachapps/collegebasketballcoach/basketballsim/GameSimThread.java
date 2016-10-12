@@ -220,7 +220,11 @@ public class GameSimThread extends Thread {
      * @return
      */
     private String getEventPrefix() {
-        return convertTime() + "\t\t" + away.getAbbr() + " " + ascore + " - " + hscore + " " + home.getAbbr() + "\n";
+        Team poss_team;
+        // This is called after possession is flipped, so flip it back
+        if (poss_home) poss_team = away;
+        else poss_team = home;
+        return convertTime() + "\t\t" + away.getAbbr() + " " + ascore + " - " + hscore + " " + home.getAbbr() + "\n" + poss_team.getAbbr() + " ball: ";
     }
 
     private String convertTime() {

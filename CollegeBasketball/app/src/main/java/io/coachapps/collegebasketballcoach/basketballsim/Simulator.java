@@ -179,10 +179,10 @@ public class Simulator {
                 }
             } else {
                 // whoPoss will shoot the ball
-                int points = takeShot(whoPoss, whoDef, offense, defense, assister);
+                int points = takeShot(gameLog, whoPoss, whoDef, offense, defense, assister);
                 if ( points > 0 ) {
                     // Made the shot!
-                    addToLog(gameLog, whoPoss.name + " drains the " + points + " point shot! ");
+                    //addToLog(gameLog, whoPoss.name + " drains the " + points + " point shot! ");
                     if ( assister == whoPoss ) { // Can't pass to yourself
                         return points;
                     } else {
@@ -203,7 +203,7 @@ public class Simulator {
                         // Defensive rebound
                         Player rebounder = findRebounder(defense);
                         rebounder.addReb();
-                        addToLog(gameLog, whoPoss.name + " misses the shot and the other team grabs the rebound. ");
+                        addToLog(gameLog, rebounder.name + " grabs the defensive rebound. ");
                         return 0; // Exit without scoring any points
                     } else {
                         // Offensive rebound
@@ -211,7 +211,7 @@ public class Simulator {
                         rebounder.addReb();
                         whoPoss = rebounder;
                         totPasses = 2;
-                        addToLog(gameLog, whoPoss.name + " misses the shot, but his team grabs the offensive board! ");
+                        addToLog(gameLog, rebounder.name + " grabs the offensive board! ");
                         // Goes back into loop to try another play
                     }
                 }
@@ -223,13 +223,14 @@ public class Simulator {
     /**
      * Make the shooter take a shot, choosing where to shoot it from.
      * Player gets a bonus for getting a pass from a good assister.
+     * @param gameLog
      * @param shooter
      * @param defender
      * @param defense
      * @param assister
      * @return nubmer of points scored (0,2,3)
      */
-    private static int takeShot( Player shooter, Player defender, Team offense, Team defense, Player assister ) {
+    private static int takeShot( StringBuilder gameLog, Player shooter, Player defender, Team offense, Team defense, Player assister ) {
         int assBonus = 0;
         if ( assister != shooter ) {
             //shooter gets bonus for having a good passer
@@ -255,11 +256,13 @@ public class Simulator {
                     offense.getOffStrat().getOutsideBonus() - defense.getDefStrat().getOutsideBonus();
             if ( chance > Math.random()*100 ) {
                 //made the shot!
+                addToLog(gameLog, getCommentary3ptMake(shooter, defender));
                 shooter.make3ptShot();
                 defender.addOFA();
                 defender.addOFM();
                 return 3;
             } else {
+                addToLog(gameLog, getCommentary3ptMiss(shooter, defender));
                 shooter.addFGA();
                 shooter.add3GA();
                 defender.addOFA();
@@ -272,6 +275,7 @@ public class Simulator {
                     offense.getOffStrat().getMidrangeBonus() - defense.getDefStrat().getMidrangeBonus();
             if ( chance > Math.random()*100 ) {
                 //made the shot!
+                addToLog(gameLog, getCommentaryMidrangeMake(shooter, defender));
                 shooter.addPts(2);
                 shooter.addFGA();
                 shooter.addFGM();
@@ -279,6 +283,7 @@ public class Simulator {
                 defender.addOFM();
                 return 2;
             } else {
+                addToLog(gameLog, getCommentaryMidrangeMiss(shooter, defender));
                 shooter.addFGA();
                 defender.addOFA();
                 return 0;
@@ -294,6 +299,7 @@ public class Simulator {
                 }
                 if ( Math.random() * Math.pow(blk, 0.75) > 5 || Math.random() < 0.02 ) {
                     //blocked!
+                    addToLog(gameLog, shooter.name + "'s shot is BLOCKED by " + defender.name + "! ");
                     shooter.addFGA();
                     defender.addOFA();
                     defender.addBlk();
@@ -314,6 +320,7 @@ public class Simulator {
                     offense.getOffStrat().getInsideBonus() - defense.getDefStrat().getInsideBonus();
             if ( chance > Math.random() * 100 ) {
                 //made the shot!
+                addToLog(gameLog, getCommentaryInsideMake(shooter, defender));
                 shooter.addPts(2);
                 shooter.addFGA();
                 shooter.addFGM();
@@ -321,6 +328,7 @@ public class Simulator {
                 defender.addOFM();
                 return 2;
             } else {
+                addToLog(gameLog, getCommentaryInsideMiss(shooter, defender));
                 shooter.addFGA();
                 defender.addOFA();
                 return 0;
@@ -452,12 +460,99 @@ public class Simulator {
         } else return false;
     }
 
+    /**
+     * Adds the event to the log, if the log is present.
+     * @param gameLog stringbuilder of the log
+     * @param event what happened
+     */
     private static void addToLog(StringBuilder gameLog, String event) {
         if (gameLog != null) {
             gameLog.append(event);
         }
     }
-    
-    
+
+    private static String getCommentary3ptMake(Player shooter, Player defender) {
+        int selection = (int)(Math.random() * 3);
+        switch (selection) {
+            case 0:
+                return shooter.name + " drains the 3 pointer from way downtown! ";
+            case 1:
+                return shooter.name + " swishes through the 3 point shot! ";
+            case 2:
+                return shooter.name + " puts up a high arcing 3 point attempt that banks in! ";
+            default:
+                return shooter.name + " makes the 3 point shot attempt. ";
+        }
+    }
+
+    private static String getCommentary3ptMiss(Player shooter, Player defender) {
+        int selection = (int)(Math.random() * 3);
+        switch (selection) {
+            case 0:
+                return shooter.name + " is way off on his 3 point shot attempt. ";
+            case 1:
+                return shooter.name + "'s 3 point shot rims out! ";
+            case 2:
+                return shooter.name + " is locked down by " + defender.name + ", and misses the 3 pointer. ";
+            default:
+                return shooter.name + " misses the 3 point shot attempt. ";
+        }
+    }
+
+    private static String getCommentaryMidrangeMake(Player shooter, Player defender) {
+        int selection = (int)(Math.random() * 3);
+        switch (selection) {
+            case 0:
+                return shooter.name + " drains the quick midrange jumper! ";
+            case 1:
+                return shooter.name + " uses the bank shot for two points! ";
+            case 2:
+                return shooter.name + "'s turnaround jumper swishes through for 2 points. ";
+            default:
+                return shooter.name + " makes the 2 point shot attempt. ";
+        }
+    }
+
+    private static String getCommentaryMidrangeMiss(Player shooter, Player defender) {
+        int selection = (int)(Math.random() * 3);
+        switch (selection) {
+            case 0:
+                return shooter.name + "'s midrange jumper clangs off the rim. ";
+            case 1:
+                return shooter.name + " tries to use the bank on the jumper, but the ball bounces out. ";
+            case 2:
+                return shooter.name + " is locked down by " + defender.name + ", and is way off on the jumpshot. ";
+            default:
+                return shooter.name + " misses the 2 point shot attempt. ";
+        }
+    }
+
+    private static String getCommentaryInsideMake(Player shooter, Player defender) {
+        int selection = (int)(Math.random() * 3);
+        switch (selection) {
+            case 0:
+                return shooter.name + " lays it in with style and grace! ";
+            case 1:
+                return "We just saw man fly! " + shooter.name + " dunks it over " + defender.name + "! ";
+            case 2:
+                return shooter.name + " dribbles around his defender and puts in an easy layup.";
+            default:
+                return shooter.name + " makes the inside shot attempt. ";
+        }
+    }
+
+    private static String getCommentaryInsideMiss(Player shooter, Player defender) {
+        int selection = (int)(Math.random() * 3);
+        switch (selection) {
+            case 0:
+                return shooter.name + " tries the circus shot, but misses badly! ";
+            case 1:
+                return shooter.name + "'s layup attempt is a bit too strong, and the ball bounces out. ";
+            case 2:
+                return shooter.name + " tries a ferocious dunk, but is blocked by the rim! ";
+            default:
+                return shooter.name + " misses the inside shot attempt. ";
+        }
+    }
     
 }
