@@ -11,11 +11,15 @@ public class Team {
     public List<Player> players;
     public int wins;
     public int losses;
+
     int games;
     int pointsFor;
     int pointsAga;
     String name;
     boolean[] startersIn;
+
+    volatile Strategy offStrat;
+    volatile Strategy defStrat;
 
     public Team( String name, List<Player> players ) {
         this.players = players;
@@ -27,6 +31,9 @@ public class Team {
         for (int i = 0; i < 5; ++i) {
             startersIn[i] = true;
         }
+
+        setOffStrat(Strategy.Strats.DRIBBLE_DRIVE);
+        setDefStrat(Strategy.Strats.MAN_TO_MAN);
     }
     
     public Team( String name, PlayerGen gen ) {
@@ -54,6 +61,25 @@ public class Team {
                 players.add(a);
             }
         }
+
+        setOffStrat(Strategy.Strats.DRIBBLE_DRIVE);
+        setDefStrat(Strategy.Strats.MAN_TO_MAN);
+    }
+
+    public void setOffStrat(Strategy.Strats type) {
+        offStrat = new Strategy(type, this);
+    }
+
+    public void setDefStrat(Strategy.Strats type) {
+        defStrat = new Strategy(type, this);
+    }
+
+    public Strategy getOffStrat() {
+        return offStrat;
+    }
+
+    public Strategy getDefStrat() {
+        return defStrat;
     }
 
     public String getName() { return name; }

@@ -8,14 +8,33 @@ package io.coachapps.collegebasketballcoach.basketballsim;
 public class Strategy {
 
     public enum Strats {
-        DRIBBLE_DRIVE,
-        MOTION,
-        RUN_AND_GUN,
-        TRIANGLE,
-        MAN_TO_MAN,
-        ONE_THREE_ONE_ZONE,
-        TWO_THREE_ZONE,
-        DOUBLE_TEAM
+        DRIBBLE_DRIVE("Dribble Drive"),
+        MOTION("Motion"),
+        RUN_AND_GUN("Run and Gun"),
+        TRIANGLE("Triangle"),
+        MAN_TO_MAN("Man to Man"),
+        ONE_THREE_ONE_ZONE("1-3-1 Zone"),
+        TWO_THREE_ZONE("2-3 Zone"),
+        DOUBLE_TEAM("Double Team");
+
+        private String name;
+
+        Strats(String name) {
+            this.name = name;
+        }
+
+        public String getName() {
+            return name;
+        }
+
+        public static Strats[] getOffStrats() {
+            return new Strats[]{DRIBBLE_DRIVE, MOTION, RUN_AND_GUN, TRIANGLE};
+        }
+
+        public static Strats[] getDefStrats() {
+            return new Strats[]{MAN_TO_MAN, ONE_THREE_ONE_ZONE, TWO_THREE_ZONE, DOUBLE_TEAM};
+        }
+
     }
 
     public final Strats strat;
@@ -96,6 +115,10 @@ public class Strategy {
                 stealBonus = 0;
                 break;
         }
+    }
+
+    public String getName() {
+        return strat.getName();
     }
 
     private double getCollectiveIQ() {

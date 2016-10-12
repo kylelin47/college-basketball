@@ -28,6 +28,7 @@ import io.coachapps.collegebasketballcoach.basketballsim.GameSimThread;
 import io.coachapps.collegebasketballcoach.basketballsim.Player;
 import io.coachapps.collegebasketballcoach.basketballsim.PlayerGen;
 import io.coachapps.collegebasketballcoach.basketballsim.Simulator;
+import io.coachapps.collegebasketballcoach.basketballsim.Strategy;
 import io.coachapps.collegebasketballcoach.basketballsim.Team;
 import io.coachapps.collegebasketballcoach.db.DbHelper;
 import io.coachapps.collegebasketballcoach.db.TeamDao;
@@ -57,6 +58,7 @@ public class MainActivity extends AppCompatActivity {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
+        /*
         TeamDao teamDao = new TeamDao(this);
         try {
             teamList = teamDao.getAllTeams();
@@ -119,6 +121,8 @@ public class MainActivity extends AppCompatActivity {
                 showPlayerDialog(p);
             }
         });
+
+        */
 
         showGameSimDialog();
 
@@ -256,8 +260,8 @@ public class MainActivity extends AppCompatActivity {
         playerGen = new PlayerGen(getString(R.string.league_player_names),
                 getString(R.string.league_last_names));
 
-        Team homeTeam = new Team("Warriors", playerGen);
-        Team awayTeam = new Team("Cavaliers", playerGen);
+        final Team homeTeam = new Team("Warriors", playerGen);
+        final Team awayTeam = new Team("Cavaliers", playerGen);
 
         final GameSimThread t = new GameSimThread(this, this, uiElements, homeTeam, awayTeam);
 
@@ -265,10 +269,90 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View v) {
                 // Perform action on click
                 t.togglePause();
+                showChangeStrategyDialog(homeTeam, t);
             }
         });
 
         t.start();
+
+    }
+
+    public void showChangeStrategyDialog(final Team userTeam, final GameSimThread t) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("Team Strategy")
+                .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        //do nothing?
+                        t.togglePause();
+                    }
+                })
+                .setView(getLayoutInflater().inflate(R.layout.team_strategy_dialog, null));
+        AlertDialog dialog = builder.create();
+        dialog.show();
+
+        // Get the options for team strategies in both offense and defense
+        final Strategy.Strats[] tsOff = Strategy.Strats.getOffStrats();
+        final Strategy.Strats[] tsDef = Strategy.Strats.getDefStrats();
+        int offStratNum = 0;
+        int defStratNum = 0;
+
+        String[] stratOffSelection = new String[ tsOff.length ];
+        for (int i = 0; i < tsOff.length; ++i) {
+            stratOffSelection[i] = tsOff[i].getName();
+            if (stratOffSelection[i].equals(userTeam.getOffStrat().getName())) offStratNum = i;
+        }
+
+        String[] stratDefSelection = new String[ tsDef.length ];
+        for (int i = 0; i < tsDef.length; ++i) {
+            stratDefSelection[i] = tsDef[i].getName();
+            if (stratDefSelection[i].equals(userTeam.getDefStrat().getName())) defStratNum = i;
+        }
+
+        final TextView offStratDescription = (TextView) dialog.findViewById(R.id.textOffenseStrategy);
+        final TextView defStratDescription = (TextView) dialog.findViewById(R.id.textDefenseStrategy);
+
+        // Offense Strategy Spinner
+        Spinner stratOffSelectionSpinner = (Spinner) dialog.findViewById(R.id.spinnerOffenseStrategy);
+        ArrayAdapter<String> stratOffSpinnerAdapter = new ArrayAdapter<String>(this,
+                android.R.layout.simple_spinner_item, stratOffSelection);
+        stratOffSpinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        stratOffSelectionSpinner.setAdapter(stratOffSpinnerAdapter);
+        stratOffSelectionSpinner.setSelection(offStratNum);
+
+        stratOffSelectionSpinner.setOnItemSelectedListener(
+                new AdapterView.OnItemSelectedListener() {
+                    public void onItemSelected(
+                            AdapterView<?> parent, View view, int position, long id) {
+                        //offStratDescription.setText(tsOff[position].getStratDescription());
+                        userTeam.setOffStrat(tsOff[position]);
+                    }
+
+                    public void onNothingSelected(AdapterView<?> parent) {
+                        // do nothing
+                    }
+                });
+
+        // Defense Spinner Adapter
+        Spinner stratDefSelectionSpinner = (Spinner) dialog.findViewById(R.id.spinnerDefenseStrategy);
+        ArrayAdapter<String> stratDefSpinnerAdapter = new ArrayAdapter<String>(this,
+                android.R.layout.simple_spinner_item, stratDefSelection);
+        stratDefSpinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        stratDefSelectionSpinner.setAdapter(stratDefSpinnerAdapter);
+        stratDefSelectionSpinner.setSelection(defStratNum);
+
+        stratDefSelectionSpinner.setOnItemSelectedListener(
+                new AdapterView.OnItemSelectedListener() {
+                    public void onItemSelected(
+                            AdapterView<?> parent, View view, int position, long id) {
+                        //defStratDescription.setText(tsDef[position].getStratDescription());
+                        userTeam.setDefStrat(tsDef[position]);
+                    }
+
+                    public void onNothingSelected(AdapterView<?> parent) {
+                        // do nothing
+                    }
+                });
 
     }
 }
