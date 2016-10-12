@@ -58,7 +58,7 @@ public class MainActivity extends AppCompatActivity {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        /*
+
         TeamDao teamDao = new TeamDao(this);
         try {
             teamList = teamDao.getAllTeams();
@@ -122,9 +122,9 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        */
 
-        showGameSimDialog();
+
+        //showGameSimDialog();
 
     }
 

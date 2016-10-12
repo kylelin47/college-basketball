@@ -121,13 +121,21 @@ public class Strategy {
         return strat.getName();
     }
 
-    private double getCollectiveIQ() {
+    public double getCollectiveIQ() {
         int iq = 0;
         for (Player p : team.players) {
             iq += p.getBBallIQ();
         }
 
         return (double) iq/team.players.size();
+    }
+
+    public double getCollectivePassing() {
+        int pass = 0;
+        for (int i = 0; i < 5; ++i) {
+            pass += team.players.get(i).getPass();
+        }
+        return (double)pass/5;
     }
 
     public double getInsideBonus() {

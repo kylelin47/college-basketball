@@ -2,9 +2,11 @@ package io.coachapps.collegebasketballcoach.basketballsim;
 
 import android.content.Context;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import io.coachapps.collegebasketballcoach.db.BoxScoreDao;
+import io.coachapps.collegebasketballcoach.models.BoxScore;
 
 /**
  * Has all the code responsible for simulating games.
@@ -96,13 +98,15 @@ public class Simulator {
         BoxScoreDao bsd = new BoxScoreDao(context);
         
         //add each players stats to his career total
+        List<BoxScore> boxScores = new ArrayList<>();
         for (int p = 0; p < 10; ++p) {
             home.players.get(p).addGameStatsToTotal();
             away.players.get(p).addGameStatsToTotal();
 
-            //bsd.save(home.playersArray[p].getGameBoxScore());
-            //bsd.save(away.playersArray[p].getGameBoxScore());
+            boxScores.add(home.players.get(p).getGameBoxScore());
+            boxScores.add(away.players.get(p).getGameBoxScore());
         }
+        bsd.save(boxScores);
         
         home.pointsFor += hscore;
         home.pointsAga += ascore;
