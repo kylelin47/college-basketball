@@ -9,7 +9,7 @@
         android:layout_width="0dip"
         android:layout_weight="1"
         android:layout_height="wrap_content"
-        android:gravity="center">
+        android:gravity="left">
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -18,75 +18,21 @@
             android:textColor="#000"
             android:textSize="25sp"
             android:textStyle="bold"
-            android:layout_centerVertical="true"
             android:id="@+id/textViewRat1"
             />
+
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="PPG"
+            android:text="INTERIOR SHOOTING"
             android:textColor="#999"
-            android:textSize="15sp"
+            android:textSize="25sp"
             android:textStyle="bold"
             android:id="@+id/textViewRat1label"
-            android:layout_centerVertical="true"
-            android:layout_toEndOf="@+id/textViewRat1" />
+            android:layout_marginEnd="31dp"
+            android:layout_alignParentTop="true"
+            android:layout_alignParentEnd="true"/>
     </RelativeLayout>
 
-    <RelativeLayout
-        android:layout_width="0dip"
-        android:layout_weight="1"
-        android:layout_height="wrap_content"
-        android:gravity="center">
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginEnd="3dp"
-            android:text="6.5"
-            android:textColor="#000"
-            android:textSize="25sp"
-            android:textStyle="bold"
-            android:layout_centerVertical="true"
-            android:id="@+id/textViewRat2"
-            />
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="RPG"
-            android:textColor="#999"
-            android:textSize="15sp"
-            android:textStyle="bold"
-            android:id="@+id/textViewRat2label"
-            android:layout_centerVertical="true"
-            android:layout_toEndOf="@+id/textViewRat2" />
-    </RelativeLayout>
-
-    <RelativeLayout
-        android:layout_width="0dip"
-        android:layout_weight="1"
-        android:layout_height="wrap_content"
-        android:gravity="center">
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginEnd="3dp"
-            android:text="8.1"
-            android:textColor="#000"
-            android:textSize="25sp"
-            android:textStyle="bold"
-            android:layout_centerVertical="true"
-            android:id="@+id/textViewRat3"
-            />
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="APG"
-            android:textColor="#999"
-            android:textSize="15sp"
-            android:textStyle="bold"
-            android:id="@+id/textViewRat3label"
-            android:layout_centerVertical="true"
-            android:layout_toEndOf="@+id/textViewRat3" />
-    </RelativeLayout>
 
 </LinearLayout>

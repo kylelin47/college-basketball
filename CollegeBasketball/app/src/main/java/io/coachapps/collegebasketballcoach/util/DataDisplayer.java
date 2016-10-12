@@ -15,6 +15,17 @@ public class DataDisplayer {
             default: return "Unknown";
         }
     }
+    public static String getYearAbbreviation(int year) {
+        switch (year) {
+            case 0: return "Re";
+            case 1: return "Fr";
+            case 2: return "Soph";
+            case 3: return "Jr";
+            case 4: return "Sr";
+            case 5: return "Gr";
+            default: return "Unknown";
+        }
+    }
     public static String getWeight(int weightInPounds) {
         return weightInPounds + " lbs.";
     }

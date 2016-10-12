@@ -23,7 +23,6 @@ import java.util.List;
 
 import io.coachapps.collegebasketballcoach.adapters.PlayerRatingsListArrayAdapter;
 import io.coachapps.collegebasketballcoach.adapters.PlayerStatsListArrayAdapter;
-import io.coachapps.collegebasketballcoach.adapters.RosterListArrayAdapter;
 import io.coachapps.collegebasketballcoach.basketballsim.GameSimThread;
 import io.coachapps.collegebasketballcoach.basketballsim.Player;
 import io.coachapps.collegebasketballcoach.basketballsim.PlayerGen;
@@ -58,7 +57,6 @@ public class MainActivity extends AppCompatActivity {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        /*
         TeamDao teamDao = new TeamDao(this);
         try {
             teamList = teamDao.getAllTeams();
@@ -122,37 +120,8 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        */
-
         showGameSimDialog();
 
-    }
-
-    public void showRosterDialog(final List<Player> players) {
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                //do nothing?
-            }
-        })
-                .setView(getLayoutInflater().inflate(R.layout.roster, null));
-        AlertDialog dialog = builder.create();
-        dialog.show();
-        dialog.getWindow().setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
-        ListView list = (ListView) dialog.findViewById(R.id.listView);
-        list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> adapterView, View view, int position, long id) {
-                Log.i("Roster dialog", "You clicked player with name " + players.get(position)
-                        .name);
-            }
-        });
-        try {
-            list.setAdapter(new RosterListArrayAdapter(MainActivity.this, players));
-        } catch (java.lang.NullPointerException e) {
-            Log.e("MainActivity", "Could not show roster", e);
-        }
     }
 
     public void showPlayerDialog(Player p) {
@@ -173,36 +142,17 @@ public class MainActivity extends AppCompatActivity {
         TextView textViewYear = (TextView) dialog.findViewById(R.id.textViewYear);
         TextView textViewOvrPot = (TextView) dialog.findViewById(R.id.textViewOvrPot);
         TextView textViewVitals = (TextView) dialog.findViewById(R.id.textViewVitals);
-        TextView textViewAttributes = (TextView) dialog.findViewById(R.id.textViewAttributes);
-
+        Spinner spinner = (Spinner) dialog.findViewById(R.id.spinnerPlayerStats);
         try {
             textViewName.setText(p.name);
-            textViewPosition.setText(DataDisplayer.getPosition(p.getPosition()));
-            textViewYear.setText(DataDisplayer.getYear(p.year));
+            textViewPosition.setText(DataDisplayer.getPositionAbbreviation(p.getPosition()));
+            textViewYear.setText(DataDisplayer.getYearAbbreviation(p.year));
             textViewOvrPot.setText(String.valueOf(p.getOverall()));
             textViewVitals.setText(DataDisplayer.getHeight(p.ratings.heightInInches) + ", " +
                     DataDisplayer.getWeight(p.ratings.weightInPounds));
-            textViewAttributes.setText("Attributes: " + p.attributes);
 
             ListView list = (ListView) dialog.findViewById(R.id.listView);
-            ArrayList<String> ratings = new ArrayList<>();
-            List<String> ratCSVs = p.getRatingsCSVs();
-            int i = 0;
-            StringBuilder sb = new StringBuilder();
-            for (String rat : ratCSVs) {
-                if (i == 3) {
-                    ratings.add(sb.toString());
-                    sb.setLength(0);
-                    i = 0;
-                }
-
-                sb.append(rat + ",");
-
-                i++;
-            }
-            ratings.add(sb.toString());
-
-            list.setAdapter(new PlayerRatingsListArrayAdapter(MainActivity.this, ratings));
+            list.setAdapter(new PlayerRatingsListArrayAdapter(MainActivity.this, p.getRatingsCSVs()));
 
 
         } catch (java.lang.NullPointerException e) {

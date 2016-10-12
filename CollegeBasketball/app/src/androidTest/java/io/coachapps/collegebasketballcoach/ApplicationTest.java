@@ -16,6 +16,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import io.coachapps.collegebasketballcoach.basketballsim.Player;
 import io.coachapps.collegebasketballcoach.basketballsim.PlayerGen;
 import io.coachapps.collegebasketballcoach.basketballsim.Team;
 import io.coachapps.collegebasketballcoach.db.BoxScoreDao;
@@ -29,6 +30,7 @@ import io.coachapps.collegebasketballcoach.models.Game;
 import io.coachapps.collegebasketballcoach.models.YearlyPlayerStats;
 
 import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.Matchers.greaterThan;
 import static org.junit.Assert.assertThat;
 
 /**
@@ -129,6 +131,18 @@ public class ApplicationTest {
                 teamList.add(new Team("Team " + i, playerGen));
             }
             teamDao.saveTeams(teamList, "player team name");
+        }
+        List<Team> newTeamList = null;
+        try {
+            newTeamList = teamDao.getAllTeams();
+        } catch (IOException | ClassNotFoundException e) {
+            Log.e("MainActivity", "Could not retrieve teams", e);
+            // PROBABLY JUST CRASH
+        }
+        for (Team team : newTeamList) {
+            for (Player player : team.players) {
+                assertThat(player.ratings.insideShooting, is(greaterThan(0)));
+            }
         }
     }
 }

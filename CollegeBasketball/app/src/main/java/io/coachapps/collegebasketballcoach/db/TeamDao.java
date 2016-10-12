@@ -70,6 +70,7 @@ public class TeamDao {
         String[] projection = {
                 Schemas.TeamEntry.NAME,
         };
+        List<String> teamNames = new ArrayList<>();
         db.beginTransaction();
         try {
             try (Cursor cursor = db.query(Schemas.TeamEntry.TABLE_NAME, projection, null, null,
@@ -77,17 +78,18 @@ public class TeamDao {
                 while (cursor.moveToNext()) {
                     String teamName = cursor.getString(cursor.getColumnIndexOrThrow(Schemas
                             .TeamEntry.NAME));
-                    teams.add(new Team(teamName, new ArrayList<Player>()));
+                    teamNames.add(teamName);
                 }
             }
-            for (Team team : teams) {
+            for (String teamName : teamNames) {
+                Team team = new Team(teamName, playerDao.getPlayers(teamName));
                 String[] teamProjection = {
                         Schemas.YearlyTeamStatsEntry.WINS,
                         Schemas.YearlyTeamStatsEntry.LOSSES
                 };
                 String whereClause = Schemas.YearlyTeamStatsEntry.TEAM + " = ?";
                 String[] whereArgs = {
-                        team.getName()
+                        teamName
                 };
                 try (Cursor cursor = db.query(Schemas.YearlyTeamStatsEntry.TABLE_NAME,
                         teamProjection, whereClause, whereArgs, null, null, null, null)) {
@@ -98,7 +100,7 @@ public class TeamDao {
                                 .YearlyTeamStatsEntry.LOSSES));
                     }
                 }
-                team.players = playerDao.getPlayers(team.getName());
+                teams.add(team);
             }
             db.setTransactionSuccessful();
         } finally {

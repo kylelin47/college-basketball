@@ -59,20 +59,11 @@
         android:layout_alignTop="@+id/textViewOvrPot"
         android:layout_alignParentEnd="true" />
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textAppearance="?android:attr/textAppearanceMedium"
-        android:text="Attributes: Ps 3p"
-        android:id="@+id/textViewAttributes"
-        android:layout_below="@+id/textViewOvrPot"
-        android:layout_centerHorizontal="true" />
-
     <Spinner
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:id="@+id/spinnerPlayerStats"
-        android:layout_below="@+id/textViewAttributes"
+        android:layout_below="@+id/textViewOvrPot"
         android:spinnerMode="dropdown" />
 
     <ListView

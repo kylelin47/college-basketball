@@ -7,10 +7,9 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.TextView;
 
-import java.util.ArrayList;
+import java.util.List;
 
 import io.coachapps.collegebasketballcoach.R;
-import io.coachapps.collegebasketballcoach.basketballsim.Player;
 
 /**
  * Array Adapter for displaying a player's rating in the player dialog.
@@ -18,9 +17,9 @@ import io.coachapps.collegebasketballcoach.basketballsim.Player;
  */
 public class PlayerRatingsListArrayAdapter  extends ArrayAdapter<String> {
     private final Context context;
-    public final ArrayList<String> ratings;
+    public final List<String> ratings;
 
-    public PlayerRatingsListArrayAdapter(Context context, ArrayList<String> values) {
+    public PlayerRatingsListArrayAdapter(Context context, List<String> values) {
         super(context, R.layout.rating_list_item, values);
         this.context = context;
         this.ratings = values;
@@ -32,18 +31,13 @@ public class PlayerRatingsListArrayAdapter  extends ArrayAdapter<String> {
                 .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         View rowView = inflater.inflate(R.layout.rating_list_item, parent, false);
 
-        TextView[] views = new TextView[6];
-        views[1] = (TextView) rowView.findViewById(R.id.textViewRat1);
-        views[0] = (TextView) rowView.findViewById(R.id.textViewRat1label);
-        views[3] = (TextView) rowView.findViewById(R.id.textViewRat2);
-        views[2] = (TextView) rowView.findViewById(R.id.textViewRat2label);
-        views[5] = (TextView) rowView.findViewById(R.id.textViewRat3);
-        views[4] = (TextView) rowView.findViewById(R.id.textViewRat3label);
+        TextView rating = (TextView) rowView.findViewById(R.id.textViewRat1);
+        TextView label = (TextView) rowView.findViewById(R.id.textViewRat1label);
 
         String[] ratingSplit = ratings.get(position).split(",");
-        for (int i = 0; i < views.length; ++i) {
-            views[i].setText(ratingSplit[i]);
-        }
+        // "Interior Shooting,20"
+        label.setText(ratingSplit[0]);
+        rating.setText(ratingSplit[1]);
 
         return rowView;
     }

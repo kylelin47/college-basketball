@@ -22,7 +22,7 @@ public class PlayerStatsListArrayAdapter extends ArrayAdapter<Player> {
     public final List<Player> players;
 
     public PlayerStatsListArrayAdapter(Context context, List<Player> values) {
-        super(context, R.layout.player_list_item, values);
+        super(context, R.layout.roster_list_item, values);
         this.context = context;
         this.players = values;
     }
@@ -31,7 +31,7 @@ public class PlayerStatsListArrayAdapter extends ArrayAdapter<Player> {
     public View getView(final int position, View convertView, ViewGroup parent) {
         LayoutInflater inflater = (LayoutInflater) context
                 .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        View rowView = inflater.inflate(R.layout.player_list_item, parent, false);
+        View rowView = inflater.inflate(R.layout.roster_list_item, parent, false);
 
         TextView playerName = (TextView) rowView.findViewById(R.id.textViewName);
         TextView playerPosition = (TextView) rowView.findViewById(R.id.textViewPosition);
@@ -47,6 +47,7 @@ public class PlayerStatsListArrayAdapter extends ArrayAdapter<Player> {
         playerName.setText(p.name);
         playerPosition.setText(DataDisplayer.getPositionAbbreviation(p.getPosition()));
         playerOvrPot.setText(String.valueOf(p.getOverall()));
+
 
         playerPPG.setText(String.valueOf(p.getPPG()));
         playerRPG.setText(String.valueOf(p.getRPG()));

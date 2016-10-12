@@ -231,21 +231,21 @@ public class Player {
 
     public List<String> getRatingsCSVs() {
         ArrayList<String> list = new ArrayList<>();
-        list.add("IntS,"+getIntS());
-        list.add("MidS,"+getMidS());
-        list.add("OutS,"+getOutS());
+        list.add("Inside Shooting,"+getIntS());
+        list.add("Midrange Shooting,"+getMidS());
+        list.add("Outside Shooting,"+getOutS());
 
         list.add("Pass,"+getPass());
-        list.add("Stl,"+getStl());
-        list.add("PerD,"+getOutD());
+        list.add("Steal,"+getStl());
+        list.add("Perimeter Defense,"+getOutD());
 
-        list.add("Reb,"+getReb());
-        list.add("Blk,"+getBlk());
-        list.add("IntD,"+getIntD());
+        list.add("Rebound,"+getReb());
+        list.add("Block,"+getBlk());
+        list.add("Interior Defense,"+getIntD());
 
-        list.add("InsT,"+getInsT());
-        list.add("MidT,"+getMidT());
-        list.add("OutT,"+getOutT());
+        list.add("Inside Tendency,"+getInsT());
+        list.add("Midrange Tendency,"+getMidT());
+        list.add("Outside Tendency,"+getOutT());
 
         list.addAll(getAvgStatsCSV());
 

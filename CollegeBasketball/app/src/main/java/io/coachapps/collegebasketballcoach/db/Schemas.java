@@ -57,6 +57,8 @@ public final class Schemas {
         public static final String HOME_STATS = "homeStats";
         public static final String AWAY_STATS = "awayStats";
         public static final String YEAR = "year";
+        public static final String WEEK = "week";
+        public static final String IS_PLAYED = "isPlayed";
     }
 
     public static abstract class LeagueResultsEntry implements BaseColumns {
