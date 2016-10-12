@@ -119,9 +119,7 @@ public class MainActivity extends AppCompatActivity {
                 showPlayerDialog(p);
             }
         });
-
-        showGameSimDialog();
-
+        //showGameSimDialog();
     }
 
     public void showPlayerDialog(Player p) {
