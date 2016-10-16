@@ -1,6 +1,8 @@
 package io.coachapps.collegebasketballcoach.models;
 
-public class Stats {
+import java.io.Serializable;
+
+public class Stats implements Serializable {
     public int points = 0;
     public int minutes = 0;
     public int offensiveRebounds = 0;

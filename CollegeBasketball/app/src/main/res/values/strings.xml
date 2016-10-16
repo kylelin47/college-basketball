@@ -1,6 +1,10 @@
 <resources>
     <string name="app_name">College Basketball Coach</string>
     <string name="title_activity_main">MainActivity</string>
+    <string-array name="player_display_choices">
+        <item>Ratings</item>
+        <item>Stats</item>
+    </string-array>
         <string name="league_player_names">
         Tim,
         James,

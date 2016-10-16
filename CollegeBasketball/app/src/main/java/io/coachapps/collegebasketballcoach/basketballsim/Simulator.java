@@ -106,7 +106,7 @@ public class Simulator {
             boxScores.add(home.players.get(p).getGameBoxScore());
             boxScores.add(away.players.get(p).getGameBoxScore());
         }
-        bsd.save(boxScores);
+        // bsd.save(boxScores);
         
         home.pointsFor += hscore;
         home.pointsAga += ascore;

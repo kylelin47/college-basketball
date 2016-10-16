@@ -3,6 +3,7 @@ package io.coachapps.collegebasketballcoach.models;
 public class BoxScore {
     public int playerId;
     public int year;
+    public int week;
 
     public Stats playerStats;
 

@@ -1,9 +1,8 @@
 package io.coachapps.collegebasketballcoach.basketballsim;
 
+import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import io.coachapps.collegebasketballcoach.models.BoxScore;
 import io.coachapps.collegebasketballcoach.models.PlayerRatings;
@@ -13,7 +12,7 @@ import io.coachapps.collegebasketballcoach.models.Stats;
  * Player class used in the application layer.
  * @author Achi Jones
  */
-public class Player {
+public class Player implements Serializable {
     
     public String name;
     public String attributes;
@@ -212,44 +211,6 @@ public class Player {
     }
     public double get3GMPG() {
         return (double)((int)((double)gmStats.threePointsMade/games_played * 10))/10;
-    }
-
-    public Map<String, Integer> getRatingsMap() {
-        HashMap<String, Integer> map = new HashMap<>();
-        map.put("IntS", getIntS());
-        map.put("MidS", getMidS());
-        map.put("OutS", getOutS());
-        map.put("Pass", getPass());
-        map.put("Stl", getStl());
-        map.put("PerD", getOutD());
-        map.put("Reb", getReb());
-        map.put("Blk", getBlk());
-        map.put("IntD", getIntD());
-
-        return map;
-    }
-
-    public List<String> getRatingsCSVs() {
-        ArrayList<String> list = new ArrayList<>();
-        list.add("Inside Shooting,"+getIntS());
-        list.add("Midrange Shooting,"+getMidS());
-        list.add("Outside Shooting,"+getOutS());
-
-        list.add("Pass,"+getPass());
-        list.add("Steal,"+getStl());
-        list.add("Perimeter Defense,"+getOutD());
-
-        list.add("Rebound,"+getReb());
-        list.add("Block,"+getBlk());
-        list.add("Interior Defense,"+getIntD());
-
-        list.add("Inside Tendency,"+getInsT());
-        list.add("Midrange Tendency,"+getMidT());
-        list.add("Outside Tendency,"+getOutT());
-
-        list.addAll(getAvgStatsCSV());
-
-        return list;
     }
 
     public List<String> getAvgStatsCSV() {

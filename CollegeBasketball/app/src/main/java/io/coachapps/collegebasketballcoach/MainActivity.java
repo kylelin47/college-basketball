@@ -1,5 +1,7 @@
 package io.coachapps.collegebasketballcoach;
 
+import android.app.DialogFragment;
+import android.app.FragmentTransaction;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.v7.app.AlertDialog;
@@ -7,7 +9,6 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
@@ -21,7 +22,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-import io.coachapps.collegebasketballcoach.adapters.PlayerRatingsListArrayAdapter;
 import io.coachapps.collegebasketballcoach.adapters.PlayerStatsListArrayAdapter;
 import io.coachapps.collegebasketballcoach.basketballsim.GameSimThread;
 import io.coachapps.collegebasketballcoach.basketballsim.Player;
@@ -31,7 +31,6 @@ import io.coachapps.collegebasketballcoach.basketballsim.Strategy;
 import io.coachapps.collegebasketballcoach.basketballsim.Team;
 import io.coachapps.collegebasketballcoach.db.DbHelper;
 import io.coachapps.collegebasketballcoach.db.TeamDao;
-import io.coachapps.collegebasketballcoach.util.DataDisplayer;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -122,40 +121,10 @@ public class MainActivity extends AppCompatActivity {
         //showGameSimDialog();
     }
 
-    public void showPlayerDialog(Player p) {
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        //do nothing?
-                    }
-                })
-                .setView(getLayoutInflater().inflate(R.layout.player_stats, null));
-        AlertDialog dialog = builder.create();
-        dialog.show();
-        dialog.getWindow().setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
-
-        TextView textViewName = (TextView) dialog.findViewById(R.id.textViewName);
-        TextView textViewPosition = (TextView) dialog.findViewById(R.id.textViewPosition);
-        TextView textViewYear = (TextView) dialog.findViewById(R.id.textViewYear);
-        TextView textViewOvrPot = (TextView) dialog.findViewById(R.id.textViewOvrPot);
-        TextView textViewVitals = (TextView) dialog.findViewById(R.id.textViewVitals);
-        Spinner spinner = (Spinner) dialog.findViewById(R.id.spinnerPlayerStats);
-        try {
-            textViewName.setText(p.name);
-            textViewPosition.setText(DataDisplayer.getPositionAbbreviation(p.getPosition()));
-            textViewYear.setText(DataDisplayer.getYearAbbreviation(p.year));
-            textViewOvrPot.setText(String.valueOf(p.getOverall()));
-            textViewVitals.setText(DataDisplayer.getHeight(p.ratings.heightInInches) + ", " +
-                    DataDisplayer.getWeight(p.ratings.weightInPounds));
-
-            ListView list = (ListView) dialog.findViewById(R.id.listView);
-            list.setAdapter(new PlayerRatingsListArrayAdapter(MainActivity.this, p.getRatingsCSVs()));
-
-
-        } catch (java.lang.NullPointerException e) {
-            // lol
-        }
+    public void showPlayerDialog(final Player p) {
+        FragmentTransaction ft = getFragmentManager().beginTransaction();
+        DialogFragment newFragment = PlayerDialogFragment.newInstance(p);
+        newFragment.show(ft, "player dialog");
     }
 
     public void showGameSimDialog() {

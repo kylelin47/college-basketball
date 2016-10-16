@@ -72,10 +72,8 @@ public final class Schemas {
     public static abstract class BoxScoreEntry implements BaseColumns {
         public static final String TABLE_NAME = "boxScore";
         public static final String PLAYER = "player";
-        public static final String GAME = "game";
-        public static final String POINTS = "points";
-        public static final String REBOUNDS = "rebounds";
-        public static final String ASSISTS = "assists";
-        public static final String FIELD_GOALS_MADE = "fgm";
+        public static final String YEAR = "game";
+        public static final String WEEK = "week";
+        public static final String STATS = "stats";
     }
 }

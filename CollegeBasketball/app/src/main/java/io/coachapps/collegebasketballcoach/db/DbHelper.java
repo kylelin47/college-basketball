@@ -56,11 +56,9 @@ public class DbHelper extends SQLiteOpenHelper {
             "CREATE TABLE " + Schemas.BoxScoreEntry.TABLE_NAME + " (" +
                     Schemas.BoxScoreEntry._ID + " INTEGER PRIMARY KEY," +
                     Schemas.BoxScoreEntry.PLAYER + INTEGER_TYPE + COMMA_SEP +
-                    Schemas.BoxScoreEntry.GAME + INTEGER_TYPE + COMMA_SEP +
-                    Schemas.BoxScoreEntry.POINTS + INTEGER_TYPE + COMMA_SEP +
-                    Schemas.BoxScoreEntry.ASSISTS + INTEGER_TYPE + COMMA_SEP +
-                    Schemas.BoxScoreEntry.FIELD_GOALS_MADE + INTEGER_TYPE + COMMA_SEP +
-                    Schemas.BoxScoreEntry.REBOUNDS + INTEGER_TYPE +
+                    Schemas.BoxScoreEntry.WEEK + INTEGER_TYPE + COMMA_SEP +
+                    Schemas.BoxScoreEntry.YEAR + INTEGER_TYPE + COMMA_SEP +
+                    Schemas.BoxScoreEntry.STATS + BLOB_TYPE +
                     " );";
 
     private static final String SQL_CREATE_ENTRIES_LEAGUE_RESULTS =

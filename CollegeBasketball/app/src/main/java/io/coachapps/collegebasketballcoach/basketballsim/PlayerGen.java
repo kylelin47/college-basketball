@@ -305,7 +305,7 @@ public class PlayerGen {
     /*public ArrayList<Player> getPlayersFromFile() {
         ArrayList<Player> PlayerList = new ArrayList<Player>();
         try {
-            List<String> playerLine = Files.readAllLines(Paths.get("player_stats.txt"));
+            List<String> playerLine = Files.readAllLines(Paths.get("player_information.txt"));
             for ( String line : playerLine ) {
                 String[] stats = line.split(" ");
                 int[] ratings = new int[16];

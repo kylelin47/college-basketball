@@ -7,6 +7,7 @@ import android.database.sqlite.SQLiteDatabase;
 import java.util.List;
 
 import io.coachapps.collegebasketballcoach.models.BoxScore;
+import io.coachapps.collegebasketballcoach.util.SerializationUtil;
 
 public class BoxScoreDao {
     private Context context;
@@ -34,7 +35,9 @@ public class BoxScoreDao {
     private void updateBoxScore(BoxScore boxScore, SQLiteDatabase db) {
         ContentValues values = new ContentValues();
         values.put(Schemas.BoxScoreEntry.PLAYER, boxScore.playerId);
-        values.put(Schemas.BoxScoreEntry.POINTS, boxScore.playerStats.points);
+        values.put(Schemas.BoxScoreEntry.YEAR, boxScore.year);
+        values.put(Schemas.BoxScoreEntry.WEEK, boxScore.week);
+        values.put(Schemas.BoxScoreEntry.STATS, SerializationUtil.serialize(boxScore.playerStats));
         db.insertOrThrow(Schemas.BoxScoreEntry.TABLE_NAME, null, values);
     }
 }
