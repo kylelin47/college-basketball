@@ -7,6 +7,7 @@ import android.support.v7.app.AlertDialog;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 
 import com.github.mikephil.charting.charts.LineChart;
 import com.github.mikephil.charting.components.AxisBase;
@@ -48,22 +49,56 @@ public class PlayerStatsFragment extends Fragment {
     private void fillStats(int playerId, View view, final LayoutInflater inflater) {
         YearlyPlayerStatsDao yearlyPlayerStatsDao = new YearlyPlayerStatsDao(getActivity());
         final List<YearlyPlayerStats> stats = yearlyPlayerStatsDao.getPlayerStatsFromYears(playerId, 0, 9999);
-        view.findViewById(R.id.ppg).setOnClickListener(new View.OnClickListener() {
+        YearlyPlayerStats latestStats = stats.size() == 0 ? new YearlyPlayerStats(playerId) : stats
+                .get(stats.size() - 1);
+        setStatValues(view, latestStats);
+        view.findViewById(R.id.ppgButton).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-                builder.setView(inflater.inflate(R.layout.chart, null));
-                AlertDialog dialog = builder.create();
-                List<Entry> entries = new ArrayList<>();
-                for (YearlyPlayerStats data : stats) {
-                    entries.add(new Entry(data.year, data.getPPG()));
-                }
-                dialog.show();
-                LineChart chart = (LineChart) dialog.findViewById(R.id.chart);
-                createChart(chart, entries, "PPG");
+                showChart("PPG", "PPG", inflater, stats);
             }
         });
-
+        view.findViewById(R.id.apgButton).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                showChart("APG", "APG", inflater, stats);
+            }
+        });
+        view.findViewById(R.id.rpgButton).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                showChart("RPG", "RPG", inflater, stats);
+            }
+        });
+        view.findViewById(R.id.mpgButton).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                showChart("MPG", "MPG", inflater, stats);
+            }
+        });
+    }
+    private void showChart(String label, String abbreviation, LayoutInflater inflater,
+                           List<YearlyPlayerStats> stats) {
+        AlertDialog dialog = createDialog(inflater);
+        dialog.show();
+        List<Entry> entries = new ArrayList<>();
+        for (YearlyPlayerStats data : stats) {
+            entries.add(new Entry(data.year, data.getPG(abbreviation)));
+        }
+        LineChart chart = (LineChart) dialog.findViewById(R.id.chart);
+        createChart(chart, entries, label);
+    }
+    private void setStatValues(View view, YearlyPlayerStats latestStats) {
+        ((TextView) view.findViewById(R.id.ppg)).setText(String.valueOf(latestStats.getPG("PPG")));
+        ((TextView) view.findViewById(R.id.apg)).setText(String.valueOf(latestStats.getPG("APG")));
+        ((TextView) view.findViewById(R.id.rpg)).setText(String.valueOf(latestStats.getPG("RPG")));
+        ((TextView) view.findViewById(R.id.mpg)).setText(String.valueOf(latestStats.getPG("MPG")));
+    }
+    private AlertDialog createDialog(LayoutInflater inflater) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+        builder.setPositiveButton("OK",null);
+        builder.setView(inflater.inflate(R.layout.chart, null));
+        return builder.create();
     }
     private void createChart(LineChart chart, List<Entry> entries, String name) {
         chart.setDrawGridBackground(false);
@@ -77,7 +112,7 @@ public class PlayerStatsFragment extends Fragment {
         dataSet.setColor(Color.BLACK);
         dataSet.setCircleColor(Color.GRAY);
         dataSet.setHighLightColor(Color.CYAN);
-        dataSet.setValueTextSize(20);
+        dataSet.setValueTextSize(14);
         LineData lineData = new LineData(dataSet);
         chart.setData(lineData);
         chart.getXAxis().setValueFormatter(new MyXAxisValueFormatter());

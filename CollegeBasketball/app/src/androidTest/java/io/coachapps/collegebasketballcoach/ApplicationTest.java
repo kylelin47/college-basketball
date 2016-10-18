@@ -27,7 +27,9 @@ import io.coachapps.collegebasketballcoach.db.TeamDao;
 import io.coachapps.collegebasketballcoach.db.YearlyPlayerStatsDao;
 import io.coachapps.collegebasketballcoach.models.BoxScore;
 import io.coachapps.collegebasketballcoach.models.Game;
+import io.coachapps.collegebasketballcoach.models.Stats;
 import io.coachapps.collegebasketballcoach.models.YearlyPlayerStats;
+import io.coachapps.collegebasketballcoach.util.SerializationUtil;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.Matchers.greaterThan;
@@ -58,13 +60,15 @@ public class ApplicationTest {
                 new BoxScore(0, 2002)));
         SQLiteDatabase db = DbHelper.getInstance(context).getReadableDatabase();
         String[] projection = {
-                Schemas.BoxScoreEntry.POINTS
+                Schemas.BoxScoreEntry.STATS
         };
         List<Integer> points = new ArrayList<>();
         try (Cursor c = db.query(Schemas.BoxScoreEntry.TABLE_NAME, projection, null, null, null,
                 null, null, null)) {
             while (c.moveToNext()) {
-                points.add(c.getInt(c.getColumnIndexOrThrow(Schemas.BoxScoreEntry.POINTS)));
+                Stats stats = (Stats) SerializationUtil.deserialize(c.getBlob(c
+                        .getColumnIndexOrThrow(Schemas.BoxScoreEntry.STATS)));
+                points.add(stats.points);
             }
         }
         List<Integer> yearlyPoints = new ArrayList<>();

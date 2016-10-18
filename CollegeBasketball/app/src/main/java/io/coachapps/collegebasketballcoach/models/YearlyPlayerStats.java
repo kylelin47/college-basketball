@@ -21,12 +21,21 @@ public class YearlyPlayerStats {
         this.playerId = boxScore.playerId;
         this.playerStats = new Stats(boxScore.playerStats);
     }
-
-    public float getPPG() {
-        if (gamesPlayed == 0) {
-            return 0;
-        } else {
-            return (float)playerStats.points/gamesPlayed;
+    public float getPG(final String abbreviation) {
+        switch(abbreviation) {
+            case "APG":
+                return getPG(playerStats.assists);
+            case "PPG":
+                return getPG(playerStats.points);
+            case "RPG":
+                return getPG(playerStats.defensiveRebounds + playerStats.offensiveRebounds);
+            case "MPG":
+                return getPG((float)playerStats.secondsPlayed/60);
+            default:
+                return 0;
         }
+    }
+    private float getPG(float total) {
+        return gamesPlayed == 0 ? 0 : total/gamesPlayed;
     }
 }
