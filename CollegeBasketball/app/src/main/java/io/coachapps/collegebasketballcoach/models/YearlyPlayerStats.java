@@ -21,6 +21,7 @@ public class YearlyPlayerStats {
         this.playerId = boxScore.playerId;
         this.playerStats = new Stats(boxScore.playerStats);
     }
+
     public float getPG(final String abbreviation) {
         switch(abbreviation) {
             case "APG":
@@ -31,6 +32,33 @@ public class YearlyPlayerStats {
                 return getPG(playerStats.defensiveRebounds + playerStats.offensiveRebounds);
             case "MPG":
                 return getPG((float)playerStats.secondsPlayed/60);
+            case "SPG":
+                return getPG(playerStats.steals);
+            case "BPG":
+                return getPG(playerStats.blocks);
+            case "FGA":
+                return getPG(playerStats.fieldGoalsAttempted);
+            case "FGM":
+                return getPG(playerStats.fieldGoalsMade);
+            case "FG%":
+                return getPG((float)playerStats.fieldGoalsMade/playerStats.fieldGoalsAttempted *
+                        100);
+            case "TPG":
+                return getPG(playerStats.turnovers);
+            case "3PA":
+                return getPG(playerStats.threePointsAttempted);
+            case "3PM":
+                return getPG(playerStats.threePointsMade);
+            case "3P%":
+                return getPG((float)playerStats.threePointsMade/playerStats.threePointsAttempted *
+                    100);
+            case "FTA":
+                return getPG(playerStats.freeThrowsAttempted);
+            case "FTM":
+                return getPG(playerStats.freeThrowsMade);
+            case "FT%":
+                return getPG((float)playerStats.freeThrowsMade/playerStats.freeThrowsAttempted *
+                        100);
             default:
                 return 0;
         }

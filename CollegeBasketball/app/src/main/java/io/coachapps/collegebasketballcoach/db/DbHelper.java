@@ -76,6 +76,9 @@ public class DbHelper extends SQLiteOpenHelper {
                     Schemas.YearlyTeamStatsEntry.LOSSES + INTEGER_TYPE + COMMA_SEP +
                     Schemas.YearlyTeamStatsEntry.WINS + INTEGER_TYPE + COMMA_SEP +
                     Schemas.YearlyTeamStatsEntry.YEAR + INTEGER_TYPE + COMMA_SEP +
+                    Schemas.YearlyTeamStatsEntry.POINTS + INTEGER_TYPE + COMMA_SEP +
+                    Schemas.YearlyTeamStatsEntry.ASSISTS + INTEGER_TYPE + COMMA_SEP +
+                    Schemas.YearlyTeamStatsEntry.REBOUNDS + INTEGER_TYPE + COMMA_SEP +
                     Schemas.YearlyTeamStatsEntry.TEAM + TEXT_TYPE +
                     " );";
 
@@ -97,7 +100,6 @@ public class DbHelper extends SQLiteOpenHelper {
                     Schemas.YearlyPlayerStatsEntry.FOULS + INTEGER_TYPE + COMMA_SEP +
                     Schemas.YearlyPlayerStatsEntry.FTA + INTEGER_TYPE + COMMA_SEP +
                     Schemas.YearlyPlayerStatsEntry.FTM + INTEGER_TYPE + COMMA_SEP +
-                    Schemas.YearlyPlayerStatsEntry.MINUTES + INTEGER_TYPE + COMMA_SEP +
                     Schemas.YearlyPlayerStatsEntry.STEALS + INTEGER_TYPE + COMMA_SEP +
                     Schemas.YearlyPlayerStatsEntry.TURNOVERS + INTEGER_TYPE + COMMA_SEP +
                     Schemas.YearlyPlayerStatsEntry.SECONDS_PLAYED + INTEGER_TYPE + COMMA_SEP +

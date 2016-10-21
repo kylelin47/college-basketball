@@ -29,11 +29,11 @@ public class GameDao {
         YearlyTeamStatsDao yearlyTeamStatsDao = new YearlyTeamStatsDao(context);
         // ties are impossible
         if (game.awayStats.points > game.homeStats.points) {
-            yearlyTeamStatsDao.recordRelativeTeamRecord(game.awayTeam, game.year, 1, 0);
-            yearlyTeamStatsDao.recordRelativeTeamRecord(game.homeTeam, game.year, 0, 1);
+            yearlyTeamStatsDao.recordRelativeTeamRecord(game.awayTeam, game.year, 1, 0, game.awayStats);
+            yearlyTeamStatsDao.recordRelativeTeamRecord(game.homeTeam, game.year, 0, 1, game.homeStats);
         } else {
-            yearlyTeamStatsDao.recordRelativeTeamRecord(game.awayTeam, game.year, 0, 1);
-            yearlyTeamStatsDao.recordRelativeTeamRecord(game.homeTeam, game.year, 1, 0);
+            yearlyTeamStatsDao.recordRelativeTeamRecord(game.awayTeam, game.year, 0, 1, game.awayStats);
+            yearlyTeamStatsDao.recordRelativeTeamRecord(game.homeTeam, game.year, 1, 0, game.homeStats);
         }
     }
     public List<Game> getGamesFromYears(String teamName, int beginYear, int endYear) {

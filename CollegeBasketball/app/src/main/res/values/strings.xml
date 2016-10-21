@@ -5,6 +5,18 @@
         <item>Ratings</item>
         <item>Stats</item>
     </string-array>
+    <string-array name="team_names">
+        <item>Nashville Nets</item>
+        <item>Lakewood Lakers</item>
+        <item>Tennessee Titans</item>
+        <item>Florida Phlogistons</item>
+        <item>Georgia Giants</item>
+        <item>Kentucky Kings</item>
+        <item>Utah Ululants</item>
+        <item>Washington Warriors</item>
+        <item>Oregon Oreos</item>
+        <item>Minnesota Miners</item>
+    </string-array>
         <string name="league_player_names">
         Tim,
         James,

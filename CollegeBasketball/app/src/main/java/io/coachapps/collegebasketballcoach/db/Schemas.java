@@ -25,6 +25,9 @@ public final class Schemas {
         public static final String YEAR = "year";
         public static final String WINS = "wins";
         public static final String LOSSES = "losses";
+        public static final String POINTS = "points";
+        public static final String ASSISTS = "assists";
+        public static final String REBOUNDS = "rebounds";
     }
 
     public static abstract class YearlyPlayerStatsEntry implements BaseColumns {
@@ -32,7 +35,6 @@ public final class Schemas {
         public static final String PLAYER = "player";
         public static final String YEAR = "year";
         public static final String POINTS = "points";
-        public static final String MINUTES = "minutes";
         public static final String OFFENSIVE_REBOUNDS = "offensiveRebounds";
         public static final String DEFENSIVE_REBOUNDS = "defensiveRebounds";
         public static final String ASSISTS = "assists";

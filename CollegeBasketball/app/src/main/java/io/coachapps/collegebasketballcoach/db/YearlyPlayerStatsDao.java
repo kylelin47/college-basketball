@@ -51,7 +51,6 @@ public class YearlyPlayerStatsDao {
         values.put(Schemas.YearlyPlayerStatsEntry.PLAYER, playerId);
         values.put(Schemas.YearlyPlayerStatsEntry.GAMES_PLAYED, stats.gamesPlayed);
         values.put(Schemas.YearlyPlayerStatsEntry.POINTS, stats.playerStats.points);
-        values.put(Schemas.YearlyPlayerStatsEntry.MINUTES, stats.playerStats.minutes);
         values.put(Schemas.YearlyPlayerStatsEntry.OFFENSIVE_REBOUNDS, stats.playerStats.offensiveRebounds);
         values.put(Schemas.YearlyPlayerStatsEntry.DEFENSIVE_REBOUNDS, stats.playerStats.defensiveRebounds);
         values.put(Schemas.YearlyPlayerStatsEntry.ASSISTS, stats.playerStats.assists);
@@ -114,8 +113,6 @@ public class YearlyPlayerStatsDao {
                 .YearlyPlayerStatsEntry.FGM));
         existingStats.playerStats.fouls += cursor.getInt(cursor.getColumnIndexOrThrow(Schemas
                 .YearlyPlayerStatsEntry.FOULS));
-        existingStats.playerStats.minutes += cursor.getInt(cursor.getColumnIndexOrThrow(Schemas
-                .YearlyPlayerStatsEntry.MINUTES));
         existingStats.playerStats.freeThrowsAttempted += cursor.getInt(cursor.getColumnIndexOrThrow(Schemas
                 .YearlyPlayerStatsEntry.FTA));
         existingStats.playerStats.freeThrowsMade += cursor.getInt(cursor.getColumnIndexOrThrow(Schemas

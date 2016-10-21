@@ -76,6 +76,78 @@ public class PlayerStatsFragment extends Fragment {
                 showChart("MPG", "MPG", inflater, stats);
             }
         });
+        view.findViewById(R.id.spgButton).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                showChart("SPG", "SPG", inflater, stats);
+            }
+        });
+        view.findViewById(R.id.tpgButton).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                showChart("TPG", "TPG", inflater, stats);
+            }
+        });
+        view.findViewById(R.id.bpgButton).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                showChart("BPG", "BPG", inflater, stats);
+            }
+        });
+        view.findViewById(R.id.fgaButton).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                showChart("FGA", "FGA", inflater, stats);
+            }
+        });
+        view.findViewById(R.id.fgmButton).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                showChart("FGM", "FGM", inflater, stats);
+            }
+        });
+        view.findViewById(R.id.fgPercentButton).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                showChart("FG%", "FG%", inflater, stats);
+            }
+        });
+        view.findViewById(R.id.threePAButton).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                showChart("3PA", "3PA", inflater, stats);
+            }
+        });
+        view.findViewById(R.id.threePMButton).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                showChart("3PM", "3PM", inflater, stats);
+            }
+        });
+        view.findViewById(R.id.threePercentButton).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                showChart("3P%", "3P%", inflater, stats);
+            }
+        });
+        view.findViewById(R.id.ftaButton).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                showChart("FTA", "FTA", inflater, stats);
+            }
+        });
+        view.findViewById(R.id.ftmButton).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                showChart("FTM", "FTM", inflater, stats);
+            }
+        });
+        view.findViewById(R.id.ftPercentButton).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                showChart("FT%", "FT%", inflater, stats);
+            }
+        });
     }
     private void showChart(String label, String abbreviation, LayoutInflater inflater,
                            List<YearlyPlayerStats> stats) {
@@ -93,6 +165,23 @@ public class PlayerStatsFragment extends Fragment {
         ((TextView) view.findViewById(R.id.apg)).setText(String.valueOf(latestStats.getPG("APG")));
         ((TextView) view.findViewById(R.id.rpg)).setText(String.valueOf(latestStats.getPG("RPG")));
         ((TextView) view.findViewById(R.id.mpg)).setText(String.valueOf(latestStats.getPG("MPG")));
+        ((TextView) view.findViewById(R.id.spg)).setText(String.valueOf(latestStats.getPG("SPG")));
+        ((TextView) view.findViewById(R.id.tpg)).setText(String.valueOf(latestStats.getPG("TPG")));
+        ((TextView) view.findViewById(R.id.bpg)).setText(String.valueOf(latestStats.getPG("BPG")));
+        ((TextView) view.findViewById(R.id.fga)).setText(String.valueOf(latestStats.getPG("FGA")));
+        ((TextView) view.findViewById(R.id.fgm)).setText(String.valueOf(latestStats.getPG("FGM")));
+        ((TextView) view.findViewById(R.id.fgPercent)).setText(String.valueOf(latestStats.getPG
+                ("FG%")));
+        ((TextView) view.findViewById(R.id.threePA)).setText(String.valueOf(latestStats.getPG
+                ("3PA")));
+        ((TextView) view.findViewById(R.id.threePM)).setText(String.valueOf(latestStats.getPG
+                ("3PM")));
+        ((TextView) view.findViewById(R.id.threePercent)).setText(String.valueOf(latestStats
+                .getPG("3P%")));
+        ((TextView) view.findViewById(R.id.fta)).setText(String.valueOf(latestStats.getPG("FTA")));
+        ((TextView) view.findViewById(R.id.ftm)).setText(String.valueOf(latestStats.getPG("FTM")));
+        ((TextView) view.findViewById(R.id.ftPercent)).setText(String.valueOf(latestStats.getPG
+                ("FT%")));
     }
     private AlertDialog createDialog(LayoutInflater inflater) {
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());

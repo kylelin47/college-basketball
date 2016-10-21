@@ -1,100 +1,159 @@
 <?xml version="1.0" encoding="utf-8"?>
-<TableLayout xmlns:android="http://schemas.android.com/apk/res/android"
-             android:orientation="horizontal"
-             android:layout_width="match_parent"
-             android:layout_height="match_parent">
-    <TableRow
-        android:layout_width="match_parent"
-        android:weightSum="3">
-        <RelativeLayout
-            android:layout_weight="1"
-            android:id="@+id/ppgButton"
-            style="@android:style/Widget.Button"
-            android:gravity="center">
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginEnd="3dp"
-                android:text="27.7"
-                android:textColor="#000"
-                android:textSize="25sp"
-                android:textStyle="bold"
-                android:layout_centerVertical="true"
-                android:id="@+id/ppg"
-                />
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="PPG"
-                android:textColor="#999"
-                android:textSize="15sp"
-                android:textStyle="bold"
-                android:id="@+id/ppgLabel"
-                android:layout_centerVertical="true"
-                android:layout_toEndOf="@+id/ppg" />
-        </RelativeLayout>
-        <RelativeLayout
-            android:layout_weight="1"
-            style="@android:style/Widget.Button"
-            android:id="@+id/rpgButton"
-            android:gravity="center">
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginEnd="3dp"
-                android:text="6.5"
-                android:textColor="#000"
-                android:textSize="25sp"
-                android:textStyle="bold"
-                android:layout_centerVertical="true"
-                android:id="@+id/rpg"
-                />
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="RPG"
-                android:textColor="#999"
-                android:textSize="15sp"
-                android:textStyle="bold"
-                android:id="@+id/rpgLabel"
-                android:layout_centerVertical="true"
-                android:layout_toEndOf="@+id/rpg" />
-        </RelativeLayout>
+<ScrollView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:scrollbars="none">
+    <TableLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                 android:orientation="horizontal"
+                 android:layout_width="match_parent"
+                 android:layout_height="match_parent">
+        <TableRow
+            android:layout_width="match_parent"
+            android:weightSum="3">
+            <RelativeLayout
+                android:layout_weight="1"
+                android:id="@+id/ppgButton"
+                style="@style/Widget.AppCompat.Button"
+                android:gravity="center">
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="3dp"
+                    android:text="27.7"
+                    android:textColor="#000"
+                    android:textSize="25sp"
+                    android:textStyle="bold"
+                    android:layout_centerVertical="true"
+                    android:id="@+id/ppg"
+                    />
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="PPG"
+                    android:textColor="#999"
+                    android:textSize="15sp"
+                    android:textStyle="bold"
+                    android:id="@+id/ppgLabel"
+                    android:layout_centerVertical="true"
+                    android:layout_toEndOf="@+id/ppg" />
+            </RelativeLayout>
+            <RelativeLayout
+                android:layout_weight="1"
+                style="@style/Widget.AppCompat.Button"
+                android:id="@+id/rpgButton"
+                android:gravity="center">
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="3dp"
+                    android:text="6.5"
+                    android:textColor="#000"
+                    android:textSize="25sp"
+                    android:textStyle="bold"
+                    android:layout_centerVertical="true"
+                    android:id="@+id/rpg"
+                    />
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="RPG"
+                    android:textColor="#999"
+                    android:textSize="15sp"
+                    android:textStyle="bold"
+                    android:id="@+id/rpgLabel"
+                    android:layout_centerVertical="true"
+                    android:layout_toEndOf="@+id/rpg" />
+            </RelativeLayout>
 
-        <RelativeLayout
-            android:layout_weight="1"
-            style="@android:style/Widget.Button"
-            android:id="@+id/apgButton"
-            android:gravity="center">
+            <RelativeLayout
+                android:layout_weight="1"
+                style="@style/Widget.AppCompat.Button"
+                android:id="@+id/apgButton"
+                android:gravity="center">
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="3dp"
+                    android:text="8.1"
+                    android:textColor="#000"
+                    android:textSize="25sp"
+                    android:textStyle="bold"
+                    android:layout_centerVertical="true"
+                    android:id="@+id/apg"
+                    />
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="APG"
+                    android:textColor="#999"
+                    android:textSize="15sp"
+                    android:textStyle="bold"
+                    android:id="@+id/apgLabel"
+                    android:layout_centerVertical="true"
+                    android:layout_toEndOf="@+id/apg" />
+            </RelativeLayout>
+        </TableRow>
+        <TableRow
+            android:weightSum="3">
+            <RelativeLayout
+                android:layout_weight="1"
+                android:id="@+id/bpgButton"
+                style="@style/Widget.AppCompat.Button"
+                android:gravity="center">
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginEnd="3dp"
-                android:text="8.1"
+                android:text="27.7"
                 android:textColor="#000"
                 android:textSize="25sp"
                 android:textStyle="bold"
                 android:layout_centerVertical="true"
-                android:id="@+id/apg"
+                android:id="@+id/bpg"
                 />
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="APG"
+                android:text="BPG"
                 android:textColor="#999"
                 android:textSize="15sp"
                 android:textStyle="bold"
-                android:id="@+id/apgLabel"
+                android:id="@+id/bpgLabel"
                 android:layout_centerVertical="true"
-                android:layout_toEndOf="@+id/apg" />
-        </RelativeLayout>
-    </TableRow>
-    <TableRow
-        android:weightSum="3">
-        <RelativeLayout
-            android:layout_weight="3"
-            android:id="@+id/mpgButton"
-            style="@android:style/Widget.Button"
+                android:layout_toEndOf="@+id/bpg" />
+            </RelativeLayout>
+            <RelativeLayout
+                android:layout_weight="1"
+                android:id="@+id/spgButton"
+                style="@style/Widget.AppCompat.Button"
+                android:gravity="center">
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="3dp"
+                    android:text="27.7"
+                    android:textColor="#000"
+                    android:textSize="25sp"
+                    android:textStyle="bold"
+                    android:layout_centerVertical="true"
+                    android:id="@+id/spg"
+                    />
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="SPG"
+                    android:textColor="#999"
+                    android:textSize="15sp"
+                    android:textStyle="bold"
+                    android:id="@+id/spgLabel"
+                    android:layout_centerVertical="true"
+                    android:layout_toEndOf="@+id/spg" />
+            </RelativeLayout>
+            <RelativeLayout
+            android:layout_weight="1"
+            android:id="@+id/tpgButton"
+            style="@style/Widget.AppCompat.Button"
             android:gravity="center">
             <TextView
                 android:layout_width="wrap_content"
@@ -105,18 +164,305 @@
                 android:textSize="25sp"
                 android:textStyle="bold"
                 android:layout_centerVertical="true"
-                android:id="@+id/mpg"
+                android:id="@+id/tpg"
                 />
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="MPG"
+                android:text="TPG"
                 android:textColor="#999"
                 android:textSize="15sp"
                 android:textStyle="bold"
-                android:id="@+id/mpgLabel"
+                android:id="@+id/tpgLabel"
                 android:layout_centerVertical="true"
-                android:layout_toEndOf="@+id/mpg" />
-        </RelativeLayout>
-    </TableRow>
-</TableLayout>
+                android:layout_toEndOf="@+id/tpg" />
+            </RelativeLayout>
+        </TableRow>
+        <TableRow
+            android:layout_width="match_parent"
+            android:weightSum="3">
+            <RelativeLayout
+                android:layout_weight="1"
+                android:id="@+id/fgaButton"
+                style="@style/Widget.AppCompat.Button"
+                android:gravity="center">
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="3dp"
+                    android:text="27.7"
+                    android:textColor="#000"
+                    android:textSize="25sp"
+                    android:textStyle="bold"
+                    android:layout_centerVertical="true"
+                    android:id="@+id/fga"
+                    />
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="FGA"
+                    android:textColor="#999"
+                    android:textSize="15sp"
+                    android:textStyle="bold"
+                    android:id="@+id/fgaLabel"
+                    android:layout_centerVertical="true"
+                    android:layout_toEndOf="@+id/fga" />
+            </RelativeLayout>
+            <RelativeLayout
+                android:layout_weight="1"
+                android:id="@+id/fgmButton"
+                style="@style/Widget.AppCompat.Button"
+                android:gravity="center">
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="3dp"
+                    android:text="27.7"
+                    android:textColor="#000"
+                    android:textSize="25sp"
+                    android:textStyle="bold"
+                    android:layout_centerVertical="true"
+                    android:id="@+id/fgm"
+                    />
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="FGM"
+                    android:textColor="#999"
+                    android:textSize="15sp"
+                    android:textStyle="bold"
+                    android:id="@+id/fgmLabel"
+                    android:layout_centerVertical="true"
+                    android:layout_toEndOf="@+id/fgm" />
+            </RelativeLayout>
+            <RelativeLayout
+                android:layout_weight="1"
+                android:id="@+id/fgPercentButton"
+                style="@style/Widget.AppCompat.Button"
+                android:gravity="center">
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="3dp"
+                    android:text="27.7"
+                    android:textColor="#000"
+                    android:textSize="25sp"
+                    android:textStyle="bold"
+                    android:layout_centerVertical="true"
+                    android:id="@+id/fgPercent"
+                    />
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="FG%"
+                    android:textColor="#999"
+                    android:textSize="15sp"
+                    android:textStyle="bold"
+                    android:id="@+id/fgPercentLabel"
+                    android:layout_centerVertical="true"
+                    android:layout_toEndOf="@+id/fgPercent" />
+            </RelativeLayout>
+        </TableRow>
+        <TableRow
+            android:layout_width="match_parent"
+            android:weightSum="3">
+            <RelativeLayout
+                android:layout_weight="1"
+                android:id="@+id/ftaButton"
+                style="@style/Widget.AppCompat.Button"
+                android:gravity="center">
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="3dp"
+                    android:text="27.7"
+                    android:textColor="#000"
+                    android:textSize="25sp"
+                    android:textStyle="bold"
+                    android:layout_centerVertical="true"
+                    android:id="@+id/fta"
+                    />
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="FTA"
+                    android:textColor="#999"
+                    android:textSize="15sp"
+                    android:textStyle="bold"
+                    android:id="@+id/ftaLabel"
+                    android:layout_centerVertical="true"
+                    android:layout_toEndOf="@+id/fta" />
+            </RelativeLayout>
+            <RelativeLayout
+                android:layout_weight="1"
+                android:id="@+id/ftmButton"
+                style="@style/Widget.AppCompat.Button"
+                android:gravity="center">
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="3dp"
+                    android:text="27.7"
+                    android:textColor="#000"
+                    android:textSize="25sp"
+                    android:textStyle="bold"
+                    android:layout_centerVertical="true"
+                    android:id="@+id/ftm"
+                    />
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="FTM"
+                    android:textColor="#999"
+                    android:textSize="15sp"
+                    android:textStyle="bold"
+                    android:id="@+id/ftmLabel"
+                    android:layout_centerVertical="true"
+                    android:layout_toEndOf="@+id/ftm" />
+            </RelativeLayout>
+            <RelativeLayout
+                android:layout_weight="1"
+                android:id="@+id/ftPercentButton"
+                style="@style/Widget.AppCompat.Button"
+                android:gravity="center">
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="3dp"
+                    android:text="27.7"
+                    android:textColor="#000"
+                    android:textSize="25sp"
+                    android:textStyle="bold"
+                    android:layout_centerVertical="true"
+                    android:id="@+id/ftPercent"
+                    />
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="FT%"
+                    android:textColor="#999"
+                    android:textSize="15sp"
+                    android:textStyle="bold"
+                    android:id="@+id/ftPercentLabel"
+                    android:layout_centerVertical="true"
+                    android:layout_toEndOf="@+id/ftPercent" />
+            </RelativeLayout>
+        </TableRow>
+        <TableRow
+            android:layout_width="match_parent"
+            android:weightSum="3">
+            <RelativeLayout
+                android:layout_weight="1"
+                android:id="@+id/threePAButton"
+                style="@style/Widget.AppCompat.Button"
+                android:gravity="center">
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="3dp"
+                    android:text="27.7"
+                    android:textColor="#000"
+                    android:textSize="25sp"
+                    android:textStyle="bold"
+                    android:layout_centerVertical="true"
+                    android:id="@+id/threePA"
+                    />
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="3PA"
+                    android:textColor="#999"
+                    android:textSize="15sp"
+                    android:textStyle="bold"
+                    android:id="@+id/threePALabel"
+                    android:layout_centerVertical="true"
+                    android:layout_toEndOf="@+id/threePA" />
+            </RelativeLayout>
+            <RelativeLayout
+                android:layout_weight="1"
+                android:id="@+id/threePMButton"
+                style="@style/Widget.AppCompat.Button"
+                android:gravity="center">
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="3dp"
+                    android:text="27.7"
+                    android:textColor="#000"
+                    android:textSize="25sp"
+                    android:textStyle="bold"
+                    android:layout_centerVertical="true"
+                    android:id="@+id/threePM"
+                    />
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="3PM"
+                    android:textColor="#999"
+                    android:textSize="15sp"
+                    android:textStyle="bold"
+                    android:id="@+id/threePMLabel"
+                    android:layout_centerVertical="true"
+                    android:layout_toEndOf="@+id/threePM" />
+            </RelativeLayout>
+            <RelativeLayout
+                android:layout_weight="1"
+                android:id="@+id/threePercentButton"
+                style="@style/Widget.AppCompat.Button"
+                android:gravity="center">
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="3dp"
+                    android:text="27.7"
+                    android:textColor="#000"
+                    android:textSize="25sp"
+                    android:textStyle="bold"
+                    android:layout_centerVertical="true"
+                    android:id="@+id/threePercent"
+                    />
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="3P%"
+                    android:textColor="#999"
+                    android:textSize="15sp"
+                    android:textStyle="bold"
+                    android:id="@+id/threePercentLabel"
+                    android:layout_centerVertical="true"
+                    android:layout_toEndOf="@+id/threePercent" />
+            </RelativeLayout>
+        </TableRow>
+        <TableRow
+            android:layout_width="match_parent"
+            android:weightSum="3">
+            <RelativeLayout
+                android:layout_weight="3"
+                android:id="@+id/mpgButton"
+                style="@style/Widget.AppCompat.Button"
+                android:gravity="center">
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="3dp"
+                    android:text="27.7"
+                    android:textColor="#000"
+                    android:textSize="25sp"
+                    android:textStyle="bold"
+                    android:layout_centerVertical="true"
+                    android:id="@+id/mpg"
+                    />
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="MPG"
+                    android:textColor="#999"
+                    android:textSize="15sp"
+                    android:textStyle="bold"
+                    android:id="@+id/mpgLabel"
+                    android:layout_centerVertical="true"
+                    android:layout_toEndOf="@+id/mpg" />
+            </RelativeLayout>
+        </TableRow>
+    </TableLayout>
+</ScrollView>

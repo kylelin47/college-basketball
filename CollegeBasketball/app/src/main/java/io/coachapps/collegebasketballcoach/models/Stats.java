@@ -4,7 +4,6 @@ import java.io.Serializable;
 
 public class Stats implements Serializable {
     public int points = 0;
-    public int minutes = 0;
     public int offensiveRebounds = 0;
     public int defensiveRebounds = 0;
     public int assists = 0;
@@ -24,7 +23,6 @@ public class Stats implements Serializable {
 
     public Stats(Stats stats) {
         this.points = stats.points;
-        this.minutes = stats.minutes;
         this.offensiveRebounds = stats.offensiveRebounds;
         this.defensiveRebounds = stats.defensiveRebounds;
         this.assists = stats.assists;
@@ -39,5 +37,23 @@ public class Stats implements Serializable {
         this.freeThrowsAttempted = stats.freeThrowsAttempted;
         this.freeThrowsMade = stats.freeThrowsMade;
         this.secondsPlayed = stats.secondsPlayed;
+    }
+
+    public void add(Stats stats) {
+        this.points += stats.points;
+        this.offensiveRebounds += stats.offensiveRebounds;
+        this.defensiveRebounds += stats.defensiveRebounds;
+        this.assists += stats.assists;
+        this.steals += stats.steals;
+        this.blocks += stats.blocks;
+        this.turnovers += stats.turnovers;
+        this.fouls += stats.fouls;
+        this.fieldGoalsAttempted += stats.fieldGoalsAttempted;
+        this.fieldGoalsMade += stats.fieldGoalsMade;
+        this.threePointsAttempted += stats.fieldGoalsAttempted;
+        this.threePointsMade += stats.fieldGoalsMade;
+        this.freeThrowsAttempted += stats.freeThrowsAttempted;
+        this.freeThrowsMade += stats.freeThrowsMade;
+        this.secondsPlayed += stats.secondsPlayed;
     }
 }

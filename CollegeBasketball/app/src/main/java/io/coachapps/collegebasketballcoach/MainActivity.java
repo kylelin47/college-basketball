@@ -6,7 +6,6 @@ import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
@@ -17,12 +16,16 @@ import android.widget.ScrollView;
 import android.widget.SeekBar;
 import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.ViewFlipper;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 import io.coachapps.collegebasketballcoach.adapters.PlayerStatsListArrayAdapter;
+import io.coachapps.collegebasketballcoach.adapters.TeamStatsListArrayAdapter;
 import io.coachapps.collegebasketballcoach.basketballsim.GameSimThread;
 import io.coachapps.collegebasketballcoach.basketballsim.Player;
 import io.coachapps.collegebasketballcoach.basketballsim.PlayerGen;
@@ -31,6 +34,8 @@ import io.coachapps.collegebasketballcoach.basketballsim.Strategy;
 import io.coachapps.collegebasketballcoach.basketballsim.Team;
 import io.coachapps.collegebasketballcoach.db.DbHelper;
 import io.coachapps.collegebasketballcoach.db.TeamDao;
+import io.coachapps.collegebasketballcoach.db.YearlyTeamStatsDao;
+import io.coachapps.collegebasketballcoach.models.YearlyTeamStats;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -42,6 +47,11 @@ public class MainActivity extends AppCompatActivity {
     TextView currTeamTextView;
 
     ListView mainList;
+    ListView statsList;
+
+    ViewFlipper vf;
+    Button statsButton;
+    Button rosterButton;
 
     @Override
     protected void onDestroy() {
@@ -53,8 +63,6 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
 
         TeamDao teamDao = new TeamDao(this);
         try {
@@ -70,8 +78,9 @@ public class MainActivity extends AppCompatActivity {
 
             // Make 10 teams;
             teamList = new ArrayList<>();
+            String[] teamNames = getResources().getStringArray(R.array.team_names);
             for (int i = 0; i < 10; ++i) {
-                teamList.add(new Team("Team " + i, playerGen));
+                teamList.add(new Team(teamNames[i], playerGen));
             }
             teamDao.saveTeams(teamList, "player team name");
         }
@@ -82,10 +91,25 @@ public class MainActivity extends AppCompatActivity {
 
         // Set up UI components
         currTeamTextView = (TextView) findViewById(R.id.currentTeamText);
-
+        vf = (ViewFlipper) findViewById(R.id.viewFlipper);
+        vf.setDisplayedChild(1);
+        statsButton = (Button) findViewById(R.id.teamStatsButton);
+        statsButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                vf.setDisplayedChild(0);
+            }
+        });
+        rosterButton = (Button) findViewById(R.id.rosterButton);
+        rosterButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                vf.setDisplayedChild(1);
+            }
+        });
         // Set up ListView
         mainList = (ListView) findViewById(R.id.mainList);
-
+        statsList = (ListView) findViewById(R.id.teamStatsList);
         teamSpinner = (Spinner) findViewById(R.id.examineTeamSpinner);
         ArrayList<String> teamStrList = new ArrayList<>();
         for (int i = 0; i < 10; i++) {
@@ -103,6 +127,8 @@ public class MainActivity extends AppCompatActivity {
                                 " Wins: " + teamList.get(position).getWins82());
                         mainList.setAdapter(new PlayerStatsListArrayAdapter(MainActivity.this,
                                 teamList.get(position).players));
+                        statsList.setAdapter(new TeamStatsListArrayAdapter(MainActivity.this,
+                                getTeamStatsCSVs(teamList.get(position).getName())));
                     }
 
                     public void onNothingSelected(AdapterView<?> parent) {
@@ -120,7 +146,47 @@ public class MainActivity extends AppCompatActivity {
         });
         //showGameSimDialog();
     }
-
+    private ArrayList<String> getTeamStatsCSVs(String teamName) {
+        YearlyTeamStatsDao yearlyTeamStatsDao = new YearlyTeamStatsDao(this);
+        List<YearlyTeamStats> currentTeamStats = yearlyTeamStatsDao.getTeamStatsOfYear(2016);
+        YearlyTeamStats statsOfSelectedTeam = null;
+        for (YearlyTeamStats stats : currentTeamStats) {
+            if (stats.team.equals(teamName)) {
+                statsOfSelectedTeam = stats;
+                break;
+            }
+        }
+        if (statsOfSelectedTeam == null) return null;
+        ArrayList<String> teamStatsCSVs = new ArrayList<>();
+        teamStatsCSVs.add(",,Rank");
+        teamStatsCSVs.add(statsOfSelectedTeam.wins + " - " + statsOfSelectedTeam.losses + ",Wins " +
+                "- Losses," + currentTeamStats.indexOf(statsOfSelectedTeam) + 1);
+        Collections.sort(currentTeamStats, new Comparator<YearlyTeamStats>() {
+            @Override
+            public int compare(YearlyTeamStats left, YearlyTeamStats right) {
+                return right.points < left.points ? -1 : left.points == right.points ? 0 : 1;
+            }
+        });
+        teamStatsCSVs.add(statsOfSelectedTeam.getPPG() + ",Points Per Game," + currentTeamStats
+                .indexOf(statsOfSelectedTeam) + 1);
+        Collections.sort(currentTeamStats, new Comparator<YearlyTeamStats>() {
+            @Override
+            public int compare(YearlyTeamStats left, YearlyTeamStats right) {
+                return right.assists < left.assists ? -1 : left.assists == right.assists ? 0 : 1;
+            }
+        });
+        teamStatsCSVs.add(statsOfSelectedTeam.getAPG() + ",Assists Per Game," + currentTeamStats
+                .indexOf(statsOfSelectedTeam) + 1);
+        Collections.sort(currentTeamStats, new Comparator<YearlyTeamStats>() {
+            @Override
+            public int compare(YearlyTeamStats left, YearlyTeamStats right) {
+                return right.rebounds < left.rebounds ? -1 : left.rebounds == right.rebounds ? 0 : 1;
+            }
+        });
+        teamStatsCSVs.add(statsOfSelectedTeam.getRPG() + ",Rebounds Per Game," + currentTeamStats
+                .indexOf(statsOfSelectedTeam) + 1);
+        return teamStatsCSVs;
+    }
     public void showPlayerDialog(final Player p) {
         FragmentTransaction ft = getFragmentManager().beginTransaction();
         DialogFragment newFragment = PlayerDialogFragment.newInstance(p);
