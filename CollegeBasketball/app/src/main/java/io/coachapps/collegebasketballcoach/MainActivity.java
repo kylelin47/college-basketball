@@ -156,7 +156,7 @@ public class MainActivity extends AppCompatActivity {
                 break;
             }
         }
-        if (statsOfSelectedTeam == null) return null;
+        if (statsOfSelectedTeam == null) return new ArrayList<>();
         ArrayList<String> teamStatsCSVs = new ArrayList<>();
         teamStatsCSVs.add(",,Rank");
         teamStatsCSVs.add(statsOfSelectedTeam.wins + " - " + statsOfSelectedTeam.losses + ",Wins " +
