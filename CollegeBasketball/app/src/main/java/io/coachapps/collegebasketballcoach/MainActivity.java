@@ -48,6 +48,7 @@ public class MainActivity extends AppCompatActivity {
 
     Spinner teamSpinner;
     TextView currTeamTextView;
+    ArrayAdapter<String> dataAdapterTeam;
 
     PlayerStatsListArrayAdapter rosterListAdapter;
     ListView rosterList;
@@ -66,6 +67,8 @@ public class MainActivity extends AppCompatActivity {
 
     int currGame;
     final int totalGames = 9;
+    // nice hack 8^)
+    int lastSelectedTeamPosition = 0;
 
     @Override
     protected void onDestroy() {
@@ -151,9 +154,9 @@ public class MainActivity extends AppCompatActivity {
         teamSpinner = (Spinner) findViewById(R.id.examineTeamSpinner);
         ArrayList<String> teamStrList = new ArrayList<>();
         for (int i = 0; i < 10; i++) {
-            teamStrList.add(teamList.get(i).getName() + " Wins: " + teamList.get(i).getWins82());
+            teamStrList.add(teamList.get(i).getName() + " Wins: " + teamList.get(i).wins);
         }
-        ArrayAdapter<String> dataAdapterTeam = new ArrayAdapter<>(this,
+        dataAdapterTeam = new ArrayAdapter<>(this,
                 android.R.layout.simple_spinner_item, teamStrList);
         dataAdapterTeam.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         teamSpinner.setAdapter(dataAdapterTeam);
@@ -162,7 +165,7 @@ public class MainActivity extends AppCompatActivity {
                     public void onItemSelected(
                             AdapterView<?> parent, View view, int position, long id) {
                         currTeamTextView.setText(teamList.get(position).getName() +
-                                " Wins: " + teamList.get(position).getWins82());
+                                " Wins: " + teamList.get(position).wins);
 
                         // Unless we change the ui, this can be consolidated to a single ListView
                         rosterListAdapter = new PlayerStatsListArrayAdapter(MainActivity.this,
@@ -176,6 +179,7 @@ public class MainActivity extends AppCompatActivity {
                         gameListAdapter = new GameScheduleListArrayAdapter(MainActivity.this, MainActivity.this,
                                 teamList.get(position), teamList.get(position).gameSchedule);
                         gameList.setAdapter(gameListAdapter);
+                        lastSelectedTeamPosition = position;
                     }
 
                     public void onNothingSelected(AdapterView<?> parent) {
@@ -196,10 +200,13 @@ public class MainActivity extends AppCompatActivity {
 
     public void advanceGame() {
         if (currGame < totalGames) {
-            LeagueEvents.playGame(currGame, teamList, bballSim);
+            LeagueEvents.playGame(2016, currGame, teamList, bballSim);
             rosterListAdapter.notifyDataSetChanged();
-            statsListAdapter.notifyDataSetChanged();
+            statsListAdapter = new TeamStatsListArrayAdapter(MainActivity.this,
+                    getTeamStatsCSVs(teamList.get(lastSelectedTeamPosition).getName()));
+            statsList.setAdapter(statsListAdapter);
             gameListAdapter.notifyDataSetChanged();
+            dataAdapterTeam.notifyDataSetChanged();
             currGame++;
         }
     }
@@ -214,35 +221,45 @@ public class MainActivity extends AppCompatActivity {
                 break;
             }
         }
-        if (statsOfSelectedTeam == null) return new ArrayList<>();
         ArrayList<String> teamStatsCSVs = new ArrayList<>();
         teamStatsCSVs.add(",,Rank");
+        if (statsOfSelectedTeam == null)  {
+            teamStatsCSVs.add("0 - 0,Wins - Losses,N/A");
+            teamStatsCSVs.add("0.0,Points Per Game,N/A");
+            teamStatsCSVs.add("0.0,Assists Per Game,N/A");
+            teamStatsCSVs.add("0.0,Rebounds Per Game,N/A");
+            return teamStatsCSVs;
+        }
+        int highestIndex = currentTeamStats.indexOf(statsOfSelectedTeam);
+        while (highestIndex >= 0 && currentTeamStats.get(highestIndex).wins == statsOfSelectedTeam.wins) {
+            highestIndex--;
+        }
         teamStatsCSVs.add(statsOfSelectedTeam.wins + " - " + statsOfSelectedTeam.losses + ",Wins " +
-                "- Losses," + currentTeamStats.indexOf(statsOfSelectedTeam) + 1);
+                "- Losses," + String.valueOf(highestIndex + 2));
         Collections.sort(currentTeamStats, new Comparator<YearlyTeamStats>() {
             @Override
             public int compare(YearlyTeamStats left, YearlyTeamStats right) {
                 return right.points < left.points ? -1 : left.points == right.points ? 0 : 1;
             }
         });
-        teamStatsCSVs.add(statsOfSelectedTeam.getPPG() + ",Points Per Game," + currentTeamStats
-                .indexOf(statsOfSelectedTeam) + 1);
+        teamStatsCSVs.add(statsOfSelectedTeam.getPGDisplay("PPG") + ",Points Per Game," +
+                String.valueOf(currentTeamStats.indexOf(statsOfSelectedTeam) + 1));
         Collections.sort(currentTeamStats, new Comparator<YearlyTeamStats>() {
             @Override
             public int compare(YearlyTeamStats left, YearlyTeamStats right) {
                 return right.assists < left.assists ? -1 : left.assists == right.assists ? 0 : 1;
             }
         });
-        teamStatsCSVs.add(statsOfSelectedTeam.getAPG() + ",Assists Per Game," + currentTeamStats
-                .indexOf(statsOfSelectedTeam) + 1);
+        teamStatsCSVs.add(statsOfSelectedTeam.getPGDisplay("APG") + ",Assists Per Game," +
+                String.valueOf(currentTeamStats.indexOf(statsOfSelectedTeam) + 1));
         Collections.sort(currentTeamStats, new Comparator<YearlyTeamStats>() {
             @Override
             public int compare(YearlyTeamStats left, YearlyTeamStats right) {
                 return right.rebounds < left.rebounds ? -1 : left.rebounds == right.rebounds ? 0 : 1;
             }
         });
-        teamStatsCSVs.add(statsOfSelectedTeam.getRPG() + ",Rebounds Per Game," + currentTeamStats
-                .indexOf(statsOfSelectedTeam) + 1);
+        teamStatsCSVs.add(statsOfSelectedTeam.getPGDisplay("RPG") + ",Rebounds Per Game," +
+                String.valueOf(currentTeamStats.indexOf(statsOfSelectedTeam) + 1));
         return teamStatsCSVs;
     }
 
@@ -271,7 +288,7 @@ public class MainActivity extends AppCompatActivity {
 
         Spinner dialogSpinner = (Spinner) dialog.findViewById(R.id.spinnerGameDialog);
         ArrayList<String> spinnerStrList = new ArrayList<>();
-        spinnerStrList.add("Game Log");
+        spinnerStrList.add("GameModel Log");
         spinnerStrList.add("Player Stats");
         ArrayAdapter<String> dataAdapter = new ArrayAdapter<>(this,
                 android.R.layout.simple_spinner_item, spinnerStrList);

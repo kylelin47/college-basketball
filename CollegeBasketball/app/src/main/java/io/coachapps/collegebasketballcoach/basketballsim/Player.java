@@ -1,8 +1,6 @@
 package io.coachapps.collegebasketballcoach.basketballsim;
 
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.List;
 
 import io.coachapps.collegebasketballcoach.models.BoxScore;
 import io.coachapps.collegebasketballcoach.models.PlayerRatings;
@@ -18,7 +16,6 @@ public class Player implements Serializable {
     public String attributes;
     // 0 is to be recruited, 1-2-3-4 are college years, 5 is done
     public int year;
-    public int games_played;
 
     private int overall;
     private double insideTend;
@@ -43,11 +40,10 @@ public class Player implements Serializable {
         overall = (100*overall)/2500;
 
         gmStats = new Stats();
-        games_played = 0;
     }
 
-    public BoxScore getGameBoxScore() {
-        return new BoxScore(id, 2016, gmStats);
+    public BoxScore getGameBoxScore(int year, int week) {
+        return new BoxScore(id, year, week, gmStats);
     }
     public int getId() {
         return id;
@@ -155,92 +151,4 @@ public class Player implements Serializable {
         add3GA();
         add3GM();
     }
-    
-    public void addGameStatsToTotal() {
-        //Add stats from each game to total count
-        //for (int i = 0; i <= 10; ++i) {
-        //    stats_tot[i] += stats_gm[i];
-        //    stats_gm[i] = 0;
-        //}
-        games_played++;
-    }
-    // stats = { 0 points, 1 fga, 2 fgm, 3 3ga, 4 3gm, 5 ass, 6 reb, 7 stl, 8 blk, 9 ofa, 10 ofm }
-    public double getPPG() {
-        return (double)((int)((double)gmStats.points/games_played * 10))/10;
-    }
-    public double getFGP() {
-        //if (stats_tot[1] > 0 ) {
-        //    return (double) ((int) ((double) stats_tot[2] / stats_tot[1] * 1000)) / 10;
-        //} else return 0;
-        return 50.0;
-    }
-    public double get3GP() {
-        //if ( stats_tot[3] > 0 ) {
-        //    return (double)((int)((double)stats_tot[4]/stats_tot[3] * 1000))/10;
-        //} else return 0;
-        return 40.0;
-    }
-    public double getAPG() {
-        return (double)((int)((double)gmStats.assists/games_played * 10))/10;
-    }
-    public double getRPG() {
-        return (double)((int)((double)gmStats.defensiveRebounds/games_played * 10))/10;
-    }
-    public double getSPG() {
-        return (double)((int)((double)gmStats.steals/games_played * 10))/10;
-    }
-    public double getBPG() {
-        return (double)((int)((double)gmStats.blocks/games_played * 10))/10;
-    }
-    public double getOFP() {
-        //return (double)((int)((double)stats_tot[10]/stats_tot[9] * 1000))/10;
-        return 50.0;
-    }
-    public int getMSM() {
-        //return (int)((double)stats_tot[11]/(games_played));
-        return 100;
-    }
-    public double getFGAPG() {
-        return (double)((int)((double)gmStats.fieldGoalsAttempted/games_played * 10))/10;
-    }
-    public double get3GAPG() {
-        return (double)((int)((double)gmStats.threePointsAttempted/games_played * 10))/10;
-    }
-    public double getFGMPG() {
-        return (double)((int)((double)gmStats.fieldGoalsMade/games_played * 10))/10;
-    }
-    public double get3GMPG() {
-        return (double)((int)((double)gmStats.threePointsMade/games_played * 10))/10;
-    }
-
-    public List<String> getAvgStatsCSV() {
-        ArrayList<String> list = new ArrayList<>();
-        list.add("GP,82");
-        list.add("GS,82");
-        list.add("MPG,"+getPlayingTime());
-
-        list.add("USG,"+getUsage());
-        list.add("MSM,"+getMSM());
-        list.add("POS,"+getPosition());
-
-        list.add("PPG,"+getPPG());
-        list.add("RPG,"+getRPG());
-        list.add("APG,"+getAPG());
-
-        list.add("SPG,"+getSPG());
-        list.add("BPG,"+getBPG());
-        list.add("OFG%,"+getOFP());
-
-        list.add("FGM,"+getFGMPG());
-        list.add("FGA,"+getFGAPG());
-        list.add("FG%,"+getFGP());
-
-        list.add("3GM,"+get3GMPG());
-        list.add("3GA,"+get3GAPG());
-        list.add("3FG%,"+get3GP());
-
-        return list;
-    }
-    
-    
 }

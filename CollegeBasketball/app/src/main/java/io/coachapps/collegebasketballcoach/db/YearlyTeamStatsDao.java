@@ -28,9 +28,11 @@ public class YearlyTeamStatsDao {
                 Schemas.YearlyTeamStatsEntry.ASSISTS,
                 Schemas.YearlyTeamStatsEntry.REBOUNDS
         };
-        String whereClause = Schemas.YearlyTeamStatsEntry.TEAM + "=?";
+        String whereClause = Schemas.YearlyTeamStatsEntry.TEAM + "=? AND " + Schemas
+                .YearlyTeamStatsEntry.YEAR + "=?";
         String[] whereArgs = {
-                team
+                team,
+                String.valueOf(year)
         };
         YearlyTeamStats teamStats;
         try (Cursor cursor = db.query(Schemas.YearlyTeamStatsEntry.TABLE_NAME, projection,

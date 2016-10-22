@@ -8,7 +8,7 @@ import android.database.sqlite.SQLiteDatabase;
 import java.util.ArrayList;
 import java.util.List;
 
-import io.coachapps.collegebasketballcoach.models.Game;
+import io.coachapps.collegebasketballcoach.models.GameModel;
 import io.coachapps.collegebasketballcoach.models.Stats;
 import io.coachapps.collegebasketballcoach.util.SerializationUtil;
 
@@ -17,10 +17,11 @@ public class GameDao {
     public GameDao(Context context) {
         this.context = context;
     }
-    public void save(Game game) {
+    public void save(GameModel game) {
         SQLiteDatabase db = DbHelper.getInstance(context).getWritableDatabase();
         ContentValues values = new ContentValues();
         values.put(Schemas.GameEntry.YEAR, game.year);
+        values.put(Schemas.GameEntry.WEEK, game.week);
         values.put(Schemas.GameEntry.AWAY_TEAM, game.awayTeam);
         values.put(Schemas.GameEntry.HOME_TEAM, game.homeTeam);
         values.put(Schemas.GameEntry.AWAY_STATS, SerializationUtil.serialize(game.awayStats));
@@ -36,13 +37,14 @@ public class GameDao {
             yearlyTeamStatsDao.recordRelativeTeamRecord(game.homeTeam, game.year, 1, 0, game.homeStats);
         }
     }
-    public List<Game> getGamesFromYears(String teamName, int beginYear, int endYear) {
-        List<Game> games = new ArrayList<>();
+    public List<GameModel> getGamesFromYears(String teamName, int beginYear, int endYear) {
+        List<GameModel> games = new ArrayList<>();
         SQLiteDatabase db = DbHelper.getInstance(context).getReadableDatabase();
         String[] projection = {
                 Schemas.GameEntry.AWAY_STATS,
                 Schemas.GameEntry.AWAY_TEAM,
                 Schemas.GameEntry.YEAR,
+                Schemas.GameEntry.WEEK,
                 Schemas.GameEntry.HOME_STATS,
                 Schemas.GameEntry.HOME_TEAM
         };
@@ -63,8 +65,9 @@ public class GameDao {
         }
         return games;
     }
-    private Game fetchGame(Cursor cursor) {
+    private GameModel fetchGame(Cursor cursor) {
         int year = cursor.getInt(cursor.getColumnIndexOrThrow(Schemas.GameEntry.YEAR));
+        int week = cursor.getInt(cursor.getColumnIndexOrThrow(Schemas.GameEntry.WEEK));
         Stats homeStats = (Stats) SerializationUtil.deserialize(cursor.getBlob(cursor
                 .getColumnIndexOrThrow(Schemas.GameEntry.HOME_STATS)));
         Stats awayStats = (Stats) SerializationUtil.deserialize(cursor.getBlob(cursor
@@ -73,6 +76,6 @@ public class GameDao {
                 .HOME_TEAM));
         String awayTeam = cursor.getString(cursor.getColumnIndexOrThrow(Schemas.GameEntry
                 .AWAY_TEAM));
-        return new Game(homeTeam, awayTeam, year, homeStats, awayStats);
+        return new GameModel(homeTeam, awayTeam, year, week, homeStats, awayStats);
     }
 }

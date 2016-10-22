@@ -23,14 +23,19 @@ public class YearlyTeamStats {
         this.points = stats.points;
         this.rebounds = stats.defensiveRebounds + stats.offensiveRebounds;
     }
-    public float getPPG() {
+    public String getPGDisplay(String abbreviation) {
+        return String.format("%.1f", getPG(abbreviation));
+    }
+    public float getPG(String abbreviation) {
+        switch (abbreviation) {
+            case "PPG":
+                return getPG(points);
+            case "APG":
+                return getPG(assists);
+            case "RPG":
+                return getPG(rebounds);
+        }
         return getPG(points);
-    }
-    public float getAPG() {
-        return getPG(assists);
-    }
-    public float getRPG() {
-        return getPG(rebounds);
     }
     private float getPG(float total) {
         return wins + losses == 0 ? 0 : total/(wins + losses);

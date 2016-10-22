@@ -161,27 +161,22 @@ public class PlayerStatsFragment extends Fragment {
         createChart(chart, entries, label);
     }
     private void setStatValues(View view, YearlyPlayerStats latestStats) {
-        ((TextView) view.findViewById(R.id.ppg)).setText(String.valueOf(latestStats.getPG("PPG")));
-        ((TextView) view.findViewById(R.id.apg)).setText(String.valueOf(latestStats.getPG("APG")));
-        ((TextView) view.findViewById(R.id.rpg)).setText(String.valueOf(latestStats.getPG("RPG")));
-        ((TextView) view.findViewById(R.id.mpg)).setText(String.valueOf(latestStats.getPG("MPG")));
-        ((TextView) view.findViewById(R.id.spg)).setText(String.valueOf(latestStats.getPG("SPG")));
-        ((TextView) view.findViewById(R.id.tpg)).setText(String.valueOf(latestStats.getPG("TPG")));
-        ((TextView) view.findViewById(R.id.bpg)).setText(String.valueOf(latestStats.getPG("BPG")));
-        ((TextView) view.findViewById(R.id.fga)).setText(String.valueOf(latestStats.getPG("FGA")));
-        ((TextView) view.findViewById(R.id.fgm)).setText(String.valueOf(latestStats.getPG("FGM")));
-        ((TextView) view.findViewById(R.id.fgPercent)).setText(String.valueOf(latestStats.getPG
-                ("FG%")));
-        ((TextView) view.findViewById(R.id.threePA)).setText(String.valueOf(latestStats.getPG
-                ("3PA")));
-        ((TextView) view.findViewById(R.id.threePM)).setText(String.valueOf(latestStats.getPG
-                ("3PM")));
-        ((TextView) view.findViewById(R.id.threePercent)).setText(String.valueOf(latestStats
-                .getPG("3P%")));
-        ((TextView) view.findViewById(R.id.fta)).setText(String.valueOf(latestStats.getPG("FTA")));
-        ((TextView) view.findViewById(R.id.ftm)).setText(String.valueOf(latestStats.getPG("FTM")));
-        ((TextView) view.findViewById(R.id.ftPercent)).setText(String.valueOf(latestStats.getPG
-                ("FT%")));
+        ((TextView) view.findViewById(R.id.ppg)).setText(latestStats.getPGDisplay("PPG"));
+        ((TextView) view.findViewById(R.id.apg)).setText(latestStats.getPGDisplay("APG"));
+        ((TextView) view.findViewById(R.id.rpg)).setText(latestStats.getPGDisplay("RPG"));
+        ((TextView) view.findViewById(R.id.mpg)).setText(latestStats.getPGDisplay("MPG"));
+        ((TextView) view.findViewById(R.id.spg)).setText(latestStats.getPGDisplay("SPG"));
+        ((TextView) view.findViewById(R.id.tpg)).setText(latestStats.getPGDisplay("TPG"));
+        ((TextView) view.findViewById(R.id.bpg)).setText(latestStats.getPGDisplay("BPG"));
+        ((TextView) view.findViewById(R.id.fga)).setText(latestStats.getPGDisplay("FGA"));
+        ((TextView) view.findViewById(R.id.fgm)).setText(latestStats.getPGDisplay("FGM"));
+        ((TextView) view.findViewById(R.id.fgPercent)).setText(latestStats.getPGDisplay("FG%"));
+        ((TextView) view.findViewById(R.id.threePA)).setText(latestStats.getPGDisplay("3PA"));
+        ((TextView) view.findViewById(R.id.threePM)).setText(latestStats.getPGDisplay("3PM"));
+        ((TextView) view.findViewById(R.id.threePercent)).setText(latestStats.getPGDisplay("3P%"));
+        ((TextView) view.findViewById(R.id.fta)).setText(latestStats.getPGDisplay("FTA"));
+        ((TextView) view.findViewById(R.id.ftm)).setText(latestStats.getPGDisplay("FTM"));
+        ((TextView) view.findViewById(R.id.ftPercent)).setText(latestStats.getPGDisplay("FT%"));
     }
     private AlertDialog createDialog(LayoutInflater inflater) {
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());

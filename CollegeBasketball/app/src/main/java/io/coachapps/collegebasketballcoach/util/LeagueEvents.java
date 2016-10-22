@@ -35,10 +35,10 @@ public class LeagueEvents {
         }
     }
 
-    public static void playGame(int game, List<Team> teams, Simulator sim) {
+    public static void playGame(int year, int game, List<Team> teams, Simulator sim) {
         for (Team t : teams) {
             if (!t.gameSchedule.get(game).hasPlayed()) {
-                t.gameSchedule.get(game).playGame(sim);
+                t.gameSchedule.get(game).playGame(sim, year, game);
             }
         }
     }

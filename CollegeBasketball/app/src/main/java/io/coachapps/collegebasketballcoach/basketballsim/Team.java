@@ -3,6 +3,8 @@ package io.coachapps.collegebasketballcoach.basketballsim;
 import java.util.ArrayList;
 import java.util.List;
 
+import io.coachapps.collegebasketballcoach.models.Stats;
+
 /**
  *
  * @author Achi Jones
@@ -70,6 +72,12 @@ public class Team {
         setDefStrat(Strategy.Strats.MAN_TO_MAN);
     }
 
+    public void beginNewGame() {
+        for (Player player : players) {
+            player.gmStats = new Stats();
+        }
+    }
+
     public void setOffStrat(Strategy.Strats type) {
         offStrat = new Strategy(type, this);
     }
@@ -89,14 +97,6 @@ public class Team {
     public String getName() { return name; }
 
     public String getAbbr() { return name.substring(0,3).toUpperCase(); }
-    
-    public int getWins82() {
-        return (int)( wins * (float)82/games );
-    }
-    
-    public int getLosses82() {
-        return 82 - getWins82();
-    }
     
     public void addPlayer( Player player ) {
         //add player (used by AI)
@@ -128,95 +128,6 @@ public class Team {
     
     public Player getC() {
         return players.get(4);
-    }
-    
-    //getters for team stats per game
-    public double getPPG() {
-        double res = 0.0;
-        for (int p = 0; p < 10; p++) {
-            res += players.get(p).getPPG();
-        }
-        return res;
-    }
-    public double getFGAPG() {
-        double res = 0.0;
-        for (int p = 0; p < 10; p++) {
-            res += players.get(p).getFGAPG();
-        }
-        return (double)((int)(res*10))/10;
-    }
-    public double get3GAPG() {
-        double res = 0.0;
-        for (int p = 0; p < 10; p++) {
-            res += players.get(p).get3GAPG();
-        }
-        return (double)((int)(res*10))/10;
-    }
-    public double getFGP() {
-        double res = 0.0;
-        for (int p = 0; p < 10; p++) {
-            res += players.get(p).getFGP() * (players.get(p).getFGAPG() / getFGAPG());
-        }
-        return (double)((int)(res * 10))/10;
-    }
-    public double get3GP() {
-        double res = 0.0;
-        for (int p = 0; p < 10; p++) {
-            res += players.get(p).get3GP() * (players.get(p).get3GAPG() / get3GAPG());
-        }
-        return (double)((int)(res * 10))/10;
-    }
-    public double getRPG() {
-        double res = 0.0;
-        for (int p = 0; p < 10; p++) {
-            res += players.get(p).getRPG();
-        }
-        return (double)((int)(res*10))/10;
-    }
-    public double getAPG() {
-        double res = 0.0;
-        for (int p = 0; p < 10; p++) {
-            res += players.get(p).getAPG();
-        }
-        return (double)((int)(res*10))/10;
-    }
-    public double getSPG() {
-        double res = 0.0;
-        for (int p = 0; p < 10; p++) {
-            res += players.get(p).getSPG();
-        }
-        return (double)((int)(res*10))/10;
-    }
-    public double getBPG() {
-        double res = 0.0;
-        for (int p = 0; p < 10; p++) {
-            res += players.get(p).getBPG();
-        }
-        return (double)((int)(res*10))/10;
-    }
-    public double getOFP() {
-        int tot_ofa = 0;
-        int tot_ofm = 0;
-        for (int p = 0; p < 10; p++) {
-            //tot_ofa += playersArray[p].stats_tot[9];
-            //tot_ofm += playersArray[p].stats_tot[10];
-        }
-        System.out.println(name + " " + tot_ofm + "/" + tot_ofa);
-        return (double)((int)((float)tot_ofm/tot_ofa * 1000))/10;
-    }
-    
-    public double getPointDiff() {
-        double pd = (double)(pointsFor - pointsAga)/games;
-        return (double)((int)(pd*10))/10;
-    }
-    
-    public String getPDStr() {
-        double pd =  getPointDiff();
-        if ( pd >= 0 ) {
-            return "+" + pd;
-        } else {
-            return "" + pd;
-        }
     }
 
     public void addTimePlayed( int seconds ) {

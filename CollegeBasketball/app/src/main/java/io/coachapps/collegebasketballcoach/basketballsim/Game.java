@@ -1,5 +1,7 @@
 package io.coachapps.collegebasketballcoach.basketballsim;
 
+import io.coachapps.collegebasketballcoach.models.GameModel;
+
 /**
  * Game class. Game objects are in each team's game schedule list.
  * Has references to each team, as well as its gameID as it is in the db.
@@ -68,10 +70,10 @@ public class Game {
         }
     }
 
-    public void playGame(Simulator sim) {
-        Simulator.GameResult result = sim.playGame(home, away);
-        homeScore = result.homeScore;
-        awayScore = result.awayScore;
+    public void playGame(Simulator sim, int year, int week) {
+        GameModel result = sim.playGame(home, away, year, week);
+        homeScore = result.homeStats.points;
+        awayScore = result.awayStats.points;
         beenPlayed = true;
     }
 }

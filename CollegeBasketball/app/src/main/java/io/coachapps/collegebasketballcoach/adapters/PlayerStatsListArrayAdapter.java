@@ -11,6 +11,8 @@ import java.util.List;
 
 import io.coachapps.collegebasketballcoach.R;
 import io.coachapps.collegebasketballcoach.basketballsim.Player;
+import io.coachapps.collegebasketballcoach.db.YearlyPlayerStatsDao;
+import io.coachapps.collegebasketballcoach.models.YearlyPlayerStats;
 import io.coachapps.collegebasketballcoach.util.DataDisplayer;
 
 /**
@@ -43,16 +45,21 @@ public class PlayerStatsListArrayAdapter extends ArrayAdapter<Player> {
         TextView playerFGP = (TextView) rowView.findViewById(R.id.textViewFGP);
 
         Player p = players.get(position);
-
         playerName.setText(p.name);
         playerPosition.setText(DataDisplayer.getPositionAbbreviation(p.getPosition()));
         playerOvrPot.setText(String.valueOf(p.getOverall()));
 
-
-        playerPPG.setText(String.valueOf(p.getPPG()));
-        playerRPG.setText(String.valueOf(p.getRPG()));
-        playerAPG.setText(String.valueOf(p.getAPG()));
-        playerFGP.setText(String.valueOf((int)p.getFGP())+"/"+String.valueOf((int)p.get3GP()));
+        YearlyPlayerStatsDao yearlyPlayerStatsDao = new YearlyPlayerStatsDao(getContext());
+        List<YearlyPlayerStats> playerStats = yearlyPlayerStatsDao.getPlayerStatsFromYears(p
+                .getId(), 2016, 2016);
+        if (playerStats.size() != 0) {
+            YearlyPlayerStats currentStats = playerStats.get(0);
+            playerPPG.setText(currentStats.getPGDisplay("PPG"));
+            playerRPG.setText(currentStats.getPGDisplay("RPG"));
+            playerAPG.setText(currentStats.getPGDisplay("APG"));
+            playerFGP.setText(currentStats.getPGDisplay("FG%")+"/"+currentStats.getPGDisplay
+                    ("3P%"));
+        }
 
         return rowView;
     }

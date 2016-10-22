@@ -21,6 +21,12 @@ public class YearlyPlayerStats {
         this.playerId = boxScore.playerId;
         this.playerStats = new Stats(boxScore.playerStats);
     }
+    public String getPGDisplay(final String abbreviation) {
+        if (abbreviation.contains("%")) {
+            return String.valueOf((int)getPG(abbreviation));
+        }
+        return String.format("%.1f", getPG(abbreviation));
+    }
 
     public float getPG(final String abbreviation) {
         switch(abbreviation) {
@@ -41,7 +47,8 @@ public class YearlyPlayerStats {
             case "FGM":
                 return getPG(playerStats.fieldGoalsMade);
             case "FG%":
-                return getPG((float)playerStats.fieldGoalsMade/playerStats.fieldGoalsAttempted *
+                if (playerStats.fieldGoalsAttempted == 0) return 0;
+                return ((float)playerStats.fieldGoalsMade/playerStats.fieldGoalsAttempted *
                         100);
             case "TPG":
                 return getPG(playerStats.turnovers);
@@ -50,14 +57,16 @@ public class YearlyPlayerStats {
             case "3PM":
                 return getPG(playerStats.threePointsMade);
             case "3P%":
-                return getPG((float)playerStats.threePointsMade/playerStats.threePointsAttempted *
+                if (playerStats.threePointsAttempted == 0) return 0;
+                return ((float)playerStats.threePointsMade/playerStats.threePointsAttempted *
                     100);
             case "FTA":
                 return getPG(playerStats.freeThrowsAttempted);
             case "FTM":
                 return getPG(playerStats.freeThrowsMade);
             case "FT%":
-                return getPG((float)playerStats.freeThrowsMade/playerStats.freeThrowsAttempted *
+                if (playerStats.freeThrowsAttempted == 0) return 0;
+                return ((float)playerStats.freeThrowsMade/playerStats.freeThrowsAttempted *
                         100);
             default:
                 return 0;

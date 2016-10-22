@@ -44,5 +44,4 @@ public class TeamStatsListArrayAdapter extends ArrayAdapter<String> {
 
         return rowView;
     }
-
 }

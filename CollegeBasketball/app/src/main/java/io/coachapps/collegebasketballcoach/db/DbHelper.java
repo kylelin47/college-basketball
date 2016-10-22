@@ -29,6 +29,7 @@ public class DbHelper extends SQLiteOpenHelper {
             "CREATE TABLE " + Schemas.GameEntry.TABLE_NAME + " (" +
                     Schemas.GameEntry._ID + " INTEGER PRIMARY KEY," +
                     Schemas.GameEntry.YEAR + INTEGER_TYPE + COMMA_SEP +
+                    Schemas.GameEntry.WEEK + INTEGER_TYPE + COMMA_SEP +
                     Schemas.GameEntry.AWAY_STATS + BLOB_TYPE + COMMA_SEP +
                     Schemas.GameEntry.HOME_STATS + BLOB_TYPE + COMMA_SEP +
                     Schemas.GameEntry.AWAY_TEAM + TEXT_TYPE + COMMA_SEP +
@@ -54,12 +55,13 @@ public class DbHelper extends SQLiteOpenHelper {
 
     private static final String SQL_CREATE_ENTRIES_BOX_SCORE =
             "CREATE TABLE " + Schemas.BoxScoreEntry.TABLE_NAME + " (" +
-                    Schemas.BoxScoreEntry._ID + " INTEGER PRIMARY KEY," +
+                    Schemas.BoxScoreEntry._ID + INTEGER_TYPE + COMMA_SEP +
                     Schemas.BoxScoreEntry.PLAYER + INTEGER_TYPE + COMMA_SEP +
                     Schemas.BoxScoreEntry.WEEK + INTEGER_TYPE + COMMA_SEP +
                     Schemas.BoxScoreEntry.YEAR + INTEGER_TYPE + COMMA_SEP +
-                    Schemas.BoxScoreEntry.STATS + BLOB_TYPE +
-                    " );";
+                    Schemas.BoxScoreEntry.STATS + BLOB_TYPE + COMMA_SEP +
+                    "PRIMARY KEY (" + Schemas.BoxScoreEntry.YEAR + COMMA_SEP + Schemas
+                    .BoxScoreEntry.WEEK + COMMA_SEP + Schemas.BoxScoreEntry.PLAYER + "));";
 
     private static final String SQL_CREATE_ENTRIES_LEAGUE_RESULTS =
             "CREATE TABLE " + Schemas.LeagueResultsEntry.TABLE_NAME + " (" +
@@ -72,15 +74,16 @@ public class DbHelper extends SQLiteOpenHelper {
 
     private static final String SQL_CREATE_ENTRIES_YEARLY_TEAM_STATS =
             "CREATE TABLE " + Schemas.YearlyTeamStatsEntry.TABLE_NAME + " (" +
-                    Schemas.YearlyTeamStatsEntry._ID + " INTEGER PRIMARY KEY," +
+                    Schemas.YearlyTeamStatsEntry._ID + COMMA_SEP +
                     Schemas.YearlyTeamStatsEntry.LOSSES + INTEGER_TYPE + COMMA_SEP +
                     Schemas.YearlyTeamStatsEntry.WINS + INTEGER_TYPE + COMMA_SEP +
                     Schemas.YearlyTeamStatsEntry.YEAR + INTEGER_TYPE + COMMA_SEP +
                     Schemas.YearlyTeamStatsEntry.POINTS + INTEGER_TYPE + COMMA_SEP +
                     Schemas.YearlyTeamStatsEntry.ASSISTS + INTEGER_TYPE + COMMA_SEP +
                     Schemas.YearlyTeamStatsEntry.REBOUNDS + INTEGER_TYPE + COMMA_SEP +
-                    Schemas.YearlyTeamStatsEntry.TEAM + TEXT_TYPE +
-                    " );";
+                    Schemas.YearlyTeamStatsEntry.TEAM + TEXT_TYPE + COMMA_SEP +
+                    "PRIMARY KEY (" + Schemas.YearlyTeamStatsEntry.YEAR + COMMA_SEP + Schemas
+                                         .YearlyTeamStatsEntry.TEAM + "));";
 
     private static final String SQL_CREATE_ENTRIES_YEARLY_PLAYER_STATS =
             "CREATE TABLE " + Schemas.YearlyPlayerStatsEntry.TABLE_NAME + " (" +

@@ -6,7 +6,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 import io.coachapps.collegebasketballcoach.db.BoxScoreDao;
+import io.coachapps.collegebasketballcoach.db.GameDao;
 import io.coachapps.collegebasketballcoach.models.BoxScore;
+import io.coachapps.collegebasketballcoach.models.GameModel;
+import io.coachapps.collegebasketballcoach.models.Stats;
 
 /**
  * Has all the code responsible for simulating games.
@@ -14,48 +17,15 @@ import io.coachapps.collegebasketballcoach.models.BoxScore;
  * @author Achi Jones
  */
 public class Simulator {
-
-    public class GameResult {
-        public Team homeTeam;
-        public Team awayTeam;
-        public int homeScore;
-        public int awayScore;
-
-        public GameResult(Team homeTeam, Team awayTeam, int homeScore, int awayScore) {
-            this.homeTeam = homeTeam;
-            this.awayTeam = awayTeam;
-            this.homeScore = homeScore;
-            this.awayScore = awayScore;
-        }
-    }
-
     public Context context;
 
     public Simulator(Context c) {
         context = c;
     }
-    
-    public void playSeason( List<Team> league ) {
-        //each team plays 4 games against each other team, and then is normalized to 82 games
-        int inner_itr = 0;
-        int outer_itr = 0;
-        int games = 0;
-        while ( outer_itr < league.size() ) {
-            inner_itr = outer_itr + 1;
-            while ( inner_itr < league.size() ) {
-                for (int g = 0; g < 20; g++) {
-                    playGame( league.get(inner_itr), league.get(outer_itr) );
-                    playGame( league.get(outer_itr), league.get(inner_itr) );
-                    games += 2;
-                }
-                inner_itr++;
-            }
-            outer_itr++;
-        }
-        
-    }
-    
-    public GameResult playGame( Team home, Team away ) {
+
+    public GameModel playGame( Team home, Team away, int year, int week ) {
+        home.beginNewGame();
+        away.beginNewGame();
         boolean poss_home = true;
         boolean poss_away = false;
         double gametime = 0;
@@ -110,17 +80,12 @@ public class Simulator {
         }
 
         BoxScoreDao bsd = new BoxScoreDao(context);
-        
-        //add each players stats to his career total
         List<BoxScore> boxScores = new ArrayList<>();
         for (int p = 0; p < 10; ++p) {
-            home.players.get(p).addGameStatsToTotal();
-            away.players.get(p).addGameStatsToTotal();
-
-            boxScores.add(home.players.get(p).getGameBoxScore());
-            boxScores.add(away.players.get(p).getGameBoxScore());
+            boxScores.add(home.players.get(p).getGameBoxScore(2016, week));
+            boxScores.add(away.players.get(p).getGameBoxScore(2016, week));
         }
-        // bsd.save(boxScores);
+        bsd.save(boxScores);
         
         home.pointsFor += hscore;
         home.pointsAga += ascore;
@@ -138,8 +103,19 @@ public class Simulator {
             home.games++;
             away.games++;
         }
-
-        return new GameResult(home, away, hscore, ascore);
+        Stats homeStats = new Stats();
+        for (Player player : home.players) {
+            homeStats.add(player.gmStats);
+        }
+        Stats awayStats = new Stats();
+        for (Player player : away.players) {
+            awayStats.add(player.gmStats);
+        }
+        GameDao gameDao = new GameDao(context);
+        GameModel gameResult = new GameModel(home.name, away.name, year, week, homeStats,
+                awayStats);
+        gameDao.save(gameResult);
+        return gameResult;
     }
 
     /**
