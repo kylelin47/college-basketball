@@ -51,9 +51,9 @@ public class PlayerStatsListArrayAdapter extends ArrayAdapter<Player> {
 
         YearlyPlayerStatsDao yearlyPlayerStatsDao = new YearlyPlayerStatsDao(getContext());
         List<YearlyPlayerStats> playerStats = yearlyPlayerStatsDao.getPlayerStatsFromYears(p
-                .getId(), 2016, 2016);
+                .getId(), 2016, 3000);
         if (playerStats.size() != 0) {
-            YearlyPlayerStats currentStats = playerStats.get(0);
+            YearlyPlayerStats currentStats = playerStats.get(playerStats.size() - 1);
             playerPPG.setText(currentStats.getPGDisplay("PPG"));
             playerRPG.setText(currentStats.getPGDisplay("RPG"));
             playerAPG.setText(currentStats.getPGDisplay("APG"));
