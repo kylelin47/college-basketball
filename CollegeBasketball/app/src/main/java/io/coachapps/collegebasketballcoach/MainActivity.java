@@ -6,6 +6,7 @@ import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
@@ -24,6 +25,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
+import io.coachapps.collegebasketballcoach.adapters.GameScheduleListArrayAdapter;
 import io.coachapps.collegebasketballcoach.adapters.PlayerStatsListArrayAdapter;
 import io.coachapps.collegebasketballcoach.adapters.TeamStatsListArrayAdapter;
 import io.coachapps.collegebasketballcoach.basketballsim.GameSimThread;
@@ -36,6 +38,7 @@ import io.coachapps.collegebasketballcoach.db.DbHelper;
 import io.coachapps.collegebasketballcoach.db.TeamDao;
 import io.coachapps.collegebasketballcoach.db.YearlyTeamStatsDao;
 import io.coachapps.collegebasketballcoach.models.YearlyTeamStats;
+import io.coachapps.collegebasketballcoach.util.LeagueEvents;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -46,12 +49,23 @@ public class MainActivity extends AppCompatActivity {
     Spinner teamSpinner;
     TextView currTeamTextView;
 
-    ListView mainList;
+    PlayerStatsListArrayAdapter rosterListAdapter;
+    ListView rosterList;
+
+    TeamStatsListArrayAdapter statsListAdapter;
     ListView statsList;
+
+    GameScheduleListArrayAdapter gameListAdapter;
+    ListView gameList;
 
     ViewFlipper vf;
     Button statsButton;
     Button rosterButton;
+    Button teamScheduleButton;
+    Button simGameButton;
+
+    int currGame;
+    final int totalGames = 9;
 
     @Override
     protected void onDestroy() {
@@ -63,6 +77,9 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+        toolbar.setTitle("Test Toolbar");
 
         TeamDao teamDao = new TeamDao(this);
         try {
@@ -87,12 +104,14 @@ public class MainActivity extends AppCompatActivity {
 
         // Sim games
         bballSim = new Simulator(MainActivity.this);
-        bballSim.playSeason(teamList);
+        LeagueEvents.scheduleSeason(teamList);
+        //bballSim.playSeason(teamList);
 
         // Set up UI components
         currTeamTextView = (TextView) findViewById(R.id.currentTeamText);
         vf = (ViewFlipper) findViewById(R.id.viewFlipper);
         vf.setDisplayedChild(1);
+
         statsButton = (Button) findViewById(R.id.teamStatsButton);
         statsButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -107,9 +126,28 @@ public class MainActivity extends AppCompatActivity {
                 vf.setDisplayedChild(1);
             }
         });
+        teamScheduleButton = (Button) findViewById(R.id.teamScheduleButton);
+        teamScheduleButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                vf.setDisplayedChild(2);
+            }
+        });
+
+        currGame = 0;
+        simGameButton = (Button) findViewById(R.id.simGameButton);
+        simGameButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                advanceGame();
+            }
+        });
+
         // Set up ListView
-        mainList = (ListView) findViewById(R.id.mainList);
+        rosterList = (ListView) findViewById(R.id.rosterList);
         statsList = (ListView) findViewById(R.id.teamStatsList);
+        gameList = (ListView) findViewById(R.id.gameList);
+
         teamSpinner = (Spinner) findViewById(R.id.examineTeamSpinner);
         ArrayList<String> teamStrList = new ArrayList<>();
         for (int i = 0; i < 10; i++) {
@@ -125,10 +163,19 @@ public class MainActivity extends AppCompatActivity {
                             AdapterView<?> parent, View view, int position, long id) {
                         currTeamTextView.setText(teamList.get(position).getName() +
                                 " Wins: " + teamList.get(position).getWins82());
-                        mainList.setAdapter(new PlayerStatsListArrayAdapter(MainActivity.this,
-                                teamList.get(position).players));
-                        statsList.setAdapter(new TeamStatsListArrayAdapter(MainActivity.this,
-                                getTeamStatsCSVs(teamList.get(position).getName())));
+
+                        // Unless we change the ui, this can be consolidated to a single ListView
+                        rosterListAdapter = new PlayerStatsListArrayAdapter(MainActivity.this,
+                                teamList.get(position).players);
+                        rosterList.setAdapter(rosterListAdapter);
+
+                        statsListAdapter = new TeamStatsListArrayAdapter(MainActivity.this,
+                                getTeamStatsCSVs(teamList.get(position).getName()));
+                        statsList.setAdapter(statsListAdapter);
+
+                        gameListAdapter = new GameScheduleListArrayAdapter(MainActivity.this, MainActivity.this,
+                                teamList.get(position), teamList.get(position).gameSchedule);
+                        gameList.setAdapter(gameListAdapter);
                     }
 
                     public void onNothingSelected(AdapterView<?> parent) {
@@ -137,15 +184,26 @@ public class MainActivity extends AppCompatActivity {
                 });
 
         // Make players clickable
-        mainList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+        rosterList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Player p  = ((PlayerStatsListArrayAdapter) mainList.getAdapter()).getItem(position);
+                Player p  = ((PlayerStatsListArrayAdapter) rosterList.getAdapter()).getItem(position);
                 showPlayerDialog(p);
             }
         });
         //showGameSimDialog();
     }
+
+    public void advanceGame() {
+        if (currGame < totalGames) {
+            LeagueEvents.playGame(currGame, teamList, bballSim);
+            rosterListAdapter.notifyDataSetChanged();
+            statsListAdapter.notifyDataSetChanged();
+            gameListAdapter.notifyDataSetChanged();
+            currGame++;
+        }
+    }
+
     private ArrayList<String> getTeamStatsCSVs(String teamName) {
         YearlyTeamStatsDao yearlyTeamStatsDao = new YearlyTeamStatsDao(this);
         List<YearlyTeamStats> currentTeamStats = yearlyTeamStatsDao.getTeamStatsOfYear(2016);
@@ -187,6 +245,7 @@ public class MainActivity extends AppCompatActivity {
                 .indexOf(statsOfSelectedTeam) + 1);
         return teamStatsCSVs;
     }
+
     public void showPlayerDialog(final Player p) {
         FragmentTransaction ft = getFragmentManager().beginTransaction();
         DialogFragment newFragment = PlayerDialogFragment.newInstance(p);

@@ -12,14 +12,16 @@ public class Team {
     public int wins;
     public int losses;
 
-    int games;
-    int pointsFor;
-    int pointsAga;
-    String name;
-    boolean[] startersIn;
+    public List<Game> gameSchedule;
 
-    volatile Strategy offStrat;
-    volatile Strategy defStrat;
+    public int games;
+    public int pointsFor;
+    public int pointsAga;
+    public String name;
+    public boolean[] startersIn;
+
+    public volatile Strategy offStrat;
+    public volatile Strategy defStrat;
 
     public Team( String name, List<Player> players ) {
         this.players = players;
@@ -27,6 +29,7 @@ public class Team {
         wins = 0;
         losses = 0;
         games = 0;
+        gameSchedule = new ArrayList<>();
         startersIn = new boolean[5];
         for (int i = 0; i < 5; ++i) {
             startersIn[i] = true;
@@ -41,6 +44,7 @@ public class Team {
         wins = 0;
         losses = 0;
         games = 0;
+        gameSchedule = new ArrayList<>();
         players = new ArrayList<>(10);
 
         // Set so all the starters are in for now
@@ -285,5 +289,29 @@ public class Team {
             }
         }
         System.out.println(name + " DIDN'T PICK ENOUGH PEOPLE!");
+    }
+
+    public String[] getGameSummaryStr(int gameNumber) {
+        String[] sum = new String[3];
+        sum[0] = "Game";
+        Game gm = gameSchedule.get(gameNumber);
+
+        if (gm.hasPlayed()) {
+            if (gm.getWinner() == this) {
+                sum[1] = gm.getWinnerString();
+            } else {
+                sum[1] = gm.getLoserString();
+            }
+        } else {
+            sum[1] = "---";
+        }
+
+        if (gm.getHome() == this) {
+            sum[2] = "vs " + gm.getAway().getAbbr();
+        } else {
+            sum[2] = "@ " + gm.getHome().getAbbr();
+        }
+
+        return sum;
     }
 }

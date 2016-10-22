@@ -15,6 +15,20 @@ import io.coachapps.collegebasketballcoach.models.BoxScore;
  */
 public class Simulator {
 
+    public class GameResult {
+        public Team homeTeam;
+        public Team awayTeam;
+        public int homeScore;
+        public int awayScore;
+
+        public GameResult(Team homeTeam, Team awayTeam, int homeScore, int awayScore) {
+            this.homeTeam = homeTeam;
+            this.awayTeam = awayTeam;
+            this.homeScore = homeScore;
+            this.awayScore = awayScore;
+        }
+    }
+
     public Context context;
 
     public Simulator(Context c) {
@@ -41,7 +55,7 @@ public class Simulator {
         
     }
     
-    public void playGame( Team home, Team away ) {
+    public GameResult playGame( Team home, Team away ) {
         boolean poss_home = true;
         boolean poss_away = false;
         double gametime = 0;
@@ -124,7 +138,8 @@ public class Simulator {
             home.games++;
             away.games++;
         }
-        
+
+        return new GameResult(home, away, hscore, ascore);
     }
 
     /**
