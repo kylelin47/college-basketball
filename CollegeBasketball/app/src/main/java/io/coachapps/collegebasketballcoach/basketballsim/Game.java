@@ -36,6 +36,14 @@ public class Game {
         return away;
     }
 
+    public int getHomeScore() {
+        return homeScore;
+    }
+
+    public int getAwayScore() {
+        return awayScore;
+    }
+
     public int getGameID() {
         return gameID;
     }
