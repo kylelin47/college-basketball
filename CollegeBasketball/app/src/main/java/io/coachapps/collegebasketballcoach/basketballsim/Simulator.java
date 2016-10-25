@@ -13,7 +13,6 @@ import io.coachapps.collegebasketballcoach.models.Stats;
 
 /**
  * Has all the code responsible for simulating games.
- * Pretty sure this class should be static :^)
  * @author Achi Jones
  */
 public class Simulator {
@@ -40,32 +39,36 @@ public class Simulator {
                            away.getPF().getOutD() + away.getC().getOutD();
         double hspeed = 6 - (home_tot_outd - away_tot_outd)/8;
         double aspeed = 6 - (away_tot_outd - home_tot_outd)/8;
-        //detect mismatches and add to total
+
+        // Detect mismatches
         int[] matches_h = detectMismatch(home, away);
-        for (int i = 0; i < 5; ++i) {
-            //home.playersArray[i].stats_tot[11] += matches_h[i]; // add mismatch to total
-        }
         int[] matches_a = detectMismatch(away, home);
-        for (int i = 0; i < 5; ++i) {
-            //away.playersArray[i].stats_tot[11] += matches_a[i]; // add mismatch to total
-        }
-        
+
+        double playTime = 0;
         while (playing) {
             if (poss_home) {
                 hscore += runPlay(home, away, matches_h, null);
                 poss_away = true;
                 poss_home = false;
-                gametime += hspeed + 25 * Math.random();
-                home.subPlayers( gametime );
+                playTime = hspeed + 25 * Math.random();
                 matches_h = detectMismatch(home, away);
             } else if (poss_away) {
                 ascore += runPlay(away, home, matches_a, null);
                 poss_away = false;
                 poss_home = true;
-                gametime += aspeed + 25 * Math.random();
-                away.subPlayers( gametime );
+                playTime = aspeed + 25 * Math.random();
                 matches_a = detectMismatch(away, home);
             }
+
+            away.addTimePlayed((int) playTime);
+            home.addTimePlayed((int) playTime);
+            gametime += playTime;
+
+            if ((gametime > 200 && Math.random() < 0.25) || (max_gametime - gametime < 120)) {
+                away.subPlayers(max_gametime - gametime);
+                home.subPlayers(max_gametime - gametime);
+            }
+
             //check if game has ended, or go to OT if needed
             if ( gametime > max_gametime ) {
                 gametime = max_gametime;
@@ -86,7 +89,10 @@ public class Simulator {
             boxScores.add(away.players.get(p).getGameBoxScore(2016, week));
         }
         bsd.save(boxScores);
-        
+
+        home.resetLineup();
+        away.resetLineup();
+
         home.pointsFor += hscore;
         home.pointsAga += ascore;
         away.pointsFor += ascore;
@@ -103,6 +109,7 @@ public class Simulator {
             home.games++;
             away.games++;
         }
+
         Stats homeStats = new Stats();
         for (Player player : home.players) {
             homeStats.add(player.gmStats);
@@ -146,7 +153,14 @@ public class Simulator {
                 if ( potSteal(whoPoss, whoDef, offense, defense) ) {
                     // Ball stolen
                     whoDef.addStl();
+                    whoPoss.addTO();
                     addToLog(gameLog, "TURNOVER! " +  whoDef.name + " steals the ball from " + whoPoss.name + "! ");
+                    return 0;
+                } else if ( potTO(whoPoss) ) {
+                    // Turnover
+                    whoDef.addStl();
+                    whoPoss.addTO();
+                    addToLog(gameLog, "TURNOVER! " +  whoPoss.name + " lost the ball on a bad pass. ");
                     return 0;
                 }
                 // Get receiver of pass
@@ -177,7 +191,6 @@ public class Simulator {
                 int points = takeShot(gameLog, whoPoss, whoDef, offense, defense, assister);
                 if ( points > 0 ) {
                     // Made the shot!
-                    //addToLog(gameLog, whoPoss.name + " drains the " + points + " point shot! ");
                     if ( assister == whoPoss ) { // Can't pass to yourself
                         return points;
                     } else {
@@ -453,6 +466,16 @@ public class Simulator {
                 return true;
             } else return false;
         } else return false;
+    }
+
+    /**
+     * Check if the player turned the ball over.
+     * Relies on their passing.
+     * @param off player on offense
+     * @return true if the ball was stolen, else false
+     */
+    private static boolean potTO( Player off ) {
+        return ((off.getPass()+off.getHand()) * Math.random() < 20);
     }
 
     /**

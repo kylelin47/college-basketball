@@ -1,6 +1,7 @@
 package io.coachapps.collegebasketballcoach.basketballsim;
 
 import java.io.Serializable;
+import java.util.Comparator;
 
 import io.coachapps.collegebasketballcoach.models.BoxScore;
 import io.coachapps.collegebasketballcoach.models.PlayerRatings;
@@ -18,9 +19,6 @@ public class Player implements Serializable {
     public int year;
 
     private int overall;
-    private double insideTend;
-    private double midrangeTend;
-    private double outsideTend;
 
     public PlayerRatings ratings;
     public Stats gmStats;
@@ -52,7 +50,9 @@ public class Player implements Serializable {
     public int getPosition() {
         return ratings.position;
     }
-    public int getBBallIQ() { return ratings.bballIQ; }
+    public int getBBallIQ() {
+        return ratings.bballIQ;
+    }
     public int getOverall() {
         return overall;
     }
@@ -137,6 +137,9 @@ public class Player implements Serializable {
     public void addBlk() {
         gmStats.blocks++;
     }
+    public void addTO() {
+        gmStats.turnovers++;
+    }
     public void addTimePlayed(int seconds) { gmStats.secondsPlayed += seconds; }
     public void addOFA() {
         //stats_gm[9]++;
@@ -150,5 +153,12 @@ public class Player implements Serializable {
         addFGA();
         add3GA();
         add3GM();
+    }
+}
+
+class PlayerOverallComp implements Comparator<Player> {
+    @Override
+    public int compare( Player a, Player b ) {
+        return b.getOverall() - a.getOverall();
     }
 }

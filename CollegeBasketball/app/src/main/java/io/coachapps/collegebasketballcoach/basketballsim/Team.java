@@ -1,6 +1,8 @@
 package io.coachapps.collegebasketballcoach.basketballsim;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 import io.coachapps.collegebasketballcoach.models.Stats;
@@ -39,6 +41,7 @@ public class Team {
 
         setOffStrat(Strategy.Strats.DRIBBLE_DRIVE);
         setDefStrat(Strategy.Strats.MAN_TO_MAN);
+        resetLineup();
     }
     
     public Team( String name, PlayerGen gen ) {
@@ -70,6 +73,43 @@ public class Team {
 
         setOffStrat(Strategy.Strats.DRIBBLE_DRIVE);
         setDefStrat(Strategy.Strats.MAN_TO_MAN);
+    }
+
+    /**
+     * Resets the lineup for the team.
+     * Makes sure that a PG SG SF PF C lineup is in place, with all the best players in place.
+     */
+    public void resetLineup() {
+        if (players.size() >= 10) {
+            Object[] playerArr = players.toArray();
+            for (Object obj : playerArr) {
+                Player p = (Player) obj;
+                System.out.println(p.name);
+            }
+            for (int i = 0; i < 5; ++i) {
+                pickStarterBenchPosition(i + 1, playerArr);
+            }
+
+            players.clear();
+            for (Object obj : playerArr) {
+                players.add((Player) obj);
+            }
+        }
+    }
+
+    private void pickStarterBenchPosition(int position, Object[] playerArr) {
+        ArrayList<Player> posPlayers = new ArrayList<>();
+        for (Object obj : playerArr) {
+            Player p = (Player) obj;
+            if (p.getPosition() == position) {
+                System.out.println("Found player at position " + position + ", " + p.name);
+                posPlayers.add(p);
+            }
+        }
+
+        Collections.sort(posPlayers, new PlayerOverallComp());
+        playerArr[position-1] = posPlayers.get(0);
+        playerArr[position-1+5] = posPlayers.get(1);
     }
 
     public void beginNewGame() {

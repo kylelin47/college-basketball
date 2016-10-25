@@ -139,15 +139,30 @@ public class Strategy {
     }
 
     public double getInsideBonus() {
-        return insideBonus;
+        if (strat == Strats.RUN_AND_GUN) {
+            if (Math.random() < 0.25) return insideBonus;
+            else return 0;
+        } else {
+            return insideBonus;
+        }
     }
 
     public double getMidrangeBonus() {
-        return midrangeBonus;
+        if (strat == Strats.RUN_AND_GUN) {
+            if (Math.random() < 0.25) return midrangeBonus;
+            else return 0;
+        } else {
+            return midrangeBonus;
+        }
     }
 
     public double getOutsideBonus() {
-        return outsideBonus;
+        if (strat == Strats.RUN_AND_GUN) {
+            if (Math.random() < 0.25) return outsideBonus;
+            else return 0;
+        } else {
+            return outsideBonus;
+        }
     }
 
     public double getStealBonus() {
