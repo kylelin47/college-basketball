@@ -198,13 +198,16 @@ public class MainActivity extends AppCompatActivity {
         });
 
         // Make games clickable
+        /*
         gameList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                System.out.println("testing onitemclick");
                 Game gm = gameListAdapter.getItem(position);
                 showGameSummaryDialog(gm, position);
             }
         });
+        */
 
         //showGameSimDialog();
     }

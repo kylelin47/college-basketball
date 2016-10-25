@@ -456,7 +456,7 @@ public class Simulator {
      * @return true if the ball was stolen, else false
      */
     private static boolean potSteal( Player off, Player def, Team offense, Team defense ) {
-        if ( Math.random() < 0.08 + offense.getOffStrat().getStealBonus()/200 + defense.getDefStrat().getStealBonus()/200) {
+        if ( Math.random() < 0.075 + offense.getOffStrat().getStealBonus()/300 + defense.getDefStrat().getStealBonus()/300) {
             int stl = def.getStl()-75;
             if (stl < 0) {
                 stl = 0;
@@ -475,7 +475,7 @@ public class Simulator {
      * @return true if the ball was stolen, else false
      */
     private static boolean potTO( Player off ) {
-        return ((off.getPass()+off.getHand()) * Math.random() < 15);
+        return (Math.random() < 0.6 && (off.getPass()+off.getHand()) * Math.random() < 15);
     }
 
     /**

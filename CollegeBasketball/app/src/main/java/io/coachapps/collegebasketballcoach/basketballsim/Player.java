@@ -162,3 +162,10 @@ class PlayerOverallComp implements Comparator<Player> {
         return b.getOverall() - a.getOverall();
     }
 }
+
+class PlayerIDComp implements Comparator<Player> {
+    @Override
+    public int compare( Player a, Player b ) {
+        return b.getId() - a.getId();
+    }
+}

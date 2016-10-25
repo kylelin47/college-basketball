@@ -59,6 +59,10 @@ public class GameScheduleListArrayAdapter extends ArrayAdapter<Game> {
         gameButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 // Examine game summary
+                Game gm = getItem(position);
+                if (gm.hasPlayed()) {
+                    mainAct.showGameSummaryDialog(gm, position);
+                }
             }
         });
 

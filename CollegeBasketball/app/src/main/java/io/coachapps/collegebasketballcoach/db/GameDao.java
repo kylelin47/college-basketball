@@ -19,6 +19,7 @@ public class GameDao {
     }
 
     public void save(GameModel game) {
+        System.out.println("Saving game : " + game.year + "yr, " + game.week + "wk, " + game.awayTeam + " @ " + game.homeTeam);
         SQLiteDatabase db = DbHelper.getInstance(context).getWritableDatabase();
         ContentValues values = new ContentValues();
         values.put(Schemas.GameEntry.YEAR, game.year);
@@ -69,6 +70,7 @@ public class GameDao {
     }
 
     public GameModel getGame(int year, int week, String homeTeam, String awayTeam) {
+        System.out.println("Getting game : " + year + "yr, " + week + "wk, " + awayTeam + " @ " + homeTeam);
         GameModel game = null;
         SQLiteDatabase db = DbHelper.getInstance(context).getReadableDatabase();
         String[] projection = {
@@ -80,10 +82,10 @@ public class GameDao {
                 Schemas.GameEntry.HOME_TEAM
         };
 
-        String whereClause = "(" + Schemas.GameEntry.HOME_TEAM + " =? AND "
-                + Schemas.GameEntry.AWAY_TEAM + " =?) AND "
-                + Schemas.GameEntry.YEAR + " =? AND "
-                + Schemas.GameEntry.WEEK + " =?";
+        String whereClause = Schemas.GameEntry.HOME_TEAM + "=? AND "
+                + Schemas.GameEntry.AWAY_TEAM + "=? AND "
+                + Schemas.GameEntry.YEAR + "=? AND "
+                + Schemas.GameEntry.WEEK + "=?";
         String[] whereArgs = {
                 String.valueOf(homeTeam),
                 String.valueOf(awayTeam),
@@ -93,8 +95,10 @@ public class GameDao {
 
         try (Cursor cursor = db.query(Schemas.GameEntry.TABLE_NAME, projection,
                 whereClause, whereArgs, null, null, null, null)) {
-            cursor.moveToFirst();
-            game = fetchGame(cursor);
+            while (cursor.moveToNext()) {
+                game = (fetchGame(cursor));
+                break;
+            }
         }
 
         return game;

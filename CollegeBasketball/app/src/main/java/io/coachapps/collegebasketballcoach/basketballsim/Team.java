@@ -41,7 +41,11 @@ public class Team {
 
         setOffStrat(Strategy.Strats.DRIBBLE_DRIVE);
         setDefStrat(Strategy.Strats.MAN_TO_MAN);
-        resetLineup();
+        try {
+            resetLineup();
+        } catch (Exception e) {
+            // uh
+        }
     }
     
     public Team( String name, PlayerGen gen ) {
@@ -81,9 +85,9 @@ public class Team {
      */
     public void resetLineup() {
         if (players.size() >= 10) {
-            Object[] playerArr = players.toArray();
+            Object[] playerArr = new Object[players.size()];
             for (int i = 0; i < 5; ++i) {
-                pickStarterBenchPosition(i + 1, playerArr);
+                pickStarterBenchPosition(i + 1, players, playerArr);
             }
 
             players.clear();
@@ -93,10 +97,9 @@ public class Team {
         }
     }
 
-    private void pickStarterBenchPosition(int position, Object[] playerArr) {
+    private void pickStarterBenchPosition(int position, List<Player> playerList, Object[] playerArr) {
         ArrayList<Player> posPlayers = new ArrayList<>();
-        for (Object obj : playerArr) {
-            Player p = (Player) obj;
+        for (Player p : playerList) {
             if (p.getPosition() == position) {
                 posPlayers.add(p);
             }
