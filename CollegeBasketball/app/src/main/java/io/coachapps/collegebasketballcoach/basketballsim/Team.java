@@ -82,10 +82,6 @@ public class Team {
     public void resetLineup() {
         if (players.size() >= 10) {
             Object[] playerArr = players.toArray();
-            for (Object obj : playerArr) {
-                Player p = (Player) obj;
-                System.out.println(p.name);
-            }
             for (int i = 0; i < 5; ++i) {
                 pickStarterBenchPosition(i + 1, playerArr);
             }
@@ -102,7 +98,6 @@ public class Team {
         for (Object obj : playerArr) {
             Player p = (Player) obj;
             if (p.getPosition() == position) {
-                System.out.println("Found player at position " + position + ", " + p.name);
                 posPlayers.add(p);
             }
         }

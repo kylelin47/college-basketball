@@ -17,6 +17,7 @@ public class GameDao {
     public GameDao(Context context) {
         this.context = context;
     }
+
     public void save(GameModel game) {
         SQLiteDatabase db = DbHelper.getInstance(context).getWritableDatabase();
         ContentValues values = new ContentValues();
@@ -37,6 +38,7 @@ public class GameDao {
             yearlyTeamStatsDao.recordRelativeTeamRecord(game.homeTeam, game.year, 1, 0, game.homeStats);
         }
     }
+
     public List<GameModel> getGamesFromYears(String teamName, int beginYear, int endYear) {
         List<GameModel> games = new ArrayList<>();
         SQLiteDatabase db = DbHelper.getInstance(context).getReadableDatabase();
@@ -65,6 +67,39 @@ public class GameDao {
         }
         return games;
     }
+
+    public GameModel getGame(int year, int week, String homeTeam, String awayTeam) {
+        GameModel game = null;
+        SQLiteDatabase db = DbHelper.getInstance(context).getReadableDatabase();
+        String[] projection = {
+                Schemas.GameEntry.AWAY_STATS,
+                Schemas.GameEntry.AWAY_TEAM,
+                Schemas.GameEntry.YEAR,
+                Schemas.GameEntry.WEEK,
+                Schemas.GameEntry.HOME_STATS,
+                Schemas.GameEntry.HOME_TEAM
+        };
+
+        String whereClause = "(" + Schemas.GameEntry.HOME_TEAM + " =? AND "
+                + Schemas.GameEntry.AWAY_TEAM + " =?) AND "
+                + Schemas.GameEntry.YEAR + " =? AND "
+                + Schemas.GameEntry.WEEK + " =?";
+        String[] whereArgs = {
+                String.valueOf(homeTeam),
+                String.valueOf(awayTeam),
+                String.valueOf(year),
+                String.valueOf(week)
+        };
+
+        try (Cursor cursor = db.query(Schemas.GameEntry.TABLE_NAME, projection,
+                whereClause, whereArgs, null, null, null, null)) {
+            cursor.moveToFirst();
+            game = fetchGame(cursor);
+        }
+
+        return game;
+    }
+
     private GameModel fetchGame(Cursor cursor) {
         int year = cursor.getInt(cursor.getColumnIndexOrThrow(Schemas.GameEntry.YEAR));
         int week = cursor.getInt(cursor.getColumnIndexOrThrow(Schemas.GameEntry.WEEK));

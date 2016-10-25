@@ -71,4 +71,8 @@ public class GameScheduleListArrayAdapter extends ArrayAdapter<Game> {
 
         return rowView;
     }
+
+    public Game getItem(int position) {
+        return games.get(position);
+    }
 }

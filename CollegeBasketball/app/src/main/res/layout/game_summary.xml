@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="15dp">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:text="Duke Blue Devils"
+            android:textSize="20sp"
+            android:textStyle="bold"
+            android:id="@+id/textViewAwayTeamName"
+            android:gravity="center_vertical"
+            android:layout_centerVertical="true"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:text="4-1"
+            android:textColor="#999"
+            android:textSize="20sp"
+            android:textStyle="bold"
+            android:id="@+id/textViewAwayTeamWL"
+            android:layout_marginStart="5dp"
+            android:layout_toEndOf="@+id/textViewAwayTeamName"
+            android:gravity="center_vertical"
+            android:layout_centerVertical="true"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:text="78"
+            android:textSize="30sp"
+            android:textStyle="bold"
+            android:id="@+id/textViewAwayTeamScore"
+            android:layout_alignParentEnd="true"
+            android:gravity="center_vertical"
+            android:layout_centerVertical="true"/>
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:text="Kentucky Wildcats"
+            android:textSize="20sp"
+            android:textStyle="bold"
+            android:id="@+id/textViewHomeTeamName"
+            android:gravity="center_vertical"
+            android:layout_centerVertical="true"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:text="5-0"
+            android:textColor="#999"
+            android:textSize="20sp"
+            android:textStyle="bold"
+            android:id="@+id/textViewHomeTeamWL"
+            android:layout_marginStart="5dp"
+            android:layout_toEndOf="@+id/textViewHomeTeamName"
+            android:gravity="center_vertical"
+            android:layout_centerVertical="true"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:text="75"
+            android:textSize="30sp"
+            android:textStyle="bold"
+            android:id="@+id/textViewHomeTeamScore"
+            android:layout_alignParentEnd="true"
+            android:gravity="center_vertical"
+            android:layout_centerVertical="true"/>
+    </RelativeLayout>
+
+    <Spinner
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/spinnerGameSummary" />
+
+    <ListView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:id="@+id/listViewGameSummary" />
+
+
+</LinearLayout>

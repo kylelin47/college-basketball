@@ -28,6 +28,7 @@ import java.util.List;
 import io.coachapps.collegebasketballcoach.adapters.GameScheduleListArrayAdapter;
 import io.coachapps.collegebasketballcoach.adapters.PlayerStatsListArrayAdapter;
 import io.coachapps.collegebasketballcoach.adapters.TeamStatsListArrayAdapter;
+import io.coachapps.collegebasketballcoach.basketballsim.Game;
 import io.coachapps.collegebasketballcoach.basketballsim.GameSimThread;
 import io.coachapps.collegebasketballcoach.basketballsim.Player;
 import io.coachapps.collegebasketballcoach.basketballsim.PlayerGen;
@@ -191,10 +192,20 @@ public class MainActivity extends AppCompatActivity {
         rosterList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Player p  = ((PlayerStatsListArrayAdapter) rosterList.getAdapter()).getItem(position);
+                Player p  = rosterListAdapter.getItem(position);
                 showPlayerDialog(p);
             }
         });
+
+        // Make games clickable
+        gameList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                Game gm = gameListAdapter.getItem(position);
+                showGameSummaryDialog(gm, position);
+            }
+        });
+
         //showGameSimDialog();
     }
 
@@ -267,6 +278,14 @@ public class MainActivity extends AppCompatActivity {
         FragmentTransaction ft = getFragmentManager().beginTransaction();
         DialogFragment newFragment = PlayerDialogFragment.newInstance(p);
         newFragment.show(ft, "player dialog");
+    }
+
+    public void showGameSummaryDialog(final Game gm, final int week) {
+        System.out.println("showing game summary at week " + week);
+        FragmentTransaction ft = getFragmentManager().beginTransaction();
+        DialogFragment newFragment = GameSummaryFragment.newInstance(
+                2016, week, gm.getHome().getName(), gm.getAway().getName());
+        newFragment.show(ft, "game dialog");
     }
 
     public void showGameSimDialog() {
