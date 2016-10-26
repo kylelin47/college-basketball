@@ -18,12 +18,14 @@ import java.util.Comparator;
 import java.util.List;
 
 import io.coachapps.collegebasketballcoach.adapters.PlayerBoxScoreListArrayAdapter;
+import io.coachapps.collegebasketballcoach.adapters.TeamStatsListArrayAdapter;
 import io.coachapps.collegebasketballcoach.basketballsim.Player;
 import io.coachapps.collegebasketballcoach.db.BoxScoreDao;
 import io.coachapps.collegebasketballcoach.db.GameDao;
 import io.coachapps.collegebasketballcoach.db.PlayerDao;
 import io.coachapps.collegebasketballcoach.models.BoxScore;
 import io.coachapps.collegebasketballcoach.models.GameModel;
+import io.coachapps.collegebasketballcoach.util.DataDisplayer;
 
 /**
  * Dialog Fragment for showing the summary of a certain game.
@@ -150,7 +152,7 @@ public class GameSummaryFragment extends DialogFragment {
         final ListView listView = (ListView) view.findViewById(R.id.listViewGameSummary);
         Spinner spinner = (Spinner) view.findViewById(R.id.spinnerGameSummary);
         final List<String> list = new ArrayList<String>();
-        list.add("Team Stats");
+        list.add("Team Stats Comparison");
         list.add(gameModel.awayTeam + " Stats");
         list.add(gameModel.homeTeam + " Stats");
         ArrayAdapter<String> adapter = new ArrayAdapter<String>(getActivity(),
@@ -162,6 +164,7 @@ public class GameSummaryFragment extends DialogFragment {
             public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
                 if (i == 0) {
                     // Team Stats
+                    listView.setAdapter(getTeamStatsAdapter());
                 } else if (i == 1) {
                     // Away Stats
                     listView.setAdapter(new PlayerBoxScoreListArrayAdapter(getActivity(), awayPlayerBoxScores));
@@ -176,6 +179,36 @@ public class GameSummaryFragment extends DialogFragment {
         });
 
         return view;
+    }
+
+    private TeamStatsListArrayAdapter getTeamStatsAdapter() {
+        ArrayList<String> teamStatsList = new ArrayList<>();
+        teamStatsList.add(gameModel.awayTeam + ",@," + gameModel.homeTeam);
+        teamStatsList.add(gameModel.awayStats.points + ",Points," + gameModel.homeStats.points);
+        teamStatsList.add((gameModel.awayStats.defensiveRebounds+gameModel.awayStats.offensiveRebounds) +
+                ",Rebounds," + (gameModel.homeStats.defensiveRebounds+gameModel.homeStats.offensiveRebounds));
+        teamStatsList.add(gameModel.awayStats.assists + ",Assists," + gameModel.homeStats.assists);
+        teamStatsList.add(gameModel.awayStats.steals + ",Steals," + gameModel.homeStats.steals);
+        teamStatsList.add(gameModel.awayStats.blocks + ",Blocks," + gameModel.homeStats.blocks);
+        teamStatsList.add(gameModel.awayStats.turnovers + ",Turnovers," + gameModel.homeStats.turnovers);
+
+        teamStatsList.add(gameModel.awayStats.fieldGoalsMade + "/" + gameModel.awayStats.fieldGoalsAttempted +
+                ",FGM/FGA," + gameModel.homeStats.fieldGoalsMade + "/" + gameModel.homeStats.fieldGoalsAttempted);
+        String awayFGP = DataDisplayer.getFieldGoalPercentage(
+                gameModel.awayStats.fieldGoalsMade, gameModel.awayStats.fieldGoalsAttempted);
+        String homeFGP = DataDisplayer.getFieldGoalPercentage(
+                gameModel.homeStats.fieldGoalsMade, gameModel.homeStats.fieldGoalsAttempted);
+        teamStatsList.add(awayFGP + "%,FG%," + homeFGP + "%");
+
+        teamStatsList.add(gameModel.awayStats.threePointsMade + "/" + gameModel.awayStats.threePointsAttempted +
+                ",3FGM/3FGA," + gameModel.homeStats.threePointsMade + "/" + gameModel.homeStats.threePointsAttempted);
+        String away3GP = DataDisplayer.getFieldGoalPercentage(
+                gameModel.awayStats.threePointsMade, gameModel.awayStats.threePointsAttempted);
+        String home3GP = DataDisplayer.getFieldGoalPercentage(
+                gameModel.homeStats.threePointsMade, gameModel.homeStats.threePointsAttempted);
+        teamStatsList.add(away3GP + "%,3FG%," + home3GP + "%");
+
+        return new TeamStatsListArrayAdapter(getActivity(), teamStatsList, true);
     }
 
 }

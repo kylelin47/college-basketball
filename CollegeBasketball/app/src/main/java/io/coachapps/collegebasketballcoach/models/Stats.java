@@ -50,8 +50,8 @@ public class Stats implements Serializable {
         this.fouls += stats.fouls;
         this.fieldGoalsAttempted += stats.fieldGoalsAttempted;
         this.fieldGoalsMade += stats.fieldGoalsMade;
-        this.threePointsAttempted += stats.fieldGoalsAttempted;
-        this.threePointsMade += stats.fieldGoalsMade;
+        this.threePointsAttempted += stats.threePointsAttempted;
+        this.threePointsMade += stats.threePointsMade;
         this.freeThrowsAttempted += stats.freeThrowsAttempted;
         this.freeThrowsMade += stats.freeThrowsMade;
         this.secondsPlayed += stats.secondsPlayed;

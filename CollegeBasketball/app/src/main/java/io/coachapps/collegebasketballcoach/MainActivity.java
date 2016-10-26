@@ -174,7 +174,7 @@ public class MainActivity extends AppCompatActivity {
                         rosterList.setAdapter(rosterListAdapter);
 
                         statsListAdapter = new TeamStatsListArrayAdapter(MainActivity.this,
-                                getTeamStatsCSVs(teamList.get(position).getName()));
+                                getTeamStatsCSVs(teamList.get(position).getName()), false);
                         statsList.setAdapter(statsListAdapter);
 
                         gameListAdapter = new GameScheduleListArrayAdapter(MainActivity.this, MainActivity.this,
@@ -217,7 +217,7 @@ public class MainActivity extends AppCompatActivity {
             LeagueEvents.playGame(2016, currGame, teamList, bballSim);
             rosterListAdapter.notifyDataSetChanged();
             statsListAdapter = new TeamStatsListArrayAdapter(MainActivity.this,
-                    getTeamStatsCSVs(teamList.get(lastSelectedTeamPosition).getName()));
+                    getTeamStatsCSVs(teamList.get(lastSelectedTeamPosition).getName()), false);
             statsList.setAdapter(statsListAdapter);
             gameListAdapter.notifyDataSetChanged();
             dataAdapterTeam.notifyDataSetChanged();

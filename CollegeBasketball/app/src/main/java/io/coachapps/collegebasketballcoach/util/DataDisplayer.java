@@ -49,4 +49,7 @@ public class DataDisplayer {
             default: return "N/A";
         }
     }
+    public static String getFieldGoalPercentage(int fgm, int fga) {
+        return String.format("%.1f", (double)(100*fgm)/fga);
+    }
 }
