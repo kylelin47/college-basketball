@@ -103,7 +103,12 @@ public class MainActivity extends AppCompatActivity {
             }
             teamDao.saveTeams(teamList, "player team name");
         }
-
+        Collections.sort(teamList, new Comparator<Team>() {
+            @Override
+            public int compare(Team team, Team t1) {
+                return team.name.compareTo(t1.name);
+            }
+        });
         // Sim games
         bballSim = new Simulator(MainActivity.this);
         LeagueEvents.scheduleSeason(teamList, this);
