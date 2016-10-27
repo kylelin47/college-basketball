@@ -46,6 +46,7 @@ public class MainActivity extends AppCompatActivity {
     Simulator bballSim;
     PlayerGen playerGen;
     List<Team> teamList;
+    List<String> teamStrList;
 
     Spinner teamSpinner;
     TextView currTeamTextView;
@@ -65,9 +66,6 @@ public class MainActivity extends AppCompatActivity {
     Button rosterButton;
     Button teamScheduleButton;
     Button simGameButton;
-
-    int currGame;
-    final int totalGames = 9;
     // nice hack 8^)
     int lastSelectedTeamPosition = 0;
 
@@ -108,7 +106,7 @@ public class MainActivity extends AppCompatActivity {
 
         // Sim games
         bballSim = new Simulator(MainActivity.this);
-        LeagueEvents.scheduleSeason(teamList);
+        LeagueEvents.scheduleSeason(teamList, this);
         //bballSim.playSeason(teamList);
 
         // Set up UI components
@@ -138,7 +136,6 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        currGame = 0;
         simGameButton = (Button) findViewById(R.id.simGameButton);
         simGameButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -153,10 +150,8 @@ public class MainActivity extends AppCompatActivity {
         gameList = (ListView) findViewById(R.id.gameList);
 
         teamSpinner = (Spinner) findViewById(R.id.examineTeamSpinner);
-        ArrayList<String> teamStrList = new ArrayList<>();
-        for (int i = 0; i < 10; i++) {
-            teamStrList.add(teamList.get(i).getName() + " Wins: " + teamList.get(i).wins);
-        }
+        teamStrList = new ArrayList<>();
+        populateTeamStrList();
         dataAdapterTeam = new ArrayAdapter<>(this,
                 android.R.layout.simple_spinner_item, teamStrList);
         dataAdapterTeam.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
@@ -165,8 +160,7 @@ public class MainActivity extends AppCompatActivity {
                 new AdapterView.OnItemSelectedListener() {
                     public void onItemSelected(
                             AdapterView<?> parent, View view, int position, long id) {
-                        currTeamTextView.setText(teamList.get(position).getName() +
-                                " Wins: " + teamList.get(position).wins);
+                        currTeamTextView.setText(teamList.get(position).getName());
 
                         // Unless we change the ui, this can be consolidated to a single ListView
                         rosterListAdapter = new PlayerStatsListArrayAdapter(MainActivity.this,
@@ -213,15 +207,21 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void advanceGame() {
-        if (currGame < totalGames) {
-            LeagueEvents.playGame(2016, currGame, teamList, bballSim);
+        if (LeagueEvents.playGame(teamList, bballSim)) {
             rosterListAdapter.notifyDataSetChanged();
             statsListAdapter = new TeamStatsListArrayAdapter(MainActivity.this,
                     getTeamStatsCSVs(teamList.get(lastSelectedTeamPosition).getName()), false);
             statsList.setAdapter(statsListAdapter);
             gameListAdapter.notifyDataSetChanged();
+            populateTeamStrList();
             dataAdapterTeam.notifyDataSetChanged();
-            currGame++;
+        }
+    }
+
+    private void populateTeamStrList() {
+        teamStrList.clear();
+        for (int i = 0; i < teamList.size(); i++) {
+            teamStrList.add(teamList.get(i).getName() + " Wins: " + teamList.get(i).wins);
         }
     }
 

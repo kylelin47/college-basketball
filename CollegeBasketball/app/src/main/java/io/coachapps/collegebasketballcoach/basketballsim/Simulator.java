@@ -85,8 +85,8 @@ public class Simulator {
         BoxScoreDao bsd = new BoxScoreDao(context);
         List<BoxScore> boxScores = new ArrayList<>();
         for (int p = 0; p < 10; ++p) {
-            boxScores.add(home.players.get(p).getGameBoxScore(2016, week));
-            boxScores.add(away.players.get(p).getGameBoxScore(2016, week));
+            boxScores.add(home.players.get(p).getGameBoxScore(year, week));
+            boxScores.add(away.players.get(p).getGameBoxScore(year, week));
         }
         bsd.save(boxScores);
 

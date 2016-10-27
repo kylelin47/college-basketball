@@ -12,20 +12,32 @@ public class Game {
 
     private Team home;
     private Team away;
-    private int gameID;
+    private int year;
+    private int week;
 
     private int homeScore;
     private int awayScore;
     private boolean beenPlayed;
 
-    public Game(Team home, Team away, int gameID) {
+    public Game(Team home, Team away, int year, int week) {
         this.home = home;
         this.away = away;
-        this.gameID = gameID;
+        this.year = year;
+        this.week = week;
 
         homeScore = 0;
         awayScore = 0;
         beenPlayed = false;
+    }
+
+    public Game(Team home, Team away, GameModel gameModel) {
+        this.home = home;
+        this.away = away;
+        this.year = gameModel.year;
+        this.week = gameModel.week;
+        this.homeScore = gameModel.homeStats.points;
+        this.awayScore = gameModel.awayStats.points;
+        this.beenPlayed = true;
     }
 
     public Team getHome() {
@@ -44,9 +56,10 @@ public class Game {
         return awayScore;
     }
 
-    public int getGameID() {
-        return gameID;
+    public int getYear() {
+        return year;
     }
+    public int getWeek() { return week; }
 
     public boolean hasPlayed() {
         return beenPlayed;
@@ -78,10 +91,11 @@ public class Game {
         }
     }
 
-    public void playGame(Simulator sim, int year, int week) {
+    public void playGame(Simulator sim) {
         GameModel result = sim.playGame(home, away, year, week);
         homeScore = result.homeStats.points;
         awayScore = result.awayStats.points;
-        beenPlayed = true;
+        away.gameSchedule.get(away.gameSchedule.indexOf(this)).beenPlayed = true;
+        home.gameSchedule.get(home.gameSchedule.indexOf(this)).beenPlayed = true;
     }
 }

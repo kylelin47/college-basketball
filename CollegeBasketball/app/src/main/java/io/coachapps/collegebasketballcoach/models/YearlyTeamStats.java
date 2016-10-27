@@ -21,6 +21,7 @@ public class YearlyTeamStats {
         this.wins = wins;
         this.losses = losses;
         this.points = stats.points;
+        this.assists = stats.assists;
         this.rebounds = stats.defensiveRebounds + stats.offensiveRebounds;
     }
     public String getPGDisplay(String abbreviation) {
@@ -35,7 +36,7 @@ public class YearlyTeamStats {
             case "RPG":
                 return getPG(rebounds);
         }
-        return getPG(points);
+        return -1;
     }
     private float getPG(float total) {
         return wins + losses == 0 ? 0 : total/(wins + losses);

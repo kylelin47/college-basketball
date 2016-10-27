@@ -27,14 +27,16 @@ public class DbHelper extends SQLiteOpenHelper {
 
     private static final String SQL_CREATE_ENTRIES_GAME =
             "CREATE TABLE " + Schemas.GameEntry.TABLE_NAME + " (" +
-                    Schemas.GameEntry._ID + " INTEGER PRIMARY KEY," +
+                    Schemas.GameEntry._ID + INTEGER_TYPE + COMMA_SEP +
                     Schemas.GameEntry.YEAR + INTEGER_TYPE + COMMA_SEP +
                     Schemas.GameEntry.WEEK + INTEGER_TYPE + COMMA_SEP +
                     Schemas.GameEntry.AWAY_STATS + BLOB_TYPE + COMMA_SEP +
                     Schemas.GameEntry.HOME_STATS + BLOB_TYPE + COMMA_SEP +
                     Schemas.GameEntry.AWAY_TEAM + TEXT_TYPE + COMMA_SEP +
-                    Schemas.GameEntry.HOME_TEAM + TEXT_TYPE +
-                    " );";
+                    Schemas.GameEntry.HOME_TEAM + TEXT_TYPE + COMMA_SEP +
+                    "PRIMARY KEY (" + Schemas.GameEntry.YEAR + COMMA_SEP + Schemas
+                    .GameEntry.WEEK + COMMA_SEP + Schemas.GameEntry.AWAY_TEAM + COMMA_SEP +
+                    Schemas.GameEntry.HOME_TEAM + "));";
 
     private static final String SQL_CREATE_ENTRIES_PLAYER =
             "CREATE TABLE " + Schemas.PlayerEntry.TABLE_NAME + " (" +
