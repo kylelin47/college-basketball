@@ -95,7 +95,6 @@ public class Game {
         GameModel result = sim.playGame(home, away, year, week);
         homeScore = result.homeStats.points;
         awayScore = result.awayStats.points;
-        away.gameSchedule.get(away.gameSchedule.indexOf(this)).beenPlayed = true;
-        home.gameSchedule.get(home.gameSchedule.indexOf(this)).beenPlayed = true;
+        beenPlayed = true;
     }
 }
