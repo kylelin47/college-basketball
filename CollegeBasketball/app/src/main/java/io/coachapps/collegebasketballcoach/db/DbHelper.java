@@ -62,6 +62,7 @@ public class DbHelper extends SQLiteOpenHelper {
                     Schemas.BoxScoreEntry.WEEK + INTEGER_TYPE + COMMA_SEP +
                     Schemas.BoxScoreEntry.YEAR + INTEGER_TYPE + COMMA_SEP +
                     Schemas.BoxScoreEntry.STATS + BLOB_TYPE + COMMA_SEP +
+                    Schemas.BoxScoreEntry.TEAM_NAME + TEXT_TYPE + COMMA_SEP +
                     "PRIMARY KEY (" + Schemas.BoxScoreEntry.YEAR + COMMA_SEP + Schemas
                     .BoxScoreEntry.WEEK + COMMA_SEP + Schemas.BoxScoreEntry.PLAYER + "));";
 

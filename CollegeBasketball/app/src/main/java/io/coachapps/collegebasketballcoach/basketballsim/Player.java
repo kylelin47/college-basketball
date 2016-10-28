@@ -40,8 +40,8 @@ public class Player implements Serializable {
         gmStats = new Stats();
     }
 
-    public BoxScore getGameBoxScore(int year, int week) {
-        return new BoxScore(id, year, week, gmStats);
+    public BoxScore getGameBoxScore(int year, int week, String teamName) {
+        return new BoxScore(id, year, week, gmStats, teamName);
     }
     public int getId() {
         return id;

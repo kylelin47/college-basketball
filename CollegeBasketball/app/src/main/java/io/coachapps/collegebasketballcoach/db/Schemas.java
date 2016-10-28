@@ -77,5 +77,6 @@ public final class Schemas {
         public static final String YEAR = "year";
         public static final String WEEK = "week";
         public static final String STATS = "stats";
+        public static final String TEAM_NAME = "teamName";
     }
 }

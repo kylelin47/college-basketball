@@ -12,7 +12,6 @@ import android.widget.Spinner;
 import android.widget.TextView;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
@@ -22,7 +21,6 @@ import io.coachapps.collegebasketballcoach.adapters.TeamStatsListArrayAdapter;
 import io.coachapps.collegebasketballcoach.basketballsim.Player;
 import io.coachapps.collegebasketballcoach.db.BoxScoreDao;
 import io.coachapps.collegebasketballcoach.db.GameDao;
-import io.coachapps.collegebasketballcoach.db.PlayerDao;
 import io.coachapps.collegebasketballcoach.models.BoxScore;
 import io.coachapps.collegebasketballcoach.models.GameModel;
 import io.coachapps.collegebasketballcoach.util.DataDisplayer;
@@ -41,10 +39,10 @@ public class GameSummaryFragment extends DialogFragment {
         }
     }
 
-    class PlayerBoxScoreComp implements Comparator<PlayerBoxScore> {
+    class BoxScoreComp implements Comparator<BoxScore> {
         @Override
-        public int compare( PlayerBoxScore a, PlayerBoxScore b ) {
-            return b.boxScore.playerStats.points - a.boxScore.playerStats.points;
+        public int compare( BoxScore a, BoxScore b ) {
+            return b.playerStats.points - a.playerStats.points;
         }
     }
 
@@ -59,8 +57,8 @@ public class GameSummaryFragment extends DialogFragment {
     private static final String AWAY_KEY = "away";
 
     private GameModel gameModel;
-    private List<PlayerBoxScore> awayPlayerBoxScores;
-    private List<PlayerBoxScore> homePlayerBoxScores;
+    private List<BoxScore> awayBoxScores;
+    private List<BoxScore> homeBoxScores;
 
     public static GameSummaryFragment newInstance(int year, int week, String homeTeam, String awayTeam) {
         GameSummaryFragment fragment = new GameSummaryFragment();
@@ -87,42 +85,15 @@ public class GameSummaryFragment extends DialogFragment {
         gameModel = gameDao.getGame(year, week, homeTeamName, awayTeamName);
 
         try {
-            // Get Home/Away box scores
-            PlayerDao playerDao = new PlayerDao(getActivity());
 
-            List<Player> awayPlayers = playerDao.getPlayers(awayTeamName);
-            int[] awayPlayerIDs = new int[awayPlayers.size()];
-            for (int i = 0; i < awayPlayerIDs.length; ++i) {
-                awayPlayerIDs[i] = awayPlayers.get(i).getId();
-            }
-
-            List<Player> homePlayers = playerDao.getPlayers(homeTeamName);
-            int[] homePlayerIDs = new int[homePlayers.size()];
-            for (int i = 0; i < homePlayerIDs.length; ++i) {
-                homePlayerIDs[i] = homePlayers.get(i).getId();
-            }
 
             BoxScoreDao boxScoreDao = new BoxScoreDao(getActivity());
-            List<BoxScore> awayBoxScores = boxScoreDao.getBoxScoresFromGame(year, week, awayPlayerIDs);
-            List<BoxScore> homeBoxScores = boxScoreDao.getBoxScoresFromGame(year, week, homePlayerIDs);
-
-            awayPlayerBoxScores = new ArrayList<>();
-            for (int i = 0; i < awayPlayerIDs.length; ++i) {
-                PlayerBoxScore pbs = new PlayerBoxScore();
-                pbs.boxScore = awayBoxScores.get(i);
-                pbs.player = awayPlayers.get(i);
-                awayPlayerBoxScores.add(pbs);
-            }
-            Collections.sort(awayPlayerBoxScores, new PlayerBoxScoreComp());
-
-            homePlayerBoxScores = new ArrayList<>();
-            for (int i = 0; i < homePlayerIDs.length; ++i) {
-                PlayerBoxScore pbs = new PlayerBoxScore();
-                pbs.boxScore = homeBoxScores.get(i);
-                pbs.player = homePlayers.get(i);
-                homePlayerBoxScores.add(pbs);
-            }
-            Collections.sort(homePlayerBoxScores, new PlayerBoxScoreComp());
+            awayBoxScores = boxScoreDao.getBoxScoresFromGame(year, week,
+                    awayTeamName);
+            homeBoxScores = boxScoreDao.getBoxScoresFromGame(year, week,
+                    homeTeamName);
+            Collections.sort(awayBoxScores, new BoxScoreComp());
+            Collections.sort(homeBoxScores, new BoxScoreComp());
 
         } catch (Exception e) {
             // TODO: how to handle this?
@@ -167,10 +138,10 @@ public class GameSummaryFragment extends DialogFragment {
                     listView.setAdapter(getTeamStatsAdapter());
                 } else if (i == 1) {
                     // Away Stats
-                    listView.setAdapter(new PlayerBoxScoreListArrayAdapter(getActivity(), awayPlayerBoxScores));
+                    listView.setAdapter(new PlayerBoxScoreListArrayAdapter(getActivity(), awayBoxScores));
                 } else if (i == 2) {
                     // Home Stats
-                    listView.setAdapter(new PlayerBoxScoreListArrayAdapter(getActivity(), homePlayerBoxScores));
+                    listView.setAdapter(new PlayerBoxScoreListArrayAdapter(getActivity(), homeBoxScores));
                 }
             }
 

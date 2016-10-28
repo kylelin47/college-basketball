@@ -7,11 +7,13 @@ import android.os.Bundle;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.text.InputType;
 import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.ScrollView;
 import android.widget.SeekBar;
@@ -42,7 +44,7 @@ import io.coachapps.collegebasketballcoach.models.YearlyTeamStats;
 import io.coachapps.collegebasketballcoach.util.LeagueEvents;
 
 public class MainActivity extends AppCompatActivity {
-
+    String playerTeamName = "Default Team Name";
     Simulator bballSim;
     PlayerGen playerGen;
     List<Team> teamList;
@@ -83,7 +85,7 @@ public class MainActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
         toolbar.setTitle("Test Toolbar");
 
-        TeamDao teamDao = new TeamDao(this);
+        final TeamDao teamDao = new TeamDao(this);
         try {
             teamList = teamDao.getAllTeams();
         } catch (IOException | ClassNotFoundException e) {
@@ -95,17 +97,45 @@ public class MainActivity extends AppCompatActivity {
             playerGen = new PlayerGen(getString(R.string.league_player_names),
                     getString(R.string.league_last_names));
 
-            // Make 10 teams;
-            teamList = new ArrayList<>();
-            String[] teamNames = getResources().getStringArray(R.array.team_names);
-            for (int i = 0; i < 10; ++i) {
-                teamList.add(new Team(teamNames[i], playerGen));
-            }
-            teamDao.saveTeams(teamList, "player team name");
+            AlertDialog.Builder builder = new AlertDialog.Builder(this);
+            builder.setTitle("Input Your Team Name");
+            final EditText input = new EditText(this);
+            input.setInputType(InputType.TYPE_CLASS_TEXT);
+            builder.setView(input);
+            builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    Log.i("MainActivity", "Set team name");
+                    ((AlertDialog) dialog).getButton(DialogInterface.BUTTON_POSITIVE).setEnabled
+                            (false);
+                    playerTeamName = input.getText().toString();
+                    String replacementTeamName = "Chef Boyardees";
+                    // Make 10 teams;
+                    teamList = new ArrayList<>();
+                    String[] teamNames = getResources().getStringArray(R.array.team_names);
+                    teamList.add(new Team(playerTeamName, playerGen));
+                    for (int i = 0; i < 9; ++i) {
+                        if (playerTeamName.equals(teamNames[i])) teamNames[i] = replacementTeamName;
+                        teamList.add(new Team(teamNames[i], playerGen));
+                    }
+                    setEverythingUp();
+                    teamDao.saveTeams(teamList, playerTeamName);
+                }
+            });
+            builder.setCancelable(false);
+            builder.show();
+        } else {
+            playerTeamName = teamDao.getPlayerTeamName();
+            setEverythingUp();
         }
+    }
+
+    private void setEverythingUp() {
         Collections.sort(teamList, new Comparator<Team>() {
             @Override
             public int compare(Team team, Team t1) {
+                if (team.name.equals(playerTeamName)) return -1;
+                if (t1.name.equals(playerTeamName)) return 1;
                 return team.name.compareTo(t1.name);
             }
         });
@@ -210,7 +240,6 @@ public class MainActivity extends AppCompatActivity {
 
         //showGameSimDialog();
     }
-
     public void advanceGame() {
         if (LeagueEvents.playGame(teamList, bballSim)) {
             rosterListAdapter.notifyDataSetChanged();

@@ -1,7 +1,6 @@
 package io.coachapps.collegebasketballcoach.adapters;
 
 import android.content.Context;
-import android.graphics.Color;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -10,9 +9,9 @@ import android.widget.TextView;
 
 import java.util.List;
 
-import io.coachapps.collegebasketballcoach.GameSummaryFragment;
 import io.coachapps.collegebasketballcoach.R;
 import io.coachapps.collegebasketballcoach.basketballsim.Player;
+import io.coachapps.collegebasketballcoach.db.PlayerDao;
 import io.coachapps.collegebasketballcoach.models.BoxScore;
 import io.coachapps.collegebasketballcoach.models.Stats;
 import io.coachapps.collegebasketballcoach.util.DataDisplayer;
@@ -22,15 +21,17 @@ import io.coachapps.collegebasketballcoach.util.DataDisplayer;
  * Created by jojones on 10/25/16.
  */
 
-public class PlayerBoxScoreListArrayAdapter extends ArrayAdapter<GameSummaryFragment.PlayerBoxScore> {
+public class PlayerBoxScoreListArrayAdapter extends ArrayAdapter<BoxScore> {
 
     private final Context context;
-    public final List<GameSummaryFragment.PlayerBoxScore> playerBoxScores;
+    public final List<BoxScore> playerBoxScores;
+    private PlayerDao playerDao;
 
-    public PlayerBoxScoreListArrayAdapter(Context context, List<GameSummaryFragment.PlayerBoxScore> values) {
+    public PlayerBoxScoreListArrayAdapter(Context context, List<BoxScore> values) {
         super(context, R.layout.game_stats_list_item, values);
         this.context = context;
         this.playerBoxScores = values;
+        this.playerDao = new PlayerDao(context);
     }
 
     @Override
@@ -54,11 +55,11 @@ public class PlayerBoxScoreListArrayAdapter extends ArrayAdapter<GameSummaryFrag
         TextView courtOrBench = (TextView) rowView.findViewById(R.id.textViewOnCourt);
         courtOrBench.setText("");
 
-        GameSummaryFragment.PlayerBoxScore p = playerBoxScores.get(position);
-        Stats gmStats = p.boxScore.playerStats;
-
-        playerName.setText(p.player.name);
-        playerPosition.setText(DataDisplayer.getPositionAbbreviation(p.player.getPosition()));
+        BoxScore boxScore = playerBoxScores.get(position);
+        Player player = playerDao.getPlayer(boxScore.playerId);
+        Stats gmStats = boxScore.playerStats;
+        playerName.setText(player.name);
+        playerPosition.setText(DataDisplayer.getPositionAbbreviation(player.getPosition()));
         playerOvrPot.setText(String.valueOf(gmStats.secondsPlayed/60) + "min");
 
         playerPTS.setText(String.valueOf(gmStats.points));
@@ -72,7 +73,7 @@ public class PlayerBoxScoreListArrayAdapter extends ArrayAdapter<GameSummaryFrag
         return rowView;
     }
 
-    public GameSummaryFragment.PlayerBoxScore getItem(int position) {
+    public BoxScore getItem(int position) {
         return playerBoxScores.get(position);
     }
 

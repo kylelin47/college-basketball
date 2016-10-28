@@ -9,7 +9,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import io.coachapps.collegebasketballcoach.models.BoxScore;
-import io.coachapps.collegebasketballcoach.models.GameModel;
 import io.coachapps.collegebasketballcoach.models.Stats;
 import io.coachapps.collegebasketballcoach.util.SerializationUtil;
 
@@ -37,38 +36,35 @@ public class BoxScoreDao {
     }
 
     /**
-     * Get list of boxscores from the database for a particular game, given a list of playerIDs
-     * who played in the game. Used in game summaries to show all box scores of a team.
+     * Get list of boxscores from the database for a particular game
      * @param year what year the game was played
      * @param week what week the game was
-     * @param playerIDs an array of playerIDs who played in the game
-     * @return list of boxScores
+     * @param teamName name of one of the teams that played
+     * @return list of boxScores for that team
      */
-    public List<BoxScore> getBoxScoresFromGame(int year, int week, int[] playerIDs) {
+    public List<BoxScore> getBoxScoresFromGame(int year, int week, String teamName) {
         SQLiteDatabase db = DbHelper.getInstance(context).getReadableDatabase();
         String[] projection = {
                 Schemas.BoxScoreEntry.PLAYER,
                 Schemas.BoxScoreEntry.YEAR,
                 Schemas.BoxScoreEntry.WEEK,
-                Schemas.BoxScoreEntry.STATS
+                Schemas.BoxScoreEntry.STATS,
+                Schemas.BoxScoreEntry.TEAM_NAME,
         };
         String whereClause = Schemas.BoxScoreEntry.YEAR + "=? AND " +
                 Schemas.BoxScoreEntry.WEEK + "=? AND " +
-                Schemas.BoxScoreEntry.PLAYER + "=?";
+                Schemas.BoxScoreEntry.TEAM_NAME + "=?";
 
         List<BoxScore> boxScores = new ArrayList<>();
-        for (int playerID : playerIDs) {
             String[] whereArgs = {
                     String.valueOf(year),
                     String.valueOf(week),
-                    String.valueOf(playerID)
+                    teamName
             };
-
-            try (Cursor cursor = db.query(Schemas.BoxScoreEntry.TABLE_NAME, projection,
-                    whereClause, whereArgs, null, null, null, null)) {
-                while (cursor.moveToNext()) {
-                    boxScores.add(fetchBoxScore(cursor));
-                }
+        try (Cursor cursor = db.query(Schemas.BoxScoreEntry.TABLE_NAME, projection,
+                whereClause, whereArgs, null, null, null, null)) {
+            while (cursor.moveToNext()) {
+                boxScores.add(fetchBoxScore(cursor));
             }
         }
         return boxScores;
@@ -80,6 +76,7 @@ public class BoxScoreDao {
         values.put(Schemas.BoxScoreEntry.YEAR, boxScore.year);
         values.put(Schemas.BoxScoreEntry.WEEK, boxScore.week);
         values.put(Schemas.BoxScoreEntry.STATS, SerializationUtil.serialize(boxScore.playerStats));
+        values.put(Schemas.BoxScoreEntry.TEAM_NAME, boxScore.teamName);
         db.insertOrThrow(Schemas.BoxScoreEntry.TABLE_NAME, null, values);
     }
 
@@ -89,6 +86,8 @@ public class BoxScoreDao {
         int week = cursor.getInt(cursor.getColumnIndexOrThrow(Schemas.BoxScoreEntry.WEEK));
         Stats playerStats = (Stats) SerializationUtil.deserialize(cursor.getBlob(cursor
                 .getColumnIndexOrThrow(Schemas.BoxScoreEntry.STATS)));
-        return new BoxScore(playerID, year, week, playerStats);
+        String teamName = cursor.getString(cursor.getColumnIndexOrThrow(Schemas.BoxScoreEntry
+                .TEAM_NAME));
+        return new BoxScore(playerID, year, week, playerStats, teamName);
     }
 }

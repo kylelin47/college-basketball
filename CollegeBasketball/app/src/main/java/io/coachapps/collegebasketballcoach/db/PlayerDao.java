@@ -42,6 +42,27 @@ public class PlayerDao {
         return players;
     }
 
+    public Player getPlayer(int playerId) {
+        SQLiteDatabase db = DbHelper.getInstance(context).getReadableDatabase();
+        String[] projection = {
+                Schemas.PlayerEntry._ID,
+                Schemas.PlayerEntry.NAME,
+                Schemas.PlayerEntry.RATINGS,
+                Schemas.PlayerEntry.YEAR
+        };
+        String whereClause = Schemas.PlayerEntry._ID + " = ?";
+        String[] whereArgs = {
+                String.valueOf(playerId)
+        };
+        try (Cursor c = db.query(Schemas.PlayerEntry.TABLE_NAME, projection, whereClause,
+                whereArgs, null, null, null, null)) {
+            if (c.moveToNext()) {
+                return createPlayer(c);
+            }
+        }
+        return null;
+    }
+
     public void save(PlayerModel player) {
         SQLiteDatabase db = DbHelper.getInstance(context).getWritableDatabase();
         ContentValues values = new ContentValues();
@@ -53,8 +74,7 @@ public class PlayerDao {
         db.insert(Schemas.PlayerEntry.TABLE_NAME, null, values);
     }
 
-    private Player createPlayer(Cursor cursor) throws IOException,
-            ClassNotFoundException {
+    private Player createPlayer(Cursor cursor) {
         int id = cursor.getInt(cursor.getColumnIndexOrThrow(Schemas.PlayerEntry._ID));
         String name = cursor.getString(cursor.getColumnIndexOrThrow(Schemas.PlayerEntry.NAME));
         int year = cursor.getInt(cursor.getColumnIndexOrThrow(Schemas.PlayerEntry.YEAR));

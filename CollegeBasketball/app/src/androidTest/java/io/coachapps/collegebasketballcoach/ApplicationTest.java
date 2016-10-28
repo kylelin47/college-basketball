@@ -49,13 +49,14 @@ public class ApplicationTest {
     @Test
     public void canSaveBoxScores() {
         BoxScoreDao boxScoreDao = new BoxScoreDao(context);
-        BoxScore boxScore = new BoxScore(0, 2000, 0);
+        BoxScore boxScore = new BoxScore(0, 2000, 0, new Stats(), "a");
         boxScore.playerStats.points = 20;
-        BoxScore boxScore2 = new BoxScore(0, 2000, 1);
+        BoxScore boxScore2 = new BoxScore(0, 2000, 1, new Stats(), "a");
         boxScore2.playerStats.points = 5;
 
-        boxScoreDao.save(Arrays.asList(boxScore, boxScore2, new BoxScore(0, 2001, 0),
-                new BoxScore(0, 2002, 0)));
+        boxScoreDao.save(Arrays.asList(boxScore, boxScore2, new BoxScore(0, 2001, 0, new Stats(),
+                "a"),
+                new BoxScore(0, 2002, 0, new Stats(), "a")));
         SQLiteDatabase db = DbHelper.getInstance(context).getReadableDatabase();
         String[] projection = {
                 Schemas.BoxScoreEntry.STATS
@@ -87,13 +88,14 @@ public class ApplicationTest {
     @Test
     public void canRetrieveYearlyPlayerStats() {
         BoxScoreDao boxScoreDao = new BoxScoreDao(context);
-        BoxScore boxScore = new BoxScore(0, 2000, 0);
+        BoxScore boxScore = new BoxScore(0, 2000, 0, new Stats(), "a");
         boxScore.playerStats.assists = 20;
-        BoxScore boxScore2 = new BoxScore(0, 2000, 1);
+        BoxScore boxScore2 = new BoxScore(0, 2000, 1, new Stats(), "a");
         boxScore2.playerStats.assists = 5;
 
-        boxScoreDao.save(Arrays.asList(boxScore, boxScore2, new BoxScore(0, 2001, 0),
-                new BoxScore(0, 2002, 0)));
+        boxScoreDao.save(Arrays.asList(boxScore, boxScore2, new BoxScore(0, 2001, 0, new Stats(),
+                "a"),
+                new BoxScore(0, 2002, 0, new Stats(), "a")));
 
         YearlyPlayerStatsDao yearlyPlayerStatsDao = new YearlyPlayerStatsDao(context);
         List<YearlyPlayerStats> stats = yearlyPlayerStatsDao.getPlayerStatsFromYears(0, 2000, 2002);
