@@ -97,4 +97,14 @@ public class Game {
         awayScore = result.awayStats.points;
         beenPlayed = true;
     }
+
+    public void setGameModel(GameModel result) {
+        homeScore = result.homeStats.points;
+        awayScore = result.awayStats.points;
+        beenPlayed = true;
+    }
+
+    public void setBeenPlayed(boolean p) {
+        beenPlayed = p;
+    }
 }

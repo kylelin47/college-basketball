@@ -11,8 +11,16 @@ import android.widget.SeekBar;
 import android.widget.TextView;
 
 import java.util.ArrayList;
+import java.util.List;
 
+import io.coachapps.collegebasketballcoach.MainActivity;
 import io.coachapps.collegebasketballcoach.adapters.PlayerGameStatsListArrayAdapter;
+import io.coachapps.collegebasketballcoach.db.BoxScoreDao;
+import io.coachapps.collegebasketballcoach.db.GameDao;
+import io.coachapps.collegebasketballcoach.models.BoxScore;
+import io.coachapps.collegebasketballcoach.models.GameModel;
+import io.coachapps.collegebasketballcoach.models.Stats;
+import io.coachapps.collegebasketballcoach.util.LeagueEvents;
 
 /**
  * Class to encapsulate viewing a game "as it happens".
@@ -43,6 +51,7 @@ public class GameSimThread extends Thread {
     private StringBuilder gameLog;
     private StringBuilder gameEvents;
 
+    private Game gm;
     private Team home;
     private Team away;
     private ArrayList<Player> allPlayers;
@@ -61,14 +70,15 @@ public class GameSimThread extends Thread {
 
     private volatile boolean isPaused;
 
-    public GameSimThread(Activity activity, Context context, GameDialogElements uiElements, Team home, Team away) {
+    public GameSimThread(Activity activity, Context context, GameDialogElements uiElements, Game gm) {
         this.activity = activity;
         this.context = context;
 
         this.uiElements = uiElements;
 
-        this.home = home;
-        this.away = away;
+        this.gm = gm;
+        this.home = gm.getHome();
+        this.away = gm.getAway();
 
         this.home.subPlayers(50);
         this.away.subPlayers(50);
@@ -91,6 +101,8 @@ public class GameSimThread extends Thread {
 
     @Override
     public void run() {
+        home.beginNewGame();
+        away.beginNewGame();
 
         uiElements.textViewHomeAbbr.setText(home.getAbbr());
         uiElements.textViewAwayAbbr.setText(away.getAbbr());
@@ -212,6 +224,19 @@ public class GameSimThread extends Thread {
             }
 
         } // End playing loop
+
+        GameModel gameResult =
+                LeagueEvents.saveGameResult(context, home, away, gm.getYear(), gm.getWeek());
+        gm.setGameModel(gameResult);
+
+        activity.runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                // Update the button to say done
+                uiElements.buttonCallTimeout.setText("Done");
+            }
+        });
+
     }
 
     /**
@@ -246,6 +271,10 @@ public class GameSimThread extends Thread {
             else
                 return minTime + ":0" + secTime + " H" + halfNum;
         }
+    }
+
+    public boolean isPlaying() {
+        return playing;
     }
 
 }

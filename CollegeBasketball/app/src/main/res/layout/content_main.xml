@@ -115,16 +115,14 @@
                     android:text="Play Week"
                     android:layout_width="0dip"
                     android:layout_weight="1"
-                    android:layout_height="wrap_content"
-                    android:id="@+id/playGameButton"
-                    android:textColor="#ffffff"/>
+                    android:layout_height="match_parent"
+                    android:id="@+id/playGameButton" />
                 <Button
                     android:text="Sim Week"
                     android:layout_width="0dip"
                     android:layout_weight="1"
-                    android:layout_height="wrap_content"
-                    android:id="@+id/simGameButton"
-                    android:textColor="#ffffff"/>
+                    android:layout_height="match_parent"
+                    android:id="@+id/simGameButton" />
             </LinearLayout>
 
         </LinearLayout>

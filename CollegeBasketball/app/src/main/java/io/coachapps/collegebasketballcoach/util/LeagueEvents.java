@@ -2,13 +2,18 @@ package io.coachapps.collegebasketballcoach.util;
 
 import android.content.Context;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import io.coachapps.collegebasketballcoach.basketballsim.Game;
+import io.coachapps.collegebasketballcoach.basketballsim.Player;
 import io.coachapps.collegebasketballcoach.basketballsim.Simulator;
 import io.coachapps.collegebasketballcoach.basketballsim.Team;
+import io.coachapps.collegebasketballcoach.db.BoxScoreDao;
 import io.coachapps.collegebasketballcoach.db.GameDao;
+import io.coachapps.collegebasketballcoach.models.BoxScore;
 import io.coachapps.collegebasketballcoach.models.GameModel;
+import io.coachapps.collegebasketballcoach.models.Stats;
 
 /**
  * League Events utility class. Will be used to perform various league activities,
@@ -51,25 +56,61 @@ public class LeagueEvents {
         }
     }
 
-    public static boolean playGame(List<Team> teams, Simulator sim) {
+    public static boolean playGame(List<Team> teams, Simulator sim,
+                                   boolean simUserGame, String userTeamName) {
         int week = determineWeek(teams);
-        if (week == -1) return false;
+        if (week == Integer.MAX_VALUE) return false;
         for (Team t : teams) {
-            if (!t.gameSchedule.get(week).hasPlayed()) {
-                t.gameSchedule.get(week).playGame(sim);
+            Game gm = t.gameSchedule.get(week);
+            if (!gm.hasPlayed() && (simUserGame ||
+                    (!gm.getAway().getName().equals(userTeamName) &&
+                     !gm.getHome().getName().equals(userTeamName)))) {
+                gm.playGame(sim);
             }
         }
         return true;
     }
 
-    private static int determineWeek(List<Team> teams) {
+    public static GameModel saveGameResult(Context context, Team home, Team away, int year, int week) {
+        BoxScoreDao bsd = new BoxScoreDao(context);
+        List<BoxScore> boxScores = new ArrayList<>();
+        for (int p = 0; p < 10; ++p) {
+            boxScores.add(home.players.get(p).getGameBoxScore(year, week, home.getName()));
+            boxScores.add(away.players.get(p).getGameBoxScore(year, week, away.getName()));
+        }
+        bsd.save(boxScores);
+
+        home.resetLineup();
+        away.resetLineup();
+
+        Stats homeStats = new Stats();
+        for (Player player : home.players) {
+            homeStats.add(player.gmStats);
+        }
+        Stats awayStats = new Stats();
+        for (Player player : away.players) {
+            awayStats.add(player.gmStats);
+        }
+        GameDao gameDao = new GameDao(context);
+        GameModel gameResult = new GameModel(home.name, away.name, year, week, homeStats,
+                awayStats);
+        gameDao.save(gameResult);
+        return gameResult;
+    }
+
+    public static int determineWeek(List<Team> teams) {
         // look at the last team to play to determine week. This accounts for the case
         // where the phone crashed mid-sim and only some games have been played
-        for (Game game : teams.get(teams.size() - 1).gameSchedule) {
-            if (!game.hasPlayed()) {
-                return game.getWeek();
+        // However this would mess up play-by-play with the last team, so I'm changing it for now
+        int minWeek = Integer.MAX_VALUE;
+        for (Team t : teams) {
+            for (Game game : t.gameSchedule) {
+                if (!game.hasPlayed() && game.getWeek() < minWeek) {
+                    minWeek = game.getWeek();
+                }
             }
         }
-        return -1;
+
+        return minWeek;
     }
 }

@@ -9,7 +9,9 @@ import io.coachapps.collegebasketballcoach.db.BoxScoreDao;
 import io.coachapps.collegebasketballcoach.db.GameDao;
 import io.coachapps.collegebasketballcoach.models.BoxScore;
 import io.coachapps.collegebasketballcoach.models.GameModel;
+import io.coachapps.collegebasketballcoach.models.LeagueResults;
 import io.coachapps.collegebasketballcoach.models.Stats;
+import io.coachapps.collegebasketballcoach.util.LeagueEvents;
 
 /**
  * Has all the code responsible for simulating games.
@@ -82,47 +84,7 @@ public class Simulator {
             }
         }
 
-        BoxScoreDao bsd = new BoxScoreDao(context);
-        List<BoxScore> boxScores = new ArrayList<>();
-        for (int p = 0; p < 10; ++p) {
-            boxScores.add(home.players.get(p).getGameBoxScore(year, week, home.getName()));
-            boxScores.add(away.players.get(p).getGameBoxScore(year, week, away.getName()));
-        }
-        bsd.save(boxScores);
-
-        home.resetLineup();
-        away.resetLineup();
-
-        home.pointsFor += hscore;
-        home.pointsAga += ascore;
-        away.pointsFor += ascore;
-        away.pointsAga += hscore;
-        
-        if ( hscore > ascore ) {
-            home.wins++;
-            away.losses++;
-            home.games++;
-            away.games++;
-        } else {
-            home.losses++;
-            away.wins++;
-            home.games++;
-            away.games++;
-        }
-
-        Stats homeStats = new Stats();
-        for (Player player : home.players) {
-            homeStats.add(player.gmStats);
-        }
-        Stats awayStats = new Stats();
-        for (Player player : away.players) {
-            awayStats.add(player.gmStats);
-        }
-        GameDao gameDao = new GameDao(context);
-        GameModel gameResult = new GameModel(home.name, away.name, year, week, homeStats,
-                awayStats);
-        gameDao.save(gameResult);
-        return gameResult;
+        return LeagueEvents.saveGameResult(context, home, away, year, week);
     }
 
     /**

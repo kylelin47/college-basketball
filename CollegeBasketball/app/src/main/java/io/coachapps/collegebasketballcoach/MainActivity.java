@@ -45,6 +45,7 @@ import io.coachapps.collegebasketballcoach.util.LeagueEvents;
 
 public class MainActivity extends AppCompatActivity {
     String playerTeamName = "Default Team Name";
+    Team playerTeam;
     Simulator bballSim;
     PlayerGen playerGen;
     List<Team> teamList;
@@ -68,6 +69,7 @@ public class MainActivity extends AppCompatActivity {
     Button rosterButton;
     Button teamScheduleButton;
     Button simGameButton;
+    Button playGameButton;
     // nice hack 8^)
     int lastSelectedTeamPosition = 0;
 
@@ -139,6 +141,8 @@ public class MainActivity extends AppCompatActivity {
                 return team.name.compareTo(t1.name);
             }
         });
+        playerTeam = teamList.get(0);
+
         // Sim games
         bballSim = new Simulator(MainActivity.this);
         LeagueEvents.scheduleSeason(teamList, this);
@@ -175,7 +179,14 @@ public class MainActivity extends AppCompatActivity {
         simGameButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                advanceGame();
+                advanceGame(true);
+            }
+        });
+        playGameButton = (Button) findViewById(R.id.playGameButton);
+        playGameButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                playNextUserGame();
             }
         });
 
@@ -226,29 +237,33 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        // Make games clickable
-        /*
-        gameList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                System.out.println("testing onitemclick");
-                Game gm = gameListAdapter.getItem(position);
-                showGameSummaryDialog(gm, position);
-            }
-        });
-        */
-
         //showGameSimDialog();
     }
-    public void advanceGame() {
-        if (LeagueEvents.playGame(teamList, bballSim)) {
-            rosterListAdapter.notifyDataSetChanged();
-            statsListAdapter = new TeamStatsListArrayAdapter(MainActivity.this,
-                    getTeamStatsCSVs(teamList.get(lastSelectedTeamPosition).getName()), false);
-            statsList.setAdapter(statsListAdapter);
-            gameListAdapter.notifyDataSetChanged();
-            populateTeamStrList();
-            dataAdapterTeam.notifyDataSetChanged();
+
+    public void updateUI() {
+        rosterListAdapter.notifyDataSetChanged();
+        statsListAdapter = new TeamStatsListArrayAdapter(MainActivity.this,
+                getTeamStatsCSVs(teamList.get(lastSelectedTeamPosition).getName()), false);
+        statsList.setAdapter(statsListAdapter);
+        gameListAdapter.notifyDataSetChanged();
+        populateTeamStrList();
+        dataAdapterTeam.notifyDataSetChanged();
+    }
+
+    public void advanceGame(boolean simPlayerGame) {
+        System.out.println("Player team name : " + playerTeamName);
+        if (LeagueEvents.playGame(teamList, bballSim, simPlayerGame, playerTeamName)) {
+            updateUI();
+        }
+    }
+
+    public void playNextUserGame() {
+        int currGame = LeagueEvents.determineWeek(teamList);
+        if (currGame != Integer.MAX_VALUE) {
+            System.out.println("currGame = " + currGame);
+            Game userGame = playerTeam.gameSchedule.get(currGame);
+            showGameSimDialog(userGame);
+            advanceGame(false);
         }
     }
 
@@ -325,10 +340,11 @@ public class MainActivity extends AppCompatActivity {
         newFragment.show(ft, "game dialog");
     }
 
-    public void showGameSimDialog() {
+    public void showGameSimDialog(final Game gm) {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setView(getLayoutInflater().inflate(R.layout.play_game_layout, null));
-        AlertDialog dialog = builder.create();
+        builder.setCancelable(false);
+        final AlertDialog dialog = builder.create();
         dialog.show();
 
         final GameSimThread.GameDialogElements uiElements = new GameSimThread.GameDialogElements();
@@ -344,7 +360,7 @@ public class MainActivity extends AppCompatActivity {
 
         Spinner dialogSpinner = (Spinner) dialog.findViewById(R.id.spinnerGameDialog);
         ArrayList<String> spinnerStrList = new ArrayList<>();
-        spinnerStrList.add("GameModel Log");
+        spinnerStrList.add("Game Log");
         spinnerStrList.add("Player Stats");
         ArrayAdapter<String> dataAdapter = new ArrayAdapter<>(this,
                 android.R.layout.simple_spinner_item, spinnerStrList);
@@ -372,24 +388,22 @@ public class MainActivity extends AppCompatActivity {
                     }
                 });
 
-        playerGen = new PlayerGen(getString(R.string.league_player_names),
-                getString(R.string.league_last_names));
-
-        final Team homeTeam = new Team("Warriors", playerGen);
-        final Team awayTeam = new Team("Cavaliers", playerGen);
-
-        final GameSimThread t = new GameSimThread(this, this, uiElements, homeTeam, awayTeam);
+        final GameSimThread t = new GameSimThread(this, this, uiElements, gm);
 
         uiElements.buttonCallTimeout.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 // Perform action on click
-                t.togglePause();
-                showChangeStrategyDialog(homeTeam, t);
+                if (t.isPlaying()) {
+                    t.togglePause();
+                    showChangeStrategyDialog(gm.getHome(), t);
+                } else {
+                    dialog.dismiss();
+                    updateUI();
+                }
             }
         });
 
         t.start();
-
     }
 
     public void showChangeStrategyDialog(final Team userTeam, final GameSimThread t) {
