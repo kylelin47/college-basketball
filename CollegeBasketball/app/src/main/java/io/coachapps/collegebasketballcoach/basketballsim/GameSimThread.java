@@ -55,6 +55,8 @@ public class GameSimThread extends Thread {
     private Team home;
     private Team away;
     private ArrayList<Player> allPlayers;
+    private ArrayList<Player> homePlayers;
+    private ArrayList<Player> awayPlayers;
 
     private int gameTime;
     private int maxGameTime;
@@ -83,11 +85,17 @@ public class GameSimThread extends Thread {
         this.home.subPlayers(50);
         this.away.subPlayers(50);
 
+        homePlayers = new ArrayList<>();
+        homePlayers.addAll(home.players);
+
+        awayPlayers = new ArrayList<>();
+        awayPlayers.addAll(away.players);
+
         allPlayers = new ArrayList<>();
         allPlayers.addAll(away.players);
         allPlayers.addAll(home.players);
 
-        statsAdapter = new PlayerGameStatsListArrayAdapter(context, allPlayers);
+        statsAdapter = new PlayerGameStatsListArrayAdapter(context, awayPlayers);
         uiElements.listViewGameStats.setAdapter(statsAdapter);
 
         hscore = 0;
@@ -159,14 +167,14 @@ public class GameSimThread extends Thread {
                     poss_away = true;
                     poss_home = false;
 
-                    playTime = hspeed + 25 * Math.random();
+                    playTime = hspeed + 20 * Math.random();
                 } else if (poss_away) {
                     matches_a = Simulator.detectMismatch(away, home);
                     ascore += Simulator.runPlay(away, home, matches_a, gameEvents);
                     poss_away = false;
                     poss_home = true;
 
-                    playTime = aspeed + 25 * Math.random();
+                    playTime = aspeed + 20 * Math.random();
                 }
 
                 gameTime += (int) playTime;
@@ -275,6 +283,20 @@ public class GameSimThread extends Thread {
 
     public boolean isPlaying() {
         return playing;
+    }
+
+    public void updateStatsAdapter(boolean homeOrAway) {
+        if (homeOrAway) {
+            // Home
+            statsAdapter = new PlayerGameStatsListArrayAdapter(context, homePlayers);
+            statsAdapter.notifyDataSetChanged();
+            uiElements.listViewGameStats.setAdapter(statsAdapter);
+        } else {
+            // Away
+            statsAdapter = new PlayerGameStatsListArrayAdapter(context, awayPlayers);
+            statsAdapter.notifyDataSetChanged();
+            uiElements.listViewGameStats.setAdapter(statsAdapter);
+        }
     }
 
 }

@@ -52,13 +52,13 @@ public class Simulator {
                 hscore += runPlay(home, away, matches_h, null);
                 poss_away = true;
                 poss_home = false;
-                playTime = hspeed + 25 * Math.random();
+                playTime = hspeed + 20 * Math.random();
                 matches_h = detectMismatch(home, away);
             } else if (poss_away) {
                 ascore += runPlay(away, home, matches_a, null);
                 poss_away = false;
                 poss_home = true;
-                playTime = aspeed + 25 * Math.random();
+                playTime = aspeed + 20 * Math.random();
                 matches_a = detectMismatch(away, home);
             }
 

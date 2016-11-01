@@ -3,6 +3,7 @@ package io.coachapps.collegebasketballcoach;
 import android.app.DialogFragment;
 import android.app.FragmentTransaction;
 import android.content.DialogInterface;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
@@ -72,6 +73,7 @@ public class MainActivity extends AppCompatActivity {
     Button playGameButton;
     // nice hack 8^)
     int lastSelectedTeamPosition = 0;
+    volatile boolean canSimWeek = true;
 
     @Override
     protected void onDestroy() {
@@ -252,8 +254,8 @@ public class MainActivity extends AppCompatActivity {
 
     public void advanceGame(boolean simPlayerGame) {
         System.out.println("Player team name : " + playerTeamName);
-        if (LeagueEvents.playGame(teamList, bballSim, simPlayerGame, playerTeamName)) {
-            updateUI();
+        if (canSimWeek) {
+            new SimulateGameTask().execute(simPlayerGame);
         }
     }
 
@@ -358,10 +360,13 @@ public class MainActivity extends AppCompatActivity {
         uiElements.textViewHomeScore = (TextView) dialog.findViewById(R.id.gameDialogScoreHome);
         uiElements.textViewAwayScore = (TextView) dialog.findViewById(R.id.gameDialogScoreAway);
 
+        final GameSimThread t = new GameSimThread(this, this, uiElements, gm);
+
         Spinner dialogSpinner = (Spinner) dialog.findViewById(R.id.spinnerGameDialog);
         ArrayList<String> spinnerStrList = new ArrayList<>();
         spinnerStrList.add("Game Log");
-        spinnerStrList.add("Player Stats");
+        spinnerStrList.add(gm.getAway().getName() + " Player Stats");
+        spinnerStrList.add(gm.getHome().getName() + " Player Stats");
         ArrayAdapter<String> dataAdapter = new ArrayAdapter<>(this,
                 android.R.layout.simple_spinner_item, spinnerStrList);
         dataAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
@@ -375,11 +380,18 @@ public class MainActivity extends AppCompatActivity {
                             uiElements.listViewGameStats.setVisibility(View.GONE);
                             uiElements.scrollViewGameLog.setVisibility(View.VISIBLE);
                             uiElements.textViewGameLog.setVisibility(View.VISIBLE);
-                        } else {
-                            // Game stats
+                        } else if (position == 1){
+                            // Away stats
                             uiElements.listViewGameStats.setVisibility(View.VISIBLE);
                             uiElements.scrollViewGameLog.setVisibility(View.GONE);
                             uiElements.textViewGameLog.setVisibility(View.GONE);
+                            t.updateStatsAdapter(false);
+                        } else {
+                            // Home stats
+                            uiElements.listViewGameStats.setVisibility(View.VISIBLE);
+                            uiElements.scrollViewGameLog.setVisibility(View.GONE);
+                            uiElements.textViewGameLog.setVisibility(View.GONE);
+                            t.updateStatsAdapter(true);
                         }
                     }
 
@@ -388,14 +400,12 @@ public class MainActivity extends AppCompatActivity {
                     }
                 });
 
-        final GameSimThread t = new GameSimThread(this, this, uiElements, gm);
-
         uiElements.buttonCallTimeout.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 // Perform action on click
                 if (t.isPlaying()) {
                     t.togglePause();
-                    showChangeStrategyDialog(gm.getHome(), t);
+                    showChangeStrategyDialog(playerTeam, t);
                 } else {
                     dialog.dismiss();
                     updateUI();
@@ -483,5 +493,24 @@ public class MainActivity extends AppCompatActivity {
                     }
                 });
 
+    }
+
+    /**
+     * Class responsible for simulating a week.
+     * Done via a AsyncTask so the UI thread isn't overwhelmed.
+     */
+    private class SimulateGameTask extends AsyncTask<Boolean, Void, Void> {
+        @Override
+        protected Void doInBackground(Boolean... simPlayerGame) {
+            canSimWeek = false;
+            boolean spg = simPlayerGame[0];
+            LeagueEvents.playGame(teamList, bballSim, spg, playerTeamName);
+            return null;
+        }
+        @Override
+        protected void onPostExecute(Void result) {
+            updateUI();
+            canSimWeek = true;
+        }
     }
 }
