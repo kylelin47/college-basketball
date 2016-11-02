@@ -70,6 +70,38 @@ public class BoxScoreDao {
         return boxScores;
     }
 
+    /**
+     * Get list of boxscores from the database for a particular game
+     * @param year what year the game was played
+     * @param playerID player of boxscores
+     * @return list of boxScores for that player
+     */
+    public List<BoxScore> getBoxScoresForPlayer(int year, int playerID) {
+        SQLiteDatabase db = DbHelper.getInstance(context).getReadableDatabase();
+        String[] projection = {
+                Schemas.BoxScoreEntry.PLAYER,
+                Schemas.BoxScoreEntry.YEAR,
+                Schemas.BoxScoreEntry.WEEK,
+                Schemas.BoxScoreEntry.STATS,
+                Schemas.BoxScoreEntry.TEAM_NAME,
+        };
+        String whereClause = Schemas.BoxScoreEntry.YEAR + "=? AND " +
+                Schemas.BoxScoreEntry.PLAYER + "=?";
+
+        List<BoxScore> boxScores = new ArrayList<>();
+        String[] whereArgs = {
+                String.valueOf(year),
+                String.valueOf(playerID)
+        };
+        try (Cursor cursor = db.query(Schemas.BoxScoreEntry.TABLE_NAME, projection,
+                whereClause, whereArgs, null, null, null, null)) {
+            while (cursor.moveToNext()) {
+                boxScores.add(fetchBoxScore(cursor));
+            }
+        }
+        return boxScores;
+    }
+
     private void updateBoxScore(BoxScore boxScore, SQLiteDatabase db) {
         ContentValues values = new ContentValues();
         values.put(Schemas.BoxScoreEntry.PLAYER, boxScore.playerId);

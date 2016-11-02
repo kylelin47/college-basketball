@@ -4,6 +4,7 @@
     <string-array name="player_display_choices">
         <item>Ratings</item>
         <item>Stats</item>
+        <item>Recent Games</item>
     </string-array>
     <string-array name="team_names">
         <item>Nashville Nets</item>

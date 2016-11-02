@@ -60,6 +60,11 @@ public class PlayerDialogFragment extends DialogFragment {
                                 (player.getId());
                         getChildFragmentManager().beginTransaction().replace(R.id.fragment_container,
                                 playerStatsFragment).commit();
+                    } else if (i == 2) {
+                        RecentGamesFragment recentGamesFragment = RecentGamesFragment.newInstance
+                                (player.getId(), 2016);
+                        getChildFragmentManager().beginTransaction().replace(R.id.fragment_container,
+                                recentGamesFragment).commit();
                     }
                 }
                 previouslySelected = i;
