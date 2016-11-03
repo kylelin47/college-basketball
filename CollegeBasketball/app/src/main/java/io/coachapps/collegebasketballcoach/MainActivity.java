@@ -45,12 +45,14 @@ import io.coachapps.collegebasketballcoach.models.YearlyTeamStats;
 import io.coachapps.collegebasketballcoach.util.LeagueEvents;
 
 public class MainActivity extends AppCompatActivity {
+    boolean hasScheduledConferenceTournament;
     String playerTeamName = "Default Team Name";
     Team playerTeam;
     Simulator bballSim;
     PlayerGen playerGen;
     List<Team> teamList;
     List<String> teamStrList;
+    List<Game> tournamentGames;
 
     Spinner teamSpinner;
     TextView currTeamTextView;
@@ -71,7 +73,6 @@ public class MainActivity extends AppCompatActivity {
     Button teamScheduleButton;
     Button simGameButton;
     Button playGameButton;
-    // nice hack 8^)
     int lastSelectedTeamPosition = 0;
     volatile boolean canSimWeek = true;
 
@@ -112,13 +113,12 @@ public class MainActivity extends AppCompatActivity {
                     Log.i("MainActivity", "Set team name");
                     ((AlertDialog) dialog).getButton(DialogInterface.BUTTON_POSITIVE).setEnabled
                             (false);
-                    playerTeamName = input.getText().toString();
+                    playerTeamName = input.getText().toString().trim();
                     String replacementTeamName = "Chef Boyardees";
-                    // Make 10 teams;
                     teamList = new ArrayList<>();
                     String[] teamNames = getResources().getStringArray(R.array.team_names);
                     teamList.add(new Team(playerTeamName, 99, playerGen));
-                    for (int i = 0; i < teamNames.length; ++i) {
+                    for (int i = 0; i < 9; ++i) {
                         if (playerTeamName.equals(teamNames[i])) teamNames[i] = replacementTeamName;
                         teamList.add(new Team(teamNames[i], (int)(Math.random()*100), playerGen));
                     }
@@ -148,8 +148,7 @@ public class MainActivity extends AppCompatActivity {
         // Sim games
         bballSim = new Simulator(MainActivity.this);
         LeagueEvents.scheduleSeason(teamList, this);
-        //bballSim.playSeason(teamList);
-
+        tryToScheduleConferenceTournament();
         // Set up UI components
         currTeamTextView = (TextView) findViewById(R.id.currentTeamText);
         vf = (ViewFlipper) findViewById(R.id.viewFlipper);
@@ -238,8 +237,6 @@ public class MainActivity extends AppCompatActivity {
                 showPlayerDialog(p);
             }
         });
-
-        //showGameSimDialog();
     }
 
     public void updateUI() {
@@ -253,7 +250,6 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void advanceGame(boolean simPlayerGame) {
-        System.out.println("Player team name : " + playerTeamName);
         if (canSimWeek) {
             canSimWeek = false;
             simGameButton.setEnabled(false);
@@ -263,7 +259,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void playNextUserGame() {
-        int currGame = LeagueEvents.determineWeek(teamList);
+        int currGame = LeagueEvents.determineLastUnplayedRegularSeasonWeek(teamList);
         if (currGame != Integer.MAX_VALUE) {
             System.out.println("currGame = " + currGame);
             Game userGame = playerTeam.gameSchedule.get(currGame);
@@ -508,7 +504,8 @@ public class MainActivity extends AppCompatActivity {
         @Override
         protected Void doInBackground(Boolean... simPlayerGame) {
             boolean spg = simPlayerGame[0];
-            LeagueEvents.playGame(teamList, bballSim, spg, playerTeamName);
+            LeagueEvents.playRegularSeasonGame(teamList, bballSim, spg, playerTeamName);
+            LeagueEvents.playTournamentRound(tournamentGames, bballSim, spg, playerTeamName);
             return null;
         }
         @Override
@@ -517,6 +514,15 @@ public class MainActivity extends AppCompatActivity {
             canSimWeek = true;
             simGameButton.setEnabled(true);
             playGameButton.setEnabled(true);
+            tryToScheduleConferenceTournament();
+        }
+    }
+    private void tryToScheduleConferenceTournament() {
+        if (!hasScheduledConferenceTournament && LeagueEvents
+                .determineLastUnplayedRegularSeasonWeek(teamList) == Integer.MAX_VALUE) {
+            tournamentGames = LeagueEvents.scheduleConferenceTournament(teamList, MainActivity
+                    .this);
+            hasScheduledConferenceTournament = true;
         }
     }
 }

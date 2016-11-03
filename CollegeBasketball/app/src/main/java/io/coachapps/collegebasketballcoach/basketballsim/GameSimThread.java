@@ -1,7 +1,6 @@
 package io.coachapps.collegebasketballcoach.basketballsim;
 
 import android.app.Activity;
-import android.app.ListActivity;
 import android.content.Context;
 import android.view.View;
 import android.widget.Button;
@@ -11,15 +10,9 @@ import android.widget.SeekBar;
 import android.widget.TextView;
 
 import java.util.ArrayList;
-import java.util.List;
 
-import io.coachapps.collegebasketballcoach.MainActivity;
 import io.coachapps.collegebasketballcoach.adapters.PlayerGameStatsListArrayAdapter;
-import io.coachapps.collegebasketballcoach.db.BoxScoreDao;
-import io.coachapps.collegebasketballcoach.db.GameDao;
-import io.coachapps.collegebasketballcoach.models.BoxScore;
 import io.coachapps.collegebasketballcoach.models.GameModel;
-import io.coachapps.collegebasketballcoach.models.Stats;
 import io.coachapps.collegebasketballcoach.util.LeagueEvents;
 
 /**
