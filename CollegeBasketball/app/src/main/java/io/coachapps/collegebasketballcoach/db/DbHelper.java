@@ -16,7 +16,7 @@ public class DbHelper extends SQLiteOpenHelper {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
     }
 
-    public static final int DATABASE_VERSION = 8;
+    public static final int DATABASE_VERSION = 9;
     public static final String DATABASE_NAME = "CollegeBasketball.db";
 
     private static final String INTEGER_TYPE = " INTEGER";
@@ -52,6 +52,7 @@ public class DbHelper extends SQLiteOpenHelper {
                     Schemas.TeamEntry._ID + INTEGER_TYPE + COMMA_SEP +
                     Schemas.TeamEntry.NAME + " TEXT PRIMARY KEY," +
                     Schemas.TeamEntry.CONFERENCE + TEXT_TYPE + COMMA_SEP +
+                    Schemas.TeamEntry.PRESTIGE + INTEGER_TYPE + COMMA_SEP +
                     Schemas.TeamEntry.IS_PLAYER + INTEGER_TYPE +
                     " );";
 

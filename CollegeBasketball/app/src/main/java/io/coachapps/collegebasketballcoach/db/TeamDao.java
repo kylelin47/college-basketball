@@ -41,7 +41,6 @@ public class TeamDao {
     /**
      * Save teams and players in the teams. Should only be called once at very beginning of app
      * installation
-     * @param teams
      */
     public void saveTeams(List<Team> teams, String playerTeamName) {
         PlayerDao playerDao = new PlayerDao(context);
@@ -52,6 +51,7 @@ public class TeamDao {
                 ContentValues values = new ContentValues();
                 values.put(Schemas.TeamEntry.NAME, team.getName());
                 values.put(Schemas.TeamEntry.CONFERENCE, "garbage");
+                values.put(Schemas.TeamEntry.PRESTIGE, team.getPrestige());
                 values.put(Schemas.TeamEntry.IS_PLAYER, team.getName().equals(playerTeamName));
                 db.insert(Schemas.TeamEntry.TABLE_NAME, null, values);
                 for (Player player : team.players) {
@@ -75,8 +75,10 @@ public class TeamDao {
         SQLiteDatabase db = DbHelper.getInstance(context).getReadableDatabase();
         String[] projection = {
                 Schemas.TeamEntry.NAME,
+                Schemas.TeamEntry.PRESTIGE
         };
         List<String> teamNames = new ArrayList<>();
+        List<Integer> teamPrestiges = new ArrayList<>();
         db.beginTransaction();
         try {
             try (Cursor cursor = db.query(Schemas.TeamEntry.TABLE_NAME, projection, null, null,
@@ -84,11 +86,16 @@ public class TeamDao {
                 while (cursor.moveToNext()) {
                     String teamName = cursor.getString(cursor.getColumnIndexOrThrow(Schemas
                             .TeamEntry.NAME));
+                    int teamPrestige = cursor.getInt(cursor.getColumnIndexOrThrow(Schemas
+                            .TeamEntry.PRESTIGE));
                     teamNames.add(teamName);
+                    teamPrestiges.add(teamPrestige);
                 }
             }
-            for (String teamName : teamNames) {
-                Team team = new Team(teamName, playerDao.getPlayers(teamName));
+            for (int i = 0; i < teamNames.size(); ++i) {
+                String teamName = teamNames.get(i);
+                int teamPrestige = teamPrestiges.get(i);
+                Team team = new Team(teamName, playerDao.getPlayers(teamName), teamPrestige);
                 String[] teamProjection = {
                         Schemas.YearlyTeamStatsEntry.WINS,
                         Schemas.YearlyTeamStatsEntry.LOSSES

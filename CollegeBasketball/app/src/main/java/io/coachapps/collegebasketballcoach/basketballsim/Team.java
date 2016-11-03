@@ -19,17 +19,17 @@ public class Team {
     public List<Game> gameSchedule;
 
     public int games;
-    public int pointsFor;
-    public int pointsAga;
     public String name;
+    public int prestige;
     public boolean[] startersIn;
 
     public volatile Strategy offStrat;
     public volatile Strategy defStrat;
 
-    public Team( String name, List<Player> players ) {
+    public Team( String name, List<Player> players, int prestige ) {
         this.players = players;
         this.name = name;
+        this.prestige = prestige;
         wins = 0;
         losses = 0;
         games = 0;
@@ -48,8 +48,9 @@ public class Team {
         }
     }
     
-    public Team( String name, PlayerGen gen ) {
+    public Team( String name, int prestige, PlayerGen gen ) {
         this.name = name;
+        this.prestige = prestige;
         wins = 0;
         losses = 0;
         games = 0;
@@ -64,8 +65,8 @@ public class Team {
 
         // Make the players
         for (int i = 0; i < 5; ++i) {
-            Player a = gen.genPlayer(i+1);
-            Player b = gen.genPlayer(i+1);
+            Player a = gen.genPlayer(i+1, prestige);
+            Player b = gen.genPlayer(i+1, prestige);
             if (a.getOverall() > b.getOverall()) {
                 players.add(i, a);
                 players.add(b);
@@ -135,6 +136,10 @@ public class Team {
     public String getName() { return name; }
 
     public String getAbbr() { return name.substring(0,3).toUpperCase(); }
+
+    public int getPrestige() {
+        return prestige;
+    }
     
     public void addPlayer( Player player ) {
         //add player (used by AI)

@@ -16,6 +16,7 @@ public final class Schemas {
         public static final String TABLE_NAME = "teams";
         public static final String NAME = "name";
         public static final String CONFERENCE = "conference";
+        public static final String PRESTIGE = "prestige";
         public static final String IS_PLAYER = "isPlayer";
     }
 

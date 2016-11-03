@@ -84,6 +84,14 @@ public class Simulator {
             }
         }
 
+        if (hscore > ascore) {
+            home.wins++;
+            away.losses++;
+        } else {
+            home.losses++;
+            away.wins++;
+        }
+
         return LeagueEvents.saveGameResult(context, home, away, year, week);
     }
 

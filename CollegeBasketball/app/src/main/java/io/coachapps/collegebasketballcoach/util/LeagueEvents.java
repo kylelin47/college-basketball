@@ -25,6 +25,7 @@ public class LeagueEvents {
     private static int determineYear() {
         return 2016;
     }
+
     public static void scheduleSeason(List<Team> teams, Context context) {
         int robinRounds = teams.size() - 1;
         int halfRobin = teams.size()/2;
@@ -59,6 +60,7 @@ public class LeagueEvents {
     public static boolean playGame(List<Team> teams, Simulator sim,
                                    boolean simUserGame, String userTeamName) {
         int week = determineWeek(teams);
+        System.out.println("Week = " + week);
         if (week == Integer.MAX_VALUE) return false;
         for (Team t : teams) {
             Game gm = t.gameSchedule.get(week);

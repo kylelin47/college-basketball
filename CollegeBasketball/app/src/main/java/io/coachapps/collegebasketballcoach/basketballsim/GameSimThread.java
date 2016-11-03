@@ -233,6 +233,14 @@ public class GameSimThread extends Thread {
 
         } // End playing loop
 
+        if (hscore > ascore) {
+            home.wins++;
+            away.losses++;
+        } else {
+            home.losses++;
+            away.wins++;
+        }
+
         GameModel gameResult =
                 LeagueEvents.saveGameResult(context, home, away, gm.getYear(), gm.getWeek());
         gm.setGameModel(gameResult);

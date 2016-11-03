@@ -117,10 +117,10 @@ public class MainActivity extends AppCompatActivity {
                     // Make 10 teams;
                     teamList = new ArrayList<>();
                     String[] teamNames = getResources().getStringArray(R.array.team_names);
-                    teamList.add(new Team(playerTeamName, playerGen));
-                    for (int i = 0; i < 9; ++i) {
+                    teamList.add(new Team(playerTeamName, 99, playerGen));
+                    for (int i = 0; i < teamNames.length; ++i) {
                         if (playerTeamName.equals(teamNames[i])) teamNames[i] = replacementTeamName;
-                        teamList.add(new Team(teamNames[i], playerGen));
+                        teamList.add(new Team(teamNames[i], (int)(Math.random()*100), playerGen));
                     }
                     setEverythingUp();
                     teamDao.saveTeams(teamList, playerTeamName);
@@ -255,6 +255,9 @@ public class MainActivity extends AppCompatActivity {
     public void advanceGame(boolean simPlayerGame) {
         System.out.println("Player team name : " + playerTeamName);
         if (canSimWeek) {
+            canSimWeek = false;
+            simGameButton.setEnabled(false);
+            playGameButton.setEnabled(false);
             new SimulateGameTask().execute(simPlayerGame);
         }
     }
@@ -272,7 +275,9 @@ public class MainActivity extends AppCompatActivity {
     private void populateTeamStrList() {
         teamStrList.clear();
         for (int i = 0; i < teamList.size(); i++) {
-            teamStrList.add(teamList.get(i).getName() + " Wins: " + teamList.get(i).wins);
+            teamStrList.add(
+                    "(" + teamList.get(i).wins + "-" + teamList.get(i).losses + ")" +
+                            " " + teamList.get(i).getName());
         }
     }
 
@@ -502,7 +507,6 @@ public class MainActivity extends AppCompatActivity {
     private class SimulateGameTask extends AsyncTask<Boolean, Void, Void> {
         @Override
         protected Void doInBackground(Boolean... simPlayerGame) {
-            canSimWeek = false;
             boolean spg = simPlayerGame[0];
             LeagueEvents.playGame(teamList, bballSim, spg, playerTeamName);
             return null;
@@ -511,6 +515,8 @@ public class MainActivity extends AppCompatActivity {
         protected void onPostExecute(Void result) {
             updateUI();
             canSimWeek = true;
+            simGameButton.setEnabled(true);
+            playGameButton.setEnabled(true);
         }
     }
 }

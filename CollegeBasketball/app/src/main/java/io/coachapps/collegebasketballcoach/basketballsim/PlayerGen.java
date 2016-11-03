@@ -34,11 +34,11 @@ public class PlayerGen {
         // generate number of players, with an equal number of each position
         ArrayList<Player> PlayerList = new ArrayList<>();
         for (int i = 0; i < number/5; ++i) {
-            Player genPG = genPlayer(1);
-            Player genSG = genPlayer(2);
-            Player genSF = genPlayer(3);
-            Player genPF = genPlayer(4);
-            Player genC = genPlayer(5);
+            Player genPG = genPlayer(1, 70 + (int)(Math.random()*30));
+            Player genSG = genPlayer(2, 70 + (int)(Math.random()*30));
+            Player genSF = genPlayer(3, 70 + (int)(Math.random()*30));
+            Player genPF = genPlayer(4, 70 + (int)(Math.random()*30));
+            Player genC  = genPlayer(5, 70 + (int)(Math.random()*30));
             PlayerList.add(genPG);
             PlayerList.add(genSG);
             PlayerList.add(genSF);
@@ -49,10 +49,10 @@ public class PlayerGen {
         return PlayerList;
     }
     
-    public Player genPlayer( int position ) {
+    public Player genPlayer( int position, int prestige ) {
         int def_rat    = 80;
         int height     = 78;
-        int weight     = 180;
+        int weight     = 200;
         int speed      = def_rat;
         int age        = 25;
         int int_s      = def_rat;
@@ -258,29 +258,29 @@ public class PlayerGen {
                 att += "St ";
             }
         }
+
+        // Better player for higher prestige
+        int prestigeFactor = 2*(prestige-50)/10;
+        int_s      += prestigeFactor*Math.random();
+        mid_s      += prestigeFactor*Math.random();
+        out_s      += prestigeFactor*Math.random();
+        passing    += prestigeFactor*Math.random();
+        handling   += prestigeFactor*Math.random();
+        steal      += prestigeFactor*Math.random();
+        block      += prestigeFactor*Math.random();
+        int_d      += prestigeFactor*Math.random();
+        out_d      += prestigeFactor*Math.random();
+        rebounding += prestigeFactor*Math.random();
         
         int usage = (int) (Math.round( Math.pow(int_s, 2) + Math.pow(mid_s, 2) + Math.pow(out_s, 2) ) + extra_usage)/1000;
+        /*
         double factor = 1.8;
         int ins_t = (int) (1000*Math.pow(int_s, factor) / (Math.pow(int_s, factor) + Math.pow(mid_s, factor) + Math.pow(out_s, factor)) );
         int mid_t = (int) (1000*Math.pow(mid_s, factor) / (Math.pow(int_s, factor) + Math.pow(mid_s, factor) + Math.pow(out_s, factor)) );
         int out_t = (int) (1000*Math.pow(out_s, factor) / (Math.pow(int_s, factor) + Math.pow(mid_s, factor) + Math.pow(out_s, factor)) );
+        */
 
         PlayerRatings ratings = new PlayerRatings();
-        /*ratings[0] = position;
-        ratings[2] = int_s;
-        ratings[3] = mid_s;
-        ratings[4] = out_s;
-        ratings[5] = passing;
-        ratings[6] = handling;
-        ratings[7] = steal;
-        ratings[8] = block;
-        ratings[9] = int_d;
-        ratings[10] = out_d;
-        ratings[11] = rebounding;
-        ratings[12] = usage;
-        ratings[13] = ins_t;
-        ratings[14] = mid_t;
-        ratings[15] = out_t;*/
 
         ratings.position = position;
         ratings.insideShooting = int_s;
@@ -294,10 +294,8 @@ public class PlayerGen {
         ratings.perimeterDefense = out_d;
         ratings.rebounding = rebounding;
         ratings.usage = usage;
-        
-        //ratings[1] = (int) Math.round( Math.pow(ratings[2], 1.3) + Math.pow(ratings[3], 1.3) + Math.pow(ratings[4], 1.3) + Math.pow(ratings[5], 1.1) + ratings[6] +
-        //                               Math.pow(ratings[7], 1.1) + Math.pow(ratings[8], 1.1) + Math.pow(ratings[9], 1.2) + Math.pow(ratings[10], 1.2) + Math.pow(ratings[11], 1.2) );
-        //ratings[1] = 100*ratings[1] / 2500;
+        ratings.weightInPounds = weight;
+        ratings.heightInInches = height;
         
         return new Player( name, ratings, att, currID++, 1 );
     }
