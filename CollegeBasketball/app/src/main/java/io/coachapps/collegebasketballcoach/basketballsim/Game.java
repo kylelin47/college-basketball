@@ -1,5 +1,6 @@
 package io.coachapps.collegebasketballcoach.basketballsim;
 
+import io.coachapps.collegebasketballcoach.models.FullGameResults;
 import io.coachapps.collegebasketballcoach.models.GameModel;
 
 /**
@@ -18,6 +19,7 @@ public class Game {
     private int homeScore;
     private int awayScore;
     private boolean beenPlayed;
+    public boolean tournamentGame;
 
     public Game(Team home, Team away, int year, int week) {
         this.home = home;
@@ -66,11 +68,13 @@ public class Game {
     }
 
     public Team getWinner() {
+        if (!beenPlayed) return null;
         if (homeScore > awayScore) return home;
         else return away;
     }
 
     public Team getLoser() {
+        if (!beenPlayed) return null;
         if (homeScore > awayScore) return away;
         else return home;
     }
@@ -91,11 +95,12 @@ public class Game {
         }
     }
 
-    public void playGame(Simulator sim) {
-        GameModel result = sim.playGame(home, away, year, week);
-        homeScore = result.homeStats.points;
-        awayScore = result.awayStats.points;
+    public FullGameResults playGame(Simulator sim) {
+        FullGameResults result = sim.playGame(home, away, year, week);
+        homeScore = result.game.homeStats.points;
+        awayScore = result.game.awayStats.points;
         beenPlayed = true;
+        return result;
     }
 
     public void setGameModel(GameModel result) {

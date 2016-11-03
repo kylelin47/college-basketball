@@ -2,15 +2,7 @@ package io.coachapps.collegebasketballcoach.basketballsim;
 
 import android.content.Context;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import io.coachapps.collegebasketballcoach.db.BoxScoreDao;
-import io.coachapps.collegebasketballcoach.db.GameDao;
-import io.coachapps.collegebasketballcoach.models.BoxScore;
-import io.coachapps.collegebasketballcoach.models.GameModel;
-import io.coachapps.collegebasketballcoach.models.LeagueResults;
-import io.coachapps.collegebasketballcoach.models.Stats;
+import io.coachapps.collegebasketballcoach.models.FullGameResults;
 import io.coachapps.collegebasketballcoach.util.LeagueEvents;
 
 /**
@@ -24,7 +16,7 @@ public class Simulator {
         context = c;
     }
 
-    public GameModel playGame( Team home, Team away, int year, int week ) {
+    public FullGameResults playGame(Team home, Team away, int year, int week ) {
         home.beginNewGame();
         away.beginNewGame();
         boolean poss_home = true;
@@ -92,7 +84,7 @@ public class Simulator {
             away.wins++;
         }
 
-        return LeagueEvents.saveGameResult(context, home, away, year, week);
+        return LeagueEvents.getGameResult(home, away, year, week);
     }
 
     /**

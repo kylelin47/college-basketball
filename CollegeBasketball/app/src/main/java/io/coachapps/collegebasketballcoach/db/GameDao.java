@@ -18,9 +18,21 @@ public class GameDao {
         this.context = context;
     }
 
-    public void save(GameModel game) {
-        System.out.println("Saving game : " + game.year + "yr, " + game.week + "wk, " + game.awayTeam + " @ " + game.homeTeam);
+    public void save(List<GameModel> games) {
         SQLiteDatabase db = DbHelper.getInstance(context).getWritableDatabase();
+        db.beginTransaction();
+        try {
+            for (GameModel game : games) {
+                save(game, db);
+            }
+            db.setTransactionSuccessful();
+        } finally {
+            db.endTransaction();
+        }
+
+    }
+    private void save(GameModel game, SQLiteDatabase db) {
+        System.out.println("Saving game : " + game.year + "yr, " + game.week + "wk, " + game.awayTeam + " @ " + game.homeTeam);
         ContentValues values = new ContentValues();
         values.put(Schemas.GameEntry.YEAR, game.year);
         values.put(Schemas.GameEntry.WEEK, game.week);
@@ -95,9 +107,8 @@ public class GameDao {
 
         try (Cursor cursor = db.query(Schemas.GameEntry.TABLE_NAME, projection,
                 whereClause, whereArgs, null, null, null, null)) {
-            while (cursor.moveToNext()) {
-                game = (fetchGame(cursor));
-                break;
+            if (cursor.moveToNext()) {
+                game = fetchGame(cursor);
             }
         }
 

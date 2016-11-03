@@ -1,7 +1,6 @@
 package io.coachapps.collegebasketballcoach.basketballsim;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
@@ -247,9 +246,12 @@ public class Team {
 
     public String[] getGameSummaryStr(int gameNumber) {
         String[] sum = new String[3];
-        sum[0] = "Game";
         Game gm = gameSchedule.get(gameNumber);
-
+        if (gm.tournamentGame) {
+            sum[0] = "Tournament";
+        } else {
+            sum[0] = "Game";
+        }
         if (gm.hasPlayed()) {
             if (gm.getWinner() == this) {
                 sum[1] = gm.getWinnerString();
