@@ -29,6 +29,15 @@ public final class Schemas {
         public static final String POINTS = "points";
         public static final String ASSISTS = "assists";
         public static final String REBOUNDS = "rebounds";
+        public static final String STEALS = "steals";
+        public static final String BLOCKS = "blocks";
+        public static final String TURNOVERS = "turnovers";
+        public static final String FGM = "fgm";
+        public static final String FGA = "fga";
+        public static final String THREEPM = "threePM";
+        public static final String THREEPA = "threePA";
+        public static final String FTM = "ftm";
+        public static final String FTA = "fta";
     }
 
     public static abstract class YearlyPlayerStatsEntry implements BaseColumns {

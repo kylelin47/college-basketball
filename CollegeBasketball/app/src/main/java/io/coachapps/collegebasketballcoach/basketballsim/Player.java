@@ -89,6 +89,9 @@ public class Player implements Serializable {
     public int getUsage() {
         return ratings.usage;
     }
+    public int getPotential() {
+        return ratings.potential;
+    }
     public double getInsT() {
         double factor = 1.8;
         return Math.pow(getIntS(), factor) / (Math.pow(getIntS(), factor) + Math.pow(getMidS(), factor) + Math.pow(getOutS(), factor));

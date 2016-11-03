@@ -207,20 +207,7 @@ public class MainActivity extends AppCompatActivity {
                 new AdapterView.OnItemSelectedListener() {
                     public void onItemSelected(
                             AdapterView<?> parent, View view, int position, long id) {
-                        currTeamTextView.setText(teamList.get(position).getName());
-
-                        // Unless we change the ui, this can be consolidated to a single ListView
-                        rosterListAdapter = new PlayerStatsListArrayAdapter(MainActivity.this,
-                                teamList.get(position).players);
-                        rosterList.setAdapter(rosterListAdapter);
-
-                        statsListAdapter = new TeamStatsListArrayAdapter(MainActivity.this,
-                                getTeamStatsCSVs(teamList.get(position).getName()), false);
-                        statsList.setAdapter(statsListAdapter);
-
-                        gameListAdapter = new GameScheduleListArrayAdapter(MainActivity.this, MainActivity.this,
-                                teamList.get(position), teamList.get(position).gameSchedule);
-                        gameList.setAdapter(gameListAdapter);
+                        examineTeam(teamList.get(position));
                         lastSelectedTeamPosition = position;
                     }
 
@@ -237,6 +224,32 @@ public class MainActivity extends AppCompatActivity {
                 showPlayerDialog(p);
             }
         });
+    }
+
+    public void examineTeam(Team team) {
+        currTeamTextView.setText(team.getName());
+        // Unless we change the ui, this can be consolidated to a single ListView
+        rosterListAdapter = new PlayerStatsListArrayAdapter(MainActivity.this, team.players);
+        rosterList.setAdapter(rosterListAdapter);
+
+        statsListAdapter = new TeamStatsListArrayAdapter(MainActivity.this,
+                getTeamStatsCSVs(team.getName()), false);
+        statsList.setAdapter(statsListAdapter);
+
+        gameListAdapter = new GameScheduleListArrayAdapter(MainActivity.this, MainActivity.this,
+                team, team.gameSchedule);
+        gameList.setAdapter(gameListAdapter);
+    }
+
+    public void examineTeam(String teamName) {
+        int teamIndex = 0;
+        for (int i = 0; i < teamList.size(); ++i) {
+            if (teamList.get(i).getName().equals(teamName)) {
+                teamIndex = i;
+                break;
+            }
+        }
+        teamSpinner.setSelection(teamIndex);
     }
 
     public void updateUI() {
@@ -271,8 +284,8 @@ public class MainActivity extends AppCompatActivity {
     private void populateTeamStrList() {
         teamStrList.clear();
         for (int i = 0; i < teamList.size(); i++) {
-            teamStrList.add(
-                    "(" + teamList.get(i).wins + "-" + teamList.get(i).losses + ")" +
+            teamStrList.add( teamList.get(i).prestige +
+                    " (" + teamList.get(i).wins + "-" + teamList.get(i).losses + ")" +
                             " " + teamList.get(i).getName());
         }
     }
@@ -294,14 +307,25 @@ public class MainActivity extends AppCompatActivity {
             teamStatsCSVs.add("0.0,Points Per Game,N/A");
             teamStatsCSVs.add("0.0,Assists Per Game,N/A");
             teamStatsCSVs.add("0.0,Rebounds Per Game,N/A");
+            teamStatsCSVs.add("0.0,Steals Per Game,N/A");
+            teamStatsCSVs.add("0.0,Blocks Per Game,N/A");
+            teamStatsCSVs.add("0.0,Turnovers Per Game,N/A");
+            teamStatsCSVs.add("0.0,FGM Per Game,N/A");
+            teamStatsCSVs.add("0.0,FGA Per Game,N/A");
+            teamStatsCSVs.add("0.0,3FGM Per Game,N/A");
+            teamStatsCSVs.add("0.0,3FGA Per Game,N/A");
             return teamStatsCSVs;
         }
         int highestIndex = currentTeamStats.indexOf(statsOfSelectedTeam);
+
         while (highestIndex >= 0 && currentTeamStats.get(highestIndex).wins == statsOfSelectedTeam.wins) {
             highestIndex--;
         }
         teamStatsCSVs.add(statsOfSelectedTeam.wins + " - " + statsOfSelectedTeam.losses + ",Wins " +
                 "- Losses," + String.valueOf(highestIndex + 2));
+
+        // This is disgusting
+
         Collections.sort(currentTeamStats, new Comparator<YearlyTeamStats>() {
             @Override
             public int compare(YearlyTeamStats left, YearlyTeamStats right) {
@@ -310,6 +334,7 @@ public class MainActivity extends AppCompatActivity {
         });
         teamStatsCSVs.add(statsOfSelectedTeam.getPGDisplay("PPG") + ",Points Per Game," +
                 String.valueOf(currentTeamStats.indexOf(statsOfSelectedTeam) + 1));
+
         Collections.sort(currentTeamStats, new Comparator<YearlyTeamStats>() {
             @Override
             public int compare(YearlyTeamStats left, YearlyTeamStats right) {
@@ -318,6 +343,7 @@ public class MainActivity extends AppCompatActivity {
         });
         teamStatsCSVs.add(statsOfSelectedTeam.getPGDisplay("APG") + ",Assists Per Game," +
                 String.valueOf(currentTeamStats.indexOf(statsOfSelectedTeam) + 1));
+
         Collections.sort(currentTeamStats, new Comparator<YearlyTeamStats>() {
             @Override
             public int compare(YearlyTeamStats left, YearlyTeamStats right) {
@@ -326,6 +352,88 @@ public class MainActivity extends AppCompatActivity {
         });
         teamStatsCSVs.add(statsOfSelectedTeam.getPGDisplay("RPG") + ",Rebounds Per Game," +
                 String.valueOf(currentTeamStats.indexOf(statsOfSelectedTeam) + 1));
+
+        Collections.sort(currentTeamStats, new Comparator<YearlyTeamStats>() {
+            @Override
+            public int compare(YearlyTeamStats left, YearlyTeamStats right) {
+                return right.steals < left.steals ? -1 : left.steals == right.steals ? 0 : 1;
+            }
+        });
+        teamStatsCSVs.add(statsOfSelectedTeam.getPGDisplay("SPG") + ",Steals Per Game," +
+                String.valueOf(currentTeamStats.indexOf(statsOfSelectedTeam) + 1));
+
+        Collections.sort(currentTeamStats, new Comparator<YearlyTeamStats>() {
+            @Override
+            public int compare(YearlyTeamStats left, YearlyTeamStats right) {
+                return right.blocks < left.blocks ? -1 : left.blocks == right.blocks ? 0 : 1;
+            }
+        });
+        teamStatsCSVs.add(statsOfSelectedTeam.getPGDisplay("BPG") + ",Blocks Per Game," +
+                String.valueOf(currentTeamStats.indexOf(statsOfSelectedTeam) + 1));
+
+        Collections.sort(currentTeamStats, new Comparator<YearlyTeamStats>() {
+            @Override
+            public int compare(YearlyTeamStats left, YearlyTeamStats right) {
+                return right.turnovers < left.turnovers ? 1 : left.turnovers == right.turnovers ? 0 : -1;
+            }
+        });
+        teamStatsCSVs.add(statsOfSelectedTeam.getPGDisplay("TPG") + ",Turnovers Per Game," +
+                String.valueOf(currentTeamStats.indexOf(statsOfSelectedTeam) + 1));
+
+        Collections.sort(currentTeamStats, new Comparator<YearlyTeamStats>() {
+            @Override
+            public int compare(YearlyTeamStats left, YearlyTeamStats right) {
+                return right.fgm < left.fgm ? -1 : left.fgm == right.fgm ? 0 : 1;
+            }
+        });
+        teamStatsCSVs.add(statsOfSelectedTeam.getPGDisplay("FGMPG") + ",FGM Per Game," +
+                String.valueOf(currentTeamStats.indexOf(statsOfSelectedTeam) + 1));
+
+        Collections.sort(currentTeamStats, new Comparator<YearlyTeamStats>() {
+            @Override
+            public int compare(YearlyTeamStats left, YearlyTeamStats right) {
+                return right.fga < left.fga ? -1 : left.fga == right.fga ? 0 : 1;
+            }
+        });
+        teamStatsCSVs.add(statsOfSelectedTeam.getPGDisplay("FGAPG") + ",FGA Per Game," +
+                String.valueOf(currentTeamStats.indexOf(statsOfSelectedTeam) + 1));
+
+        Collections.sort(currentTeamStats, new Comparator<YearlyTeamStats>() {
+            @Override
+            public int compare(YearlyTeamStats left, YearlyTeamStats right) {
+                return right.getFGP() < left.getFGP() ? -1 : left.getFGP() == right.getFGP() ? 0 : 1;
+            }
+        });
+        teamStatsCSVs.add(statsOfSelectedTeam.getFGPStr() + "%,Field Goal Percentage," +
+                String.valueOf(currentTeamStats.indexOf(statsOfSelectedTeam) + 1));
+
+        Collections.sort(currentTeamStats, new Comparator<YearlyTeamStats>() {
+            @Override
+            public int compare(YearlyTeamStats left, YearlyTeamStats right) {
+                return right.threePM < left.threePM ? -1 : left.threePM == right.threePM ? 0 : 1;
+            }
+        });
+        teamStatsCSVs.add(statsOfSelectedTeam.getPGDisplay("3FGMPG") + ",3FGM Per Game," +
+                String.valueOf(currentTeamStats.indexOf(statsOfSelectedTeam) + 1));
+
+        Collections.sort(currentTeamStats, new Comparator<YearlyTeamStats>() {
+            @Override
+            public int compare(YearlyTeamStats left, YearlyTeamStats right) {
+                return right.threePA < left.threePA ? -1 : left.threePA == right.threePA ? 0 : 1;
+            }
+        });
+        teamStatsCSVs.add(statsOfSelectedTeam.getPGDisplay("3FGAPG") + ",3FGA Per Game," +
+                String.valueOf(currentTeamStats.indexOf(statsOfSelectedTeam) + 1));
+
+        Collections.sort(currentTeamStats, new Comparator<YearlyTeamStats>() {
+            @Override
+            public int compare(YearlyTeamStats left, YearlyTeamStats right) {
+                return right.get3FGP() < left.get3FGP() ? -1 : left.get3FGP() == right.get3FGP() ? 0 : 1;
+            }
+        });
+        teamStatsCSVs.add(statsOfSelectedTeam.get3FGPStr() + "%,3 Point Percentage," +
+                String.valueOf(currentTeamStats.indexOf(statsOfSelectedTeam) + 1));
+
         return teamStatsCSVs;
     }
 

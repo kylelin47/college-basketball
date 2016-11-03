@@ -115,6 +115,40 @@ public class GameDao {
         return game;
     }
 
+    public GameModel getGame(int year, int week, String team) {
+        System.out.println("Getting game : " + year + "yr, " + week + "wk, team = " + team);
+        GameModel game = null;
+        SQLiteDatabase db = DbHelper.getInstance(context).getReadableDatabase();
+        String[] projection = {
+                Schemas.GameEntry.AWAY_STATS,
+                Schemas.GameEntry.AWAY_TEAM,
+                Schemas.GameEntry.YEAR,
+                Schemas.GameEntry.WEEK,
+                Schemas.GameEntry.HOME_STATS,
+                Schemas.GameEntry.HOME_TEAM
+        };
+
+        String whereClause = "(" + Schemas.GameEntry.HOME_TEAM + "=? OR "
+                + Schemas.GameEntry.AWAY_TEAM + "=?) AND "
+                + Schemas.GameEntry.YEAR + "=? AND "
+                + Schemas.GameEntry.WEEK + "=?";
+        String[] whereArgs = {
+                String.valueOf(team),
+                String.valueOf(team),
+                String.valueOf(year),
+                String.valueOf(week)
+        };
+
+        try (Cursor cursor = db.query(Schemas.GameEntry.TABLE_NAME, projection,
+                whereClause, whereArgs, null, null, null, null)) {
+            if (cursor.moveToNext()) {
+                game = fetchGame(cursor);
+            }
+        }
+
+        return game;
+    }
+
     private GameModel fetchGame(Cursor cursor) {
         int year = cursor.getInt(cursor.getColumnIndexOrThrow(Schemas.GameEntry.YEAR));
         int week = cursor.getInt(cursor.getColumnIndexOrThrow(Schemas.GameEntry.WEEK));

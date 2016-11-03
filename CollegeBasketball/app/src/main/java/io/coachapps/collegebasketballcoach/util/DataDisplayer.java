@@ -1,6 +1,7 @@
 package io.coachapps.collegebasketballcoach.util;
 
 public class DataDisplayer {
+    private static final String[] grades = {"F", "F+", "D", "D+", "C", "C+", "B", "B+", "A", "A+"};
     public static String getHeight(int heightInInches) {
         return heightInInches/12 + "'" + heightInInches % 12 + "\"";
     }
@@ -19,7 +20,7 @@ public class DataDisplayer {
         switch (year) {
             case 0: return "Re";
             case 1: return "Fr";
-            case 2: return "Soph";
+            case 2: return "So";
             case 3: return "Jr";
             case 4: return "Sr";
             case 5: return "Gr";
@@ -51,5 +52,11 @@ public class DataDisplayer {
     }
     public static String getFieldGoalPercentage(int fgm, int fga) {
         return String.format("%.1f", (double)(100*fgm)/fga);
+    }
+    public static String getLetterGrade(int num) {
+        int ind = (num-50)/5;
+        if (ind > 9) ind = 9;
+        if (ind < 0) ind = 0;
+        return grades[ind];
     }
 }

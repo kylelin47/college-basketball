@@ -10,6 +10,7 @@ import android.widget.ListView;
 import java.util.List;
 
 import io.coachapps.collegebasketballcoach.adapters.PlayerBoxScoreListArrayAdapter;
+import io.coachapps.collegebasketballcoach.adapters.RecentGamesListArrayAdapter;
 import io.coachapps.collegebasketballcoach.db.BoxScoreDao;
 import io.coachapps.collegebasketballcoach.models.BoxScore;
 
@@ -48,7 +49,7 @@ public class RecentGamesFragment extends Fragment {
         List<BoxScore> recentGames = dao.getBoxScoresForPlayer(getYear(), getPlayerID());
 
         ListView listView = (ListView) view.findViewById(R.id.listViewRecentGames);
-        listView.setAdapter(new PlayerBoxScoreListArrayAdapter(getActivity(), recentGames));
+        listView.setAdapter(new RecentGamesListArrayAdapter(getActivity(), recentGames));
 
         return view;
     }

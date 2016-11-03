@@ -76,7 +76,8 @@ public class PlayerDialogFragment extends DialogFragment {
         textViewName.setText(player.name);
         textViewPosition.setText(DataDisplayer.getPositionAbbreviation(player.getPosition()));
         textViewYear.setText(DataDisplayer.getYearAbbreviation(player.year));
-        textViewOvrPot.setText(String.valueOf(player.getOverall()));
+        textViewOvrPot.setText(String.valueOf(player.getOverall()) + " / " +
+                DataDisplayer.getLetterGrade(player.getPotential()));
         textViewVitals.setText(DataDisplayer.getHeight(player.ratings.heightInInches) + ", " +
                 DataDisplayer.getWeight(player.ratings.weightInPounds));
         return view;

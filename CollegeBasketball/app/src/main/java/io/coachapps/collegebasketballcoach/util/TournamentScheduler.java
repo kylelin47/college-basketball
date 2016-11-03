@@ -73,7 +73,7 @@ class TournamentScheduler {
             for (int i = 0; i < teams.size()/2; i++) {
                 teams.set(i, games.get(i).getWinner());
             }
-            games.addAll(scheduleTournament(teams.subList(0, teams.size()), year, firstWeek + 1,
+            games.addAll(scheduleTournament(teams.subList(0, teams.size()/2), year, firstWeek + 1,
                     gameDao));
         }
         return games;

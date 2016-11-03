@@ -2,6 +2,7 @@ package io.coachapps.collegebasketballcoach.basketballsim;
 
 import java.util.ArrayList;
 
+import io.coachapps.collegebasketballcoach.MainActivity;
 import io.coachapps.collegebasketballcoach.models.PlayerRatings;
 
 /**
@@ -50,7 +51,7 @@ public class PlayerGen {
     }
     
     public Player genPlayer( int position, int prestige ) {
-        int def_rat    = 80;
+        int def_rat    = 75;
         int height     = 78;
         int weight     = 200;
         int speed      = def_rat;
@@ -282,6 +283,7 @@ public class PlayerGen {
 
         PlayerRatings ratings = new PlayerRatings();
 
+        ratings.potential = 50 + (int)(Math.random()*50);
         ratings.position = position;
         ratings.insideShooting = int_s;
         ratings.midrangeShooting = mid_s;
@@ -296,74 +298,41 @@ public class PlayerGen {
         ratings.usage = usage;
         ratings.weightInPounds = weight;
         ratings.heightInInches = height;
-        
-        return new Player( name, ratings, att, currID++, 1 );
-    }
-    
-    /*public ArrayList<Player> getPlayersFromFile() {
-        ArrayList<Player> PlayerList = new ArrayList<Player>();
-        try {
-            List<String> playerLine = Files.readAllLines(Paths.get("player_information.txt"));
-            for ( String line : playerLine ) {
-                String[] stats = line.split(" ");
-                int[] ratings = new int[16];
-                if ("PG".equals(stats[2])){
-                    ratings[0] = 1;
-                } else if ("SG".equals(stats[2])){
-                    ratings[0] = 2;
-                } else if ("SF".equals(stats[2])){
-                    ratings[0] = 3;
-                } else if ("PF".equals(stats[2])){
-                    ratings[0] = 4;
-                } else {
-                    ratings[0] = 5;
-                }
-                
-                ratings[2] = Math.round( 50 + 65 * Float.parseFloat(stats[8]) + 3 * Float.parseFloat(stats[6]) );
-                if ( Float.parseFloat(stats[9]) > 0.3 ) {
-                    ratings[4] = Math.round( 50 + 70 * Float.parseFloat(stats[11]) + 6 * Float.parseFloat(stats[9]) );
-                } else {
-                    ratings[4] = 30;
-                }
-                
-                ratings[3] = (int) Math.round( (ratings[2]+ratings[4])/2.7 * (0.45 + Float.parseFloat(stats[17])) );
-                ratings[5] = 60 + Math.round( 10 * Float.parseFloat(stats[21]) / Float.parseFloat(stats[24]) + Float.parseFloat(stats[21]) );
-                ratings[6] = 75;
-                ratings[7] = Math.round( 50 + 20 * Float.parseFloat(stats[22]) );
-                ratings[8] = Math.round( 50 + 20 * Float.parseFloat(stats[23]) );
-                ratings[11] = 50 + Math.round( Float.parseFloat(stats[20]) * 5 );
-                ratings[9] = (int) Math.round( (float)(ratings[8] + ratings[11])/2.1);
-                ratings[10] = Math.round( (float)(ratings[7] + ratings[4] + ratings[5])/3 );
-                ratings[13] = Math.round( (Float.parseFloat(stats[28]) + Float.parseFloat(stats[29])) * 1000 );
-                ratings[14] = Math.round( (Float.parseFloat(stats[30]) + Float.parseFloat(stats[31])) * 1000 );
-                ratings[15] = Math.round( Float.parseFloat(stats[32]) * 1000 );
-                ratings[12] = Math.round( Float.parseFloat(stats[7]) );
-                
-                //all nba teams
-                if ( Integer.parseInt(stats[39]) != 0 ) {
-                   ratings[2] += (4 - Integer.parseInt(stats[39])) * 2;
-                   ratings[3] += (4 - Integer.parseInt(stats[39])) * 2;
-                   ratings[4] += (4 - Integer.parseInt(stats[39])) * 2;
-                   ratings[5] += (4 - Integer.parseInt(stats[39])) * 2;
-                }
-                if ( Integer.parseInt(stats[40]) != 0 ) {
-                   ratings[9] += (5 - Integer.parseInt(stats[40])) * 2;
-                   ratings[10] += (5 - Integer.parseInt(stats[40])) * 2;
-                }
-                
-                //overall calc
-                ratings[1] = (int) Math.round( Math.pow(ratings[2], 1.3) + Math.pow(ratings[3], 1.3) + Math.pow(ratings[4], 1.3) + Math.pow(ratings[5], 1.1) + ratings[6] + 
-                                               Math.pow(ratings[7], 1.1) + Math.pow(ratings[8], 1.1) + Math.pow(ratings[9], 1.2) + Math.pow(ratings[10], 1.2) + Math.pow(ratings[11], 1.2) );
-                ratings[1] = 100*ratings[1] / 2500;
-                
-                String name = stats[0] + " " + stats[1] + " " + stats[2];
-                Player draftPlayer = new Player(name, ratings );
-                PlayerList.add(draftPlayer);
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
+
+        int numYearsAdvance = (int)(Math.random()*4);
+        for (int i = 0; i < numYearsAdvance; ++i) {
+            advanceYearRatings(ratings);
         }
-        return PlayerList;
-    }*/
+        
+        return new Player( name, ratings, att, currID++, 1 + numYearsAdvance );
+    }
+
+    public void advanceYearRatings(PlayerRatings ratings) {
+        int potBonus = ratings.potential - 40;
+        int div = 10;
+        ratings.insideShooting   += (int)(Math.random()*potBonus)/div;
+        ratings.midrangeShooting += (int)(Math.random()*potBonus)/div;
+        ratings.outsideShooting  += (int)(Math.random()*potBonus)/div;
+        ratings.passing          += (int)(Math.random()*potBonus)/div;
+        ratings.handling         += (int)(Math.random()*potBonus)/div;
+        ratings.steal            += (int)(Math.random()*potBonus)/div;
+        ratings.block            += (int)(Math.random()*potBonus)/div;
+        ratings.insideDefense    += (int)(Math.random()*potBonus)/div;
+        ratings.perimeterDefense += (int)(Math.random()*potBonus)/div;
+        ratings.rebounding       += (int)(Math.random()*potBonus)/div;
+
+        if (Math.random()*100 < ratings.potential) {
+            ratings.insideShooting   += (int)(Math.random()*potBonus)/div;
+            ratings.midrangeShooting += (int)(Math.random()*potBonus)/div;
+            ratings.outsideShooting  += (int)(Math.random()*potBonus)/div;
+            ratings.passing          += (int)(Math.random()*potBonus)/div;
+            ratings.handling         += (int)(Math.random()*potBonus)/div;
+            ratings.steal            += (int)(Math.random()*potBonus)/div;
+            ratings.block            += (int)(Math.random()*potBonus)/div;
+            ratings.insideDefense    += (int)(Math.random()*potBonus)/div;
+            ratings.perimeterDefense += (int)(Math.random()*potBonus)/div;
+            ratings.rebounding       += (int)(Math.random()*potBonus)/div;
+        }
+    }
     
 }

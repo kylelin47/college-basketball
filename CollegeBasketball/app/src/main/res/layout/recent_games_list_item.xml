@@ -9,24 +9,25 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textAppearance="?android:attr/textAppearanceLarge"
-        android:text="Lebron James [Sr]"
+        android:text="100 - 90 @ Other Team"
         android:textSize="15sp"
         android:textStyle="bold"
-        android:id="@+id/textViewName"
+        android:id="@+id/textViewGameSummary"
         android:layout_alignParentTop="true"
-        android:layout_marginStart="30dp"
-        android:layout_marginLeft="30dp" />
+        android:layout_toRightOf="@+id/textViewWL"
+        android:layout_toEndOf="@+id/textViewWL"
+        android:layout_marginStart="5dp"
+        android:layout_marginLeft="5dp"/>
 
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textAppearance="?android:attr/textAppearanceLarge"
-        android:text="SF"
-        android:textColor="#999"
+        android:text="W"
         android:textSize="15sp"
         android:textStyle="bold"
-        android:id="@+id/textViewPosition"
+        android:id="@+id/textViewWL"
         android:layout_alignParentTop="true"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true" />
@@ -35,34 +36,19 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textAppearance="?android:attr/textAppearanceLarge"
-        android:text="99 / A"
+        android:text="30min"
         android:textColor="#999"
         android:textSize="15sp"
         android:textStyle="bold"
-        android:id="@+id/textViewOvrPot"
-        android:layout_alignParentTop="true"
-        android:layout_toLeftOf="@+id/textViewOnCourt"
-        android:layout_toStartOf="@+id/textViewOnCourt"
+        android:id="@+id/textViewMinutes"
+        android:layout_alignParentEnd="true"
         android:layout_marginRight="10dp"
         android:layout_marginEnd="10dp"/>
-
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textAppearance="?android:attr/textAppearanceLarge"
-        android:text="ON COURT"
-        android:textColor="#42f48f"
-        android:textSize="15sp"
-        android:textStyle="bold"
-        android:id="@+id/textViewOnCourt"
-        android:layout_alignParentTop="true"
-        android:layout_alignParentRight="true"
-        android:layout_alignParentEnd="true" />
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/textViewName">
+        android:layout_below="@+id/textViewGameSummary">
 
         <RelativeLayout
             android:layout_width="0dip"

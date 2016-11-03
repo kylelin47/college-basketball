@@ -112,13 +112,13 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent">
                 <Button
-                    android:text="Play Week"
+                    android:text="Play Game"
                     android:layout_width="0dip"
                     android:layout_weight="1"
                     android:layout_height="match_parent"
                     android:id="@+id/playGameButton" />
                 <Button
-                    android:text="Sim Week"
+                    android:text="Sim Game"
                     android:layout_width="0dip"
                     android:layout_weight="1"
                     android:layout_height="match_parent"

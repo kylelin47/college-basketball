@@ -45,9 +45,10 @@ public class PlayerStatsListArrayAdapter extends ArrayAdapter<Player> {
         TextView playerFGP = (TextView) rowView.findViewById(R.id.textViewFGP);
 
         Player p = players.get(position);
-        playerName.setText(p.name);
+        playerName.setText(p.name + " [" + DataDisplayer.getYearAbbreviation(p.year) + "]");
         playerPosition.setText(DataDisplayer.getPositionAbbreviation(p.getPosition()));
-        playerOvrPot.setText(String.valueOf(p.getOverall()));
+        playerOvrPot.setText(String.valueOf(p.getOverall()) + " / " +
+                DataDisplayer.getLetterGrade(p.getPotential()));
 
         YearlyPlayerStatsDao yearlyPlayerStatsDao = new YearlyPlayerStatsDao(getContext());
         List<YearlyPlayerStats> playerStats = yearlyPlayerStatsDao.getPlayerStatsFromYears(p

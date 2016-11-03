@@ -70,6 +70,12 @@ public class GameScheduleListArrayAdapter extends ArrayAdapter<Game> {
             @Override
             public void onClick(View v) {
                 // Examine team
+                Game gm = getItem(position);
+                if (gm.getHome() == team) {
+                    mainAct.examineTeam(gm.getAway().name);
+                } else {
+                    mainAct.examineTeam(gm.getHome().name);
+                }
             }
         });
 

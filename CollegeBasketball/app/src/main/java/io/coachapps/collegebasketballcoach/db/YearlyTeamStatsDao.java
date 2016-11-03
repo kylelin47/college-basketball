@@ -26,7 +26,16 @@ public class YearlyTeamStatsDao {
                 Schemas.YearlyTeamStatsEntry.YEAR,
                 Schemas.YearlyTeamStatsEntry.POINTS,
                 Schemas.YearlyTeamStatsEntry.ASSISTS,
-                Schemas.YearlyTeamStatsEntry.REBOUNDS
+                Schemas.YearlyTeamStatsEntry.REBOUNDS,
+                Schemas.YearlyTeamStatsEntry.STEALS,
+                Schemas.YearlyTeamStatsEntry.BLOCKS,
+                Schemas.YearlyTeamStatsEntry.TURNOVERS,
+                Schemas.YearlyTeamStatsEntry.FGM,
+                Schemas.YearlyTeamStatsEntry.FGA,
+                Schemas.YearlyTeamStatsEntry.THREEPM,
+                Schemas.YearlyTeamStatsEntry.THREEPA,
+                Schemas.YearlyTeamStatsEntry.FTM,
+                Schemas.YearlyTeamStatsEntry.FTA
         };
         String whereClause = Schemas.YearlyTeamStatsEntry.TEAM + "=? AND " + Schemas
                 .YearlyTeamStatsEntry.YEAR + "=?";
@@ -44,6 +53,15 @@ public class YearlyTeamStatsDao {
                 teamStats.points += stats.points;
                 teamStats.assists += stats.assists;
                 teamStats.rebounds += stats.defensiveRebounds + stats.offensiveRebounds;
+                teamStats.steals += stats.steals;
+                teamStats.blocks += stats.blocks;
+                teamStats.turnovers += stats.turnovers;
+                teamStats.fgm += stats.fieldGoalsMade;
+                teamStats.fga += stats.fieldGoalsAttempted;
+                teamStats.threePM += stats.threePointsMade;
+                teamStats.threePA += stats.threePointsAttempted;
+                teamStats.ftm += stats.freeThrowsMade;
+                teamStats.fta += stats.freeThrowsAttempted;
             } else {
                 teamStats = new YearlyTeamStats(team, year, numWins, numLosses, stats);
             }
@@ -56,10 +74,19 @@ public class YearlyTeamStatsDao {
         values.put(Schemas.YearlyTeamStatsEntry.TEAM, team);
         values.put(Schemas.YearlyTeamStatsEntry.YEAR, stats.year);
         values.put(Schemas.YearlyTeamStatsEntry.WINS, stats.wins);
+        values.put(Schemas.YearlyTeamStatsEntry.LOSSES, stats.losses);
         values.put(Schemas.YearlyTeamStatsEntry.POINTS, stats.points);
         values.put(Schemas.YearlyTeamStatsEntry.ASSISTS, stats.assists);
         values.put(Schemas.YearlyTeamStatsEntry.REBOUNDS, stats.rebounds);
-        values.put(Schemas.YearlyTeamStatsEntry.LOSSES, stats.losses);
+        values.put(Schemas.YearlyTeamStatsEntry.STEALS, stats.steals);
+        values.put(Schemas.YearlyTeamStatsEntry.BLOCKS, stats.blocks);
+        values.put(Schemas.YearlyTeamStatsEntry.TURNOVERS, stats.turnovers);
+        values.put(Schemas.YearlyTeamStatsEntry.FGM, stats.fgm);
+        values.put(Schemas.YearlyTeamStatsEntry.FGA, stats.fga);
+        values.put(Schemas.YearlyTeamStatsEntry.THREEPM, stats.threePM);
+        values.put(Schemas.YearlyTeamStatsEntry.THREEPA, stats.threePA);
+        values.put(Schemas.YearlyTeamStatsEntry.FTM, stats.ftm);
+        values.put(Schemas.YearlyTeamStatsEntry.FTA, stats.fta);
         return values;
     }
 
@@ -73,7 +100,16 @@ public class YearlyTeamStatsDao {
                 Schemas.YearlyTeamStatsEntry.YEAR,
                 Schemas.YearlyTeamStatsEntry.POINTS,
                 Schemas.YearlyTeamStatsEntry.ASSISTS,
-                Schemas.YearlyTeamStatsEntry.REBOUNDS
+                Schemas.YearlyTeamStatsEntry.REBOUNDS,
+                Schemas.YearlyTeamStatsEntry.STEALS,
+                Schemas.YearlyTeamStatsEntry.BLOCKS,
+                Schemas.YearlyTeamStatsEntry.TURNOVERS,
+                Schemas.YearlyTeamStatsEntry.FGM,
+                Schemas.YearlyTeamStatsEntry.FGA,
+                Schemas.YearlyTeamStatsEntry.THREEPM,
+                Schemas.YearlyTeamStatsEntry.THREEPA,
+                Schemas.YearlyTeamStatsEntry.FTM,
+                Schemas.YearlyTeamStatsEntry.FTA
         };
         String whereClause = Schemas.YearlyTeamStatsEntry.YEAR + " = ?";
         String[] whereArgs = {
@@ -98,7 +134,16 @@ public class YearlyTeamStatsDao {
                 Schemas.YearlyTeamStatsEntry.YEAR,
                 Schemas.YearlyTeamStatsEntry.POINTS,
                 Schemas.YearlyTeamStatsEntry.ASSISTS,
-                Schemas.YearlyTeamStatsEntry.REBOUNDS
+                Schemas.YearlyTeamStatsEntry.REBOUNDS,
+                Schemas.YearlyTeamStatsEntry.STEALS,
+                Schemas.YearlyTeamStatsEntry.BLOCKS,
+                Schemas.YearlyTeamStatsEntry.TURNOVERS,
+                Schemas.YearlyTeamStatsEntry.FGM,
+                Schemas.YearlyTeamStatsEntry.FGA,
+                Schemas.YearlyTeamStatsEntry.THREEPM,
+                Schemas.YearlyTeamStatsEntry.THREEPA,
+                Schemas.YearlyTeamStatsEntry.FTM,
+                Schemas.YearlyTeamStatsEntry.FTA
         };
         String whereClause = Schemas.YearlyTeamStatsEntry.TEAM + "=? AND " + Schemas
                 .YearlyTeamStatsEntry.YEAR + " BETWEEN ? AND ?";
@@ -122,8 +167,8 @@ public class YearlyTeamStatsDao {
     }
     private YearlyTeamStats fetchYearlyTeamStats(Cursor cursor, String team) {
         YearlyTeamStats stats = new YearlyTeamStats(team);
-        stats.wins = cursor.getInt(cursor.getColumnIndexOrThrow(Schemas.YearlyTeamStatsEntry
-                .WINS));
+        stats.wins = cursor.getInt(cursor.getColumnIndexOrThrow(Schemas
+                .YearlyTeamStatsEntry.WINS));
         stats.losses = cursor.getInt(cursor.getColumnIndexOrThrow(Schemas
                 .YearlyTeamStatsEntry.LOSSES));
         stats.year = cursor.getInt(cursor.getColumnIndexOrThrow(Schemas
@@ -134,6 +179,24 @@ public class YearlyTeamStatsDao {
                 .YearlyTeamStatsEntry.ASSISTS));
         stats.rebounds = cursor.getInt(cursor.getColumnIndexOrThrow(Schemas
                 .YearlyTeamStatsEntry.REBOUNDS));
+        stats.steals = cursor.getInt(cursor.getColumnIndexOrThrow(Schemas
+                .YearlyTeamStatsEntry.STEALS));
+        stats.blocks = cursor.getInt(cursor.getColumnIndexOrThrow(Schemas
+                .YearlyTeamStatsEntry.BLOCKS));
+        stats.turnovers = cursor.getInt(cursor.getColumnIndexOrThrow(Schemas
+                .YearlyTeamStatsEntry.TURNOVERS));
+        stats.fgm = cursor.getInt(cursor.getColumnIndexOrThrow(Schemas
+                .YearlyTeamStatsEntry.FGM));
+        stats.fga = cursor.getInt(cursor.getColumnIndexOrThrow(Schemas
+                .YearlyTeamStatsEntry.FGA));
+        stats.threePM = cursor.getInt(cursor.getColumnIndexOrThrow(Schemas
+                .YearlyTeamStatsEntry.THREEPM));
+        stats.threePA = cursor.getInt(cursor.getColumnIndexOrThrow(Schemas
+                .YearlyTeamStatsEntry.THREEPA));
+        stats.ftm = cursor.getInt(cursor.getColumnIndexOrThrow(Schemas
+                .YearlyTeamStatsEntry.FTM));
+        stats.fta = cursor.getInt(cursor.getColumnIndexOrThrow(Schemas
+                .YearlyTeamStatsEntry.FTA));
         return stats;
     }
 }

@@ -16,7 +16,7 @@ public class DbHelper extends SQLiteOpenHelper {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
     }
 
-    public static final int DATABASE_VERSION = 9;
+    public static final int DATABASE_VERSION = 11;
     public static final String DATABASE_NAME = "CollegeBasketball.db";
 
     private static final String INTEGER_TYPE = " INTEGER";
@@ -85,6 +85,15 @@ public class DbHelper extends SQLiteOpenHelper {
                     Schemas.YearlyTeamStatsEntry.POINTS + INTEGER_TYPE + COMMA_SEP +
                     Schemas.YearlyTeamStatsEntry.ASSISTS + INTEGER_TYPE + COMMA_SEP +
                     Schemas.YearlyTeamStatsEntry.REBOUNDS + INTEGER_TYPE + COMMA_SEP +
+                    Schemas.YearlyTeamStatsEntry.STEALS + INTEGER_TYPE + COMMA_SEP +
+                    Schemas.YearlyTeamStatsEntry.BLOCKS + INTEGER_TYPE + COMMA_SEP +
+                    Schemas.YearlyTeamStatsEntry.TURNOVERS + INTEGER_TYPE + COMMA_SEP +
+                    Schemas.YearlyTeamStatsEntry.FGM + INTEGER_TYPE + COMMA_SEP +
+                    Schemas.YearlyTeamStatsEntry.FGA + INTEGER_TYPE + COMMA_SEP +
+                    Schemas.YearlyTeamStatsEntry.THREEPM + INTEGER_TYPE + COMMA_SEP +
+                    Schemas.YearlyTeamStatsEntry.THREEPA + INTEGER_TYPE + COMMA_SEP +
+                    Schemas.YearlyTeamStatsEntry.FTM + INTEGER_TYPE + COMMA_SEP +
+                    Schemas.YearlyTeamStatsEntry.FTA + INTEGER_TYPE + COMMA_SEP +
                     Schemas.YearlyTeamStatsEntry.TEAM + TEXT_TYPE + COMMA_SEP +
                     "PRIMARY KEY (" + Schemas.YearlyTeamStatsEntry.YEAR + COMMA_SEP + Schemas
                                          .YearlyTeamStatsEntry.TEAM + "));";
