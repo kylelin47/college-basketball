@@ -75,6 +75,7 @@ public class LeagueEvents {
         Game lastGame = tournamentGames.get(tournamentGames.size() - 1);
         tournamentScheduler.scheduleTournament(winners, lastGame.getYear(), lastGame.getWeek() + 1);
     }
+
     public static boolean playRegularSeasonGame(List<Team> teams, Simulator sim,
                                                 boolean simUserGame, String userTeamName) {
         int week = determineLastUnplayedRegularSeasonWeek(teams);

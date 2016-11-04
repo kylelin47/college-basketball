@@ -2,7 +2,8 @@
 <resources>
     <color name="colorPrimary">#AA6E39</color>
     <color name="colorPrimaryDark">#FF7800</color>
-    <color name="colorAccent">#236267</color>
+    <color name="colorAccentDark">#236267</color>
+    <color name="colorAccent">#347378</color>
     <color name="winColor">#b3ffb3</color>
     <color name="winColorPressed">#66ff66</color>
     <color name="lossColor">#ffb3b3</color>

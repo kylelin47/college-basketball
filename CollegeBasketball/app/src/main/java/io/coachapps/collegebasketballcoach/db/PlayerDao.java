@@ -63,6 +63,40 @@ public class PlayerDao {
         return null;
     }
 
+    public void updatePlayerRatings(int playerID, PlayerRatings ratings) {
+        SQLiteDatabase db = DbHelper.getInstance(context).getWritableDatabase();
+        db.beginTransaction();
+        System.out.println("About to update ratings, min = " + ratings.lineupMinutes + ", pos = " + ratings.lineupPosition);
+        try {
+            String whereClause = Schemas.PlayerEntry._ID + "=?";
+            String[] whereArgs = {
+                    String.valueOf(playerID),
+            };
+            ContentValues values = new ContentValues();
+            try (Cursor cursor = db.query(Schemas.PlayerEntry.TABLE_NAME, null,
+                    whereClause, whereArgs, null, null, null, null)) {
+                if (cursor.moveToNext()) {
+                    values.put(Schemas.PlayerEntry._ID, cursor.getInt(cursor.getColumnIndexOrThrow(
+                            Schemas.PlayerEntry._ID)));
+                    values.put(Schemas.PlayerEntry.NAME, cursor.getString(cursor.getColumnIndexOrThrow(
+                            Schemas.PlayerEntry.NAME)));
+                    values.put(Schemas.PlayerEntry.TEAM, cursor.getString(cursor.getColumnIndexOrThrow(
+                            Schemas.PlayerEntry.TEAM)));
+                    values.put(Schemas.PlayerEntry.YEAR, cursor.getInt(cursor.getColumnIndexOrThrow(
+                            Schemas.PlayerEntry.YEAR)));
+                    System.out.println("updated ratings for " +
+                            cursor.getString(cursor.getColumnIndexOrThrow(Schemas.PlayerEntry.NAME)));
+                }
+            }
+            values.put(Schemas.PlayerEntry.RATINGS, SerializationUtil.serialize(ratings));
+            db.replaceOrThrow(Schemas.PlayerEntry.TABLE_NAME, null, values);
+            db.setTransactionSuccessful();
+            System.out.println("donezo");
+        } finally {
+            db.endTransaction();
+        }
+    }
+
     public void save(PlayerModel player) {
         SQLiteDatabase db = DbHelper.getInstance(context).getWritableDatabase();
         ContentValues values = new ContentValues();

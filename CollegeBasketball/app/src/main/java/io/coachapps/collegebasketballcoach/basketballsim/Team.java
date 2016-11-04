@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import io.coachapps.collegebasketballcoach.db.PlayerDao;
 import io.coachapps.collegebasketballcoach.models.Stats;
 
 /**
@@ -77,6 +78,11 @@ public class Team {
 
         setOffStrat(Strategy.Strats.DRIBBLE_DRIVE);
         setDefStrat(Strategy.Strats.MAN_TO_MAN);
+        try {
+            resetLineup();
+        } catch (Exception e) {
+            // uh
+        }
     }
 
     /**
@@ -93,6 +99,17 @@ public class Team {
             players.clear();
             for (Object obj : playerArr) {
                 players.add((Player) obj);
+            }
+
+            int[] backUpMinutes = new int[5];
+            for (int i = 0; i < 10; ++i) {
+                players.get(i).setLineupPosition(i);
+                if (i < 5) {
+                    backUpMinutes[i] = 40 - players.get(i).getPlayingTime();
+                    players.get(i).setLineupMinutes(players.get(i).getPlayingTime());
+                } else {
+                    players.get(i).setLineupMinutes(backUpMinutes[i-5]);
+                }
             }
         }
     }
@@ -181,7 +198,7 @@ public class Team {
     private void subPosition( double remainingTime, int position ) {
         if (startersIn[position] && remainingTime > 120) {
             // See if should be subbed out (starters stay in for last 2 min)
-            if (remainingTime + players.get(position).gmStats.secondsPlayed > players.get(position).getPlayingTime()*60) {
+            if (remainingTime + players.get(position).gmStats.secondsPlayed > players.get(position).getLineupMinutes()*60) {
                 // More time than needed to play, can sub out
                 if (Math.random() < 0.3) {
                     // Sub
@@ -193,7 +210,7 @@ public class Team {
             }
         } else {
             // Bench is in
-            if (remainingTime + players.get(position+5).gmStats.secondsPlayed < players.get(position).getPlayingTime()*60
+            if (remainingTime + players.get(position+5).gmStats.secondsPlayed < players.get(position).getLineupMinutes()*60
                     || Math.random() < 0.3 || remainingTime <= 120) {
                 // Sub starter in
                 startersIn[position] = true;

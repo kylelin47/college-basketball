@@ -19,4 +19,7 @@ public class PlayerRatings implements Serializable {
     public int perimeterDefense;
     public int rebounding;
     public int usage;
+    // Variables needed for when users customize lineup/minutes
+    public int lineupMinutes;
+    public int lineupPosition;
 }

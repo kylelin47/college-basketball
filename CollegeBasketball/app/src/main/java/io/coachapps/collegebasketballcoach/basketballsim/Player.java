@@ -40,6 +40,27 @@ public class Player implements Serializable {
         gmStats = new Stats();
     }
 
+    public void setLineupPosition(int pos) {
+        ratings.lineupPosition = pos;
+    }
+
+    public int getLineupPosition() {
+        return ratings.lineupPosition;
+    }
+
+    public void setLineupMinutes(int minutes) {
+        ratings.lineupMinutes = minutes;
+    }
+
+    public int getLineupMinutes() {
+        return ratings.lineupMinutes;
+    }
+
+    public int getPlayingTime() {
+        //playing time in minutes
+        return 18 + getOverall()/6;
+    }
+
     public BoxScore getGameBoxScore(int year, int week, String teamName) {
         return new BoxScore(id, year, week, gmStats, teamName);
     }
@@ -104,12 +125,6 @@ public class Player implements Serializable {
         double factor = 1.8;
         return Math.pow(getOutS(), factor) / (Math.pow(getIntS(), factor) + Math.pow(getMidS(), factor) + Math.pow(getOutS(), factor));
     }
-
-
-    public int getPlayingTime() {
-        //playing time in minutes
-        return 18 + getOverall()/6;
-    }
     
     //Stats getters/setters
     // stats = { 0 points, 1 fga, 2 fgm, 3 3ga, 4 3gm, 5 ass, 6 reb, 7 stl, 8 blk, 9 ofa, 10 ofm }
@@ -156,6 +171,22 @@ public class Player implements Serializable {
         addFGA();
         add3GA();
         add3GM();
+    }
+
+    public int getCompositeShooting() {
+        return (getIntS() + getMidS() + getOutS())/3;
+    }
+
+    public int getCompositeDefense() {
+        return (getIntD()*3 + getOutD()*2 + getBlk() + getStl())/7;
+    }
+
+    public int getCompositePassing() {
+        return (getPass()*4 + getHand())/5;
+    }
+
+    public int getCompositeRebounding() {
+        return getReb();
     }
 }
 

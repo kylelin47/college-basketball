@@ -10,6 +10,8 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.InputType;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -30,6 +32,7 @@ import java.util.List;
 
 import io.coachapps.collegebasketballcoach.adapters.GameScheduleListArrayAdapter;
 import io.coachapps.collegebasketballcoach.adapters.PlayerStatsListArrayAdapter;
+import io.coachapps.collegebasketballcoach.adapters.SetLineupListArrayAdapter;
 import io.coachapps.collegebasketballcoach.adapters.TeamStatsListArrayAdapter;
 import io.coachapps.collegebasketballcoach.basketballsim.Game;
 import io.coachapps.collegebasketballcoach.basketballsim.GameSimThread;
@@ -39,6 +42,7 @@ import io.coachapps.collegebasketballcoach.basketballsim.Simulator;
 import io.coachapps.collegebasketballcoach.basketballsim.Strategy;
 import io.coachapps.collegebasketballcoach.basketballsim.Team;
 import io.coachapps.collegebasketballcoach.db.DbHelper;
+import io.coachapps.collegebasketballcoach.db.PlayerDao;
 import io.coachapps.collegebasketballcoach.db.TeamDao;
 import io.coachapps.collegebasketballcoach.db.YearlyTeamStatsDao;
 import io.coachapps.collegebasketballcoach.models.YearlyTeamStats;
@@ -83,12 +87,40 @@ public class MainActivity extends AppCompatActivity {
     }
 
     @Override
+    public void onResume() {
+        super.onResume();  // Always call the superclass method first
+        System.out.println("Calling onResume() in MainActivity");
+        if (playerTeamName != null && playerTeam != null) {
+            PlayerDao playerDao = new PlayerDao(this);
+            try {
+                playerTeam.players = playerDao.getPlayers(playerTeamName);
+                for (Player p : playerTeam.players) {
+                    System.out.println(p.name + ", lineupPos = " + p.getLineupPosition());
+                }
+                Collections.sort(playerTeam.players, new Comparator<Player>() {
+                    @Override
+                    public int compare(Player left, Player right) {
+                        return right.getLineupPosition() < left.getLineupPosition() ?
+                                1 : left.getLineupPosition() == right.getLineupPosition() ? 0 : -1;
+                    }
+                });
+                examineTeam(playerTeamName);
+                rosterListAdapter.clear();
+                rosterListAdapter.addAll(playerTeam.players);
+                rosterListAdapter.notifyDataSetChanged();
+            } catch (Exception e) {
+                // k
+                System.out.println("Resume failed!");
+            }
+        }
+    }
+
+        @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-        toolbar.setTitle("Test Toolbar");
 
         final TeamDao teamDao = new TeamDao(this);
         try {
@@ -124,6 +156,11 @@ public class MainActivity extends AppCompatActivity {
                     }
                     setEverythingUp();
                     teamDao.saveTeams(teamList, playerTeamName);
+                    playerTeam.resetLineup();
+                    PlayerDao pd = new PlayerDao(MainActivity.this);
+                    for (Player p : playerTeam.players) {
+                        pd.updatePlayerRatings(p.getId(), p.ratings);
+                    }
                 }
             });
             builder.setCancelable(false);
@@ -144,6 +181,7 @@ public class MainActivity extends AppCompatActivity {
             }
         });
         playerTeam = teamList.get(0);
+        getSupportActionBar().setTitle(playerTeamName);
 
         // Sim games
         bballSim = new Simulator(MainActivity.this);
@@ -226,6 +264,30 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        getMenuInflater().inflate(R.menu.menu_main, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // Handle action bar item clicks here. The action bar will
+        // automatically handle clicks on the Home/Up button, so long
+        // as you specify a parent activity in AndroidManifest.xml.
+        int id = item.getItemId();
+
+        if (id == R.id.action_set_lineup) {
+            /**
+             * Clicked Set Team Lineup
+             */
+            showSetLineupDialog();
+        }
+
+        return super.onOptionsItemSelected(item);
+    }
+
     public void examineTeam(Team team) {
         currTeamTextView.setText(team.getName());
         // Unless we change the ui, this can be consolidated to a single ListView
@@ -287,6 +349,15 @@ public class MainActivity extends AppCompatActivity {
             teamStrList.add( teamList.get(i).prestige +
                     " (" + teamList.get(i).wins + "-" + teamList.get(i).losses + ")" +
                             " " + teamList.get(i).getName());
+        }
+    }
+
+    public void updateAllPlayerRatings() {
+        PlayerDao pd = new PlayerDao(this);
+        for (Team t : teamList) {
+            for (Player p : t.players) {
+                pd.updatePlayerRatings(p.getId(), p.ratings);
+            }
         }
     }
 
@@ -602,6 +673,29 @@ public class MainActivity extends AppCompatActivity {
                     }
                 });
 
+    }
+
+    public void showSetLineupDialog() {
+        FragmentTransaction ft = getFragmentManager().beginTransaction();
+        DialogFragment newFragment = SetLineupFragment.newInstance(playerTeamName);
+        newFragment.show(ft, "lineup dialog");
+
+        /*
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setView(getLayoutInflater().inflate(R.layout.simple_list, null));
+        builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.dismiss();
+            }
+        });
+        builder.setTitle("Set Lineup");
+        final AlertDialog dialog = builder.create();
+        dialog.show();
+
+        ListView listView = (ListView) dialog.findViewById(R.id.listView);
+        listView.setAdapter(new SetLineupListArrayAdapter(this, playerTeam.players));
+        */
     }
 
     /**

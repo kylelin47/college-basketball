@@ -59,7 +59,7 @@ public class PlayerBoxScoreListArrayAdapter extends ArrayAdapter<BoxScore> {
         Player player = playerDao.getPlayer(boxScore.playerId);
         Stats gmStats = boxScore.playerStats;
         playerName.setText(player.name);
-        playerPosition.setText(DataDisplayer.getPositionAbbreviation(player.getPosition()));
+        playerPosition.setText(DataDisplayer.getPositionAbbreviation(player.getLineupPosition()%5 + 1));
         playerOvrPot.setText(String.valueOf(gmStats.secondsPlayed/60) + "min");
 
         playerPTS.setText(String.valueOf(gmStats.points));

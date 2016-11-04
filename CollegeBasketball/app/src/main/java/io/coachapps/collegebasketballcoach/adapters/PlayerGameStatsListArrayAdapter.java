@@ -60,7 +60,7 @@ public class PlayerGameStatsListArrayAdapter extends ArrayAdapter<Player> {
         Player p = players.get(position);
 
         playerName.setText(p.name);
-        playerPosition.setText(DataDisplayer.getPositionAbbreviation(p.getPosition()));
+        playerPosition.setText(DataDisplayer.getPositionAbbreviation(p.getLineupPosition()%5 + 1));
         playerOvrPot.setText(String.valueOf(p.gmStats.secondsPlayed/60) + "min");
 
         playerPTS.setText(String.valueOf(p.gmStats.points));
