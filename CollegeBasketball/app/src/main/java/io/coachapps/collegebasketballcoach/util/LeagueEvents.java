@@ -73,7 +73,10 @@ public class LeagueEvents {
         List<Team> winners = playGames(tournamentGames, sim, simUserGame, userTeamName);
         TournamentScheduler tournamentScheduler = new TournamentScheduler(sim.context);
         Game lastGame = tournamentGames.get(tournamentGames.size() - 1);
-        tournamentScheduler.scheduleTournament(winners, lastGame.getYear(), lastGame.getWeek() + 1);
+        if (simUserGame) {
+            tournamentGames.addAll(
+                    tournamentScheduler.scheduleTournament(winners, lastGame.getYear(), lastGame.getWeek() + 1));
+        }
     }
 
     public static boolean playRegularSeasonGame(List<Team> teams, Simulator sim,

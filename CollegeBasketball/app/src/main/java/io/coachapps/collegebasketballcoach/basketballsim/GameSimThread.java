@@ -10,10 +10,12 @@ import android.widget.SeekBar;
 import android.widget.TextView;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import io.coachapps.collegebasketballcoach.adapters.PlayerGameStatsListArrayAdapter;
 import io.coachapps.collegebasketballcoach.models.GameModel;
 import io.coachapps.collegebasketballcoach.util.LeagueEvents;
+import io.coachapps.collegebasketballcoach.util.TournamentScheduler;
 
 /**
  * Class to encapsulate viewing a game "as it happens".
@@ -44,6 +46,7 @@ public class GameSimThread extends Thread {
     private StringBuilder gameLog;
     private StringBuilder gameEvents;
 
+    private List<Game> tournamentGames;
     private Game gm;
     private Team home;
     private Team away;
@@ -65,10 +68,11 @@ public class GameSimThread extends Thread {
 
     private volatile boolean isPaused;
 
-    public GameSimThread(Activity activity, Context context, GameDialogElements uiElements, Game gm) {
+    public GameSimThread(Activity activity, Context context, GameDialogElements uiElements, Game
+            gm, List<Game> tournamentGames) {
         this.activity = activity;
         this.context = context;
-
+        this.tournamentGames = tournamentGames;
         this.uiElements = uiElements;
 
         this.gm = gm;
@@ -237,6 +241,13 @@ public class GameSimThread extends Thread {
         GameModel gameResult =
                 LeagueEvents.saveGameResult(context, home, away, gm.getYear(), gm.getWeek());
         gm.setGameModel(gameResult);
+        if (tournamentGames != null) {
+            TournamentScheduler tournamentScheduler = new TournamentScheduler(context);
+            List<Team> winners = determineLatestWinners(tournamentGames);
+            Game lastGame = tournamentGames.get(tournamentGames.size() - 1);
+            tournamentGames.addAll(tournamentScheduler.scheduleTournament(winners, lastGame
+                    .getYear(), lastGame.getWeek() + 1));
+        }
 
         activity.runOnUiThread(new Runnable() {
             @Override
@@ -248,6 +259,16 @@ public class GameSimThread extends Thread {
 
     }
 
+    private List<Team> determineLatestWinners(List<Game> games) {
+        List<Team> winners = new ArrayList<>();
+        Game latestGame = games.get(games.size() - 1);
+        for (Game game : games) {
+            if (game.getWeek() == latestGame.getWeek()) {
+                winners.add(game.getWinner());
+            }
+        }
+        return winners;
+    }
     /**
      * Returns a string that is prefixed to any event in the game log.
      * Ex: 0:01 Q4 ALA 98 - 95 FLA

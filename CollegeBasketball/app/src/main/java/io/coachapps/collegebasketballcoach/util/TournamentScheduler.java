@@ -12,14 +12,21 @@ import io.coachapps.collegebasketballcoach.basketballsim.Game;
 import io.coachapps.collegebasketballcoach.basketballsim.Team;
 import io.coachapps.collegebasketballcoach.db.GameDao;
 
-class TournamentScheduler {
+public class TournamentScheduler {
     private Context context;
     public TournamentScheduler(Context context) {
         this.context = context;
     }
-    private int determineYear(List<Team> teams) {
-        List<Game> schedule = teams.get(0).gameSchedule;
-        return schedule.get(schedule.size() - 1).getYear();
+
+    private Game getLastSeasonalGame(List<Team> teams) {
+        Team team = teams.get(0);
+        for (int i = team.gameSchedule.size() - 1; i >= 0; i--) {
+            Game game = team.gameSchedule.get(i);
+            if (!game.tournamentGame) {
+                return game;
+            }
+        }
+        return null;
     }
 
     private Game scheduleTournamentGame(Team home, Team away, int year, int week, GameDao gameDao) {
@@ -35,29 +42,22 @@ class TournamentScheduler {
             teams = teams.subList(0, 10);
         }
         teams = seedTeams(teams);
+        teams = teams.subList(0, 8);
         GameDao gameDao = new GameDao(context);
-        int year = determineYear(teams);
-        List<Game> schedule = teams.get(0).gameSchedule;
-        int week = schedule.get(schedule.size() - 1).getWeek() + 1;
-        // do play in rounds
-        Game sevenSeed = scheduleTournamentGame(teams.get(6), teams.get(9), year, week, gameDao);
-        Game eightSeed = scheduleTournamentGame(teams.get(7), teams.get(8), year, week, gameDao);
-        games.add(sevenSeed);
-        games.add(eightSeed);
-        if (eightSeed.hasPlayed() && sevenSeed.hasPlayed()) {
-            teams.set(6, sevenSeed.getWinner());
-            teams.set(7, eightSeed.getWinner());
-            teams = teams.subList(0, 8);
-            games.addAll(scheduleTournament(createBrackets(teams), year, week + 1, gameDao));
-        }
+        Game lastSeasonalGame = getLastSeasonalGame(teams);
+        int week = lastSeasonalGame.getWeek() + 1;
+        int year = lastSeasonalGame.getYear();
+        games.addAll(scheduleTournament(createBrackets(teams), year, week, gameDao));
         return games;
     }
-    List<Game> scheduleTournament(List<Team> teams, int year, int firstWeek) {
+
+    public List<Game> scheduleTournament(List<Team> teams, int year, int firstWeek) {
         return scheduleTournament(teams, year, firstWeek, new GameDao(context));
     }
 
     private List<Game> scheduleTournament(List<Team> teams, int year, int firstWeek, GameDao
             gameDao) {
+        if (teams.size() <= 1) return new ArrayList<>();
         if (!((teams.size() & (teams.size() - 1)) == 0)) {
             Log.e("scheduleTournament", "Tournaments require power-of-2 number of teams");
             Log.e("scheduleTournament", "Tournament has " + teams.size() + " entrants");
@@ -91,11 +91,22 @@ class TournamentScheduler {
         Collections.sort(seededTeams, new Comparator<Team>() {
             @Override
             public int compare(Team left, Team right) {
-                return right.wins < left.wins ? -1 : left.wins == right.wins ? 0 : 1;
+                int leftWins = getRegularSeasonWins(left);
+                int rightWins = getRegularSeasonWins(right);
+                return rightWins < leftWins ? -1 : leftWins == rightWins ? 0 : 1;
 
             }
         });
         return seededTeams;
+    }
+    private int getRegularSeasonWins(Team team) {
+        int regularSeasonWins = 0;
+        for (Game game : team.gameSchedule) {
+            if (!game.tournamentGame && game.getWinner() == team) {
+                regularSeasonWins++;
+            }
+        }
+        return regularSeasonWins;
     }
     // given a seeded list of teams (teams.get(n) is seed n+1), rearrange so teams that play
     // against each other are adjacent

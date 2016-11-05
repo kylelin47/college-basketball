@@ -32,7 +32,6 @@ import java.util.List;
 
 import io.coachapps.collegebasketballcoach.adapters.GameScheduleListArrayAdapter;
 import io.coachapps.collegebasketballcoach.adapters.PlayerStatsListArrayAdapter;
-import io.coachapps.collegebasketballcoach.adapters.SetLineupListArrayAdapter;
 import io.coachapps.collegebasketballcoach.adapters.TeamStatsListArrayAdapter;
 import io.coachapps.collegebasketballcoach.basketballsim.Game;
 import io.coachapps.collegebasketballcoach.basketballsim.GameSimThread;
@@ -115,7 +114,7 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-        @Override
+    @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
@@ -340,6 +339,12 @@ public class MainActivity extends AppCompatActivity {
             Game userGame = playerTeam.gameSchedule.get(currGame);
             showGameSimDialog(userGame);
             advanceGame(false);
+        } else {
+            Game userGame = playerTeam.gameSchedule.get(playerTeam.gameSchedule.size() - 1);
+            if (!userGame.hasPlayed()) {
+                showGameSimDialog(userGame);
+                advanceGame(false);
+            }
         }
     }
 
@@ -540,7 +545,7 @@ public class MainActivity extends AppCompatActivity {
         uiElements.textViewHomeScore = (TextView) dialog.findViewById(R.id.gameDialogScoreHome);
         uiElements.textViewAwayScore = (TextView) dialog.findViewById(R.id.gameDialogScoreAway);
 
-        final GameSimThread t = new GameSimThread(this, this, uiElements, gm);
+        final GameSimThread t = new GameSimThread(this, this, uiElements, gm, tournamentGames);
 
         Spinner dialogSpinner = (Spinner) dialog.findViewById(R.id.spinnerGameDialog);
         ArrayList<String> spinnerStrList = new ArrayList<>();
