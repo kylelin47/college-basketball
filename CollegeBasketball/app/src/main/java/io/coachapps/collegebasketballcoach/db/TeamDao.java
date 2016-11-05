@@ -75,10 +75,12 @@ public class TeamDao {
         SQLiteDatabase db = DbHelper.getInstance(context).getReadableDatabase();
         String[] projection = {
                 Schemas.TeamEntry.NAME,
-                Schemas.TeamEntry.PRESTIGE
+                Schemas.TeamEntry.PRESTIGE,
+                Schemas.TeamEntry.IS_PLAYER
         };
         List<String> teamNames = new ArrayList<>();
         List<Integer> teamPrestiges = new ArrayList<>();
+        List<Integer> isPlayerCheckers = new ArrayList<>();
         db.beginTransaction();
         try {
             try (Cursor cursor = db.query(Schemas.TeamEntry.TABLE_NAME, projection, null, null,
@@ -88,14 +90,18 @@ public class TeamDao {
                             .TeamEntry.NAME));
                     int teamPrestige = cursor.getInt(cursor.getColumnIndexOrThrow(Schemas
                             .TeamEntry.PRESTIGE));
+                    int isPlayer = cursor.getInt(cursor.getColumnIndexOrThrow(Schemas
+                            .TeamEntry.IS_PLAYER));
                     teamNames.add(teamName);
                     teamPrestiges.add(teamPrestige);
+                    isPlayerCheckers.add(isPlayer);
                 }
             }
             for (int i = 0; i < teamNames.size(); ++i) {
                 String teamName = teamNames.get(i);
                 int teamPrestige = teamPrestiges.get(i);
-                Team team = new Team(teamName, playerDao.getPlayers(teamName), teamPrestige);
+                Team team = new Team(teamName, playerDao.getPlayers(teamName),
+                        teamPrestige, isPlayerCheckers.get(i)==1);
                 String[] teamProjection = {
                         Schemas.YearlyTeamStatsEntry.WINS,
                         Schemas.YearlyTeamStatsEntry.LOSSES

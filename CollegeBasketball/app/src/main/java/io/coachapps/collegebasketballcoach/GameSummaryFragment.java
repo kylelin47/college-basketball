@@ -21,6 +21,7 @@ import io.coachapps.collegebasketballcoach.adapters.TeamStatsListArrayAdapter;
 import io.coachapps.collegebasketballcoach.basketballsim.Player;
 import io.coachapps.collegebasketballcoach.db.BoxScoreDao;
 import io.coachapps.collegebasketballcoach.db.GameDao;
+import io.coachapps.collegebasketballcoach.db.PlayerDao;
 import io.coachapps.collegebasketballcoach.models.BoxScore;
 import io.coachapps.collegebasketballcoach.models.GameModel;
 import io.coachapps.collegebasketballcoach.util.DataDisplayer;
@@ -56,6 +57,7 @@ public class GameSummaryFragment extends DialogFragment {
     private static final String HOME_KEY = "home";
     private static final String AWAY_KEY = "away";
 
+    PlayerDao playerDao;
     private GameModel gameModel;
     private List<BoxScore> awayBoxScores;
     private List<BoxScore> homeBoxScores;
@@ -79,14 +81,12 @@ public class GameSummaryFragment extends DialogFragment {
         int week = getArguments().getInt(WEEK_KEY);
         String homeTeamName = getArguments().getString(HOME_KEY);
         String awayTeamName = getArguments().getString(AWAY_KEY);
-
+        playerDao = new PlayerDao(getActivity());
         // Get GameModel
         GameDao gameDao = new GameDao(getActivity());
         gameModel = gameDao.getGame(year, week, homeTeamName, awayTeamName);
 
         try {
-
-
             BoxScoreDao boxScoreDao = new BoxScoreDao(getActivity());
             awayBoxScores = boxScoreDao.getBoxScoresFromGame(year, week,
                     awayTeamName);
@@ -139,9 +139,27 @@ public class GameSummaryFragment extends DialogFragment {
                 } else if (i == 1) {
                     // Away Stats
                     listView.setAdapter(new PlayerBoxScoreListArrayAdapter(getActivity(), awayBoxScores));
+                    listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                        public void onItemClick(AdapterView<?> parent, View view,
+                                                int position, long id) {
+                            BoxScore bs = (BoxScore)listView.getItemAtPosition(position);
+                            Player p = playerDao.getPlayer(bs.playerId);
+                            MainActivity mainActivity = (MainActivity) getActivity();
+                            mainActivity.showPlayerDialog(p);
+                        }
+                    });
                 } else if (i == 2) {
                     // Home Stats
                     listView.setAdapter(new PlayerBoxScoreListArrayAdapter(getActivity(), homeBoxScores));
+                    listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                        public void onItemClick(AdapterView<?> parent, View view,
+                                                int position, long id) {
+                            BoxScore bs = (BoxScore)listView.getItemAtPosition(position);
+                            Player p = playerDao.getPlayer(bs.playerId);
+                            MainActivity mainActivity = (MainActivity) getActivity();
+                            mainActivity.showPlayerDialog(p);
+                        }
+                    });
                 }
             }
 

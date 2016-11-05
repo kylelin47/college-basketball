@@ -149,14 +149,14 @@ public class MainActivity extends AppCompatActivity {
                     String replacementTeamName = "Chef Boyardees";
                     teamList = new ArrayList<>();
                     String[] teamNames = getResources().getStringArray(R.array.team_names);
-                    teamList.add(new Team(playerTeamName, 99, playerGen));
+                    teamList.add(new Team(playerTeamName, 99, playerGen, true));
                     for (int i = 0; i < 9; ++i) {
                         if (playerTeamName.equals(teamNames[i])) teamNames[i] = replacementTeamName;
-                        teamList.add(new Team(teamNames[i], (int)(Math.random()*100), playerGen));
+                        teamList.add(new Team(teamNames[i], (int)(Math.random()*100), playerGen, false));
                     }
                     setEverythingUp();
                     teamDao.saveTeams(teamList, playerTeamName);
-                    playerTeam.resetLineup();
+                    playerTeam.sortPlayersOvrPosition();
                     PlayerDao pd = new PlayerDao(MainActivity.this);
                     for (Player p : playerTeam.players) {
                         pd.updatePlayerRatings(p.getId(), p.ratings);

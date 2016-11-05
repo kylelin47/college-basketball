@@ -2,6 +2,7 @@ package io.coachapps.collegebasketballcoach.basketballsim;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 import io.coachapps.collegebasketballcoach.db.PlayerDao;
@@ -20,16 +21,18 @@ public class Team {
 
     public int games;
     public String name;
+    private boolean isUserTeam;
     public int prestige;
     public boolean[] startersIn;
 
     public volatile Strategy offStrat;
     public volatile Strategy defStrat;
 
-    public Team( String name, List<Player> players, int prestige ) {
+    public Team( String name, List<Player> players, int prestige, boolean isUserTeam ) {
         this.players = players;
         this.name = name;
         this.prestige = prestige;
+        this.isUserTeam = isUserTeam;
         wins = 0;
         losses = 0;
         games = 0;
@@ -48,9 +51,10 @@ public class Team {
         }
     }
     
-    public Team( String name, int prestige, PlayerGen gen ) {
+    public Team( String name, int prestige, PlayerGen gen, boolean isUserTeam ) {
         this.name = name;
         this.prestige = prestige;
+        this.isUserTeam = isUserTeam;
         wins = 0;
         losses = 0;
         games = 0;
@@ -90,6 +94,14 @@ public class Team {
      * Makes sure that a PG SG SF PF C lineup is in place, with all the best players in place.
      */
     public void resetLineup() {
+        if (isUserTeam) {
+            sortPlayersLineupPosition();
+        } else {
+            sortPlayersOvrPosition();
+        }
+    }
+
+    public void sortPlayersOvrPosition() {
         if (players.size() >= 10) {
             Object[] playerArr = new Object[players.size()];
             for (int i = 0; i < 5; ++i) {
@@ -112,6 +124,16 @@ public class Team {
                 }
             }
         }
+    }
+
+    public void sortPlayersLineupPosition() {
+        Collections.sort(players, new Comparator<Player>() {
+            @Override
+            public int compare(Player left, Player right) {
+                return right.getLineupPosition() < left.getLineupPosition() ?
+                        1 : left.getLineupPosition() == right.getLineupPosition() ? 0 : -1;
+            }
+        });
     }
 
     private void pickStarterBenchPosition(int position, List<Player> playerList, Object[] playerArr) {
