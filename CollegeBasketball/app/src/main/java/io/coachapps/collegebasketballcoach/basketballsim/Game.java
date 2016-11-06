@@ -42,6 +42,17 @@ public class Game {
         this.beenPlayed = true;
     }
 
+    /**
+     * @return Home team name,Away team name,homeScore,awayScore,year,week,beenPlayed,
+     * tournamentGame,homeSeed,awaySeed
+     */
+    @Override
+    public String toString() {
+        return home.getName() + "," + away.getName() + "," + homeScore + "," + awayScore + "," +
+                year + "," + week + "," + beenPlayed + "," + tournamentGame + "," + home.seed +
+                "," + away.seed;
+    }
+
     public Team getHome() {
         return home;
     }

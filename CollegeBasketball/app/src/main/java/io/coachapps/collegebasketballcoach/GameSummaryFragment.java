@@ -32,26 +32,12 @@ import io.coachapps.collegebasketballcoach.util.DataDisplayer;
  */
 
 public class GameSummaryFragment extends DialogFragment {
-
-    class BoxScoreIDComp implements Comparator<BoxScore> {
-        @Override
-        public int compare( BoxScore a, BoxScore b ) {
-            return b.playerId - a.playerId;
-        }
-    }
-
     class BoxScoreComp implements Comparator<BoxScore> {
         @Override
         public int compare( BoxScore a, BoxScore b ) {
             return b.playerStats.points - a.playerStats.points;
         }
     }
-
-    public class PlayerBoxScore {
-        public BoxScore boxScore;
-        public Player player;
-    }
-
     private static final String YEAR_KEY = "year";
     private static final String WEEK_KEY = "week";
     private static final String HOME_KEY = "home";

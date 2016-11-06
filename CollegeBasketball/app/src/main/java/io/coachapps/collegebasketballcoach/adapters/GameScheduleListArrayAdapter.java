@@ -1,6 +1,7 @@
 package io.coachapps.collegebasketballcoach.adapters;
 
 import android.content.Context;
+import android.support.v4.content.ContextCompat;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -50,18 +51,26 @@ public class GameScheduleListArrayAdapter extends ArrayAdapter<Game> {
 
         if (games.get(position).hasPlayed()) {
             if (team == games.get(position).getWinner()) {
-                gameButton.setBackground(context.getResources().getDrawable(R.drawable.button_shape_win));
+                gameButton.setBackground(ContextCompat.getDrawable(context, R.drawable
+                        .button_shape_win));
             } else {
-                gameButton.setBackground(context.getResources().getDrawable(R.drawable.button_shape_loss));
+                gameButton.setBackground(ContextCompat.getDrawable(context, R.drawable.button_shape_loss));
             }
         }
-
+        if (gameSummary[0].equals("Tournament")) {
+            textLeft.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    mainAct.showBracketDialog();
+                }
+            });
+        }
         gameButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 // Examine game summary
                 Game gm = getItem(position);
                 if (gm.hasPlayed()) {
-                    mainAct.showGameSummaryDialog(gm, position);
+                    mainAct.showGameSummaryDialog(gm);
                 }
             }
         });

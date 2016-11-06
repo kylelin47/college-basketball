@@ -97,6 +97,9 @@ public class TournamentScheduler {
 
             }
         });
+        for (int i = 0; i < seededTeams.size(); i++) {
+            seededTeams.get(i).seed = i + 1;
+        }
         return seededTeams;
     }
     private int getRegularSeasonWins(Team team) {
@@ -109,14 +112,27 @@ public class TournamentScheduler {
         return regularSeasonWins;
     }
     // given a seeded list of teams (teams.get(n) is seed n+1), rearrange so teams that play
-    // against each other are adjacent
+    // against each other are adjacent and in bracket order
     private List<Team> createBrackets(List<Team> teams) {
         List<Team> bracketedTeams = new ArrayList<>(teams.size());
+        for (int i = 0; i < teams.size(); i++) {
+            bracketedTeams.add(null);
+        }
+        int leftIndex = 0;
+        int rightIndex = teams.size() - 1;
+        // need to think of how to modify this for > 8 person tournaments
         for (int i = 0; i < teams.size()/2; i++) {
             Team home = teams.get(i);
             Team away = teams.get(teams.size() - 1 - i);
-            bracketedTeams.add(home);
-            bracketedTeams.add(away);
+            if (i == 0) {
+                bracketedTeams.set(leftIndex, home);
+                bracketedTeams.set(leftIndex + 1, away);
+                leftIndex += 2;
+            } else {
+                bracketedTeams.set(rightIndex - 1, home);
+                bracketedTeams.set(rightIndex, away);
+                rightIndex -= 2;
+            }
         }
         return bracketedTeams;
     }

@@ -43,8 +43,7 @@ import io.coachapps.collegebasketballcoach.basketballsim.Team;
 import io.coachapps.collegebasketballcoach.db.DbHelper;
 import io.coachapps.collegebasketballcoach.db.PlayerDao;
 import io.coachapps.collegebasketballcoach.db.TeamDao;
-import io.coachapps.collegebasketballcoach.db.YearlyTeamStatsDao;
-import io.coachapps.collegebasketballcoach.models.YearlyTeamStats;
+import io.coachapps.collegebasketballcoach.util.DataDisplayer;
 import io.coachapps.collegebasketballcoach.util.LeagueEvents;
 
 public class MainActivity extends AppCompatActivity {
@@ -294,7 +293,7 @@ public class MainActivity extends AppCompatActivity {
         rosterList.setAdapter(rosterListAdapter);
 
         statsListAdapter = new TeamStatsListArrayAdapter(MainActivity.this,
-                getTeamStatsCSVs(team.getName()), false);
+                DataDisplayer.getTeamStatsCSVs(team.getName(), this, getYear()), false);
         statsList.setAdapter(statsListAdapter);
 
         gameListAdapter = new GameScheduleListArrayAdapter(MainActivity.this, MainActivity.this,
@@ -313,10 +312,15 @@ public class MainActivity extends AppCompatActivity {
         teamSpinner.setSelection(teamIndex);
     }
 
+    private int getYear() {
+        return 2016;
+    }
+
     public void updateUI() {
         rosterListAdapter.notifyDataSetChanged();
         statsListAdapter = new TeamStatsListArrayAdapter(MainActivity.this,
-                getTeamStatsCSVs(teamList.get(lastSelectedTeamPosition).getName()), false);
+                DataDisplayer.getTeamStatsCSVs(teamList.get(lastSelectedTeamPosition).getName(),
+                        this, getYear()), false);
         statsList.setAdapter(statsListAdapter);
         gameListAdapter.notifyDataSetChanged();
         populateTeamStrList();
@@ -366,164 +370,22 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    private ArrayList<String> getTeamStatsCSVs(String teamName) {
-        YearlyTeamStatsDao yearlyTeamStatsDao = new YearlyTeamStatsDao(this);
-        List<YearlyTeamStats> currentTeamStats = yearlyTeamStatsDao.getTeamStatsOfYear(2016);
-        YearlyTeamStats statsOfSelectedTeam = null;
-        for (YearlyTeamStats stats : currentTeamStats) {
-            if (stats.team.equals(teamName)) {
-                statsOfSelectedTeam = stats;
-                break;
-            }
-        }
-        ArrayList<String> teamStatsCSVs = new ArrayList<>();
-        teamStatsCSVs.add(",,Rank");
-        if (statsOfSelectedTeam == null)  {
-            teamStatsCSVs.add("0 - 0,Wins - Losses,N/A");
-            teamStatsCSVs.add("0.0,Points Per Game,N/A");
-            teamStatsCSVs.add("0.0,Assists Per Game,N/A");
-            teamStatsCSVs.add("0.0,Rebounds Per Game,N/A");
-            teamStatsCSVs.add("0.0,Steals Per Game,N/A");
-            teamStatsCSVs.add("0.0,Blocks Per Game,N/A");
-            teamStatsCSVs.add("0.0,Turnovers Per Game,N/A");
-            teamStatsCSVs.add("0.0,FGM Per Game,N/A");
-            teamStatsCSVs.add("0.0,FGA Per Game,N/A");
-            teamStatsCSVs.add("0.0,3FGM Per Game,N/A");
-            teamStatsCSVs.add("0.0,3FGA Per Game,N/A");
-            return teamStatsCSVs;
-        }
-        int highestIndex = currentTeamStats.indexOf(statsOfSelectedTeam);
-
-        while (highestIndex >= 0 && currentTeamStats.get(highestIndex).wins == statsOfSelectedTeam.wins) {
-            highestIndex--;
-        }
-        teamStatsCSVs.add(statsOfSelectedTeam.wins + " - " + statsOfSelectedTeam.losses + ",Wins " +
-                "- Losses," + String.valueOf(highestIndex + 2));
-
-        // This is disgusting
-
-        Collections.sort(currentTeamStats, new Comparator<YearlyTeamStats>() {
-            @Override
-            public int compare(YearlyTeamStats left, YearlyTeamStats right) {
-                return right.points < left.points ? -1 : left.points == right.points ? 0 : 1;
-            }
-        });
-        teamStatsCSVs.add(statsOfSelectedTeam.getPGDisplay("PPG") + ",Points Per Game," +
-                String.valueOf(currentTeamStats.indexOf(statsOfSelectedTeam) + 1));
-
-        Collections.sort(currentTeamStats, new Comparator<YearlyTeamStats>() {
-            @Override
-            public int compare(YearlyTeamStats left, YearlyTeamStats right) {
-                return right.assists < left.assists ? -1 : left.assists == right.assists ? 0 : 1;
-            }
-        });
-        teamStatsCSVs.add(statsOfSelectedTeam.getPGDisplay("APG") + ",Assists Per Game," +
-                String.valueOf(currentTeamStats.indexOf(statsOfSelectedTeam) + 1));
-
-        Collections.sort(currentTeamStats, new Comparator<YearlyTeamStats>() {
-            @Override
-            public int compare(YearlyTeamStats left, YearlyTeamStats right) {
-                return right.rebounds < left.rebounds ? -1 : left.rebounds == right.rebounds ? 0 : 1;
-            }
-        });
-        teamStatsCSVs.add(statsOfSelectedTeam.getPGDisplay("RPG") + ",Rebounds Per Game," +
-                String.valueOf(currentTeamStats.indexOf(statsOfSelectedTeam) + 1));
-
-        Collections.sort(currentTeamStats, new Comparator<YearlyTeamStats>() {
-            @Override
-            public int compare(YearlyTeamStats left, YearlyTeamStats right) {
-                return right.steals < left.steals ? -1 : left.steals == right.steals ? 0 : 1;
-            }
-        });
-        teamStatsCSVs.add(statsOfSelectedTeam.getPGDisplay("SPG") + ",Steals Per Game," +
-                String.valueOf(currentTeamStats.indexOf(statsOfSelectedTeam) + 1));
-
-        Collections.sort(currentTeamStats, new Comparator<YearlyTeamStats>() {
-            @Override
-            public int compare(YearlyTeamStats left, YearlyTeamStats right) {
-                return right.blocks < left.blocks ? -1 : left.blocks == right.blocks ? 0 : 1;
-            }
-        });
-        teamStatsCSVs.add(statsOfSelectedTeam.getPGDisplay("BPG") + ",Blocks Per Game," +
-                String.valueOf(currentTeamStats.indexOf(statsOfSelectedTeam) + 1));
-
-        Collections.sort(currentTeamStats, new Comparator<YearlyTeamStats>() {
-            @Override
-            public int compare(YearlyTeamStats left, YearlyTeamStats right) {
-                return right.turnovers < left.turnovers ? 1 : left.turnovers == right.turnovers ? 0 : -1;
-            }
-        });
-        teamStatsCSVs.add(statsOfSelectedTeam.getPGDisplay("TPG") + ",Turnovers Per Game," +
-                String.valueOf(currentTeamStats.indexOf(statsOfSelectedTeam) + 1));
-
-        Collections.sort(currentTeamStats, new Comparator<YearlyTeamStats>() {
-            @Override
-            public int compare(YearlyTeamStats left, YearlyTeamStats right) {
-                return right.fgm < left.fgm ? -1 : left.fgm == right.fgm ? 0 : 1;
-            }
-        });
-        teamStatsCSVs.add(statsOfSelectedTeam.getPGDisplay("FGMPG") + ",FGM Per Game," +
-                String.valueOf(currentTeamStats.indexOf(statsOfSelectedTeam) + 1));
-
-        Collections.sort(currentTeamStats, new Comparator<YearlyTeamStats>() {
-            @Override
-            public int compare(YearlyTeamStats left, YearlyTeamStats right) {
-                return right.fga < left.fga ? -1 : left.fga == right.fga ? 0 : 1;
-            }
-        });
-        teamStatsCSVs.add(statsOfSelectedTeam.getPGDisplay("FGAPG") + ",FGA Per Game," +
-                String.valueOf(currentTeamStats.indexOf(statsOfSelectedTeam) + 1));
-
-        Collections.sort(currentTeamStats, new Comparator<YearlyTeamStats>() {
-            @Override
-            public int compare(YearlyTeamStats left, YearlyTeamStats right) {
-                return right.getFGP() < left.getFGP() ? -1 : left.getFGP() == right.getFGP() ? 0 : 1;
-            }
-        });
-        teamStatsCSVs.add(statsOfSelectedTeam.getFGPStr() + "%,Field Goal Percentage," +
-                String.valueOf(currentTeamStats.indexOf(statsOfSelectedTeam) + 1));
-
-        Collections.sort(currentTeamStats, new Comparator<YearlyTeamStats>() {
-            @Override
-            public int compare(YearlyTeamStats left, YearlyTeamStats right) {
-                return right.threePM < left.threePM ? -1 : left.threePM == right.threePM ? 0 : 1;
-            }
-        });
-        teamStatsCSVs.add(statsOfSelectedTeam.getPGDisplay("3FGMPG") + ",3FGM Per Game," +
-                String.valueOf(currentTeamStats.indexOf(statsOfSelectedTeam) + 1));
-
-        Collections.sort(currentTeamStats, new Comparator<YearlyTeamStats>() {
-            @Override
-            public int compare(YearlyTeamStats left, YearlyTeamStats right) {
-                return right.threePA < left.threePA ? -1 : left.threePA == right.threePA ? 0 : 1;
-            }
-        });
-        teamStatsCSVs.add(statsOfSelectedTeam.getPGDisplay("3FGAPG") + ",3FGA Per Game," +
-                String.valueOf(currentTeamStats.indexOf(statsOfSelectedTeam) + 1));
-
-        Collections.sort(currentTeamStats, new Comparator<YearlyTeamStats>() {
-            @Override
-            public int compare(YearlyTeamStats left, YearlyTeamStats right) {
-                return right.get3FGP() < left.get3FGP() ? -1 : left.get3FGP() == right.get3FGP() ? 0 : 1;
-            }
-        });
-        teamStatsCSVs.add(statsOfSelectedTeam.get3FGPStr() + "%,3 Point Percentage," +
-                String.valueOf(currentTeamStats.indexOf(statsOfSelectedTeam) + 1));
-
-        return teamStatsCSVs;
-    }
-
     public void showPlayerDialog(final Player p) {
         FragmentTransaction ft = getFragmentManager().beginTransaction();
         DialogFragment newFragment = PlayerDialogFragment.newInstance(p);
         newFragment.show(ft, "player dialog");
     }
 
-    public void showGameSummaryDialog(final Game gm, final int week) {
-        System.out.println("showing game summary at week " + week);
+    public void showBracketDialog() {
+        FragmentTransaction ft = getFragmentManager().beginTransaction();
+        DialogFragment newFragment = BracketDialogFragment.newInstance(tournamentGames);
+        newFragment.show(ft, "bracket dialog");
+    }
+    public void showGameSummaryDialog(final Game gm) {
+        System.out.println("showing game summary at week " + gm.getWeek());
         FragmentTransaction ft = getFragmentManager().beginTransaction();
         DialogFragment newFragment = GameSummaryFragment.newInstance(
-                2016, week, gm.getHome().getName(), gm.getAway().getName());
+                gm.getYear(), gm.getWeek(), gm.getHome().getName(), gm.getAway().getName());
         newFragment.show(ft, "game dialog");
     }
 

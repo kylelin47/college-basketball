@@ -5,7 +5,6 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
-import io.coachapps.collegebasketballcoach.db.PlayerDao;
 import io.coachapps.collegebasketballcoach.models.Stats;
 
 /**
@@ -16,6 +15,7 @@ public class Team {
     public List<Player> players;
     public int wins;
     public int losses;
+    public int seed;
 
     public List<Game> gameSchedule;
 
@@ -289,7 +289,7 @@ public class Team {
         if (gm.tournamentGame) {
             sum[0] = "Tournament";
         } else {
-            sum[0] = "Game";
+            sum[0] = "Reg. Season";
         }
         if (gm.hasPlayed()) {
             if (gm.getWinner() == this) {
@@ -306,7 +306,6 @@ public class Team {
         } else {
             sum[2] = "@ " + gm.getHome().getAbbr();
         }
-
         return sum;
     }
 }
