@@ -28,6 +28,8 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 
 import io.coachapps.collegebasketballcoach.adapters.GameScheduleListArrayAdapter;
@@ -57,6 +59,8 @@ public class MainActivity extends AppCompatActivity {
     Simulator bballSim;
     PlayerGen playerGen;
     List<Team> teamList;
+    HashMap<Integer, Player> playerMap;
+    HashMap<Integer, Team> playerTeamMap;
     List<String> teamStrList;
     List<Game> tournamentGames;
 
@@ -264,6 +268,9 @@ public class MainActivity extends AppCompatActivity {
                 showPlayerDialog(p);
             }
         });
+
+        // Populate hashmaps to store id->player and id->team
+        populateMaps();
     }
 
     @Override
@@ -319,6 +326,17 @@ public class MainActivity extends AppCompatActivity {
             }
         }
         teamSpinner.setSelection(teamIndex);
+    }
+
+    public void populateMaps() {
+        playerMap = new HashMap<>();
+        playerTeamMap = new HashMap<>();
+        for (Team t : teamList) {
+            for (Player p : t.players) {
+                playerMap.put(p.getId(), p);
+                playerTeamMap.put(p.getId(), t);
+            }
+        }
     }
 
     private int getYear() {
@@ -381,7 +399,8 @@ public class MainActivity extends AppCompatActivity {
 
     public void showPlayerDialog(final Player p) {
         FragmentTransaction ft = getFragmentManager().beginTransaction();
-        DialogFragment newFragment = PlayerDialogFragment.newInstance(p);
+        DialogFragment newFragment =
+                PlayerDialogFragment.newInstance(p, playerTeamMap.get(p.getId()).getName());
         newFragment.show(ft, "player dialog");
     }
 
@@ -588,16 +607,22 @@ public class MainActivity extends AppCompatActivity {
         dialog.show();
 
         final YearlyPlayerStatsDao yearlyPlayerStatsDao = new YearlyPlayerStatsDao(this);
-        final PlayerDao playerDao = new PlayerDao(this);
+        populateMaps();
 
         final ListView listView = (ListView) dialog.findViewById(R.id.listView);
         final Spinner spinner = (Spinner) dialog.findViewById(R.id.spinner);
         final List<String> categoryList = new ArrayList<>();
-        categoryList.add(Schemas.YearlyPlayerStatsEntry.POINTS);
-        categoryList.add(Schemas.YearlyPlayerStatsEntry.DEFENSIVE_REBOUNDS);
-        categoryList.add(Schemas.YearlyPlayerStatsEntry.ASSISTS);
-        categoryList.add(Schemas.YearlyPlayerStatsEntry.FGM);
-        categoryList.add(Schemas.YearlyPlayerStatsEntry.THREE_POINTS_MADE);
+        final List<String> schemaCategoryList = new ArrayList<>();
+        categoryList.add("Points");
+        categoryList.add("Rebounds");
+        categoryList.add("Assists");
+        categoryList.add("Field Goals Made");
+        categoryList.add("Three Pointers Made");
+        schemaCategoryList.add(Schemas.YearlyPlayerStatsEntry.POINTS);
+        schemaCategoryList.add(Schemas.YearlyPlayerStatsEntry.DEFENSIVE_REBOUNDS);
+        schemaCategoryList.add(Schemas.YearlyPlayerStatsEntry.ASSISTS);
+        schemaCategoryList.add(Schemas.YearlyPlayerStatsEntry.FGM);
+        schemaCategoryList.add(Schemas.YearlyPlayerStatsEntry.THREE_POINTS_MADE);
         ArrayAdapter<String> stratDefSpinnerAdapter = new ArrayAdapter<String>(this,
                 android.R.layout.simple_spinner_item, categoryList);
         stratDefSpinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
@@ -607,15 +632,12 @@ public class MainActivity extends AppCompatActivity {
                     public void onItemSelected(
                             AdapterView<?> parent, View view, int position, long id) {
                         List<YearlyPlayerStats> leaders = yearlyPlayerStatsDao.getLeagueLeaders(
-                                getYear(), 25, categoryList.get(position));
+                                getYear(), 25, schemaCategoryList.get(position));
                         List<Player> players = new ArrayList<>();
                         for (YearlyPlayerStats stats : leaders) {
-                            for (Team t : teamList) {
-                                for (Player p : t.players) {
-                                    if (p.getId() == stats.playerId) players.add(p);
-                                }
+                            if (playerMap.containsKey(stats.playerId)) {
+                                players.add(playerMap.get(stats.playerId));
                             }
-                            //players.add(playerDao.getPlayer(stats.playerId));
                         }
                         listView.setAdapter(new LeagueLeadersListArrayAdapter(
                                 MainActivity.this, players, leaders));

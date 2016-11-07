@@ -44,7 +44,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textAppearance="?android:attr/textAppearanceLarge"
-        android:text="99 / A"
+        android:text="99 / A+"
         android:textSize="50sp"
         android:textStyle="bold"
         android:id="@+id/textViewOvrPot"
@@ -54,9 +54,18 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textAppearance="?android:attr/textAppearanceMedium"
+        android:text="Washington Monuments"
+        android:id="@+id/textViewTeamName"
+        android:layout_alignTop="@+id/textViewOvrPot"
+        android:layout_alignParentEnd="true" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceMedium"
         android:text="6&apos;7&quot;, 250 lbs"
         android:id="@+id/textViewVitals"
-        android:layout_alignTop="@+id/textViewOvrPot"
+        android:layout_below="@+id/textViewTeamName"
         android:layout_alignParentEnd="true" />
 
     <Spinner

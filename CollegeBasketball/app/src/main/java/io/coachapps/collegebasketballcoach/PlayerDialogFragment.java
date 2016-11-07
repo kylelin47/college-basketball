@@ -15,12 +15,15 @@ import io.coachapps.collegebasketballcoach.util.DataDisplayer;
 
 public class PlayerDialogFragment extends DialogFragment {
     private Player player;
+    private String teamName;
     private final static String PLAYER_KEY = "player";
+    private final static String TEAM_KEY = "team";
 
-    public static PlayerDialogFragment newInstance(Player player) {
+    public static PlayerDialogFragment newInstance(Player player, String teamName) {
         PlayerDialogFragment fragment = new PlayerDialogFragment();
         Bundle args = new Bundle();
         args.putSerializable(PLAYER_KEY, player);
+        args.putString(TEAM_KEY, teamName);
         fragment.setArguments(args);
         return fragment;
     }
@@ -30,6 +33,7 @@ public class PlayerDialogFragment extends DialogFragment {
         super.onCreate(savedInstanceState);
         setStyle(STYLE_NO_FRAME, android.R.style.Theme_DeviceDefault_Light);
         player = (Player) getArguments().getSerializable(PLAYER_KEY);
+        teamName = getArguments().getString(TEAM_KEY);
     }
 
     @Override
@@ -37,6 +41,7 @@ public class PlayerDialogFragment extends DialogFragment {
             savedInstanceState) {
         View view = inflater.inflate(R.layout.player_information, container, false);
         TextView textViewName = (TextView) view.findViewById(R.id.textViewName);
+        TextView textViewTeamName = (TextView) view.findViewById(R.id.textViewTeamName);
         TextView textViewPosition = (TextView) view.findViewById(R.id.textViewPosition);
         TextView textViewYear = (TextView) view.findViewById(R.id.textViewYear);
         TextView textViewOvrPot = (TextView) view.findViewById(R.id.textViewOvrPot);
@@ -74,6 +79,7 @@ public class PlayerDialogFragment extends DialogFragment {
             public void onNothingSelected(AdapterView<?> parent) {}
         });
         textViewName.setText(player.name);
+        textViewTeamName.setText(teamName);
         textViewPosition.setText(DataDisplayer.getPositionAbbreviation(player.getPosition()));
         textViewYear.setText(DataDisplayer.getYearAbbreviation(player.year));
         textViewOvrPot.setText(String.valueOf(player.getOverall()) + " / " +
