@@ -31,6 +31,7 @@ import java.util.Comparator;
 import java.util.List;
 
 import io.coachapps.collegebasketballcoach.adapters.GameScheduleListArrayAdapter;
+import io.coachapps.collegebasketballcoach.adapters.LeagueLeadersListArrayAdapter;
 import io.coachapps.collegebasketballcoach.adapters.PlayerStatsListArrayAdapter;
 import io.coachapps.collegebasketballcoach.adapters.TeamStatsListArrayAdapter;
 import io.coachapps.collegebasketballcoach.basketballsim.Game;
@@ -42,7 +43,10 @@ import io.coachapps.collegebasketballcoach.basketballsim.Strategy;
 import io.coachapps.collegebasketballcoach.basketballsim.Team;
 import io.coachapps.collegebasketballcoach.db.DbHelper;
 import io.coachapps.collegebasketballcoach.db.PlayerDao;
+import io.coachapps.collegebasketballcoach.db.Schemas;
 import io.coachapps.collegebasketballcoach.db.TeamDao;
+import io.coachapps.collegebasketballcoach.db.YearlyPlayerStatsDao;
+import io.coachapps.collegebasketballcoach.models.YearlyPlayerStats;
 import io.coachapps.collegebasketballcoach.util.DataDisplayer;
 import io.coachapps.collegebasketballcoach.util.LeagueEvents;
 
@@ -281,6 +285,11 @@ public class MainActivity extends AppCompatActivity {
              * Clicked Set Team Lineup
              */
             showSetLineupDialog();
+        } else if (id == R.id.action_league_leaders) {
+            /**
+             * Clicked League Leaders
+             */
+            showLeagueLeadersDialog();
         }
 
         return super.onOptionsItemSelected(item);
@@ -563,6 +572,67 @@ public class MainActivity extends AppCompatActivity {
         ListView listView = (ListView) dialog.findViewById(R.id.listView);
         listView.setAdapter(new SetLineupListArrayAdapter(this, playerTeam.players));
         */
+    }
+
+    public void showLeagueLeadersDialog() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setView(getLayoutInflater().inflate(R.layout.spinner_list, null));
+        builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.dismiss();
+            }
+        });
+        builder.setTitle("League Leaders");
+        final AlertDialog dialog = builder.create();
+        dialog.show();
+
+        final YearlyPlayerStatsDao yearlyPlayerStatsDao = new YearlyPlayerStatsDao(this);
+        final PlayerDao playerDao = new PlayerDao(this);
+
+        final ListView listView = (ListView) dialog.findViewById(R.id.listView);
+        final Spinner spinner = (Spinner) dialog.findViewById(R.id.spinner);
+        final List<String> categoryList = new ArrayList<>();
+        categoryList.add(Schemas.YearlyPlayerStatsEntry.POINTS);
+        categoryList.add(Schemas.YearlyPlayerStatsEntry.DEFENSIVE_REBOUNDS);
+        categoryList.add(Schemas.YearlyPlayerStatsEntry.ASSISTS);
+        categoryList.add(Schemas.YearlyPlayerStatsEntry.FGM);
+        categoryList.add(Schemas.YearlyPlayerStatsEntry.THREE_POINTS_MADE);
+        ArrayAdapter<String> stratDefSpinnerAdapter = new ArrayAdapter<String>(this,
+                android.R.layout.simple_spinner_item, categoryList);
+        stratDefSpinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spinner.setAdapter(stratDefSpinnerAdapter);
+        spinner.setOnItemSelectedListener(
+                new AdapterView.OnItemSelectedListener() {
+                    public void onItemSelected(
+                            AdapterView<?> parent, View view, int position, long id) {
+                        List<YearlyPlayerStats> leaders = yearlyPlayerStatsDao.getLeagueLeaders(
+                                getYear(), 25, categoryList.get(position));
+                        List<Player> players = new ArrayList<>();
+                        for (YearlyPlayerStats stats : leaders) {
+                            for (Team t : teamList) {
+                                for (Player p : t.players) {
+                                    if (p.getId() == stats.playerId) players.add(p);
+                                }
+                            }
+                            //players.add(playerDao.getPlayer(stats.playerId));
+                        }
+                        listView.setAdapter(new LeagueLeadersListArrayAdapter(
+                                MainActivity.this, players, leaders));
+                        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                            @Override
+                            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                                Player p = ((LeagueLeadersListArrayAdapter) listView
+                                        .getAdapter()).getItem(position);
+                                showPlayerDialog(p);
+                            }
+                        });
+                    }
+
+                    public void onNothingSelected(AdapterView<?> parent) {
+                        // do nothing
+                    }
+                });
     }
 
     /**

@@ -93,6 +93,28 @@ public class YearlyPlayerStatsDao {
         return stats;
     }
 
+    public List<YearlyPlayerStats> getLeagueLeaders(int year, int numPlayers, String category) {
+        List<YearlyPlayerStats> stats = new ArrayList<>();
+        SQLiteDatabase db = DbHelper.getInstance(context).getReadableDatabase();
+        String whereClause = Schemas.YearlyPlayerStatsEntry.YEAR + "=?";
+        String[] whereArgs = {
+                String.valueOf(year)
+        };
+        String orderBy = category + " DESC";
+        String limit = String.valueOf(numPlayers);
+        try (Cursor cursor = db.query(Schemas.YearlyPlayerStatsEntry.TABLE_NAME, null,
+                whereClause, whereArgs, null, null, orderBy, limit)) {
+            while (cursor.moveToNext()) {
+                YearlyPlayerStats existingStats = new YearlyPlayerStats(
+                        cursor.getInt(cursor.getColumnIndexOrThrow(
+                                Schemas.YearlyPlayerStatsEntry.PLAYER)));
+                addToYearlyPlayerStats(cursor, existingStats);
+                stats.add(existingStats);
+            }
+        }
+        return stats;
+    }
+
     private void addToYearlyPlayerStats(Cursor cursor, YearlyPlayerStats existingStats) {
         existingStats.year = cursor.getInt(cursor.getColumnIndexOrThrow(Schemas
                 .YearlyPlayerStatsEntry.YEAR));

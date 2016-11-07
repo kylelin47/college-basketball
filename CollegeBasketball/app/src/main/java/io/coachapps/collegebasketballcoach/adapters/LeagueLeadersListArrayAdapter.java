@@ -9,6 +9,7 @@ import android.widget.TextView;
 
 import java.util.List;
 
+import io.coachapps.collegebasketballcoach.MainActivity;
 import io.coachapps.collegebasketballcoach.R;
 import io.coachapps.collegebasketballcoach.basketballsim.Player;
 import io.coachapps.collegebasketballcoach.db.YearlyPlayerStatsDao;
@@ -16,24 +17,33 @@ import io.coachapps.collegebasketballcoach.models.YearlyPlayerStats;
 import io.coachapps.collegebasketballcoach.util.DataDisplayer;
 
 /**
- * Array Adapter for displaying players in the roster tab in MainActivity.
+ * Array Adapter for displaying players in the league leaders dialog.
  * Created by Achi Jones on 9/14/2016.
  */
-public class PlayerStatsListArrayAdapter extends ArrayAdapter<Player> {
+public class LeagueLeadersListArrayAdapter extends ArrayAdapter<Player> {
     private final Context context;
     public final List<Player> players;
+    public final List<YearlyPlayerStats> stats;
 
-    public PlayerStatsListArrayAdapter(Context context, List<Player> values) {
-        super(context, R.layout.roster_list_item, values);
+    public LeagueLeadersListArrayAdapter(Context context,
+                                         List<Player> players, List<YearlyPlayerStats> stats) {
+        super(context, R.layout.roster_list_item, players);
         this.context = context;
-        this.players = values;
+        this.players = players;
+        this.stats = stats;
     }
 
     @Override
     public View getView(final int position, View convertView, ViewGroup parent) {
         LayoutInflater inflater = (LayoutInflater) context
                 .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        View rowView = inflater.inflate(R.layout.roster_list_item, parent, false);
+
+        View rowView;
+        if (convertView == null) {
+            rowView = inflater.inflate(R.layout.roster_list_item, parent, false);
+        } else {
+            rowView = convertView;
+        }
 
         TextView playerName = (TextView) rowView.findViewById(R.id.textViewName);
         TextView playerPosition = (TextView) rowView.findViewById(R.id.textViewPosition);
@@ -50,17 +60,12 @@ public class PlayerStatsListArrayAdapter extends ArrayAdapter<Player> {
         playerOvrPot.setText(String.valueOf(p.getOverall()) + " / " +
                 DataDisplayer.getLetterGrade(p.getPotential()));
 
-        YearlyPlayerStatsDao yearlyPlayerStatsDao = new YearlyPlayerStatsDao(getContext());
-        List<YearlyPlayerStats> playerStats = yearlyPlayerStatsDao.getPlayerStatsFromYears(
-                p.getId(), 2016, 3000);
-        if (playerStats.size() != 0) {
-            YearlyPlayerStats currentStats = playerStats.get(playerStats.size() - 1);
-            playerPPG.setText(currentStats.getPGDisplay("PPG"));
-            playerRPG.setText(currentStats.getPGDisplay("RPG"));
-            playerAPG.setText(currentStats.getPGDisplay("APG"));
-            playerFGP.setText(currentStats.getPGDisplay("FG%")+
-                    "/"+currentStats.getPGDisplay("3P%"));
-        }
+        YearlyPlayerStats currentStats = stats.get(position);
+        playerPPG.setText(currentStats.getPGDisplay("PPG"));
+        playerRPG.setText(currentStats.getPGDisplay("RPG"));
+        playerAPG.setText(currentStats.getPGDisplay("APG"));
+        playerFGP.setText(currentStats.getPGDisplay("FG%")+
+                "/"+currentStats.getPGDisplay("3P%"));
 
         return rowView;
     }

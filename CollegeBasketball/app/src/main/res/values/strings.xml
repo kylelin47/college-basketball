@@ -2,6 +2,7 @@
     <string name="app_name">College Basketball Coach</string>
     <string name="title_activity_main">MainActivity</string>
     <string name="action_set_lineup">Set Lineup</string>
+    <string name="action_league_leaders">League Leaders</string>
     <string-array name="player_display_choices">
         <item>Ratings</item>
         <item>Stats</item>

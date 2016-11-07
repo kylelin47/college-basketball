@@ -108,6 +108,8 @@ public class GameSimThread extends Thread {
     public void run() {
         home.beginNewGame();
         away.beginNewGame();
+        home.resetLineup();
+        away.resetLineup();
 
         uiElements.textViewHomeAbbr.setText(home.getAbbr());
         uiElements.textViewAwayAbbr.setText(away.getAbbr());
