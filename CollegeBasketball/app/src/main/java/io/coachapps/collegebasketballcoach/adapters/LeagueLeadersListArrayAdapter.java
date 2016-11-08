@@ -27,7 +27,7 @@ public class LeagueLeadersListArrayAdapter extends ArrayAdapter<Player> {
 
     public LeagueLeadersListArrayAdapter(Context context,
                                          List<Player> players, List<YearlyPlayerStats> stats) {
-        super(context, R.layout.roster_list_item, players);
+        super(context, R.layout.league_leaders_list_item, players);
         this.context = context;
         this.players = players;
         this.stats = stats;
@@ -40,11 +40,12 @@ public class LeagueLeadersListArrayAdapter extends ArrayAdapter<Player> {
 
         View rowView;
         if (convertView == null) {
-            rowView = inflater.inflate(R.layout.roster_list_item, parent, false);
+            rowView = inflater.inflate(R.layout.league_leaders_list_item, parent, false);
         } else {
             rowView = convertView;
         }
 
+        TextView rank = (TextView) rowView.findViewById(R.id.textViewRank);
         TextView playerName = (TextView) rowView.findViewById(R.id.textViewName);
         TextView playerPosition = (TextView) rowView.findViewById(R.id.textViewPosition);
         TextView playerOvrPot = (TextView) rowView.findViewById(R.id.textViewOvrPot);
@@ -66,6 +67,8 @@ public class LeagueLeadersListArrayAdapter extends ArrayAdapter<Player> {
         playerAPG.setText(currentStats.getPGDisplay("APG"));
         playerFGP.setText(currentStats.getPGDisplay("FG%")+
                 "/"+currentStats.getPGDisplay("3P%"));
+
+        rank.setText(String.valueOf(position+1));
 
         return rowView;
     }

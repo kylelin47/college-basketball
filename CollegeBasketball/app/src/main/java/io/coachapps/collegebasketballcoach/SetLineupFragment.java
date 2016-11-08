@@ -78,7 +78,10 @@ public class SetLineupFragment extends DialogFragment {
     }
 
     public void swapPlayers(int a, int b) {
-        if (a >= players.size() || a < 0 || b >= players.size() || b < 0 || a==b) return;
+        if (a >= players.size() || a < 0 || b >= players.size() || b < 0 || a==b) {
+            selectedIndex = -1;
+            return;
+        }
         players.get(a).setLineupPosition(b);
         players.get(b).setLineupPosition(a);
         playerDao.updatePlayerRatings(players.get(a).getId(),

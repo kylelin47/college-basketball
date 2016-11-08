@@ -72,7 +72,6 @@
                 android:text="PPG"
                 android:textColor="#999"
                 android:textSize="13sp"
-                android:textStyle="bold"
                 android:layout_toEndOf="@+id/textViewPPG"
                 android:layout_alignBottom="@+id/textViewPPG"
                 android:id="@+id/textViewPPGlabel"
@@ -100,7 +99,6 @@
                 android:text="RPG"
                 android:textColor="#999"
                 android:textSize="13sp"
-                android:textStyle="bold"
                 android:layout_toEndOf="@+id/textViewRPG"
                 android:layout_alignBottom="@+id/textViewRPG"
                 android:id="@+id/textViewRPGlabel"
@@ -128,7 +126,6 @@
                 android:text="APG"
                 android:textColor="#999"
                 android:textSize="13sp"
-                android:textStyle="bold"
                 android:layout_toEndOf="@+id/textViewAPG"
                 android:layout_alignBottom="@+id/textViewAPG"
                 android:id="@+id/textViewAPGlabel"
@@ -137,7 +134,7 @@
 
         <RelativeLayout
             android:layout_width="0dip"
-            android:layout_weight="1"
+            android:layout_weight="1.2"
             android:layout_height="wrap_content"
             android:gravity="center">
             <TextView
@@ -156,7 +153,6 @@
                 android:text="FG%"
                 android:textColor="#999"
                 android:textSize="13sp"
-                android:textStyle="bold"
                 android:layout_toEndOf="@+id/textViewFGP"
                 android:layout_alignBottom="@+id/textViewFGP"
                 android:id="@+id/textViewFGPlabel"

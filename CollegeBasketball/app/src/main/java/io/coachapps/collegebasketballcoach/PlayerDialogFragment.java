@@ -42,6 +42,7 @@ public class PlayerDialogFragment extends DialogFragment {
         View view = inflater.inflate(R.layout.player_information, container, false);
         TextView textViewName = (TextView) view.findViewById(R.id.textViewName);
         TextView textViewTeamName = (TextView) view.findViewById(R.id.textViewTeamName);
+        TextView textViewPrefPos = (TextView) view.findViewById(R.id.textViewPreferredPosition);
         TextView textViewPosition = (TextView) view.findViewById(R.id.textViewPosition);
         TextView textViewYear = (TextView) view.findViewById(R.id.textViewYear);
         TextView textViewOvrPot = (TextView) view.findViewById(R.id.textViewOvrPot);
@@ -57,17 +58,18 @@ public class PlayerDialogFragment extends DialogFragment {
             public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
                 if (i != previouslySelected) {
                     if (i == 0) {
-                        PlayerRatingsFragment playerRatingsFragment = PlayerRatingsFragment.newInstance(player.ratings);
+                        PlayerRatingsFragment playerRatingsFragment =
+                                PlayerRatingsFragment.newInstance(player.ratings);
                         getChildFragmentManager().beginTransaction().replace(R.id.fragment_container,
                                 playerRatingsFragment).commit();
                     } else if (i == 1) {
-                        PlayerStatsFragment playerStatsFragment = PlayerStatsFragment.newInstance
-                                (player.getId());
+                        PlayerStatsFragment playerStatsFragment =
+                                PlayerStatsFragment.newInstance(player.getId());
                         getChildFragmentManager().beginTransaction().replace(R.id.fragment_container,
                                 playerStatsFragment).commit();
                     } else if (i == 2) {
-                        RecentGamesFragment recentGamesFragment = RecentGamesFragment.newInstance
-                                (player.getId(), 2016);
+                        RecentGamesFragment recentGamesFragment =
+                                RecentGamesFragment.newInstance(player.getId(), 2016);
                         getChildFragmentManager().beginTransaction().replace(R.id.fragment_container,
                                 recentGamesFragment).commit();
                     }
@@ -80,7 +82,10 @@ public class PlayerDialogFragment extends DialogFragment {
         });
         textViewName.setText(player.name);
         textViewTeamName.setText(teamName);
-        textViewPosition.setText(DataDisplayer.getPositionAbbreviation(player.getPosition()));
+        textViewPrefPos.setText("Preferred Pos: " +
+                DataDisplayer.getPositionAbbreviation(player.getPosition()));
+        textViewPosition.setText(
+                DataDisplayer.getPositionAbbreviation(player.getLineupPosition()%5+1));
         textViewYear.setText(DataDisplayer.getYearAbbreviation(player.year));
         textViewOvrPot.setText(String.valueOf(player.getOverall()) + " / " +
                 DataDisplayer.getLetterGrade(player.getPotential()));

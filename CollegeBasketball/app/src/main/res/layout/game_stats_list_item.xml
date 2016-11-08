@@ -76,7 +76,6 @@
                 android:text="27"
                 android:textColor="#000"
                 android:textSize="15sp"
-                android:textStyle="bold"
                 android:id="@+id/textViewPTS"
                 />
             <TextView
@@ -85,7 +84,6 @@
                 android:text="PT"
                 android:textColor="#999"
                 android:textSize="12sp"
-                android:textStyle="bold"
                 android:layout_toEndOf="@+id/textViewPTS"
                 android:layout_alignBottom="@+id/textViewPTS"
                 />
@@ -103,7 +101,6 @@
                 android:text="6"
                 android:textColor="#000"
                 android:textSize="15sp"
-                android:textStyle="bold"
                 android:id="@+id/textViewREB"
                 />
             <TextView
@@ -112,7 +109,6 @@
                 android:text="RB"
                 android:textColor="#999"
                 android:textSize="12sp"
-                android:textStyle="bold"
                 android:layout_toEndOf="@+id/textViewREB"
                 android:layout_alignBottom="@+id/textViewREB"
                 />
@@ -130,7 +126,6 @@
                 android:text="8"
                 android:textColor="#000"
                 android:textSize="15sp"
-                android:textStyle="bold"
                 android:id="@+id/textViewAST"
                 />
             <TextView
@@ -139,7 +134,6 @@
                 android:text="AS"
                 android:textColor="#999"
                 android:textSize="12sp"
-                android:textStyle="bold"
                 android:layout_toEndOf="@+id/textViewAST"
                 android:layout_alignBottom="@+id/textViewAST"
                 />
@@ -157,7 +151,6 @@
                 android:text="15/22"
                 android:textColor="#000"
                 android:textSize="15sp"
-                android:textStyle="bold"
                 android:id="@+id/textViewFGMA"
                 />
             <TextView
@@ -166,7 +159,6 @@
                 android:text="FG"
                 android:textColor="#999"
                 android:textSize="12sp"
-                android:textStyle="bold"
                 android:layout_toEndOf="@+id/textViewFGMA"
                 android:layout_alignBottom="@+id/textViewFGMA"
                 />
@@ -184,7 +176,6 @@
                 android:text="5/7"
                 android:textColor="#000"
                 android:textSize="15sp"
-                android:textStyle="bold"
                 android:id="@+id/textView3GMA"
                 />
             <TextView
@@ -193,7 +184,6 @@
                 android:text="3FG"
                 android:textColor="#999"
                 android:textSize="12sp"
-                android:textStyle="bold"
                 android:layout_toEndOf="@+id/textView3GMA"
                 android:layout_alignBottom="@+id/textView3GMA"
                 />
@@ -211,7 +201,6 @@
                 android:text="2"
                 android:textColor="#000"
                 android:textSize="15sp"
-                android:textStyle="bold"
                 android:id="@+id/textViewBLK"
                 />
             <TextView
@@ -220,7 +209,6 @@
                 android:text="BLK"
                 android:textColor="#999"
                 android:textSize="12sp"
-                android:textStyle="bold"
                 android:layout_toEndOf="@+id/textViewBLK"
                 android:layout_alignBottom="@+id/textViewBLK"
                 />
@@ -238,7 +226,6 @@
                 android:text="0"
                 android:textColor="#000"
                 android:textSize="15sp"
-                android:textStyle="bold"
                 android:id="@+id/textViewSTL"
                 />
             <TextView
@@ -247,7 +234,6 @@
                 android:text="STL"
                 android:textColor="#999"
                 android:textSize="12sp"
-                android:textStyle="bold"
                 android:layout_toEndOf="@+id/textViewSTL"
                 android:layout_alignBottom="@+id/textViewSTL"
                 />

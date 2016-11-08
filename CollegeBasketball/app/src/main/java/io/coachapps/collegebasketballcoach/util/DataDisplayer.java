@@ -69,6 +69,14 @@ public class DataDisplayer {
         if (ind < 0) ind = 0;
         return grades[ind];
     }
+    public static String getRankStr(int rank) {
+        switch (rank) {
+            case 1: return "1st";
+            case 2: return "2nd";
+            case 3: return "4th";
+            default: return rank + "th";
+        }
+    }
     public static ArrayList<String> getTeamStatsCSVs(String teamName, Context context, int year) {
         YearlyTeamStatsDao yearlyTeamStatsDao = new YearlyTeamStatsDao(context);
         List<YearlyTeamStats> currentTeamStats = yearlyTeamStatsDao.getTeamStatsOfYear(year);
@@ -101,7 +109,7 @@ public class DataDisplayer {
             highestIndex--;
         }
         teamStatsCSVs.add(statsOfSelectedTeam.wins + " - " + statsOfSelectedTeam.losses + ",Wins " +
-                "- Losses," + String.valueOf(highestIndex + 2));
+                "- Losses," + getRankStr(highestIndex + 2));
 
         // This is disgusting
 
@@ -112,7 +120,7 @@ public class DataDisplayer {
             }
         });
         teamStatsCSVs.add(statsOfSelectedTeam.getPGDisplay("PPG") + ",Points Per Game," +
-                String.valueOf(currentTeamStats.indexOf(statsOfSelectedTeam) + 1));
+                getRankStr(currentTeamStats.indexOf(statsOfSelectedTeam) + 1));
 
         Collections.sort(currentTeamStats, new Comparator<YearlyTeamStats>() {
             @Override
@@ -121,7 +129,7 @@ public class DataDisplayer {
             }
         });
         teamStatsCSVs.add(statsOfSelectedTeam.getPGDisplay("APG") + ",Assists Per Game," +
-                String.valueOf(currentTeamStats.indexOf(statsOfSelectedTeam) + 1));
+                getRankStr(currentTeamStats.indexOf(statsOfSelectedTeam) + 1));
 
         Collections.sort(currentTeamStats, new Comparator<YearlyTeamStats>() {
             @Override
@@ -130,7 +138,7 @@ public class DataDisplayer {
             }
         });
         teamStatsCSVs.add(statsOfSelectedTeam.getPGDisplay("RPG") + ",Rebounds Per Game," +
-                String.valueOf(currentTeamStats.indexOf(statsOfSelectedTeam) + 1));
+                getRankStr(currentTeamStats.indexOf(statsOfSelectedTeam) + 1));
 
         Collections.sort(currentTeamStats, new Comparator<YearlyTeamStats>() {
             @Override
@@ -139,7 +147,7 @@ public class DataDisplayer {
             }
         });
         teamStatsCSVs.add(statsOfSelectedTeam.getPGDisplay("SPG") + ",Steals Per Game," +
-                String.valueOf(currentTeamStats.indexOf(statsOfSelectedTeam) + 1));
+                getRankStr(currentTeamStats.indexOf(statsOfSelectedTeam) + 1));
 
         Collections.sort(currentTeamStats, new Comparator<YearlyTeamStats>() {
             @Override
@@ -148,7 +156,7 @@ public class DataDisplayer {
             }
         });
         teamStatsCSVs.add(statsOfSelectedTeam.getPGDisplay("BPG") + ",Blocks Per Game," +
-                String.valueOf(currentTeamStats.indexOf(statsOfSelectedTeam) + 1));
+                getRankStr(currentTeamStats.indexOf(statsOfSelectedTeam) + 1));
 
         Collections.sort(currentTeamStats, new Comparator<YearlyTeamStats>() {
             @Override
@@ -157,7 +165,7 @@ public class DataDisplayer {
             }
         });
         teamStatsCSVs.add(statsOfSelectedTeam.getPGDisplay("TPG") + ",Turnovers Per Game," +
-                String.valueOf(currentTeamStats.indexOf(statsOfSelectedTeam) + 1));
+                getRankStr(currentTeamStats.indexOf(statsOfSelectedTeam) + 1));
 
         Collections.sort(currentTeamStats, new Comparator<YearlyTeamStats>() {
             @Override
@@ -166,7 +174,7 @@ public class DataDisplayer {
             }
         });
         teamStatsCSVs.add(statsOfSelectedTeam.getPGDisplay("FGMPG") + ",FGM Per Game," +
-                String.valueOf(currentTeamStats.indexOf(statsOfSelectedTeam) + 1));
+                getRankStr(currentTeamStats.indexOf(statsOfSelectedTeam) + 1));
 
         Collections.sort(currentTeamStats, new Comparator<YearlyTeamStats>() {
             @Override
@@ -175,7 +183,7 @@ public class DataDisplayer {
             }
         });
         teamStatsCSVs.add(statsOfSelectedTeam.getPGDisplay("FGAPG") + ",FGA Per Game," +
-                String.valueOf(currentTeamStats.indexOf(statsOfSelectedTeam) + 1));
+                getRankStr(currentTeamStats.indexOf(statsOfSelectedTeam) + 1));
 
         Collections.sort(currentTeamStats, new Comparator<YearlyTeamStats>() {
             @Override
@@ -184,7 +192,7 @@ public class DataDisplayer {
             }
         });
         teamStatsCSVs.add(statsOfSelectedTeam.getFGPStr() + "%,Field Goal Percentage," +
-                String.valueOf(currentTeamStats.indexOf(statsOfSelectedTeam) + 1));
+                getRankStr(currentTeamStats.indexOf(statsOfSelectedTeam) + 1));
 
         Collections.sort(currentTeamStats, new Comparator<YearlyTeamStats>() {
             @Override
@@ -193,7 +201,7 @@ public class DataDisplayer {
             }
         });
         teamStatsCSVs.add(statsOfSelectedTeam.getPGDisplay("3FGMPG") + ",3FGM Per Game," +
-                String.valueOf(currentTeamStats.indexOf(statsOfSelectedTeam) + 1));
+                getRankStr(currentTeamStats.indexOf(statsOfSelectedTeam) + 1));
 
         Collections.sort(currentTeamStats, new Comparator<YearlyTeamStats>() {
             @Override
@@ -202,7 +210,7 @@ public class DataDisplayer {
             }
         });
         teamStatsCSVs.add(statsOfSelectedTeam.getPGDisplay("3FGAPG") + ",3FGA Per Game," +
-                String.valueOf(currentTeamStats.indexOf(statsOfSelectedTeam) + 1));
+                getRankStr(currentTeamStats.indexOf(statsOfSelectedTeam) + 1));
 
         Collections.sort(currentTeamStats, new Comparator<YearlyTeamStats>() {
             @Override
@@ -211,7 +219,7 @@ public class DataDisplayer {
             }
         });
         teamStatsCSVs.add(statsOfSelectedTeam.get3FGPStr() + "%,3 Point Percentage," +
-                String.valueOf(currentTeamStats.indexOf(statsOfSelectedTeam) + 1));
+                getRankStr(currentTeamStats.indexOf(statsOfSelectedTeam) + 1));
 
         return teamStatsCSVs;
     }

@@ -68,11 +68,20 @@
         android:layout_below="@+id/textViewTeamName"
         android:layout_alignParentEnd="true" />
 
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:text="Preferred Pos: PG"
+        android:id="@+id/textViewPreferredPosition"
+        android:layout_below="@+id/textViewVitals"
+        android:layout_alignParentEnd="true" />
+
     <Spinner
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:id="@+id/spinnerPlayerStats"
-        android:layout_below="@+id/textViewOvrPot"
+        android:layout_below="@+id/textViewPreferredPosition"
         android:spinnerMode="dropdown" />
 
     <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
