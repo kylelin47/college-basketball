@@ -56,5 +56,9 @@ public class BracketDialogFragment extends DialogFragment {
                 year, week, homeName, awayName);
         newFragment.show(ft, "game dialog");
     }
+    public void examineTeam(String teamName) {
+        ((MainActivity) getActivity()).examineTeam(teamName);
+        dismiss();
+    }
 }
 

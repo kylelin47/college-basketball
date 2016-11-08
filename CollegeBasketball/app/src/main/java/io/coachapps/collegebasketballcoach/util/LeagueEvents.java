@@ -4,7 +4,9 @@ import android.content.Context;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
+import java.util.Random;
 
 import io.coachapps.collegebasketballcoach.basketballsim.Game;
 import io.coachapps.collegebasketballcoach.basketballsim.Player;
@@ -24,24 +26,21 @@ import io.coachapps.collegebasketballcoach.models.Stats;
  */
 
 public class LeagueEvents {
-    private static int determineYear() {
-        return 2016;
-    }
-
-    public static void scheduleSeason(List<Team> teams, Context context) {
-        int robinRounds = teams.size() - 1;
-        int halfRobin = teams.size()/2;
-        int year = determineYear();
+    public static void scheduleSeason(List<Team> teams, Context context, int year) {
+        List<Team> shuffledTeams = new ArrayList<>(teams);
+        Collections.shuffle(shuffledTeams, new Random(year));
+        int robinRounds = shuffledTeams.size() - 1;
+        int halfRobin = shuffledTeams.size()/2;
         int week = 0;
         GameDao gameDao = new GameDao(context);
         for (int r = 0; r < robinRounds; ++r) {
             for (int g = 0; g < halfRobin; ++g) {
-                Team home = teams.get((r + g) % robinRounds);
+                Team home = shuffledTeams.get((r + g) % robinRounds);
                 Team away;
                 if ( g == 0 ) {
-                    away = teams.get(robinRounds);
+                    away = shuffledTeams.get(robinRounds);
                 } else {
-                    away = teams.get((robinRounds - g + r) % robinRounds);
+                    away = shuffledTeams.get((robinRounds - g + r) % robinRounds);
                 }
                 scheduleGame(home, away, year, week, gameDao);
             }

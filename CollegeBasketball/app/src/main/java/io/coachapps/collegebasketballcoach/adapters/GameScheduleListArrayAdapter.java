@@ -1,6 +1,7 @@
 package io.coachapps.collegebasketballcoach.adapters;
 
 import android.content.Context;
+import android.support.annotation.NonNull;
 import android.support.v4.content.ContextCompat;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -20,7 +21,6 @@ import io.coachapps.collegebasketballcoach.basketballsim.Team;
  * Adapter for displaying the list of games
  * Created by Achi Jones on 10/22/2016.
  */
-
 public class GameScheduleListArrayAdapter extends ArrayAdapter<Game> {
     private final Context context;
     private final List<Game> games;
@@ -35,37 +35,53 @@ public class GameScheduleListArrayAdapter extends ArrayAdapter<Game> {
         this.team = team;
     }
 
-    @Override
-    public View getView(final int position, View convertView, ViewGroup parent) {
-        LayoutInflater inflater = (LayoutInflater) context
-                .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        View rowView = inflater.inflate(R.layout.game_schedule_list_item, parent, false);
-        TextView textLeft = (TextView) rowView.findViewById(R.id.gameScheduleLeft);
-        Button gameButton = (Button) rowView.findViewById(R.id.gameScheduleButtonList);
-        Button textRight = (Button) rowView.findViewById(R.id.gameScheduleRight);
+    private static class ViewHolder {
+        TextView gameType;
+        Button viewGame;
+        Button viewOpponent;
+    }
 
+    @Override
+    @NonNull
+    public View getView(final int position, View convertView, @NonNull ViewGroup parent) {
+        ViewHolder viewHolder;
         String[] gameSummary = team.getGameSummaryStr(position);
-        textLeft.setText( gameSummary[0] );
-        gameButton.setText( gameSummary[1] );
-        textRight.setText( gameSummary[2] );
+        if (convertView == null || gameSummary[0].equals("Tournament")) {
+            LayoutInflater inflater = (LayoutInflater) context
+                    .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+            convertView = inflater.inflate(R.layout.game_schedule_list_item, parent, false);
+            viewHolder = new ViewHolder();
+            viewHolder.gameType = (TextView) convertView.findViewById(R.id.gameScheduleLeft);
+            viewHolder.viewGame = (Button) convertView.findViewById(R.id.gameScheduleButtonList);
+            viewHolder.viewOpponent = (Button) convertView.findViewById(R.id.gameScheduleRight);
+            convertView.setTag(viewHolder);
+        } else {
+            viewHolder = (ViewHolder) convertView.getTag();
+        }
+
+
+        viewHolder.gameType.setText( gameSummary[0] );
+        viewHolder.viewGame.setText( gameSummary[1] );
+        viewHolder.viewOpponent.setText( gameSummary[2] );
 
         if (games.get(position).hasPlayed()) {
             if (team == games.get(position).getWinner()) {
-                gameButton.setBackground(ContextCompat.getDrawable(context, R.drawable
+                viewHolder.viewGame.setBackground(ContextCompat.getDrawable(context, R.drawable
                         .button_shape_win));
             } else {
-                gameButton.setBackground(ContextCompat.getDrawable(context, R.drawable.button_shape_loss));
+                viewHolder.viewGame.setBackground(ContextCompat.getDrawable(context, R.drawable
+                        .button_shape_loss));
             }
         }
         if (gameSummary[0].equals("Tournament")) {
-            textLeft.setOnClickListener(new View.OnClickListener() {
+            viewHolder.gameType.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
                     mainAct.showBracketDialog();
                 }
             });
         }
-        gameButton.setOnClickListener(new View.OnClickListener() {
+        viewHolder.viewGame.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 // Examine game summary
                 Game gm = getItem(position);
@@ -75,7 +91,7 @@ public class GameScheduleListArrayAdapter extends ArrayAdapter<Game> {
             }
         });
 
-        textRight.setOnClickListener(new View.OnClickListener() {
+        viewHolder.viewOpponent.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 // Examine team
@@ -88,7 +104,7 @@ public class GameScheduleListArrayAdapter extends ArrayAdapter<Game> {
             }
         });
 
-        return rowView;
+        return convertView;
     }
 
     public Game getItem(int position) {

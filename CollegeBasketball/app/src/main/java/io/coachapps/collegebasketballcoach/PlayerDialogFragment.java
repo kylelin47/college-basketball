@@ -16,14 +16,17 @@ import io.coachapps.collegebasketballcoach.util.DataDisplayer;
 public class PlayerDialogFragment extends DialogFragment {
     private Player player;
     private String teamName;
+    private int year;
     private final static String PLAYER_KEY = "player";
     private final static String TEAM_KEY = "team";
+    private final static String YEAR_KEY = "year";
 
-    public static PlayerDialogFragment newInstance(Player player, String teamName) {
+    public static PlayerDialogFragment newInstance(Player player, String teamName, int year) {
         PlayerDialogFragment fragment = new PlayerDialogFragment();
         Bundle args = new Bundle();
         args.putSerializable(PLAYER_KEY, player);
         args.putString(TEAM_KEY, teamName);
+        args.putInt(YEAR_KEY, year);
         fragment.setArguments(args);
         return fragment;
     }
@@ -34,6 +37,7 @@ public class PlayerDialogFragment extends DialogFragment {
         setStyle(STYLE_NO_FRAME, android.R.style.Theme_DeviceDefault_Light);
         player = (Player) getArguments().getSerializable(PLAYER_KEY);
         teamName = getArguments().getString(TEAM_KEY);
+        year = getArguments().getInt(YEAR_KEY);
     }
 
     @Override
@@ -69,7 +73,7 @@ public class PlayerDialogFragment extends DialogFragment {
                                 playerStatsFragment).commit();
                     } else if (i == 2) {
                         RecentGamesFragment recentGamesFragment =
-                                RecentGamesFragment.newInstance(player.getId(), 2016);
+                                RecentGamesFragment.newInstance(player.getId(), year);
                         getChildFragmentManager().beginTransaction().replace(R.id.fragment_container,
                                 recentGamesFragment).commit();
                     }

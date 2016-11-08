@@ -1,6 +1,7 @@
 package io.coachapps.collegebasketballcoach.adapters;
 
 import android.content.Context;
+import android.support.annotation.NonNull;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -19,7 +20,7 @@ import io.coachapps.collegebasketballcoach.R;
 public class BracketListArrayAdapter extends ArrayAdapter<String>  {
     private final Context context;
     /**
-     *   Array of game toString() with seed appended to the end
+     *   Array of game toString()
      */
     private String[][] gameSummaries;
     // boundaries to place rounds
@@ -52,7 +53,8 @@ public class BracketListArrayAdapter extends ArrayAdapter<String>  {
     }
 
     @Override
-    public View getView(final int position, View convertView, ViewGroup parent) {
+    @NonNull
+    public View getView(final int position, View convertView, @NonNull ViewGroup parent) {
         LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         View rowView = inflater.inflate(R.layout.bracket_list_item, parent, false);
 
@@ -80,6 +82,18 @@ public class BracketListArrayAdapter extends ArrayAdapter<String>  {
                     bracketDialogFragment.showGameSummaryDialog(getYear(gameInfo),
                            getWeek(gameInfo), gameInfo[0], gameInfo[1]);
                 }
+            }
+        });
+        textHomeName.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                bracketDialogFragment.examineTeam(gameInfo[0]);
+            }
+        });
+        textAwayName.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                bracketDialogFragment.examineTeam(gameInfo[1]);
             }
         });
         return rowView;

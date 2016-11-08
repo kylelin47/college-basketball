@@ -12,6 +12,7 @@ import android.widget.TextView;
 import java.util.ArrayList;
 import java.util.List;
 
+import io.coachapps.collegebasketballcoach.MainActivity;
 import io.coachapps.collegebasketballcoach.adapters.PlayerGameStatsListArrayAdapter;
 import io.coachapps.collegebasketballcoach.models.GameModel;
 import io.coachapps.collegebasketballcoach.util.LeagueEvents;
@@ -249,6 +250,8 @@ public class GameSimThread extends Thread {
             Game lastGame = tournamentGames.get(tournamentGames.size() - 1);
             tournamentGames.addAll(tournamentScheduler.scheduleTournament(winners, lastGame
                     .getYear(), lastGame.getWeek() + 1));
+        } else {
+            ((MainActivity) activity).tryToScheduleConferenceTournament();
         }
 
         activity.runOnUiThread(new Runnable() {

@@ -29,7 +29,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
-import java.util.LinkedHashMap;
 import java.util.List;
 
 import io.coachapps.collegebasketballcoach.adapters.GameScheduleListArrayAdapter;
@@ -191,7 +190,7 @@ public class MainActivity extends AppCompatActivity {
 
         // Sim games
         bballSim = new Simulator(MainActivity.this);
-        LeagueEvents.scheduleSeason(teamList, this);
+        LeagueEvents.scheduleSeason(teamList, this, getYear());
         tryToScheduleConferenceTournament();
         // Set up UI components
         currTeamTextView = (TextView) findViewById(R.id.currentTeamText);
@@ -400,7 +399,8 @@ public class MainActivity extends AppCompatActivity {
     public void showPlayerDialog(final Player p) {
         FragmentTransaction ft = getFragmentManager().beginTransaction();
         DialogFragment newFragment =
-                PlayerDialogFragment.newInstance(p, playerTeamMap.get(p.getId()).getName());
+                PlayerDialogFragment.newInstance(p, playerTeamMap.get(p.getId()).getName(),
+                        getYear());
         newFragment.show(ft, "player dialog");
     }
 
@@ -528,7 +528,7 @@ public class MainActivity extends AppCompatActivity {
 
         // Offense Strategy Spinner
         Spinner stratOffSelectionSpinner = (Spinner) dialog.findViewById(R.id.spinnerOffenseStrategy);
-        ArrayAdapter<String> stratOffSpinnerAdapter = new ArrayAdapter<String>(this,
+        ArrayAdapter<String> stratOffSpinnerAdapter = new ArrayAdapter<>(this,
                 android.R.layout.simple_spinner_item, stratOffSelection);
         stratOffSpinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         stratOffSelectionSpinner.setAdapter(stratOffSpinnerAdapter);
@@ -549,7 +549,7 @@ public class MainActivity extends AppCompatActivity {
 
         // Defense Spinner Adapter
         Spinner stratDefSelectionSpinner = (Spinner) dialog.findViewById(R.id.spinnerDefenseStrategy);
-        ArrayAdapter<String> stratDefSpinnerAdapter = new ArrayAdapter<String>(this,
+        ArrayAdapter<String> stratDefSpinnerAdapter = new ArrayAdapter<>(this,
                 android.R.layout.simple_spinner_item, stratDefSelection);
         stratDefSpinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         stratDefSelectionSpinner.setAdapter(stratDefSpinnerAdapter);
@@ -623,7 +623,7 @@ public class MainActivity extends AppCompatActivity {
         schemaCategoryList.add(Schemas.YearlyPlayerStatsEntry.ASSISTS);
         schemaCategoryList.add(Schemas.YearlyPlayerStatsEntry.FGM);
         schemaCategoryList.add(Schemas.YearlyPlayerStatsEntry.THREE_POINTS_MADE);
-        ArrayAdapter<String> stratDefSpinnerAdapter = new ArrayAdapter<String>(this,
+        ArrayAdapter<String> stratDefSpinnerAdapter = new ArrayAdapter<>(this,
                 android.R.layout.simple_spinner_item, categoryList);
         stratDefSpinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spinner.setAdapter(stratDefSpinnerAdapter);
@@ -678,7 +678,7 @@ public class MainActivity extends AppCompatActivity {
             tryToScheduleConferenceTournament();
         }
     }
-    private void tryToScheduleConferenceTournament() {
+    public void tryToScheduleConferenceTournament() {
         if (!hasScheduledConferenceTournament && LeagueEvents
                 .determineLastUnplayedRegularSeasonWeek(teamList) == Integer.MAX_VALUE) {
             tournamentGames = LeagueEvents.scheduleConferenceTournament(teamList, MainActivity
