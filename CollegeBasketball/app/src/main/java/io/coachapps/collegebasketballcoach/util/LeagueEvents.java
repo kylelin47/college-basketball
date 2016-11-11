@@ -14,6 +14,7 @@ import io.coachapps.collegebasketballcoach.basketballsim.Simulator;
 import io.coachapps.collegebasketballcoach.basketballsim.Team;
 import io.coachapps.collegebasketballcoach.db.BoxScoreDao;
 import io.coachapps.collegebasketballcoach.db.GameDao;
+import io.coachapps.collegebasketballcoach.db.LeagueResultsEntryDao;
 import io.coachapps.collegebasketballcoach.models.BoxScore;
 import io.coachapps.collegebasketballcoach.models.FullGameResults;
 import io.coachapps.collegebasketballcoach.models.GameModel;
@@ -76,6 +77,21 @@ public class LeagueEvents {
             tournamentGames.addAll(
                     tournamentScheduler.scheduleTournament(winners, lastGame.getYear(), lastGame.getWeek() + 1));
         }
+    }
+
+    public static boolean tryToFinishTournament(List<Game> tournamentGames, Context context) {
+        if (tournamentGames == null || tournamentGames.size() <= 4) {
+            return false;
+        }
+        Game championshipGame = tournamentGames.get(tournamentGames.size() - 1);
+        Game previousGame = tournamentGames.get(tournamentGames.size() - 2);
+        if (championshipGame.hasPlayed() && championshipGame.getWeek() > previousGame.getWeek()) {
+            LeagueResultsEntryDao leagueResultsEntryDao = new LeagueResultsEntryDao(context);
+            leagueResultsEntryDao.save(championshipGame.getYear(), championshipGame.getWinner().name,
+                    0, 0);
+            return true;
+        }
+        return false;
     }
 
     public static boolean playRegularSeasonGame(List<Team> teams, Simulator sim,

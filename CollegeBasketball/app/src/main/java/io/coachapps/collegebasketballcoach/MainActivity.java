@@ -43,6 +43,7 @@ import io.coachapps.collegebasketballcoach.basketballsim.Simulator;
 import io.coachapps.collegebasketballcoach.basketballsim.Strategy;
 import io.coachapps.collegebasketballcoach.basketballsim.Team;
 import io.coachapps.collegebasketballcoach.db.DbHelper;
+import io.coachapps.collegebasketballcoach.db.LeagueResultsEntryDao;
 import io.coachapps.collegebasketballcoach.db.PlayerDao;
 import io.coachapps.collegebasketballcoach.db.Schemas;
 import io.coachapps.collegebasketballcoach.db.TeamDao;
@@ -142,34 +143,47 @@ public class MainActivity extends AppCompatActivity {
             AlertDialog.Builder builder = new AlertDialog.Builder(this);
             builder.setTitle("Input Your Team Name");
             final EditText input = new EditText(this);
+            input.setHint("3 or more characters");
             input.setInputType(InputType.TYPE_CLASS_TEXT);
             builder.setView(input);
             builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
-                    Log.i("MainActivity", "Set team name");
-                    ((AlertDialog) dialog).getButton(DialogInterface.BUTTON_POSITIVE).setEnabled
-                            (false);
-                    playerTeamName = input.getText().toString().trim();
-                    String replacementTeamName = "Chef Boyardees";
-                    teamList = new ArrayList<>();
-                    String[] teamNames = getResources().getStringArray(R.array.team_names);
-                    teamList.add(new Team(playerTeamName, 99, playerGen, true));
-                    for (int i = 0; i < 9; ++i) {
-                        if (playerTeamName.equals(teamNames[i])) teamNames[i] = replacementTeamName;
-                        teamList.add(new Team(teamNames[i], (int)(Math.random()*100), playerGen, false));
-                    }
-                    setEverythingUp();
-                    teamDao.saveTeams(teamList, playerTeamName);
-                    playerTeam.sortPlayersOvrPosition();
-                    PlayerDao pd = new PlayerDao(MainActivity.this);
-                    for (Player p : playerTeam.players) {
-                        pd.updatePlayerRatings(p.getId(), p.ratings);
-                    }
+                    // do nothing
                 }
             });
             builder.setCancelable(false);
-            builder.show();
+            final AlertDialog dialog = builder.show();
+            dialog.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener(new View
+                    .OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Log.i("MainActivity", "Set team name");
+                    playerTeamName = input.getText().toString().trim();
+                    if (playerTeamName.length() >= 3) {
+                        dialog.getButton(DialogInterface.BUTTON_POSITIVE).setEnabled
+                                (false);
+                        String replacementTeamName = "Chef Boyardees";
+                        teamList = new ArrayList<>();
+                        String[] teamNames = getResources().getStringArray(R.array.team_names);
+                        teamList.add(new Team(playerTeamName, 99, playerGen, true));
+                        for (int i = 0; i < 9; ++i) {
+                            if (playerTeamName.substring(0, 3).equals(teamNames[i].substring(0, 3))) {
+                                teamNames[i] = replacementTeamName;
+                            }
+                            teamList.add(new Team(teamNames[i], (int) (Math.random() * 100), playerGen, false));
+                        }
+                        setEverythingUp();
+                        teamDao.saveTeams(teamList, playerTeamName);
+                        playerTeam.sortPlayersOvrPosition();
+                        PlayerDao pd = new PlayerDao(MainActivity.this);
+                        for (Player p : playerTeam.players) {
+                            pd.updatePlayerRatings(p.getId(), p.ratings);
+                        }
+                        dialog.dismiss();
+                    }
+                }
+            });
         } else {
             playerTeamName = teamDao.getPlayerTeamName();
             setEverythingUp();
@@ -263,7 +277,7 @@ public class MainActivity extends AppCompatActivity {
         rosterList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Player p  = rosterListAdapter.getItem(position);
+                Player p = rosterListAdapter.getItem(position);
                 showPlayerDialog(p);
             }
         });
@@ -302,13 +316,14 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void examineTeam(Team team) {
+        int year = getYear();
         currTeamTextView.setText(team.getName());
         // Unless we change the ui, this can be consolidated to a single ListView
-        rosterListAdapter = new PlayerStatsListArrayAdapter(MainActivity.this, team.players);
+        rosterListAdapter = new PlayerStatsListArrayAdapter(MainActivity.this, team.players, year);
         rosterList.setAdapter(rosterListAdapter);
 
         statsListAdapter = new TeamStatsListArrayAdapter(MainActivity.this,
-                DataDisplayer.getTeamStatsCSVs(team.getName(), this, getYear()), false);
+                DataDisplayer.getTeamStatsCSVs(team.getName(), this, year), false);
         statsList.setAdapter(statsListAdapter);
 
         gameListAdapter = new GameScheduleListArrayAdapter(MainActivity.this, MainActivity.this,
@@ -339,7 +354,10 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private int getYear() {
-        return 2016;
+        LeagueResultsEntryDao leagueResultsEntryDao = new LeagueResultsEntryDao(this);
+        int currentYear = leagueResultsEntryDao.getCurrentYear();
+        Log.i("MainActivity", "Current Year: " + currentYear);
+        return currentYear;
     }
 
     public void updateUI() {
@@ -351,6 +369,21 @@ public class MainActivity extends AppCompatActivity {
         gameListAdapter.notifyDataSetChanged();
         populateTeamStrList();
         dataAdapterTeam.notifyDataSetChanged();
+        if (LeagueEvents.tryToFinishTournament(tournamentGames, this)) {
+            Log.i("MainActivity", "Finished tournament");
+            tournamentGames = null;
+            // enter recruiting
+            onNewYear(); // for testing
+        }
+    }
+
+    private void onNewYear() {
+        for (Team team : teamList) {
+            team.beginNewSeason();
+        }
+        LeagueEvents.scheduleSeason(teamList, this, getYear());
+        examineTeam(teamList.get(lastSelectedTeamPosition));
+        updateUI();
     }
 
     public void advanceGame(boolean simPlayerGame) {

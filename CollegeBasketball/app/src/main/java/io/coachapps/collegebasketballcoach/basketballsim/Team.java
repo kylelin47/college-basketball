@@ -19,7 +19,6 @@ public class Team {
 
     public List<Game> gameSchedule;
 
-    public int games;
     public String name;
     private boolean isUserTeam;
     public int prestige;
@@ -35,7 +34,6 @@ public class Team {
         this.isUserTeam = isUserTeam;
         wins = 0;
         losses = 0;
-        games = 0;
         gameSchedule = new ArrayList<>();
         startersIn = new boolean[5];
         for (int i = 0; i < 5; ++i) {
@@ -57,7 +55,6 @@ public class Team {
         this.isUserTeam = isUserTeam;
         wins = 0;
         losses = 0;
-        games = 0;
         gameSchedule = new ArrayList<>();
         players = new ArrayList<>(10);
 
@@ -243,15 +240,14 @@ public class Team {
         }
     }
     
-    public void subPlayers( double remainingTime ) {
+    void subPlayers( double remainingTime ) {
         // sub players based on game time
 
         for (int i = 0; i < 5; ++i)
             subPosition(remainingTime, i);
 
         for (int i = 0; i < players.size(); ++i) {
-            if (i < 5) players.get(i).onCourt = true;
-            else players.get(i).onCourt = false;
+            players.get(i).onCourt = (i < 5);
         }
     }
     
@@ -307,5 +303,12 @@ public class Team {
             sum[2] = "@ " + gm.getHome().getAbbr();
         }
         return sum;
+    }
+
+    public void beginNewSeason() {
+        this.wins = 0;
+        this.losses = 0;
+        this.seed = 0;
+        this.gameSchedule.clear();
     }
 }

@@ -25,11 +25,13 @@ import io.coachapps.collegebasketballcoach.models.YearlyPlayerStats;
 
 public class PlayerStatsFragment extends Fragment {
     private static final String ID_KEY = "playerId";
+    private static final String YEAR_KEY = "year";
 
-    public static PlayerStatsFragment newInstance(int playerId) {
+    public static PlayerStatsFragment newInstance(int playerId, int currentYear) {
         PlayerStatsFragment fragment = new PlayerStatsFragment();
         Bundle args = new Bundle();
         args.putInt(ID_KEY, playerId);
+        args.putInt(YEAR_KEY, currentYear);
         fragment.setArguments(args);
         return fragment;
     }
@@ -45,12 +47,18 @@ public class PlayerStatsFragment extends Fragment {
     private int getPlayerId() {
         return getArguments().getInt(ID_KEY);
     }
+    private int getCurrentYear() { return getArguments().getInt(YEAR_KEY); }
 
     private void fillStats(int playerId, View view, final LayoutInflater inflater) {
         YearlyPlayerStatsDao yearlyPlayerStatsDao = new YearlyPlayerStatsDao(getActivity());
-        final List<YearlyPlayerStats> stats = yearlyPlayerStatsDao.getPlayerStatsFromYears(playerId, 0, 9999);
-        YearlyPlayerStats latestStats = stats.size() == 0 ? new YearlyPlayerStats(playerId) : stats
-                .get(stats.size() - 1);
+        final List<YearlyPlayerStats> stats = yearlyPlayerStatsDao.getPlayerStatsFromYears
+                (playerId, 0, getCurrentYear());
+        YearlyPlayerStats latestStats;
+        if (stats.size() == 0 || stats.get(stats.size() - 1).year != getCurrentYear()) {
+            latestStats = new YearlyPlayerStats(playerId, getCurrentYear());
+        } else {
+            latestStats = stats.get(stats.size() - 1);
+        }
         setStatValues(view, latestStats);
         view.findViewById(R.id.ppgButton).setOnClickListener(new View.OnClickListener() {
             @Override

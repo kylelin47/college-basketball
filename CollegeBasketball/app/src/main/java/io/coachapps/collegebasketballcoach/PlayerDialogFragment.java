@@ -68,7 +68,7 @@ public class PlayerDialogFragment extends DialogFragment {
                                 playerRatingsFragment).commit();
                     } else if (i == 1) {
                         PlayerStatsFragment playerStatsFragment =
-                                PlayerStatsFragment.newInstance(player.getId());
+                                PlayerStatsFragment.newInstance(player.getId(), year);
                         getChildFragmentManager().beginTransaction().replace(R.id.fragment_container,
                                 playerStatsFragment).commit();
                     } else if (i == 2) {

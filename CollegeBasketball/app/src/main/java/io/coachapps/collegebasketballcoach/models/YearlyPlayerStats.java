@@ -8,11 +8,15 @@ public class YearlyPlayerStats {
 
     public Stats playerStats;
 
-    public YearlyPlayerStats(int playerId){
+    public YearlyPlayerStats(int playerId) {
         this.playerId = playerId;
         this.gamesPlayed = 0;
-
         this.playerStats = new Stats();
+    }
+
+    public YearlyPlayerStats(int playerId, int year) {
+        this(playerId);
+        this.year = year;
     }
 
     public YearlyPlayerStats(BoxScore boxScore) {

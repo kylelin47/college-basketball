@@ -2,7 +2,6 @@ package io.coachapps.collegebasketballcoach.models;
 
 public class BoxScore {
     public int playerId;
-    public String playerName;
     public int year;
     public int week;
     public String teamName;

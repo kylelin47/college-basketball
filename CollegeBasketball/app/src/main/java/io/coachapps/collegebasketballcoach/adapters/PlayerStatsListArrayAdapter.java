@@ -22,47 +22,66 @@ import io.coachapps.collegebasketballcoach.util.DataDisplayer;
 public class PlayerStatsListArrayAdapter extends ArrayAdapter<Player> {
     private final Context context;
     public final List<Player> players;
+    private int currentYear;
 
-    public PlayerStatsListArrayAdapter(Context context, List<Player> values) {
+    public PlayerStatsListArrayAdapter(Context context, List<Player> values, int currentYear) {
         super(context, R.layout.roster_list_item, values);
         this.context = context;
         this.players = values;
+        this.currentYear = currentYear;
+    }
+
+    private static class ViewHolder {
+        TextView playerName;
+        TextView playerPosition;
+        TextView playerOvrPot;
+
+        TextView playerPPG;
+        TextView playerRPG;
+        TextView playerAPG;
+        TextView playerFGP;
     }
 
     @Override
     public View getView(final int position, View convertView, ViewGroup parent) {
-        LayoutInflater inflater = (LayoutInflater) context
-                .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        View rowView = inflater.inflate(R.layout.roster_list_item, parent, false);
+        ViewHolder viewHolder;
+        if (convertView == null) {
+            LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+            convertView = inflater.inflate(R.layout.roster_list_item, parent, false);
+            viewHolder = new ViewHolder();
+            viewHolder.playerName = (TextView) convertView.findViewById(R.id.textViewName);
+            viewHolder.playerPosition = (TextView) convertView.findViewById(R.id.textViewPosition);
+            viewHolder.playerOvrPot = (TextView) convertView.findViewById(R.id.textViewOvrPot);
 
-        TextView playerName = (TextView) rowView.findViewById(R.id.textViewName);
-        TextView playerPosition = (TextView) rowView.findViewById(R.id.textViewPosition);
-        TextView playerOvrPot = (TextView) rowView.findViewById(R.id.textViewOvrPot);
-
-        TextView playerPPG = (TextView) rowView.findViewById(R.id.textViewPPG);
-        TextView playerRPG = (TextView) rowView.findViewById(R.id.textViewRPG);
-        TextView playerAPG = (TextView) rowView.findViewById(R.id.textViewAPG);
-        TextView playerFGP = (TextView) rowView.findViewById(R.id.textViewFGP);
+            viewHolder.playerPPG = (TextView) convertView.findViewById(R.id.textViewPPG);
+            viewHolder.playerRPG = (TextView) convertView.findViewById(R.id.textViewRPG);
+            viewHolder.playerAPG = (TextView) convertView.findViewById(R.id.textViewAPG);
+            viewHolder.playerFGP = (TextView) convertView.findViewById(R.id.textViewFGP);
+            convertView.setTag(viewHolder);
+        } else {
+            viewHolder = (ViewHolder) convertView.getTag();
+        }
 
         Player p = players.get(position);
-        playerName.setText(p.name + " [" + DataDisplayer.getYearAbbreviation(p.year) + "]");
-        playerPosition.setText(DataDisplayer.getPositionAbbreviation(position % 5 + 1));
-        playerOvrPot.setText(String.valueOf(p.getOverall()) + " / " +
+        viewHolder.playerName.setText(p.name + " [" + DataDisplayer.getYearAbbreviation(p.year) +
+                "]");
+        viewHolder.playerPosition.setText(DataDisplayer.getPositionAbbreviation(position % 5 + 1));
+        viewHolder.playerOvrPot.setText(String.valueOf(p.getOverall()) + " / " +
                 DataDisplayer.getLetterGrade(p.getPotential()));
 
         YearlyPlayerStatsDao yearlyPlayerStatsDao = new YearlyPlayerStatsDao(getContext());
         List<YearlyPlayerStats> playerStats = yearlyPlayerStatsDao.getPlayerStatsFromYears(
-                p.getId(), 2016, 3000);
-        if (playerStats.size() != 0) {
+                p.getId(), 2016, currentYear);
+        if (playerStats.size() != 0 && playerStats.get(playerStats.size() - 1).year == currentYear) {
             YearlyPlayerStats currentStats = playerStats.get(playerStats.size() - 1);
-            playerPPG.setText(currentStats.getPGDisplay("PPG"));
-            playerRPG.setText(currentStats.getPGDisplay("RPG"));
-            playerAPG.setText(currentStats.getPGDisplay("APG"));
-            playerFGP.setText(currentStats.getPGDisplay("FG%")+
+            viewHolder.playerPPG.setText(currentStats.getPGDisplay("PPG"));
+            viewHolder.playerRPG.setText(currentStats.getPGDisplay("RPG"));
+            viewHolder.playerAPG.setText(currentStats.getPGDisplay("APG"));
+            viewHolder.playerFGP.setText(currentStats.getPGDisplay("FG%")+
                     "/"+currentStats.getPGDisplay("3P%"));
         }
 
-        return rowView;
+        return convertView;
     }
 
     public Player getItem(int position) {

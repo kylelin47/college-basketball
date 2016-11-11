@@ -26,6 +26,19 @@ public class LeagueResultsEntryDao {
         db.insert(Schemas.LeagueResultsEntry.TABLE_NAME, null, values);
     }
 
+    public int getCurrentYear() {
+        SQLiteDatabase db = DbHelper.getInstance(context).getReadableDatabase();
+        try (Cursor cursor = db.rawQuery("SELECT MAX(" + Schemas.LeagueResultsEntry.YEAR + ") " +
+                "FROM " + Schemas.LeagueResultsEntry.TABLE_NAME, null)) {
+            if (cursor.moveToNext()) {
+                int year = cursor.getInt(0);
+                if (year > 0) {
+                    return cursor.getInt(0) + 1;
+                }
+            }
+        }
+        return 2016;
+    }
     /**
      * Range is inclusive [beginYear, endYear]
      */
