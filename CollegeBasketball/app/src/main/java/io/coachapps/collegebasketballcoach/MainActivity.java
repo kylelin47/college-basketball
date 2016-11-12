@@ -369,6 +369,8 @@ public class MainActivity extends AppCompatActivity {
         gameListAdapter.notifyDataSetChanged();
         populateTeamStrList();
         dataAdapterTeam.notifyDataSetChanged();
+        playGameButton.setEnabled(!playerTeam.gameSchedule.get(playerTeam.gameSchedule.size() -
+                1).hasPlayed());
         if (LeagueEvents.tryToFinishTournament(tournamentGames, this)) {
             Log.i("MainActivity", "Finished tournament");
             tournamentGames = null;

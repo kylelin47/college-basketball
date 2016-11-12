@@ -33,6 +33,8 @@ public class LeagueEvents {
         int robinRounds = shuffledTeams.size() - 1;
         int halfRobin = shuffledTeams.size()/2;
         int week = 0;
+        int lastPlayedWeek = week - 1;
+        boolean allGamesPlayed = true;
         GameDao gameDao = new GameDao(context);
         for (int r = 0; r < robinRounds; ++r) {
             for (int g = 0; g < halfRobin; ++g) {
@@ -43,8 +45,15 @@ public class LeagueEvents {
                 } else {
                     away = shuffledTeams.get((robinRounds - g + r) % robinRounds);
                 }
-                scheduleGame(home, away, year, week, gameDao);
+                if (lastPlayedWeek == week - 1) {
+                    Game game = scheduleGame(home, away, year, week, gameDao);
+                    if (!game.hasPlayed()) allGamesPlayed = false;
+                } else {
+                    Game game = new Game(home, away, year, week);
+                    game.schedule();
+                }
             }
+            if (allGamesPlayed) lastPlayedWeek++;
             week++;
         }
     }
@@ -57,8 +66,7 @@ public class LeagueEvents {
         } else {
             gameToSchedule = new Game(home, away, gameModel);
         }
-        home.gameSchedule.add(gameToSchedule);
-        away.gameSchedule.add(gameToSchedule);
+        gameToSchedule.schedule();
         return gameToSchedule;
     }
 

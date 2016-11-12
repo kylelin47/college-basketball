@@ -5,7 +5,7 @@ import io.coachapps.collegebasketballcoach.models.GameModel;
 
 /**
  * Game class. Game objects are in each team's game schedule list.
- * Has references to each team, as well as its gameID as it is in the db.
+ * Has references to each team
  * Created by Achi Jones on 10/22/2016.
  */
 
@@ -42,6 +42,10 @@ public class Game {
         this.beenPlayed = true;
     }
 
+    public void schedule() {
+        getHome().gameSchedule.add(this);
+        getAway().gameSchedule.add(this);
+    }
     /**
      * @return Home team name,Away team name,homeScore,awayScore,year,week,beenPlayed,
      * tournamentGame,homeSeed,awaySeed
