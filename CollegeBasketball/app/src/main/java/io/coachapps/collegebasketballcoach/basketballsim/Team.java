@@ -188,6 +188,14 @@ public class Team {
         }
 
     }
+
+    public int getPosTotals(int position) {
+        int count = 0;
+        for (Player p : players) {
+            if (p.getPosition() == position) count++;
+        }
+        return count;
+    }
     
     public Player getPG() {
         return players.get(0);

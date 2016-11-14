@@ -1,5 +1,7 @@
 package io.coachapps.collegebasketballcoach;
 
+import android.app.DialogFragment;
+import android.app.FragmentTransaction;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.v7.app.AlertDialog;
@@ -20,6 +22,8 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 
+import io.coachapps.collegebasketballcoach.adapters.PlayerStatsListArrayAdapter;
+import io.coachapps.collegebasketballcoach.adapters.PlayerStatsRatingsListArrayAdapter;
 import io.coachapps.collegebasketballcoach.adapters.RecruitsListArrayAdapter;
 import io.coachapps.collegebasketballcoach.adapters.StrengthWeaknessListArrayAdapter;
 import io.coachapps.collegebasketballcoach.basketballsim.Player;
@@ -109,6 +113,12 @@ public class RecruitingActivity extends AppCompatActivity {
         recruitingListView = (ListView) findViewById(R.id.listViewRecruiting);
         doneButton = (Button) findViewById(R.id.doneButton);
         viewTeamButton = (Button) findViewById(R.id.viewTeamButton);
+        viewTeamButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                showTeamDialog();
+            }
+        });
 
         updateTextView();
         fillSpinner();
@@ -129,11 +139,11 @@ public class RecruitingActivity extends AppCompatActivity {
     private void fillSpinner() {
         List<String> spinnerList = new ArrayList<>();
         spinnerList.add("Top 50 Players");
-        spinnerList.add("Point Guards");
-        spinnerList.add("Shooting Guards");
-        spinnerList.add("Small Forwards");
-        spinnerList.add("Power Forwards");
-        spinnerList.add("Centers");
+        spinnerList.add("Point Guards (Team: " + playerTeam.getPosTotals(1) + "/2)");
+        spinnerList.add("Shooting Guards (Team: " + playerTeam.getPosTotals(2) + "/2)");
+        spinnerList.add("Small Forwards (Team: " + playerTeam.getPosTotals(3) + "/2)");
+        spinnerList.add("Power Forwards (Team: " + playerTeam.getPosTotals(4) + "/2)");
+        spinnerList.add("Centers (Team: " + playerTeam.getPosTotals(5) + "/2)");
         ArrayAdapter<String> dataAdapter = new ArrayAdapter<>(this,
                 android.R.layout.simple_spinner_item, spinnerList);
         dataAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
@@ -177,6 +187,40 @@ public class RecruitingActivity extends AppCompatActivity {
                 showRecruitDialog(p);
             }
         });
+    }
+
+    public void showTeamDialog() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setView(getLayoutInflater().inflate(R.layout.simple_list, null));
+        builder.setPositiveButton("OK",
+                new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.dismiss();
+                    }
+                });
+        builder.setTitle(playerTeamName);
+        final AlertDialog dialog = builder.create();
+        dialog.show();
+
+        // Show player stats of team from the past year
+        Collections.sort(playerTeam.players, new PlayerOverallComp());
+        final ListView listView = (ListView) dialog.findViewById(R.id.listView);
+        listView.setAdapter(new PlayerStatsRatingsListArrayAdapter(this, playerTeam.players, getYear()-1));
+        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                Player p = ((PlayerStatsRatingsListArrayAdapter)(listView.getAdapter())).getItem(position);
+                showPlayerDialog(p);
+            }
+        });
+    }
+
+    public void showPlayerDialog(final Player p) {
+        FragmentTransaction ft = getFragmentManager().beginTransaction();
+        DialogFragment newFragment =
+                PlayerDialogFragment.newInstance(p, playerTeamName, getYear()-1);
+        newFragment.show(ft, "player dialog");
     }
 
     public void showRecruitDialog(Player p) {
