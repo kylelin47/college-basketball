@@ -378,7 +378,6 @@ public class MainActivity extends AppCompatActivity {
                 1).hasPlayed());
         if (LeagueEvents.tryToFinishTournament(tournamentGames, this)) {
             Log.i("MainActivity", "Finished tournament");
-            tournamentGames = null;
             // enter recruiting
             doneWithSeason = true;
             simGameButton.setText("Recruit");
