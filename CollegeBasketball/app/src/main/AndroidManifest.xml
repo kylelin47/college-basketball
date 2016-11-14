@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-          package="io.coachapps.collegebasketballcoach">
+    package="io.coachapps.collegebasketballcoach">
 
     <application
         android:allowBackup="true"
@@ -19,17 +19,19 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-
         <activity
             android:name=".TeamStats"
             android:label="@string/title_activity_team_stats"
             android:parentActivityName=".MainActivity"
             android:theme="@style/AppTheme.NoActionBar">
-
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value="io.coachapps.collegebasketballcoach.MainActivity"/>
+                android:value="io.coachapps.collegebasketballcoach.MainActivity" />
         </activity>
+        <activity
+            android:name=".RecruitingActivity"
+            android:label="@string/title_activity_recruiting"
+            android:theme="@style/AppTheme.NoActionBar"></activity>
     </application>
 
 </manifest>

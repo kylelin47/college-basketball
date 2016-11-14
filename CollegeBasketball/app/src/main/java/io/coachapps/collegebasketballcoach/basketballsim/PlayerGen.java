@@ -15,14 +15,14 @@ public class PlayerGen {
     String[] listLastNames;
     int currID;
     
-    public PlayerGen(String firstCSV, String lastCSV) {
+    public PlayerGen(String firstCSV, String lastCSV, int year) {
         //get list of names from file
         listFirstNames = firstCSV.split(",");
         listLastNames = lastCSV.split(",");
-        currID = 1;
+        currID = 1000 * (year - 2016) + 1;
     }
     
-    public String getRandName() {
+    private String getRandName() {
         // get random name from list and remove it so it won't be used again
         int firstName = (int)(Math.random() * listFirstNames.length);
         String fName = listFirstNames[firstName].trim();
@@ -31,15 +31,17 @@ public class PlayerGen {
         return ( fName + " " + lName );        
     }
     
-    public ArrayList<Player> genRandPlayers( int number ) {
+    public ArrayList<Player> genRecruits( int number ) {
         // generate number of players, with an equal number of each position
         ArrayList<Player> PlayerList = new ArrayList<>();
+        int basePrestige = 25;
+        int randPrestige = 75;
         for (int i = 0; i < number/5; ++i) {
-            Player genPG = genPlayer(1, 70 + (int)(Math.random()*30));
-            Player genSG = genPlayer(2, 70 + (int)(Math.random()*30));
-            Player genSF = genPlayer(3, 70 + (int)(Math.random()*30));
-            Player genPF = genPlayer(4, 70 + (int)(Math.random()*30));
-            Player genC  = genPlayer(5, 70 + (int)(Math.random()*30));
+            Player genPG = genPlayer(1, basePrestige + (int)(Math.random()*randPrestige), 1);
+            Player genSG = genPlayer(2, basePrestige + (int)(Math.random()*randPrestige), 1);
+            Player genSF = genPlayer(3, basePrestige + (int)(Math.random()*randPrestige), 1);
+            Player genPF = genPlayer(4, basePrestige + (int)(Math.random()*randPrestige), 1);
+            Player genC  = genPlayer(5, basePrestige + (int)(Math.random()*randPrestige), 1);
             PlayerList.add(genPG);
             PlayerList.add(genSG);
             PlayerList.add(genSF);
@@ -50,7 +52,7 @@ public class PlayerGen {
         return PlayerList;
     }
     
-    public Player genPlayer( int position, int prestige ) {
+    public Player genPlayer( int position, int prestige, int year ) {
         int def_rat    = 75;
         int height     = 78;
         int weight     = 200;
@@ -284,6 +286,7 @@ public class PlayerGen {
         PlayerRatings ratings = new PlayerRatings();
 
         ratings.potential = 50 + (int)(Math.random()*50);
+        ratings.bballIQ = 50 + (int)(Math.random()*50);
         ratings.position = position;
         ratings.insideShooting = int_s;
         ratings.midrangeShooting = mid_s;
@@ -299,12 +302,12 @@ public class PlayerGen {
         ratings.weightInPounds = weight;
         ratings.heightInInches = height;
 
-        int numYearsAdvance = (int)(Math.random()*4);
+        int numYearsAdvance = year - 1;
         for (int i = 0; i < numYearsAdvance; ++i) {
             advanceYearRatings(ratings);
         }
         
-        return new Player( name, ratings, att, currID++, 1 + numYearsAdvance );
+        return new Player(name, ratings, att, currID++, year);
     }
 
     public void advanceYearRatings(PlayerRatings ratings) {

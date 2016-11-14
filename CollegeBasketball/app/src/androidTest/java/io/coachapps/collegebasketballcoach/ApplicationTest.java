@@ -117,7 +117,7 @@ public class ApplicationTest {
         if (teamList.size() == 0) {
             // Make generator, passing in possible player names
             PlayerGen playerGen = new PlayerGen(context.getString(R.string.league_player_names),
-                    context.getString(R.string.league_last_names));
+                    context.getString(R.string.league_last_names), 2016);
 
             // Make 10 teams;
             teamList = new ArrayList<>();

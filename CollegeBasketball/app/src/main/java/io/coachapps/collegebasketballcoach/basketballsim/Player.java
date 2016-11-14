@@ -189,17 +189,3 @@ public class Player implements Serializable {
         return getReb();
     }
 }
-
-class PlayerOverallComp implements Comparator<Player> {
-    @Override
-    public int compare( Player a, Player b ) {
-        return b.getOverall() - a.getOverall();
-    }
-}
-
-class PlayerIDComp implements Comparator<Player> {
-    @Override
-    public int compare( Player a, Player b ) {
-        return b.getId() - a.getId();
-    }
-}

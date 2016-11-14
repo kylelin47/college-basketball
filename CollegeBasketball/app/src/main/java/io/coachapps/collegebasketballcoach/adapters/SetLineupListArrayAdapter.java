@@ -68,6 +68,11 @@ public class SetLineupListArrayAdapter extends ArrayAdapter<Player> {
         playerPassing.setText(DataDisplayer.getLetterGrade(p.getCompositePassing()));
         playerRebounding.setText(DataDisplayer.getLetterGrade(p.getCompositeRebounding()));
 
+        DataDisplayer.colorizeRatings(playerShooting);
+        DataDisplayer.colorizeRatings(playerDefense);
+        DataDisplayer.colorizeRatings(playerPassing);
+        DataDisplayer.colorizeRatings(playerRebounding);
+
         Button moveButton = (Button) convertView.findViewById(R.id.buttonMove);
         if (frag.selectedIndex == -1) {
             moveButton.setText("Move");

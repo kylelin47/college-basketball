@@ -1,6 +1,12 @@
 package io.coachapps.collegebasketballcoach.util;
 
 import android.content.Context;
+import android.graphics.Color;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.ListAdapter;
+import android.widget.ListView;
+import android.widget.TextView;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -222,5 +228,21 @@ public class DataDisplayer {
                 getRankStr(currentTeamStats.indexOf(statsOfSelectedTeam) + 1));
 
         return teamStatsCSVs;
+    }
+
+    public static void colorizeRatings(TextView textV) {
+        String letter = textV.getText().toString();
+        // The last index is always the rating: A+, C, etc
+        if (letter.equals("A") || letter.equals("A+")) {
+            textV.setTextColor(Color.parseColor("#006600"));
+        } else if (letter.equals("B") || letter.equals("B+")) {
+            textV.setTextColor(Color.parseColor("#00b300"));
+        } else if (letter.equals("C") || letter.equals("C+")) {
+            textV.setTextColor(Color.parseColor("#e68a00"));
+        } else if (letter.equals("D") || letter.equals("D+")) {
+            textV.setTextColor(Color.parseColor("#cc3300"));
+        } else if (letter.equals("F") || letter.equals("F+")) {
+            textV.setTextColor(Color.parseColor("#990000"));
+        }
     }
 }

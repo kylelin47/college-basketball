@@ -393,4 +393,5 @@
         Beckham
     </string>
     <string name="title_activity_team_stats">Team Stats</string>
+    <string name="title_activity_recruiting">RecruitingActivity</string>
 </resources>

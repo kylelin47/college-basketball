@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/content_recruiting"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:padding="10dp"
+    app:layout_behavior="@string/appbar_scrolling_view_behavior"
+    tools:context="io.coachapps.collegebasketballcoach.RecruitingActivity"
+    tools:showIn="@layout/activity_recruiting">
+
+    <TextView
+        android:text="Prestige: 95, Budget: $1200"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:textAlignment="gravity"
+        android:textColor="#000"
+        android:textStyle="bold"
+        android:gravity="center"
+        android:id="@+id/textViewRecruiting" />
+
+    <Spinner
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="10dp"
+        android:id="@+id/spinnerRecruiting" />
+
+    <ListView
+        android:layout_width="match_parent"
+        android:layout_height="0dip"
+        android:layout_weight="5"
+        android:id="@+id/listViewRecruiting" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center|bottom"
+        android:orientation="vertical" >
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+            <Button
+                android:text="View Team"
+                android:layout_width="0dip"
+                android:layout_weight="1"
+                android:layout_height="match_parent"
+                android:id="@+id/viewTeamButton"
+                android:background="@drawable/button_shape_accent"
+                android:textColor="#ffffff"
+                android:layout_margin="5dp"/>
+            <Button
+                android:text="Done"
+                android:layout_width="0dip"
+                android:layout_weight="1"
+                android:layout_height="match_parent"
+                android:id="@+id/doneButton"
+                android:background="@drawable/button_shape_primary"
+                android:textColor="#ffffff"
+                android:layout_margin="5dp"/>
+        </LinearLayout>
+
+    </LinearLayout>
+
+</LinearLayout>

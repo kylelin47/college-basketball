@@ -1,0 +1,243 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="10dp">
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textAppearance="?android:attr/textAppearanceLarge"
+                android:text="SF"
+                android:textColor="#999"
+                android:textSize="20sp"
+                android:textStyle="bold"
+                android:id="@+id/textViewPosition"
+                android:layout_alignParentTop="true"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentStart="true" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textAppearance="?android:attr/textAppearanceLarge"
+                android:text="Lebron James"
+                android:textSize="20sp"
+                android:textStyle="bold"
+                android:id="@+id/textViewName"
+                android:layout_alignParentTop="true"
+                android:layout_toEndOf="@+id/textViewPosition"
+                android:layout_marginStart="5dp"
+                android:layout_marginLeft="5dp" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textAppearance="?android:attr/textAppearanceLarge"
+                android:text="99 / A"
+                android:textColor="#999"
+                android:textSize="20sp"
+                android:textStyle="bold"
+                android:id="@+id/textViewOvrPot"
+                android:layout_alignParentTop="true"
+                android:layout_alignParentRight="true"
+                android:layout_alignParentEnd="true"
+                android:layout_marginRight="10dp"
+                android:layout_marginEnd="10dp"/>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/linLayoutMiddle"
+                android:layout_below="@+id/textViewName"
+                android:layout_marginTop="5dp"
+                android:layout_marginStart="5dp"
+                android:layout_marginEnd="5dp">
+
+                <RelativeLayout
+                    android:layout_width="0dip"
+                    android:layout_weight="1"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:gravity="center">
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginEnd="3dp"
+                        android:text="A+"
+                        android:textColor="#000"
+                        android:textSize="18sp"
+                        android:textStyle="bold"
+                        android:gravity="center_vertical"
+                        android:id="@+id/textViewShooting"
+                        />
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Shoot"
+                        android:textColor="#999"
+                        android:textSize="14sp"
+                        android:textStyle="bold"
+                        android:layout_toEndOf="@+id/textViewShooting"
+                        android:layout_alignBottom="@+id/textViewShooting"
+                        />
+                </RelativeLayout>
+
+                <RelativeLayout
+                    android:layout_width="0dip"
+                    android:layout_weight="1"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:gravity="center">
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginEnd="3dp"
+                        android:text="C-"
+                        android:textColor="#000"
+                        android:textSize="18sp"
+                        android:textStyle="bold"
+                        android:id="@+id/textViewDefense"
+                        />
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Def"
+                        android:textColor="#999"
+                        android:textSize="14sp"
+                        android:textStyle="bold"
+                        android:layout_toEndOf="@+id/textViewDefense"
+                        android:layout_alignBottom="@+id/textViewDefense"
+                        />
+                </RelativeLayout>
+
+                <RelativeLayout
+                    android:layout_width="0dip"
+                    android:layout_weight="1"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:gravity="center">
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginEnd="3dp"
+                        android:text="B+"
+                        android:textColor="#000"
+                        android:textSize="18sp"
+                        android:textStyle="bold"
+                        android:id="@+id/textViewPassing"
+                        />
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Pass"
+                        android:textColor="#999"
+                        android:textSize="14sp"
+                        android:textStyle="bold"
+                        android:layout_toEndOf="@+id/textViewPassing"
+                        android:layout_alignBottom="@+id/textViewPassing"
+                        />
+                </RelativeLayout>
+
+                <RelativeLayout
+                    android:layout_width="0dip"
+                    android:layout_weight="1"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:gravity="center">
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginEnd="3dp"
+                        android:text="F"
+                        android:textColor="#000"
+                        android:textSize="18sp"
+                        android:textStyle="bold"
+                        android:id="@+id/textViewRebounding"
+                        />
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Reb"
+                        android:textColor="#999"
+                        android:textSize="14sp"
+                        android:textStyle="bold"
+                        android:layout_toEndOf="@+id/textViewRebounding"
+                        android:layout_alignBottom="@+id/textViewRebounding"
+                        />
+                </RelativeLayout>
+
+                <TextView
+                    android:layout_width="0dip"
+                    android:layout_weight="1"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:gravity="center"
+                    android:text="$599"
+                    android:textColor="#000"
+                    android:textSize="18sp"
+                    android:textStyle="bold"
+                    android:id="@+id/textViewCost"
+                    />
+
+            </LinearLayout>
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/linLayoutMiddle"
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:text="Personality: Wants to play for a winning team"
+                android:textSize="14sp"
+                android:textAlignment="center"
+                android:textStyle="italic"
+                android:id="@+id/textViewPersonality"
+                android:layout_margin="5dp" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/textViewPersonality"
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:text="Strengths:"
+                android:textSize="18sp"
+                android:textStyle="bold"
+                android:id="@+id/textViewStrengths"/>
+
+            <io.coachapps.collegebasketballcoach.adapters.NestedListView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/textViewStrengths"
+                android:id="@+id/listViewStrengths"/>
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/listViewStrengths"
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:text="Weaknesses:"
+                android:textSize="18sp"
+                android:textStyle="bold"
+                android:layout_marginTop="5dp"
+                android:id="@+id/textViewWeaknesses"/>
+
+            <io.coachapps.collegebasketballcoach.adapters.NestedListView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/textViewWeaknesses"
+                android:id="@+id/listViewWeaknesses"/>
+
+        </RelativeLayout>
+
+    </ScrollView>
+
+</RelativeLayout>

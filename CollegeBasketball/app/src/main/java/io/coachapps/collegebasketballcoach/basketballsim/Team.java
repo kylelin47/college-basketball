@@ -6,6 +6,7 @@ import java.util.Comparator;
 import java.util.List;
 
 import io.coachapps.collegebasketballcoach.models.Stats;
+import io.coachapps.collegebasketballcoach.util.PlayerOverallComp;
 
 /**
  *
@@ -66,8 +67,8 @@ public class Team {
 
         // Make the players
         for (int i = 0; i < 5; ++i) {
-            Player a = gen.genPlayer(i+1, prestige);
-            Player b = gen.genPlayer(i+1, prestige);
+            Player a = gen.genPlayer(i+1, prestige, 1+(int)(Math.random()*4));
+            Player b = gen.genPlayer(i+1, prestige, 1+(int)(Math.random()*4));
             if (a.getOverall() > b.getOverall()) {
                 players.add(i, a);
                 players.add(b);

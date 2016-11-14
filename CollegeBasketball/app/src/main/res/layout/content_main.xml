@@ -117,7 +117,7 @@
                     android:layout_weight="1"
                     android:layout_height="match_parent"
                     android:id="@+id/playGameButton"
-                    android:background="@drawable/button_shape_primary"
+                    android:background="@drawable/button_shape_accent"
                     android:textColor="#ffffff"
                     android:layout_margin="5dp"/>
                 <Button

@@ -3,6 +3,7 @@ package io.coachapps.collegebasketballcoach;
 import android.app.DialogFragment;
 import android.app.FragmentTransaction;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.AlertDialog;
@@ -86,6 +87,8 @@ public class MainActivity extends AppCompatActivity {
     int lastSelectedTeamPosition = 0;
     volatile boolean canSimWeek = true;
 
+    boolean doneWithSeason = false;
+
     @Override
     protected void onDestroy() {
         super.onDestroy();
@@ -138,7 +141,7 @@ public class MainActivity extends AppCompatActivity {
         if (teamList.size() == 0) {
             // Make generator, passing in possible player names
             playerGen = new PlayerGen(getString(R.string.league_player_names),
-                    getString(R.string.league_last_names));
+                    getString(R.string.league_last_names), 2016);
 
             AlertDialog.Builder builder = new AlertDialog.Builder(this);
             builder.setTitle("Input Your Team Name");
@@ -237,7 +240,9 @@ public class MainActivity extends AppCompatActivity {
         simGameButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                advanceGame(true);
+                if (!doneWithSeason) {
+                    advanceGame(true);
+                } else startRecruiting();
             }
         });
         playGameButton = (Button) findViewById(R.id.playGameButton);
@@ -375,8 +380,15 @@ public class MainActivity extends AppCompatActivity {
             Log.i("MainActivity", "Finished tournament");
             tournamentGames = null;
             // enter recruiting
-            onNewYear(); // for testing
+            doneWithSeason = true;
+            simGameButton.setText("Recruit");
+            //onNewYear(); // for testing
         }
+    }
+
+    private void startRecruiting() {
+        Intent intent = new Intent(this, RecruitingActivity.class);
+        startActivity(intent);
     }
 
     private void onNewYear() {
