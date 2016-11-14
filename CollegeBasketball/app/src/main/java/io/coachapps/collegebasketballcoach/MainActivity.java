@@ -38,6 +38,7 @@ import io.coachapps.collegebasketballcoach.adapters.PlayerStatsListArrayAdapter;
 import io.coachapps.collegebasketballcoach.adapters.TeamStatsListArrayAdapter;
 import io.coachapps.collegebasketballcoach.basketballsim.Game;
 import io.coachapps.collegebasketballcoach.basketballsim.GameSimThread;
+import io.coachapps.collegebasketballcoach.basketballsim.League;
 import io.coachapps.collegebasketballcoach.basketballsim.Player;
 import io.coachapps.collegebasketballcoach.basketballsim.PlayerGen;
 import io.coachapps.collegebasketballcoach.basketballsim.Simulator;
@@ -55,10 +56,9 @@ import io.coachapps.collegebasketballcoach.util.LeagueEvents;
 
 public class MainActivity extends AppCompatActivity {
     boolean hasScheduledConferenceTournament;
-    String playerTeamName = "Default Team Name";
     Team playerTeam;
     Simulator bballSim;
-    PlayerGen playerGen;
+    League league;
     List<Team> teamList;
     HashMap<Integer, Player> playerMap;
     HashMap<Integer, Team> playerTeamMap;
@@ -66,6 +66,7 @@ public class MainActivity extends AppCompatActivity {
     List<Game> tournamentGames;
 
     Spinner teamSpinner;
+    Spinner conferenceSpinner;
     TextView currTeamTextView;
     ArrayAdapter<String> dataAdapterTeam;
 
@@ -78,10 +79,6 @@ public class MainActivity extends AppCompatActivity {
     GameScheduleListArrayAdapter gameListAdapter;
     ListView gameList;
 
-    ViewFlipper vf;
-    Button statsButton;
-    Button rosterButton;
-    Button teamScheduleButton;
     Button simGameButton;
     Button playGameButton;
     int lastSelectedTeamPosition = 0;
@@ -99,10 +96,10 @@ public class MainActivity extends AppCompatActivity {
     public void onResume() {
         super.onResume();  // Always call the superclass method first
         System.out.println("Calling onResume() in MainActivity");
-        if (playerTeamName != null && playerTeam != null) {
+        if (playerTeam != null) {
             PlayerDao playerDao = new PlayerDao(this);
             try {
-                playerTeam.players = playerDao.getPlayers(playerTeamName);
+                playerTeam.players = playerDao.getPlayers(playerTeam.getName());
                 for (Player p : playerTeam.players) {
                     System.out.println(p.name + ", lineupPos = " + p.getLineupPosition());
                 }
@@ -113,7 +110,7 @@ public class MainActivity extends AppCompatActivity {
                                 1 : left.getLineupPosition() == right.getLineupPosition() ? 0 : -1;
                     }
                 });
-                examineTeam(playerTeamName);
+                examineTeam(playerTeam.getName());
                 rosterListAdapter.clear();
                 rosterListAdapter.addAll(playerTeam.players);
                 rosterListAdapter.notifyDataSetChanged();
@@ -133,14 +130,15 @@ public class MainActivity extends AppCompatActivity {
 
         final TeamDao teamDao = new TeamDao(this);
         try {
-            teamList = teamDao.getAllTeams();
+            league = new League(teamDao.getAllTeams());
+            teamList = league.getPlayerConference();
         } catch (IOException | ClassNotFoundException e) {
             Log.e("MainActivity", "Could not retrieve teams", e);
             // PROBABLY JUST CRASH
         }
-        if (teamList.size() == 0) {
-            // Make generator, passing in possible player names
-            playerGen = new PlayerGen(getString(R.string.league_player_names),
+        if (teamList == null) {
+            final PlayerGen playerGen = new PlayerGen
+                    (getString(R.string.league_player_names),
                     getString(R.string.league_last_names), 2016);
 
             AlertDialog.Builder builder = new AlertDialog.Builder(this);
@@ -162,22 +160,13 @@ public class MainActivity extends AppCompatActivity {
                 @Override
                 public void onClick(View v) {
                     Log.i("MainActivity", "Set team name");
-                    playerTeamName = input.getText().toString().trim();
+                    String playerTeamName = input.getText().toString().trim();
                     if (playerTeamName.length() >= 3) {
-                        dialog.getButton(DialogInterface.BUTTON_POSITIVE).setEnabled
-                                (false);
-                        String replacementTeamName = "Chef Boyardees";
-                        teamList = new ArrayList<>();
-                        String[] teamNames = getResources().getStringArray(R.array.team_names);
-                        teamList.add(new Team(playerTeamName, 99, playerGen, true));
-                        for (int i = 0; i < 9; ++i) {
-                            if (playerTeamName.substring(0, 3).equals(teamNames[i].substring(0, 3))) {
-                                teamNames[i] = replacementTeamName;
-                            }
-                            teamList.add(new Team(teamNames[i], (int) (Math.random() * 100), playerGen, false));
-                        }
+                        dialog.getButton(DialogInterface.BUTTON_POSITIVE).setEnabled(false);
+                        league = new League(playerTeamName, MainActivity.this, playerGen);
+                        teamList = league.getPlayerConference();
                         setEverythingUp();
-                        teamDao.saveTeams(teamList, playerTeamName);
+                        teamDao.saveTeams(league.getAllTeams(), playerTeamName);
                         playerTeam.sortPlayersOvrPosition();
                         PlayerDao pd = new PlayerDao(MainActivity.this);
                         for (Player p : playerTeam.players) {
@@ -188,22 +177,13 @@ public class MainActivity extends AppCompatActivity {
                 }
             });
         } else {
-            playerTeamName = teamDao.getPlayerTeamName();
             setEverythingUp();
         }
     }
 
     private void setEverythingUp() {
-        Collections.sort(teamList, new Comparator<Team>() {
-            @Override
-            public int compare(Team team, Team t1) {
-                if (team.name.equals(playerTeamName)) return -1;
-                if (t1.name.equals(playerTeamName)) return 1;
-                return team.name.compareTo(t1.name);
-            }
-        });
-        playerTeam = teamList.get(0);
-        getSupportActionBar().setTitle(playerTeamName);
+        playerTeam = league.getPlayerTeam();
+        getSupportActionBar().setTitle(playerTeam.name);
 
         // Sim games
         bballSim = new Simulator(MainActivity.this);
@@ -211,24 +191,24 @@ public class MainActivity extends AppCompatActivity {
         tryToScheduleConferenceTournament();
         // Set up UI components
         currTeamTextView = (TextView) findViewById(R.id.currentTeamText);
-        vf = (ViewFlipper) findViewById(R.id.viewFlipper);
+        final ViewFlipper vf = (ViewFlipper) findViewById(R.id.viewFlipper);
         vf.setDisplayedChild(1);
 
-        statsButton = (Button) findViewById(R.id.teamStatsButton);
+        Button statsButton = (Button) findViewById(R.id.teamStatsButton);
         statsButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 vf.setDisplayedChild(0);
             }
         });
-        rosterButton = (Button) findViewById(R.id.rosterButton);
+        Button rosterButton = (Button) findViewById(R.id.rosterButton);
         rosterButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 vf.setDisplayedChild(1);
             }
         });
-        teamScheduleButton = (Button) findViewById(R.id.teamScheduleButton);
+        Button teamScheduleButton = (Button) findViewById(R.id.teamScheduleButton);
         teamScheduleButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -269,7 +249,7 @@ public class MainActivity extends AppCompatActivity {
                 new AdapterView.OnItemSelectedListener() {
                     public void onItemSelected(
                             AdapterView<?> parent, View view, int position, long id) {
-                        examineTeam(teamList.get(position));
+                        onTeamSpinnerSelection(teamList.get(position));
                         lastSelectedTeamPosition = position;
                     }
 
@@ -277,6 +257,30 @@ public class MainActivity extends AppCompatActivity {
                         //heh
                     }
                 });
+
+        conferenceSpinner = (Spinner) findViewById(R.id.examineConfSpinner);
+        ArrayAdapter<String> conferenceAdapter = new ArrayAdapter<>(this, android.R.layout
+                .simple_spinner_item, league.getConferenceNames());
+        conferenceAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        conferenceSpinner.setAdapter(conferenceAdapter);
+        conferenceSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
+                teamList = league.getConference(league.getConferences().get(i));
+                populateTeamStrList();
+                dataAdapterTeam.notifyDataSetChanged();
+                if (lastSelectedTeamPosition == 0) {
+                    onTeamSpinnerSelection(teamList.get(0));
+                } else {
+                    examineTeam(teamList.get(0).name);
+                }
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> adapterView) {
+                // do nothing
+            }
+        });
 
         // Make players clickable
         rosterList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -306,21 +310,15 @@ public class MainActivity extends AppCompatActivity {
         int id = item.getItemId();
 
         if (id == R.id.action_set_lineup) {
-            /**
-             * Clicked Set Team Lineup
-             */
             showSetLineupDialog();
         } else if (id == R.id.action_league_leaders) {
-            /**
-             * Clicked League Leaders
-             */
             showLeagueLeadersDialog();
         }
 
         return super.onOptionsItemSelected(item);
     }
 
-    public void examineTeam(Team team) {
+    public void onTeamSpinnerSelection(Team team) {
         int year = getYear();
         currTeamTextView.setText(team.getName());
         // Unless we change the ui, this can be consolidated to a single ListView
@@ -388,15 +386,6 @@ public class MainActivity extends AppCompatActivity {
     private void startRecruiting() {
         Intent intent = new Intent(this, RecruitingActivity.class);
         startActivity(intent);
-    }
-
-    private void onNewYear() {
-        for (Team team : teamList) {
-            team.beginNewSeason();
-        }
-        LeagueEvents.scheduleSeason(teamList, this, getYear());
-        examineTeam(teamList.get(lastSelectedTeamPosition));
-        updateUI();
     }
 
     public void advanceGame(boolean simPlayerGame) {
@@ -618,7 +607,7 @@ public class MainActivity extends AppCompatActivity {
 
     public void showSetLineupDialog() {
         FragmentTransaction ft = getFragmentManager().beginTransaction();
-        DialogFragment newFragment = SetLineupFragment.newInstance(playerTeamName);
+        DialogFragment newFragment = SetLineupFragment.newInstance(playerTeam.name);
         newFragment.show(ft, "lineup dialog");
 
         /*
@@ -711,8 +700,8 @@ public class MainActivity extends AppCompatActivity {
         @Override
         protected Void doInBackground(Boolean... simPlayerGame) {
             boolean spg = simPlayerGame[0];
-            LeagueEvents.playRegularSeasonGame(teamList, bballSim, spg, playerTeamName);
-            LeagueEvents.playTournamentRound(tournamentGames, bballSim, spg, playerTeamName);
+            LeagueEvents.playRegularSeasonGame(teamList, bballSim, spg, playerTeam.name);
+            LeagueEvents.playTournamentRound(tournamentGames, bballSim, spg, playerTeam.name);
             return null;
         }
         @Override

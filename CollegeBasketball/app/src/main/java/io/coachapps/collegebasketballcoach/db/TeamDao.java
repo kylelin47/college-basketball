@@ -50,7 +50,7 @@ public class TeamDao {
             for (Team team : teams) {
                 ContentValues values = new ContentValues();
                 values.put(Schemas.TeamEntry.NAME, team.getName());
-                values.put(Schemas.TeamEntry.CONFERENCE, "garbage");
+                values.put(Schemas.TeamEntry.CONFERENCE, team.conference);
                 values.put(Schemas.TeamEntry.PRESTIGE, team.getPrestige());
                 values.put(Schemas.TeamEntry.IS_PLAYER, team.getName().equals(playerTeamName));
                 db.insert(Schemas.TeamEntry.TABLE_NAME, null, values);
@@ -76,11 +76,13 @@ public class TeamDao {
         String[] projection = {
                 Schemas.TeamEntry.NAME,
                 Schemas.TeamEntry.PRESTIGE,
-                Schemas.TeamEntry.IS_PLAYER
+                Schemas.TeamEntry.IS_PLAYER,
+                Schemas.TeamEntry.CONFERENCE
         };
         List<String> teamNames = new ArrayList<>();
         List<Integer> teamPrestiges = new ArrayList<>();
         List<Integer> isPlayerCheckers = new ArrayList<>();
+        List<String> conferences = new ArrayList<>();
         db.beginTransaction();
         try {
             try (Cursor cursor = db.query(Schemas.TeamEntry.TABLE_NAME, projection, null, null,
@@ -95,13 +97,15 @@ public class TeamDao {
                     teamNames.add(teamName);
                     teamPrestiges.add(teamPrestige);
                     isPlayerCheckers.add(isPlayer);
+                    conferences.add(cursor.getString(cursor.getColumnIndexOrThrow(Schemas
+                            .TeamEntry.CONFERENCE)));
                 }
             }
             for (int i = 0; i < teamNames.size(); ++i) {
                 String teamName = teamNames.get(i);
                 int teamPrestige = teamPrestiges.get(i);
                 Team team = new Team(teamName, playerDao.getPlayers(teamName),
-                        teamPrestige, isPlayerCheckers.get(i)==1);
+                        teamPrestige, isPlayerCheckers.get(i)==1, conferences.get(i));
                 String[] teamProjection = {
                         Schemas.YearlyTeamStatsEntry.WINS,
                         Schemas.YearlyTeamStatsEntry.LOSSES

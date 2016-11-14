@@ -8,36 +8,73 @@
         <item>Stats</item>
         <item>Recent Games</item>
     </string-array>
+    <!-- First 10 are SOUTH conference, next 10 LAKES, etc. -->
     <string-array name="team_names">
-        <item>Nashville Nets</item>
-        <item>Lakewood Lakers</item>
-        <item>Tennessee Titans</item>
-        <item>Florida Phlogistons</item>
+        <item>Alabama Alligators</item>
         <item>Georgia Giants</item>
+        <item>Florida Phlogistons</item>
+        <item>Tennessee Titans</item>
+        <item>Atlanta Aliens</item>
+        <item>New Orleans Newcomers</item>
+        <item>Arkansas Ants</item>
+        <item>Louisiana Lizards</item>
+        <item>Key West Limes</item>
         <item>Kentucky Kings</item>
-        <item>Utah Ululants</item>
-        <item>Washington Warriors</item>
-        <item>Oregon Oreos</item>
+
+        <item>Ohio State Orangutans</item>
+        <item>Michigan Miners</item>
+        <item>Columbus Colonists</item>
+        <item>Wisconsin Witches</item>
         <item>Minnesota Miners</item>
-        <item>Nashville Nets2</item>
-        <item>Lakewood Lakers2</item>
-        <item>Tennessee Titans2</item>
-        <item>Florida Phlogistons2</item>
-        <item>Georgia Giants2</item>
-        <item>Kentucky Kings2</item>
-        <item>Utah Ululants2</item>
-        <item>Washington Warriors2</item>
-        <item>Oregon Oreos2</item>
-        <item>Minnesota Miners2</item>
-        <item>Nashville Nets3</item>
-        <item>Lakewood Lakers3</item>
-        <item>Tennessee Titans3</item>
-        <item>Florida Phlogistons3</item>
-        <item>Georgia Giants3</item>
-        <item>Kentucky Kings3</item>
-        <item>Utah Ululants3</item>
-        <item>Washington Warriors3</item>
-        <item>Oregon Oreos3</item>
+        <item>Chicago Carnivores</item>
+        <item>Detroit Divers</item>
+        <item>Indiana Igloos</item>
+        <item>Cleveland Clowns</item>
+        <item>Milwaukee Miscreants</item>
+
+        <item>New York Nightcrawlers</item>
+        <item>Jersey Jerks</item>
+        <item>Maine Meerkats</item>
+        <item>Pennsylvania Peons</item>
+        <item>Maryland Marblers</item>
+        <item>DC Devils</item>
+        <item>Boston Borers</item>
+        <item>Pittsburgh People</item>
+        <item>Vermont Voles</item>
+        <item>Delaware Deer</item>
+
+        <item>Oklahoma Oranges</item>
+        <item>Texas Tiggers</item>
+        <item>Houston Howlers</item>
+        <item>Dallas Denizens</item>
+        <item>Nebraska Nitrides</item>
+        <item>Austin Aborigines</item>
+        <item>El Paso Pesos</item>
+        <item>Missouri Moonmen</item>
+        <item>Tulsa Timbers</item>
+        <item>Omaha Eulers</item>
+
+        <item>California Curlers</item>
+        <item>Oregon Ossifiers</item>
+        <item>Los Angeles Lemurs</item>
+        <item>Oakland Ombudsmen</item>
+        <item>Washington Warriors</item>
+        <item>Hawaii Heroes</item>
+        <item>Seattle Settlers</item>
+        <item>Hollywood Handymen</item>
+        <item>San Diego Dudes</item>
+        <item>Sacramento Sellouts</item>
+
+        <item>Colorado Comets</item>
+        <item>Yellowstone Yellers</item>
+        <item>Utah Ululants</item>
+        <item>Denver Dopes</item>
+        <item>Albuquerque Albinos</item>
+        <item>Salt Lake Lakers</item>
+        <item>Wyoming Winners</item>
+        <item>Montana Mopers</item>
+        <item>Las Vegas Legends</item>
+        <item>Phoenix Pterodactyls</item>
     </string-array>
         <string name="league_player_names">
         Tim,

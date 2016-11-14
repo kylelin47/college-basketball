@@ -122,7 +122,7 @@ public class ApplicationTest {
             // Make 10 teams;
             teamList = new ArrayList<>();
             for (int i = 0; i < 10; ++i) {
-                teamList.add(new Team("Team " + i, 90, playerGen, false));
+                teamList.add(new Team("Team " + i, 90, playerGen, false, "garbage"));
             }
             teamDao.saveTeams(teamList, "player team name");
         }
