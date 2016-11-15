@@ -91,6 +91,11 @@ public class PlayerStatsRatingsListArrayAdapter extends ArrayAdapter<Player> {
             viewHolder.playerAPG.setText(currentStats.getPGDisplay("APG"));
             viewHolder.playerFGP.setText(currentStats.getPGDisplay("FG%")+
                     "/"+currentStats.getPGDisplay("3P%"));
+        } else {
+            viewHolder.playerPPG.setText("N/A");
+            viewHolder.playerRPG.setText("N/A");
+            viewHolder.playerAPG.setText("N/A");
+            viewHolder.playerFGP.setText("N/A");
         }
 
         viewHolder.playerShooting.setText(DataDisplayer.getLetterGrade(p.getCompositeShooting()));

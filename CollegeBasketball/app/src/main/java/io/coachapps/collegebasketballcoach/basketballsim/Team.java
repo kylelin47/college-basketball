@@ -320,4 +320,69 @@ public class Team {
         this.seed = 0;
         this.gameSchedule.clear();
     }
+
+    public int getWeakestPosition() {
+        int weakestPosition = 1;
+        int totalOverallPos = Integer.MAX_VALUE;
+        int currTotal = 0;
+        List<Player> currPosPlayers;
+        for (int i = 1; i < 6; ++i) {
+            currPosPlayers = new ArrayList<>();
+            for (Player p : players) {
+                if (p.getPosition() == i) currPosPlayers.add(p);
+            }
+            if (currPosPlayers.size() == 0) return i;
+            Collections.sort(currPosPlayers, new PlayerOverallComp());
+            currTotal = currPosPlayers.get(0).getOverall();
+            if (currTotal < totalOverallPos) weakestPosition = i;
+        }
+
+        return weakestPosition;
+    }
+
+    /**
+     * Recruits a player from a list of the recruits.
+     * Assumes that the recruit list is sorted by overall rating.
+     * Checks to see if player is in a position in need, then may recruit him.
+     * @param recruits list of players
+     * @return the player that was signed (if any)
+     */
+    public Player recruitPlayerFromList(List<Player> recruits) {
+        // Have chance that this team passes on signing anyone
+        if (Math.random() < 0.25) return null;
+
+        // See if we don't have 2 players in any position
+        boolean hasNeedsFilled = true;
+        for (int i = 1; i < 6; ++i) {
+            if (getPosTotals(i) < 2) {
+                hasNeedsFilled = false;
+                break;
+            }
+        }
+
+        double chanceToSign = 0.25;
+        if (!hasNeedsFilled) {
+            for (Player p : recruits) {
+                if (getPosTotals(p.getPosition()) < 2) {
+                    // Need this position
+                    if (Math.random() < chanceToSign) {
+                        // Choose him
+                        return p;
+                    }
+                }
+            }
+        } else {
+            for (Player p : recruits) {
+                if (getWeakestPosition() == p.getPosition()) {
+                    // He is our weakest position, try to sign
+                    if (Math.random() < chanceToSign/2) {
+                        // Choose him
+                        return p;
+                    }
+                }
+            }
+        }
+
+        return null;
+    }
 }

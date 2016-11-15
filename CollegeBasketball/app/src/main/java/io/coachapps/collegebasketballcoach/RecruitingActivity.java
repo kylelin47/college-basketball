@@ -15,6 +15,7 @@ import android.widget.Button;
 import android.widget.ListView;
 import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -22,12 +23,15 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 
+import io.coachapps.collegebasketballcoach.adapters.CommitmentsListArrayAdapter;
 import io.coachapps.collegebasketballcoach.adapters.PlayerStatsListArrayAdapter;
 import io.coachapps.collegebasketballcoach.adapters.PlayerStatsRatingsListArrayAdapter;
 import io.coachapps.collegebasketballcoach.adapters.RecruitsListArrayAdapter;
 import io.coachapps.collegebasketballcoach.adapters.StrengthWeaknessListArrayAdapter;
 import io.coachapps.collegebasketballcoach.basketballsim.Player;
 import io.coachapps.collegebasketballcoach.basketballsim.PlayerGen;
+import io.coachapps.collegebasketballcoach.db.PlayerDao;
+import io.coachapps.collegebasketballcoach.models.PlayerModel;
 import io.coachapps.collegebasketballcoach.util.DataDisplayer;
 import io.coachapps.collegebasketballcoach.util.PlayerOverallComp;
 import io.coachapps.collegebasketballcoach.basketballsim.Team;
@@ -36,7 +40,19 @@ import io.coachapps.collegebasketballcoach.db.TeamDao;
 
 public class RecruitingActivity extends AppCompatActivity {
 
+    public class TeamPlayerCommitment {
+        public Player player;
+        public Team team;
+        public TeamPlayerCommitment(Player p, Team t) {
+            player = p;
+            team = t;
+        }
+    }
+
     private static final int NUM_RECRUITS = 100;
+
+    PlayerDao playerDao;
+    TeamDao teamDao;
 
     PlayerGen playerGen;
     List<Team> teamList;
@@ -53,6 +69,8 @@ public class RecruitingActivity extends AppCompatActivity {
     HashMap<Player, Integer> recruitCostMap;
     HashMap<Player, String> recruitPersonalityMap;
 
+    List<TeamPlayerCommitment> commitments;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -61,7 +79,8 @@ public class RecruitingActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
 
         // Get all teams from DB
-        final TeamDao teamDao = new TeamDao(this);
+        playerDao = new PlayerDao(this);
+        teamDao = new TeamDao(this);
         try {
             teamList = teamDao.getAllTeams();
         } catch (IOException | ClassNotFoundException e) {
@@ -82,8 +101,10 @@ public class RecruitingActivity extends AppCompatActivity {
         playerGen = new PlayerGen(getString(R.string.league_player_names),
                 getString(R.string.league_last_names), getYear());
         availableRecruits = playerGen.genRecruits(NUM_RECRUITS);
+        Collections.sort(availableRecruits, new PlayerOverallComp());
         recruitCostMap = new HashMap<>();
         recruitPersonalityMap = new HashMap<>();
+        commitments = new ArrayList<>();
         for (Player p : availableRecruits) {
             recruitCostMap.put(p, (int)(((Math.random()*50 + 75)*(p.getOverall()-60))/5));
             if (recruitCostMap.get(p) < 50) recruitCostMap.put(p, 50);
@@ -122,6 +143,34 @@ public class RecruitingActivity extends AppCompatActivity {
 
         updateTextView();
         fillSpinner();
+    }
+
+    public void recruitPlayer(Team team, Player player) {
+        System.out.println(team.getName() + " recruited " + player.toString());
+        TeamPlayerCommitment commit = new TeamPlayerCommitment(player, team);
+        commitments.add(commit);
+        team.players.add(player);
+        availableRecruits.remove(player);
+        playerDao.save(new PlayerModel(player, team.getName()));
+    }
+
+    public void letComputerTeamsRecruit() {
+        for (Team t : teamList) {
+            if (t != playerTeam) {
+                Player p = t.recruitPlayerFromList(availableRecruits);
+                if (p != null) {
+                    recruitPlayer(t, p);
+                }
+            }
+        }
+
+        // Update UI
+        int selection = recruitingSpinner.getSelectedItemPosition();
+        updateListView(selection);
+        fillSpinner();
+        recruitingSpinner.setSelection(selection);
+
+        showCommitmentsDialog();
     }
 
     private int getYear() {
@@ -189,6 +238,31 @@ public class RecruitingActivity extends AppCompatActivity {
         });
     }
 
+    public void showCommitmentsDialog() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setView(getLayoutInflater().inflate(R.layout.simple_list, null));
+        builder.setPositiveButton("OK",
+                new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.dismiss();
+                    }
+                });
+        builder.setTitle("Commitments");
+        final AlertDialog dialog = builder.create();
+        dialog.show();
+
+        final ListView listView = (ListView) dialog.findViewById(R.id.listView);
+        listView.setAdapter(new CommitmentsListArrayAdapter(this, commitments));
+        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                Player p = ((CommitmentsListArrayAdapter)(listView.getAdapter())).getItem(position).player;
+                showPlayerDialog(p);
+            }
+        });
+    }
+
     public void showTeamDialog() {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setView(getLayoutInflater().inflate(R.layout.simple_list, null));
@@ -223,7 +297,7 @@ public class RecruitingActivity extends AppCompatActivity {
         newFragment.show(ft, "player dialog");
     }
 
-    public void showRecruitDialog(Player p) {
+    public void showRecruitDialog(final Player p) {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setView(getLayoutInflater().inflate(R.layout.recruit_dialog, null));
         builder.setPositiveButton("OK",
@@ -237,7 +311,11 @@ public class RecruitingActivity extends AppCompatActivity {
                 new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
+                recruitPlayer(playerTeam, p);
+                letComputerTeamsRecruit();
                 dialog.dismiss();
+                Toast.makeText(RecruitingActivity.this, "Recruited " + p.name,
+                        Toast.LENGTH_LONG).show();
             }
         });
         final AlertDialog dialog = builder.create();

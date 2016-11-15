@@ -6,6 +6,7 @@ import java.util.Comparator;
 import io.coachapps.collegebasketballcoach.models.BoxScore;
 import io.coachapps.collegebasketballcoach.models.PlayerRatings;
 import io.coachapps.collegebasketballcoach.models.Stats;
+import io.coachapps.collegebasketballcoach.util.DataDisplayer;
 
 /**
  * Player class used in the application layer.
@@ -38,6 +39,12 @@ public class Player implements Serializable {
         overall = (100*overall)/2500;
 
         gmStats = new Stats();
+    }
+
+    public String toString() {
+        return DataDisplayer.getPositionAbbreviation(getPosition()) + " " + name +
+                " [" + DataDisplayer.getYear(year) + "] (" +
+                getOverall() + " / " + DataDisplayer.getLetterGrade(getPotential()) + ")";
     }
 
     public void setLineupPosition(int pos) {
