@@ -109,7 +109,7 @@ public class ApplicationTest {
         List<Team> teamList = new ArrayList<>();
         TeamDao teamDao = new TeamDao(context);
         try {
-            teamList = teamDao.getAllTeams();
+            teamList = teamDao.getAllTeams(2016);
         } catch (IOException | ClassNotFoundException e) {
             Log.e("MainActivity", "Could not retrieve teams", e);
             // PROBABLY JUST CRASH
@@ -128,7 +128,7 @@ public class ApplicationTest {
         }
         List<Team> newTeamList = null;
         try {
-            newTeamList = teamDao.getAllTeams();
+            newTeamList = teamDao.getAllTeams(2016);
         } catch (IOException | ClassNotFoundException e) {
             Log.e("MainActivity", "Could not retrieve teams", e);
             // PROBABLY JUST CRASH
