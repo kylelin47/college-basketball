@@ -39,8 +39,9 @@ public class PlayerDao {
             while (c.moveToNext()) {
                 Player p = createPlayer(c);
                 if (p == null) {
-                    System.out.println("Found null player in db for " + teamName);
+                    System.out.println("ERROR ERROR Found null player in db for " + teamName);
                 } else {
+                    System.out.println(teamName + " : " + p.toString());
                     players.add(p);
                 }
             }

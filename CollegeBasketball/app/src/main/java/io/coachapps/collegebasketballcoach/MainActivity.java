@@ -182,6 +182,12 @@ public class MainActivity extends AppCompatActivity {
                 }
             });
         } else {
+            playerTeam = league.getPlayerTeam();
+            playerTeam.sortPlayersOvrPosition();
+            PlayerDao playerDao = new PlayerDao(this);
+            for (Player p : playerTeam.players) {
+                playerDao.updatePlayerRatings(p.getId(), p.ratings);
+            }
             setEverythingUp();
         }
     }
@@ -390,6 +396,7 @@ public class MainActivity extends AppCompatActivity {
 
     private void startRecruiting() {
         Intent intent = new Intent(this, RecruitingActivity.class);
+        finish();
         startActivity(intent);
     }
 

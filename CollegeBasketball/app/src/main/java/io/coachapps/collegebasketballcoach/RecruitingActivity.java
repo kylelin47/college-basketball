@@ -49,7 +49,7 @@ public class RecruitingActivity extends AppCompatActivity {
         }
     }
 
-    private static final int NUM_RECRUITS = 100;
+    private static final int NUM_RECRUITS = 300;
 
     PlayerDao playerDao;
     TeamDao teamDao;

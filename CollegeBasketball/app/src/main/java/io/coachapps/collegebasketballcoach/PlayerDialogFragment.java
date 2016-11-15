@@ -88,8 +88,7 @@ public class PlayerDialogFragment extends DialogFragment {
         textViewTeamName.setText(teamName);
         textViewPrefPos.setText("Preferred Pos: " +
                 DataDisplayer.getPositionAbbreviation(player.getPosition()));
-        textViewPosition.setText(
-                DataDisplayer.getPositionAbbreviation(player.getLineupPosition()%5+1));
+        textViewPosition.setText(player.getLineupPositionStr());
         textViewYear.setText(DataDisplayer.getYearAbbreviation(player.year));
         textViewOvrPot.setText(String.valueOf(player.getOverall()) + " / " +
                 DataDisplayer.getLetterGrade(player.getPotential()));

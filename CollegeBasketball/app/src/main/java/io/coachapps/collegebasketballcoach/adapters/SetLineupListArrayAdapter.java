@@ -49,9 +49,15 @@ public class SetLineupListArrayAdapter extends ArrayAdapter<Player> {
         TextView playerOvrPot = (TextView) convertView.findViewById(R.id.textViewOvrPot);
 
         Player p = players.get(position);
-        playerName.setText(p.name + " [" + DataDisplayer.getYearAbbreviation(p.year) + "]");
+        playerName.setText(p.name + " [" + DataDisplayer.getYearAbbreviation(p.year) +
+                "] Pref Pos: " + DataDisplayer.getPositionAbbreviation(p.getPosition()));
         String benchOrStart = (position/5) == 0 ? "Start " : "Bench ";
-        playerPosition.setText(benchOrStart + DataDisplayer.getPositionAbbreviation(position%5 + 1));
+        if (position < 10) {
+            playerPosition.setText(benchOrStart +
+                    DataDisplayer.getPositionAbbreviation(position % 5 + 1));
+        } else {
+            playerPosition.setText("Won't Play");
+        }
         playerOvrPot.setText(String.valueOf(p.getOverall()) + " / " +
                 DataDisplayer.getLetterGrade(p.getPotential()));
 
@@ -99,6 +105,11 @@ public class SetLineupListArrayAdapter extends ArrayAdapter<Player> {
         playerMinutes.setText(p.getLineupMinutes() + "min");
         // only the top 5 players can adjust their minutes
         seekBarMinutes.setEnabled(position < 5);
+        if (position >= 10) {
+            players.get(position).setLineupMinutes(0);
+            playerDao.updatePlayerRatings(players.get(position).getId(),
+                    players.get(position).ratings);
+        }
         seekBarMinutes.setProgress(players.get(position).getLineupMinutes()*3);
         seekBarMinutes.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override

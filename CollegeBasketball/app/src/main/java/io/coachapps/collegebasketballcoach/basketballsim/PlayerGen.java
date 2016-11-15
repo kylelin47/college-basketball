@@ -19,7 +19,7 @@ public class PlayerGen {
         //get list of names from file
         listFirstNames = firstCSV.split(",");
         listLastNames = lastCSV.split(",");
-        currID = 1000 * (year - 2016) + 1;
+        currID = 5000 * (year - 2016) + 1;
     }
     
     private String getRandName() {

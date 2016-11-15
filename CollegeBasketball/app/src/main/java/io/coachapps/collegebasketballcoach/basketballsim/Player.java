@@ -55,6 +55,14 @@ public class Player implements Serializable {
         return ratings.lineupPosition;
     }
 
+    public String getLineupPositionStr() {
+        if (getLineupPosition() >= 10) {
+            return DataDisplayer.getPositionAbbreviation(getPosition());
+        } else {
+            return DataDisplayer.getPositionAbbreviation(getLineupPosition()%5+1);
+        }
+    }
+
     public void setLineupMinutes(int minutes) {
         ratings.lineupMinutes = minutes;
     }

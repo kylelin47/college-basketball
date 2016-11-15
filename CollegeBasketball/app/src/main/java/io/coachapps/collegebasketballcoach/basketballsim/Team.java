@@ -115,13 +115,15 @@ public class Team {
             }
 
             int[] backUpMinutes = new int[5];
-            for (int i = 0; i < 10; ++i) {
+            for (int i = 0; i < players.size(); ++i) {
                 players.get(i).setLineupPosition(i);
                 if (i < 5) {
                     backUpMinutes[i] = 40 - players.get(i).getPlayingTime();
                     players.get(i).setLineupMinutes(players.get(i).getPlayingTime());
-                } else {
+                } else if (i < 10) {
                     players.get(i).setLineupMinutes(backUpMinutes[i-5]);
+                } else {
+                    players.get(i).setLineupMinutes(0);
                 }
             }
         }
@@ -148,6 +150,11 @@ public class Team {
         Collections.sort(posPlayers, new PlayerOverallComp());
         playerArr[position-1] = posPlayers.get(0);
         playerArr[position-1+5] = posPlayers.get(1);
+        for (int i = 2; i < posPlayers.size(); ++i) {
+            for (int j = 10; j < playerArr.length; ++j) {
+                if (playerArr[j] == null) playerArr[j] = posPlayers.get(i);
+            }
+        }
     }
 
     public void beginNewGame() {
@@ -369,7 +376,7 @@ public class Team {
     public List<Player> recruitWalkOns(PlayerGen playerGen) {
         List<Player> walkOns = new ArrayList<>();
         for (int i = 1; i < 6; ++i) {
-            if (getPosTotals(i) < 2) {
+            while (getPosTotals(i) < 2) {
                 Player p = playerGen.genPlayer(i, 25, 1);
                 players.add(p);
                 walkOns.add(p);

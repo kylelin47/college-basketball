@@ -65,7 +65,11 @@ public class PlayerStatsListArrayAdapter extends ArrayAdapter<Player> {
         Player p = players.get(position);
         viewHolder.playerName.setText(p.name + " [" + DataDisplayer.getYearAbbreviation(p.year) +
                 "]");
-        viewHolder.playerPosition.setText(DataDisplayer.getPositionAbbreviation(position % 5 + 1));
+        if (position < 10) {
+            viewHolder.playerPosition.setText(DataDisplayer.getPositionAbbreviation(position % 5 + 1));
+        } else {
+            viewHolder.playerPosition.setText("DNP");
+        }
         viewHolder.playerOvrPot.setText(String.valueOf(p.getOverall()) + " / " +
                 DataDisplayer.getLetterGrade(p.getPotential()));
 
