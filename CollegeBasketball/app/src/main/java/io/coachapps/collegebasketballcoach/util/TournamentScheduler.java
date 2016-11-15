@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Map;
 
 import io.coachapps.collegebasketballcoach.basketballsim.Game;
 import io.coachapps.collegebasketballcoach.basketballsim.Team;
@@ -49,6 +50,10 @@ public class TournamentScheduler {
         int year = lastSeasonalGame.getYear();
         games.addAll(scheduleTournament(createBrackets(teams), year, week, gameDao));
         return games;
+    }
+
+    List<Game> scheduleMarchMadness(Map<String, List<Team> > teams, List<Game> tournamentGames) {
+        return null;
     }
 
     public List<Game> scheduleTournament(List<Team> teams, int year, int firstWeek) {

@@ -19,13 +19,6 @@
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal">
-            <TextView
-                android:text="Team:"
-                android:textAppearance="?android:attr/textAppearanceMedium"
-                android:layout_height="wrap_content"
-                android:id="@+id/examineTeamText"
-                android:layout_width="0dip"
-                android:layout_weight="2" />
             <Spinner
                 android:layout_height="wrap_content"
                 android:id="@+id/examineConfSpinner"

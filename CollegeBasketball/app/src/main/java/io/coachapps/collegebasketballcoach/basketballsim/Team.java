@@ -17,6 +17,7 @@ public class Team {
     public int wins;
     public int losses;
     public int seed;
+    public String conference;
 
     public List<Game> gameSchedule;
 
@@ -50,10 +51,11 @@ public class Team {
         }
     }
     
-    public Team( String name, int prestige, PlayerGen gen, boolean isUserTeam ) {
+    public Team(String name, int prestige, PlayerGen gen, boolean isUserTeam, String conference) {
         this.name = name;
         this.prestige = prestige;
         this.isUserTeam = isUserTeam;
+        this.conference = conference;
         wins = 0;
         losses = 0;
         gameSchedule = new ArrayList<>();
@@ -189,6 +191,10 @@ public class Team {
 
     }
 
+    public boolean isPlayer() {
+        return isUserTeam;
+    }
+
     public int getPosTotals(int position) {
         int count = 0;
         for (Player p : players) {
@@ -312,13 +318,6 @@ public class Team {
             sum[2] = "@ " + gm.getHome().getAbbr();
         }
         return sum;
-    }
-
-    public void beginNewSeason() {
-        this.wins = 0;
-        this.losses = 0;
-        this.seed = 0;
-        this.gameSchedule.clear();
     }
 
     public int getWeakestPosition() {
