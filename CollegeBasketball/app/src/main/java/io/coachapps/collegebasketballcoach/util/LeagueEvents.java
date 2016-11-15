@@ -32,9 +32,6 @@ public class LeagueEvents {
         Collections.shuffle(shuffledTeams, new Random(year));
         int robinRounds = shuffledTeams.size() - 1;
         int halfRobin = shuffledTeams.size()/2;
-        int week = 0;
-        int lastPlayedWeek = week - 1;
-        boolean allGamesPlayed = true;
         GameDao gameDao = new GameDao(context);
         for (int r = 0; r < robinRounds; ++r) {
             for (int g = 0; g < halfRobin; ++g) {
@@ -45,28 +42,24 @@ public class LeagueEvents {
                 } else {
                     away = shuffledTeams.get((robinRounds - g + r) % robinRounds);
                 }
-                if (lastPlayedWeek == week - 1) {
-                    Game game = scheduleGame(home, away, year, week, gameDao);
-                    if (!game.hasPlayed()) allGamesPlayed = false;
-                } else {
-                    Game game = new Game(home, away, year, week);
-                    game.schedule();
-                }
+               scheduleGame(home, away, year, gameDao, Game.GameType.REGULAR_SEASON);
             }
-            if (allGamesPlayed) lastPlayedWeek++;
-            week++;
         }
     }
 
-    static Game scheduleGame(Team home, Team away, int year, int week, GameDao gameDao) {
-        GameModel gameModel = gameDao.getGame(year, week, home.getName(), away.getName());
+    static Game scheduleGame(Team home, Team away, int year, GameDao gameDao, Game.GameType gameType) {
+        int week = home.gameSchedule.size();
+        GameModel gameModel = null;
+        if (home.gameSchedule.size() == 0 || home.gameSchedule.get(week - 1).hasPlayed()) {
+            gameModel = gameDao.getGame(year, week, home.getName(), away.getName());
+        }
         Game gameToSchedule;
         if (gameModel == null) {
-            gameToSchedule = new Game(home, away, year, week);
+            gameToSchedule = new Game(home, away, year);
         } else {
             gameToSchedule = new Game(home, away, gameModel);
         }
-        gameToSchedule.schedule();
+        gameToSchedule.schedule(week, gameType);
         return gameToSchedule;
     }
 
@@ -83,7 +76,7 @@ public class LeagueEvents {
         Game lastGame = tournamentGames.get(tournamentGames.size() - 1);
         if (simUserGame) {
             tournamentGames.addAll(
-                    tournamentScheduler.scheduleTournament(winners, lastGame.getYear(), lastGame.getWeek() + 1));
+                    tournamentScheduler.scheduleTournament(winners, lastGame.getYear()));
         }
     }
 
@@ -178,7 +171,7 @@ public class LeagueEvents {
         int minWeek = Integer.MAX_VALUE;
         for (Team t : teams) {
             for (Game game : t.gameSchedule) {
-                if (!game.tournamentGame && !game.hasPlayed() && game.getWeek() < minWeek) {
+                if (game.gameType == Game.GameType.REGULAR_SEASON && !game.hasPlayed() && game.getWeek() < minWeek) {
                     minWeek = game.getWeek();
                 }
             }

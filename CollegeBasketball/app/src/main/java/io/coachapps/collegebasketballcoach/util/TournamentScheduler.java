@@ -23,17 +23,11 @@ public class TournamentScheduler {
         Team team = teams.get(0);
         for (int i = team.gameSchedule.size() - 1; i >= 0; i--) {
             Game game = team.gameSchedule.get(i);
-            if (!game.tournamentGame) {
+            if (game.gameType == Game.GameType.REGULAR_SEASON) {
                 return game;
             }
         }
         return null;
-    }
-
-    private Game scheduleTournamentGame(Team home, Team away, int year, int week, GameDao gameDao) {
-        Game game = LeagueEvents.scheduleGame(home, away, year, week, gameDao);
-        game.tournamentGame = true;
-        return game;
     }
 
     List<Game> scheduleConferenceTournament(List<Team> teams) {
@@ -46,9 +40,8 @@ public class TournamentScheduler {
         teams = teams.subList(0, 8);
         GameDao gameDao = new GameDao(context);
         Game lastSeasonalGame = getLastSeasonalGame(teams);
-        int week = lastSeasonalGame.getWeek() + 1;
         int year = lastSeasonalGame.getYear();
-        games.addAll(scheduleTournament(createBrackets(teams), year, week, gameDao));
+        games.addAll(scheduleTournament(createBrackets(teams), year, gameDao));
         return games;
     }
 
@@ -56,12 +49,11 @@ public class TournamentScheduler {
         return null;
     }
 
-    public List<Game> scheduleTournament(List<Team> teams, int year, int firstWeek) {
-        return scheduleTournament(teams, year, firstWeek, new GameDao(context));
+    public List<Game> scheduleTournament(List<Team> teams, int year) {
+        return scheduleTournament(teams, year, new GameDao(context));
     }
 
-    private List<Game> scheduleTournament(List<Team> teams, int year, int firstWeek, GameDao
-            gameDao) {
+    private List<Game> scheduleTournament(List<Team> teams, int year, GameDao gameDao) {
         if (teams.size() <= 1) return new ArrayList<>();
         if (!((teams.size() & (teams.size() - 1)) == 0)) {
             Log.e("scheduleTournament", "Tournaments require power-of-2 number of teams");
@@ -72,14 +64,13 @@ public class TournamentScheduler {
         for (int i = 0; i < teams.size(); i+=2) {
             Team home = teams.get(i);
             Team away = teams.get(i+1);
-            games.add(scheduleTournamentGame(home, away, year, firstWeek, gameDao));
+            games.add(LeagueEvents.scheduleGame(home, away, year, gameDao, Game.GameType.TOURNAMENT_GAME));
         }
         if (allGamesPlayed(games)) {
             for (int i = 0; i < teams.size()/2; i++) {
                 teams.set(i, games.get(i).getWinner());
             }
-            games.addAll(scheduleTournament(teams.subList(0, teams.size()/2), year, firstWeek + 1,
-                    gameDao));
+            games.addAll(scheduleTournament(teams.subList(0, teams.size()/2), year, gameDao));
         }
         return games;
     }
@@ -110,7 +101,7 @@ public class TournamentScheduler {
     private int getRegularSeasonWins(Team team) {
         int regularSeasonWins = 0;
         for (Game game : team.gameSchedule) {
-            if (!game.tournamentGame && game.getWinner() == team) {
+            if (game.gameType == Game.GameType.REGULAR_SEASON && game.getWinner() == team) {
                 regularSeasonWins++;
             }
         }

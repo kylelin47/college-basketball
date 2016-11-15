@@ -22,17 +22,16 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 
-import io.coachapps.collegebasketballcoach.adapters.PlayerStatsListArrayAdapter;
 import io.coachapps.collegebasketballcoach.adapters.PlayerStatsRatingsListArrayAdapter;
 import io.coachapps.collegebasketballcoach.adapters.RecruitsListArrayAdapter;
 import io.coachapps.collegebasketballcoach.adapters.StrengthWeaknessListArrayAdapter;
 import io.coachapps.collegebasketballcoach.basketballsim.Player;
 import io.coachapps.collegebasketballcoach.basketballsim.PlayerGen;
-import io.coachapps.collegebasketballcoach.util.DataDisplayer;
-import io.coachapps.collegebasketballcoach.util.PlayerOverallComp;
 import io.coachapps.collegebasketballcoach.basketballsim.Team;
 import io.coachapps.collegebasketballcoach.db.LeagueResultsEntryDao;
 import io.coachapps.collegebasketballcoach.db.TeamDao;
+import io.coachapps.collegebasketballcoach.util.DataDisplayer;
+import io.coachapps.collegebasketballcoach.util.PlayerOverallComp;
 
 public class RecruitingActivity extends AppCompatActivity {
 
@@ -63,7 +62,7 @@ public class RecruitingActivity extends AppCompatActivity {
         // Get all teams from DB
         final TeamDao teamDao = new TeamDao(this);
         try {
-            teamList = teamDao.getAllTeams();
+            teamList = teamDao.getAllTeams(getYear());
         } catch (IOException | ClassNotFoundException e) {
             Log.e("RecruitingActivity", "Could not retrieve teams", e);
             // PROBABLY JUST CRASH

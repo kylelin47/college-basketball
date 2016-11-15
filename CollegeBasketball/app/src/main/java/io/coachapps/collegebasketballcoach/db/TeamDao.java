@@ -68,7 +68,7 @@ public class TeamDao {
      * Do this once at the beginning of the main activity
      * @return All teams and players found in the database. Empty list if none found
      */
-    public List<Team> getAllTeams() throws IOException, ClassNotFoundException {
+    public List<Team> getAllTeams(int year) throws IOException, ClassNotFoundException {
         // inner joins would give better performance
         PlayerDao playerDao = new PlayerDao(context);
         List<Team> teams = new ArrayList<>();
@@ -110,9 +110,11 @@ public class TeamDao {
                         Schemas.YearlyTeamStatsEntry.WINS,
                         Schemas.YearlyTeamStatsEntry.LOSSES
                 };
-                String whereClause = Schemas.YearlyTeamStatsEntry.TEAM + " = ?";
+                String whereClause = Schemas.YearlyTeamStatsEntry.TEAM + " = ? AND " + Schemas
+                        .YearlyTeamStatsEntry.YEAR + " = ?";
                 String[] whereArgs = {
-                        teamName
+                        teamName,
+                        String.valueOf(year)
                 };
                 try (Cursor cursor = db.query(Schemas.YearlyTeamStatsEntry.TABLE_NAME,
                         teamProjection, whereClause, whereArgs, null, null, null, null)) {
