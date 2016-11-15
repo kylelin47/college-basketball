@@ -132,6 +132,11 @@ public class MainActivity extends AppCompatActivity {
         try {
             league = new League(teamDao.getAllTeams());
             teamList = league.getPlayerConference();
+            for (Team t : league.getAllTeams()) {
+                for (Player p : t.players) {
+                    if (p == null) System.out.println(t.getName() + " has null player!");
+                }
+            }
         } catch (IOException | ClassNotFoundException e) {
             Log.e("MainActivity", "Could not retrieve teams", e);
             // PROBABLY JUST CRASH

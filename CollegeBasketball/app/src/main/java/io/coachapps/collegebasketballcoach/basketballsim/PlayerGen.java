@@ -310,7 +310,7 @@ public class PlayerGen {
         return new Player(name, ratings, att, currID++, year);
     }
 
-    public void advanceYearRatings(PlayerRatings ratings) {
+    public static void advanceYearRatings(PlayerRatings ratings) {
         int potBonus = ratings.potential - 40;
         int div = 10;
         ratings.insideShooting   += (int)(Math.random()*potBonus)/div;

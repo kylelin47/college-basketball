@@ -3,6 +3,7 @@ package io.coachapps.collegebasketballcoach;
 import android.app.DialogFragment;
 import android.app.FragmentTransaction;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
@@ -24,7 +25,6 @@ import java.util.HashMap;
 import java.util.List;
 
 import io.coachapps.collegebasketballcoach.adapters.CommitmentsListArrayAdapter;
-import io.coachapps.collegebasketballcoach.adapters.PlayerStatsListArrayAdapter;
 import io.coachapps.collegebasketballcoach.adapters.PlayerStatsRatingsListArrayAdapter;
 import io.coachapps.collegebasketballcoach.adapters.RecruitsListArrayAdapter;
 import io.coachapps.collegebasketballcoach.adapters.StrengthWeaknessListArrayAdapter;
@@ -65,6 +65,8 @@ public class RecruitingActivity extends AppCompatActivity {
     Button doneButton;
     Button viewTeamButton;
 
+    List<Player> existingPlayers;
+    HashMap<Player, Team> existingPlayersTeamMap;
     List<Player> availableRecruits;
     HashMap<Player, Integer> recruitCostMap;
     HashMap<Player, String> recruitPersonalityMap;
@@ -81,8 +83,17 @@ public class RecruitingActivity extends AppCompatActivity {
         // Get all teams from DB
         playerDao = new PlayerDao(this);
         teamDao = new TeamDao(this);
+        existingPlayers = new ArrayList<>();
+        existingPlayersTeamMap = new HashMap<>();
         try {
             teamList = teamDao.getAllTeams();
+            for (Team t : teamList) {
+                for (Player p : t.players) {
+                    existingPlayersTeamMap.put(p, t);
+                }
+                existingPlayers.addAll(t.players);
+                t.removeSeniorsAndAddYear();
+            }
         } catch (IOException | ClassNotFoundException e) {
             Log.e("RecruitingActivity", "Could not retrieve teams", e);
             // PROBABLY JUST CRASH
@@ -133,6 +144,12 @@ public class RecruitingActivity extends AppCompatActivity {
         recruitingSpinner = (Spinner) findViewById(R.id.spinnerRecruiting);
         recruitingListView = (ListView) findViewById(R.id.listViewRecruiting);
         doneButton = (Button) findViewById(R.id.doneButton);
+        doneButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                finishRecruiting();
+            }
+        });
         viewTeamButton = (Button) findViewById(R.id.viewTeamButton);
         viewTeamButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -145,16 +162,50 @@ public class RecruitingActivity extends AppCompatActivity {
         fillSpinner();
     }
 
+    public void finishRecruiting() {
+        for (int i = 0; i < 3; ++i) {
+            letComputerTeamsRecruit(false);
+        }
+
+        for (Team t : teamList) {
+            List<Player> walkOns = t.recruitWalkOns(playerGen);
+            System.out.println(t.getName() + " made " + walkOns.size() + " walk ons");
+            for (Player p : walkOns) {
+                commitments.add(new TeamPlayerCommitment(p, t));
+            }
+        }
+
+        for (TeamPlayerCommitment c : commitments) {
+            // Don't save players til after recruiting
+            if (c.player == null) {
+                System.out.println("commitment has null player: " + c.team.getName());
+            } else {
+                playerDao.save(new PlayerModel(c.player, c.team.getName()));
+            }
+        }
+
+        for (Player p : existingPlayers) {
+            PlayerGen.advanceYearRatings(p.ratings);
+            playerDao.updatePlayer(new PlayerModel(p, existingPlayersTeamMap.get(p).getName()));
+        }
+
+        Intent intent = new Intent(this, MainActivity.class);
+        startActivity(intent);
+    }
+
     public void recruitPlayer(Team team, Player player) {
-        System.out.println(team.getName() + " recruited " + player.toString());
+        if (player == null) {
+            System.out.print(team.getName() + " tried to recruit a null player!");
+            return;
+        }
+        //System.out.println(team.getName() + " recruited " + player.toString());
         TeamPlayerCommitment commit = new TeamPlayerCommitment(player, team);
         commitments.add(commit);
         team.players.add(player);
         availableRecruits.remove(player);
-        playerDao.save(new PlayerModel(player, team.getName()));
     }
 
-    public void letComputerTeamsRecruit() {
+    public void letComputerTeamsRecruit(boolean updateUI) {
         for (Team t : teamList) {
             if (t != playerTeam) {
                 Player p = t.recruitPlayerFromList(availableRecruits);
@@ -164,13 +215,14 @@ public class RecruitingActivity extends AppCompatActivity {
             }
         }
 
-        // Update UI
-        int selection = recruitingSpinner.getSelectedItemPosition();
-        updateListView(selection);
-        fillSpinner();
-        recruitingSpinner.setSelection(selection);
-
-        showCommitmentsDialog();
+        if (updateUI) {
+            // Update UI
+            int selection = recruitingSpinner.getSelectedItemPosition();
+            updateListView(selection);
+            fillSpinner();
+            recruitingSpinner.setSelection(selection);
+            showCommitmentsDialog();
+        }
     }
 
     private int getYear() {
@@ -216,7 +268,7 @@ public class RecruitingActivity extends AppCompatActivity {
         if (selection == 0) {
             filteredList.addAll(availableRecruits);
             Collections.sort(filteredList, new PlayerOverallComp());
-            filteredList = filteredList.subList(0, 50);
+            filteredList = filteredList.subList(0, Math.min(50, availableRecruits.size()));
             recruitingListView.setAdapter(new RecruitsListArrayAdapter(this, filteredList,
                     recruitCostMap, recruitPersonalityMap));
         } else {
@@ -312,7 +364,7 @@ public class RecruitingActivity extends AppCompatActivity {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 recruitPlayer(playerTeam, p);
-                letComputerTeamsRecruit();
+                letComputerTeamsRecruit(true);
                 dialog.dismiss();
                 Toast.makeText(RecruitingActivity.this, "Recruited " + p.name,
                         Toast.LENGTH_LONG).show();

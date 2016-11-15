@@ -29,11 +29,12 @@ public class Team {
     public volatile Strategy offStrat;
     public volatile Strategy defStrat;
 
-    public Team( String name, List<Player> players, int prestige, boolean isUserTeam ) {
+    public Team( String name, List<Player> players, int prestige, boolean isUserTeam, String conference ) {
         this.players = players;
         this.name = name;
         this.prestige = prestige;
         this.isUserTeam = isUserTeam;
+        this.conference = conference;
         wins = 0;
         losses = 0;
         gameSchedule = new ArrayList<>();
@@ -339,6 +340,48 @@ public class Team {
         return weakestPosition;
     }
 
+    public int getStrongestPosition() {
+        int strongestPosition = 1;
+        int totalOverallPos = 0;
+        int currTotal = 0;
+        List<Player> currPosPlayers;
+        for (int i = 1; i < 6; ++i) {
+            currPosPlayers = new ArrayList<>();
+            for (Player p : players) {
+                if (p.getPosition() == i) currPosPlayers.add(p);
+            }
+            if (currPosPlayers.size() == 0) return i;
+            Collections.sort(currPosPlayers, new PlayerOverallComp());
+            currTotal = currPosPlayers.get(0).getOverall();
+            if (currTotal > totalOverallPos) strongestPosition = i;
+        }
+
+        return strongestPosition;
+    }
+
+    public void removeSeniorsAndAddYear() {
+        List<Player> seniors = new ArrayList<>();
+        for (Player p : players) {
+            p.year++;
+            if (p.year == 5) seniors.add(p);
+        }
+        for (Player p : seniors) {
+            players.remove(p);
+        }
+    }
+
+    public List<Player> recruitWalkOns(PlayerGen playerGen) {
+        List<Player> walkOns = new ArrayList<>();
+        for (int i = 1; i < 6; ++i) {
+            if (getPosTotals(i) < 2) {
+                Player p = playerGen.genPlayer(i, 25, 1);
+                players.add(p);
+                walkOns.add(p);
+            }
+        }
+        return walkOns;
+    }
+
     /**
      * Recruits a player from a list of the recruits.
      * Assumes that the recruit list is sorted by overall rating.
@@ -348,7 +391,7 @@ public class Team {
      */
     public Player recruitPlayerFromList(List<Player> recruits) {
         // Have chance that this team passes on signing anyone
-        if (Math.random() < 0.25) return null;
+        if (Math.random() < 0.25 || players.size() >= 15) return null;
 
         // See if we don't have 2 players in any position
         boolean hasNeedsFilled = true;
@@ -372,8 +415,9 @@ public class Team {
             }
         } else {
             for (Player p : recruits) {
-                if (getWeakestPosition() == p.getPosition()) {
-                    // He is our weakest position, try to sign
+                if (getStrongestPosition() != p.getPosition() &&
+                        getPosTotals(p.getPosition()) < 3) {
+                    // He could be useful
                     if (Math.random() < chanceToSign/2) {
                         // Choose him
                         return p;

@@ -29,15 +29,23 @@ public class PlayerDao {
                 Schemas.PlayerEntry.RATINGS,
                 Schemas.PlayerEntry.YEAR
         };
-        String whereClause = Schemas.PlayerEntry.TEAM + " = ?";
+        String whereClause = Schemas.PlayerEntry.TEAM + " = ? AND " +
+                Schemas.PlayerEntry.YEAR + " < 5";
         String[] whereArgs = {
                 teamName
         };
         try (Cursor c = db.query(Schemas.PlayerEntry.TABLE_NAME, projection, whereClause,
                 whereArgs, null, null, null, null)) {
             while (c.moveToNext()) {
-                players.add(createPlayer(c));
+                Player p = createPlayer(c);
+                if (p == null) {
+                    System.out.println("Found null player in db for " + teamName);
+                } else {
+                    players.add(p);
+                }
             }
+        } catch (Exception e) {
+            System.out.println(e.toString());
         }
         return players;
     }
@@ -95,6 +103,17 @@ public class PlayerDao {
         } finally {
             db.endTransaction();
         }
+    }
+
+    public void updatePlayer(PlayerModel player) {
+        SQLiteDatabase db = DbHelper.getInstance(context).getWritableDatabase();
+        ContentValues values = new ContentValues();
+        values.put(Schemas.PlayerEntry._ID, player.id);
+        values.put(Schemas.PlayerEntry.NAME, player.name);
+        values.put(Schemas.PlayerEntry.TEAM, player.team);
+        values.put(Schemas.PlayerEntry.YEAR, player.year);
+        values.put(Schemas.PlayerEntry.RATINGS, SerializationUtil.serialize(player.ratings));
+        db.replace(Schemas.PlayerEntry.TABLE_NAME, null, values);
     }
 
     public void save(PlayerModel player) {

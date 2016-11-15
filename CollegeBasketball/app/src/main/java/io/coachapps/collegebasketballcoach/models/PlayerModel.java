@@ -9,9 +9,6 @@ public class PlayerModel {
     public int year;
     public PlayerRatings ratings;
 
-    /**
-
-     */
     public PlayerModel(Player player, String teamName) {
         this.id = player.getId();
         this.name = player.name;
