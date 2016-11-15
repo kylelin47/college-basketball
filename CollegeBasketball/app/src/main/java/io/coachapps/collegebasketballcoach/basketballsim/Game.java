@@ -1,5 +1,7 @@
 package io.coachapps.collegebasketballcoach.basketballsim;
 
+import android.util.Log;
+
 import io.coachapps.collegebasketballcoach.models.FullGameResults;
 import io.coachapps.collegebasketballcoach.models.GameModel;
 
@@ -11,21 +13,33 @@ import io.coachapps.collegebasketballcoach.models.GameModel;
 
 public class Game {
 
+    public enum GameType {
+        REGULAR_SEASON("Reg. Season"),
+        TOURNAMENT_GAME("Tournament"),
+        MARCH_MADNESS("March Madness");
+        private String value;
+        GameType(String value) {
+            this.value = value;
+        }
+        @Override
+        public String toString() {
+            return value;
+        }
+    }
+
     private Team home;
     private Team away;
     private int year;
-    private int week;
 
     private int homeScore;
     private int awayScore;
     private boolean beenPlayed;
-    public boolean tournamentGame;
+    public GameType gameType;
 
-    public Game(Team home, Team away, int year, int week) {
+    public Game(Team home, Team away, int year) {
         this.home = home;
         this.away = away;
         this.year = year;
-        this.week = week;
 
         homeScore = 0;
         awayScore = 0;
@@ -36,24 +50,27 @@ public class Game {
         this.home = home;
         this.away = away;
         this.year = gameModel.year;
-        this.week = gameModel.week;
         this.homeScore = gameModel.homeStats.points;
         this.awayScore = gameModel.awayStats.points;
         this.beenPlayed = true;
     }
 
-    public void schedule() {
-        getHome().gameSchedule.add(this);
-        getAway().gameSchedule.add(this);
+    public void schedule(int week, GameType gameType) {
+        if (getHome().gameSchedule.size() != getAway().gameSchedule.size()) {
+            Log.e("Game", "Tried to schedule games with teams with uneven schedules");
+        }
+        this.gameType = gameType;
+        getHome().gameSchedule.add(week, this);
+        getAway().gameSchedule.add(week, this);
     }
     /**
      * @return Home team name,Away team name,homeScore,awayScore,year,week,beenPlayed,
-     * tournamentGame,homeSeed,awaySeed
+     * gameType,homeSeed,awaySeed
      */
     @Override
     public String toString() {
         return home.getName() + "," + away.getName() + "," + homeScore + "," + awayScore + "," +
-                year + "," + week + "," + beenPlayed + "," + tournamentGame + "," + home.seed +
+                year + "," + getWeek() + "," + beenPlayed + "," + gameType.toString() + "," + home.seed +
                 "," + away.seed;
     }
 
@@ -76,7 +93,7 @@ public class Game {
     public int getYear() {
         return year;
     }
-    public int getWeek() { return week; }
+    public int getWeek() { return home.gameSchedule.indexOf(this); }
 
     public boolean hasPlayed() {
         return beenPlayed;
@@ -88,13 +105,7 @@ public class Game {
         else return away;
     }
 
-    public Team getLoser() {
-        if (!beenPlayed) return null;
-        if (homeScore > awayScore) return away;
-        else return home;
-    }
-
-    public String getWinnerString() {
+    String getWinnerString() {
         if (homeScore > awayScore) {
             return "W " + homeScore + "-" + awayScore;
         } else {
@@ -102,7 +113,7 @@ public class Game {
         }
     }
 
-    public String getLoserString() {
+    String getLoserString() {
         if (homeScore > awayScore) {
             return "L " + awayScore + "-" + homeScore;
         } else {
@@ -111,20 +122,16 @@ public class Game {
     }
 
     public FullGameResults playGame(Simulator sim) {
-        FullGameResults result = sim.playGame(home, away, year, week);
+        FullGameResults result = sim.playGame(home, away, year, getWeek());
         homeScore = result.game.homeStats.points;
         awayScore = result.game.awayStats.points;
         beenPlayed = true;
         return result;
     }
 
-    public void setGameModel(GameModel result) {
+    void setGameModel(GameModel result) {
         homeScore = result.homeStats.points;
         awayScore = result.awayStats.points;
         beenPlayed = true;
-    }
-
-    public void setBeenPlayed(boolean p) {
-        beenPlayed = p;
     }
 }

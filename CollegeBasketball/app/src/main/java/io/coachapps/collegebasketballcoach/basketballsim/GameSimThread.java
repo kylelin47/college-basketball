@@ -249,7 +249,7 @@ public class GameSimThread extends Thread {
             List<Team> winners = determineLatestWinners(tournamentGames);
             Game lastGame = tournamentGames.get(tournamentGames.size() - 1);
             tournamentGames.addAll(tournamentScheduler.scheduleTournament(winners, lastGame
-                    .getYear(), lastGame.getWeek() + 1));
+                    .getYear()));
         } else {
             ((MainActivity) activity).tryToScheduleConferenceTournament();
         }

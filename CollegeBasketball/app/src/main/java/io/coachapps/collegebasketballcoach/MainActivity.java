@@ -130,7 +130,7 @@ public class MainActivity extends AppCompatActivity {
 
         final TeamDao teamDao = new TeamDao(this);
         try {
-            league = new League(teamDao.getAllTeams());
+            league = new League(teamDao.getAllTeams(getYear()));
             teamList = league.getPlayerConference();
             for (Team t : league.getAllTeams()) {
                 for (Player p : t.players) {

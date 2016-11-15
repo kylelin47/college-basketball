@@ -298,11 +298,7 @@ public class Team {
     public String[] getGameSummaryStr(int gameNumber) {
         String[] sum = new String[3];
         Game gm = gameSchedule.get(gameNumber);
-        if (gm.tournamentGame) {
-            sum[0] = "Tournament";
-        } else {
-            sum[0] = "Reg. Season";
-        }
+        sum[0] = gm.gameType.toString();
         if (gm.hasPlayed()) {
             if (gm.getWinner() == this) {
                 sum[1] = gm.getWinnerString();
