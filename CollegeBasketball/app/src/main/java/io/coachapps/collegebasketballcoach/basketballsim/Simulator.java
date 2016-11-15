@@ -343,7 +343,7 @@ public class Simulator {
      */
     private static Player intelligentPass( Player whoPoss, Team offense, Team defense, int[] matches ) {
         //pass intelligently
-        int mismFactor = 18;
+        int mismFactor = 15;
         double pgTen = offense.getPG().getUsage() + (float)matches[0]/mismFactor;
         double sgTen = offense.getSG().getUsage() + (float)matches[1]/mismFactor;
         double sfTen = offense.getSF().getUsage() + (float)matches[2]/mismFactor;
@@ -372,9 +372,9 @@ public class Simulator {
      * @return player who will get ball
      */
     private static Player getBallCarrier( Team t ) {
-        double sfBall = t.getSF().getPass() * Math.random();
-        double sgBall = t.getSG().getPass() * Math.random();
-        double pgBall = t.getPG().getPass() * Math.random();
+        double sfBall = Math.pow(t.getSF().getPass() * Math.random(), 1.5);
+        double sgBall = Math.pow(t.getSG().getPass() * Math.random(), 1.5);
+        double pgBall = Math.pow(t.getPG().getPass() * Math.random(), 1.5);
         if ( sfBall > sgBall && sfBall > pgBall ) {
             return t.getSF();
         } else if ( sgBall > sfBall && sgBall > pgBall ) {

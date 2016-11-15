@@ -9,6 +9,11 @@
         android:title="@string/action_set_lineup"
         app:showAsAction="never" />
     <item
+        android:id="@+id/action_set_strategy"
+        android:orderInCategory="100"
+        android:title="@string/action_set_strategy"
+        app:showAsAction="never" />
+    <item
         android:id="@+id/action_league_leaders"
         android:orderInCategory="100"
         android:title="@string/action_league_leaders"

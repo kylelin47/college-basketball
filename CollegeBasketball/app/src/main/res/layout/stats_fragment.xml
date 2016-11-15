@@ -195,18 +195,18 @@
                     android:textSize="25sp"
                     android:textStyle="bold"
                     android:layout_centerVertical="true"
-                    android:id="@+id/fga"
+                    android:id="@+id/fgm"
                     />
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="FGA"
+                    android:text="FGM"
                     android:textColor="#999"
                     android:textSize="15sp"
                     android:textStyle="bold"
-                    android:id="@+id/fgaLabel"
+                    android:id="@+id/fgmLabel"
                     android:layout_centerVertical="true"
-                    android:layout_toEndOf="@+id/fga" />
+                    android:layout_toEndOf="@+id/fgm" />
             </RelativeLayout>
             <RelativeLayout
                 android:layout_weight="1"
@@ -222,18 +222,18 @@
                     android:textSize="25sp"
                     android:textStyle="bold"
                     android:layout_centerVertical="true"
-                    android:id="@+id/fgm"
+                    android:id="@+id/fga"
                     />
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="FGM"
+                    android:text="FGA"
                     android:textColor="#999"
                     android:textSize="15sp"
                     android:textStyle="bold"
-                    android:id="@+id/fgmLabel"
+                    android:id="@+id/fgaLabel"
                     android:layout_centerVertical="true"
-                    android:layout_toEndOf="@+id/fgm" />
+                    android:layout_toEndOf="@+id/fga" />
             </RelativeLayout>
             <RelativeLayout
                 android:layout_weight="1"
@@ -280,18 +280,18 @@
                     android:textSize="25sp"
                     android:textStyle="bold"
                     android:layout_centerVertical="true"
-                    android:id="@+id/fta"
+                    android:id="@+id/ftm"
                     />
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="FTA"
+                    android:text="FTM"
                     android:textColor="#999"
                     android:textSize="15sp"
                     android:textStyle="bold"
-                    android:id="@+id/ftaLabel"
+                    android:id="@+id/ftmLabel"
                     android:layout_centerVertical="true"
-                    android:layout_toEndOf="@+id/fta" />
+                    android:layout_toEndOf="@+id/ftm" />
             </RelativeLayout>
             <RelativeLayout
                 android:layout_weight="1"
@@ -307,18 +307,18 @@
                     android:textSize="25sp"
                     android:textStyle="bold"
                     android:layout_centerVertical="true"
-                    android:id="@+id/ftm"
+                    android:id="@+id/fta"
                     />
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="FTM"
+                    android:text="FTA"
                     android:textColor="#999"
                     android:textSize="15sp"
                     android:textStyle="bold"
-                    android:id="@+id/ftmLabel"
+                    android:id="@+id/ftaLabel"
                     android:layout_centerVertical="true"
-                    android:layout_toEndOf="@+id/ftm" />
+                    android:layout_toEndOf="@+id/fta" />
             </RelativeLayout>
             <RelativeLayout
                 android:layout_weight="1"
@@ -365,18 +365,18 @@
                     android:textSize="25sp"
                     android:textStyle="bold"
                     android:layout_centerVertical="true"
-                    android:id="@+id/threePA"
+                    android:id="@+id/threePM"
                     />
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="3PA"
+                    android:text="3PM"
                     android:textColor="#999"
                     android:textSize="15sp"
                     android:textStyle="bold"
-                    android:id="@+id/threePALabel"
+                    android:id="@+id/threePMLabel"
                     android:layout_centerVertical="true"
-                    android:layout_toEndOf="@+id/threePA" />
+                    android:layout_toEndOf="@+id/threePM" />
             </RelativeLayout>
             <RelativeLayout
                 android:layout_weight="1"
@@ -392,18 +392,18 @@
                     android:textSize="25sp"
                     android:textStyle="bold"
                     android:layout_centerVertical="true"
-                    android:id="@+id/threePM"
+                    android:id="@+id/threePA"
                     />
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="3PM"
+                    android:text="3PA"
                     android:textColor="#999"
                     android:textSize="15sp"
                     android:textStyle="bold"
-                    android:id="@+id/threePMLabel"
+                    android:id="@+id/threePALabel"
                     android:layout_centerVertical="true"
-                    android:layout_toEndOf="@+id/threePM" />
+                    android:layout_toEndOf="@+id/threePA" />
             </RelativeLayout>
             <RelativeLayout
                 android:layout_weight="1"

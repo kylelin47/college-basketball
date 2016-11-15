@@ -397,7 +397,8 @@ public class Team {
      */
     public Player recruitPlayerFromList(List<Player> recruits) {
         // Have chance that this team passes on signing anyone
-        if (Math.random() < 0.25 || players.size() >= 15) return null;
+        double prestigeSkipChance = (double)prestige/2 + 0.05;
+        if (Math.random() > prestigeSkipChance || players.size() >= 15) return null;
 
         // See if we don't have 2 players in any position
         boolean hasNeedsFilled = true;

@@ -43,7 +43,7 @@ public class Player implements Serializable {
 
     public String toString() {
         return DataDisplayer.getPositionAbbreviation(getPosition()) + " " + name +
-                " [" + DataDisplayer.getYear(year) + "] (" +
+                " [" + DataDisplayer.getYearAbbreviation(year) + "] (" +
                 getOverall() + " / " + DataDisplayer.getLetterGrade(getPotential()) + ")";
     }
 
@@ -91,6 +91,11 @@ public class Player implements Serializable {
     }
     public int getOverall() {
         return overall;
+    }
+    public void updateOverall() {
+        overall = (int) Math.round( Math.pow(getIntS(), 1.3) + Math.pow(getMidS(), 1.3) + Math.pow(getOutS(), 1.3) + Math.pow(getPass(), 1.1) + getHand() +
+                Math.pow(getStl(), 1.1) + Math.pow(getBlk(), 1.1) + Math.pow(getIntD(), 1.2) + Math.pow(getOutD(), 1.2) + Math.pow(getReb(), 1.2) );
+        overall = (100*overall)/2500;
     }
     public int getIntS() {
         return ratings.insideShooting;

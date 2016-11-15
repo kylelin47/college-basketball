@@ -319,6 +319,8 @@ public class MainActivity extends AppCompatActivity {
             showSetLineupDialog();
         } else if (id == R.id.action_league_leaders) {
             showLeagueLeadersDialog();
+        } else if (id == R.id.action_set_strategy) {
+            showChangeStrategyDialog(playerTeam, null);
         }
 
         return super.onOptionsItemSelected(item);
@@ -544,7 +546,7 @@ public class MainActivity extends AppCompatActivity {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         //do nothing?
-                        t.togglePause();
+                        if (t != null) t.togglePause();
                     }
                 })
                 .setView(getLayoutInflater().inflate(R.layout.team_strategy_dialog, null));

@@ -2,8 +2,10 @@ package io.coachapps.collegebasketballcoach;
 
 import android.app.DialogFragment;
 import android.app.FragmentTransaction;
+import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
@@ -26,6 +28,8 @@ import java.util.HashMap;
 import java.util.List;
 
 import io.coachapps.collegebasketballcoach.adapters.CommitmentsListArrayAdapter;
+import io.coachapps.collegebasketballcoach.adapters.ImprovementsListArrayAdapter;
+import io.coachapps.collegebasketballcoach.adapters.PlayerStatsListArrayAdapter;
 import io.coachapps.collegebasketballcoach.adapters.PlayerStatsRatingsListArrayAdapter;
 import io.coachapps.collegebasketballcoach.adapters.RecruitsListArrayAdapter;
 import io.coachapps.collegebasketballcoach.adapters.StrengthWeaknessListArrayAdapter;
@@ -34,6 +38,7 @@ import io.coachapps.collegebasketballcoach.basketballsim.PlayerGen;
 import io.coachapps.collegebasketballcoach.db.PlayerDao;
 import io.coachapps.collegebasketballcoach.models.PlayerModel;
 import io.coachapps.collegebasketballcoach.util.DataDisplayer;
+import io.coachapps.collegebasketballcoach.util.LeagueEvents;
 import io.coachapps.collegebasketballcoach.util.PlayerOverallComp;
 import io.coachapps.collegebasketballcoach.basketballsim.Team;
 import io.coachapps.collegebasketballcoach.db.LeagueResultsEntryDao;
@@ -59,18 +64,21 @@ public class RecruitingActivity extends AppCompatActivity {
     List<Team> teamList;
     Team playerTeam;
     String playerTeamName;
+    int playerTeamMoney = 0;
 
     TextView recruitingTextView;
     Spinner recruitingSpinner;
     ListView recruitingListView;
     Button doneButton;
     Button viewTeamButton;
+    ProgressDialog dialogLoading;
 
     List<Player> existingPlayers;
     HashMap<Player, Team> existingPlayersTeamMap;
     List<Player> availableRecruits;
     HashMap<Player, Integer> recruitCostMap;
     HashMap<Player, String> recruitPersonalityMap;
+    HashMap<Player, Integer> playerImprovementMap;
 
     List<TeamPlayerCommitment> commitments;
 
@@ -86,6 +94,7 @@ public class RecruitingActivity extends AppCompatActivity {
         teamDao = new TeamDao(this);
         existingPlayers = new ArrayList<>();
         existingPlayersTeamMap = new HashMap<>();
+        playerImprovementMap = new HashMap<>();
         try {
             teamList = teamDao.getAllTeams(getYear());
             Collections.sort(teamList, new Comparator<Team>() {
@@ -111,6 +120,7 @@ public class RecruitingActivity extends AppCompatActivity {
         for (Team t : teamList) {
             if (t.getName().equals(playerTeamName)) {
                 playerTeam = t;
+                playerTeamMoney = playerTeam.getPrestige()*15;
                 break;
             }
         }
@@ -154,7 +164,10 @@ public class RecruitingActivity extends AppCompatActivity {
         doneButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                finishRecruiting();
+                dialogLoading = ProgressDialog.show(RecruitingActivity.this, "",
+                        getResources().getString(R.string.recruiting_loading_msg), true);
+                dialogLoading.setCancelable(false);
+                new FinishRecruitingTask().execute();
             }
         });
         viewTeamButton = (Button) findViewById(R.id.viewTeamButton);
@@ -167,35 +180,11 @@ public class RecruitingActivity extends AppCompatActivity {
 
         updateTextView();
         fillSpinner();
+
+        showPlayersLeavingDialog();
     }
 
-    public void finishRecruiting() {
-        for (int i = 0; i < 3; ++i) {
-            letComputerTeamsRecruit(false);
-        }
-
-        for (Team t : teamList) {
-            List<Player> walkOns = t.recruitWalkOns(playerGen);
-            System.out.println(t.getName() + " made " + walkOns.size() + " walk ons");
-            for (Player p : walkOns) {
-                commitments.add(new TeamPlayerCommitment(p, t));
-            }
-        }
-
-        for (TeamPlayerCommitment c : commitments) {
-            // Don't save players til after recruiting
-            if (c.player == null) {
-                System.out.println("commitment has null player: " + c.team.getName());
-            } else {
-                playerDao.save(new PlayerModel(c.player, c.team.getName()));
-            }
-        }
-
-        for (Player p : existingPlayers) {
-            PlayerGen.advanceYearRatings(p.ratings);
-            playerDao.updatePlayer(new PlayerModel(p, existingPlayersTeamMap.get(p).getName()));
-        }
-
+    public void goToMainActivity() {
         Intent intent = new Intent(this, MainActivity.class);
         startActivity(intent);
     }
@@ -240,7 +229,8 @@ public class RecruitingActivity extends AppCompatActivity {
     }
 
     private void updateTextView() {
-        String str = "Prestige: " + playerTeam.getPrestige() + ", Budget: $1000";
+        String str = "Prestige: " + playerTeam.getPrestige() +
+                ", Budget: $" + playerTeamMoney;
         recruitingTextView.setText(str);
     }
 
@@ -293,6 +283,39 @@ public class RecruitingActivity extends AppCompatActivity {
                 Player p = ((RecruitsListArrayAdapter) recruitingListView
                         .getAdapter()).getItem(position);
                 showRecruitDialog(p);
+            }
+        });
+    }
+
+    public void showPlayersLeavingDialog() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setView(getLayoutInflater().inflate(R.layout.simple_list, null));
+        builder.setPositiveButton("OK",
+                new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.dismiss();
+                    }
+                });
+        builder.setTitle("Players Leaving");
+        final AlertDialog dialog = builder.create();
+        dialog.show();
+
+        List<Player> playerTeamSeniors = new ArrayList<>();
+        for (Player p : existingPlayers) {
+            if (existingPlayersTeamMap.get(p) == playerTeam && p.year > 4) {
+                playerTeamSeniors.add(p);
+            }
+        }
+        Collections.sort(playerTeamSeniors, new PlayerOverallComp());
+
+        final ListView listView = (ListView) dialog.findViewById(R.id.listView);
+        listView.setAdapter(new PlayerStatsRatingsListArrayAdapter(this, playerTeamSeniors, getYear()-1));
+        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                Player p = ((PlayerStatsRatingsListArrayAdapter)(listView.getAdapter())).getItem(position);
+                showPlayerDialog(p);
             }
         });
     }
@@ -357,6 +380,32 @@ public class RecruitingActivity extends AppCompatActivity {
         });
     }
 
+    public void showImprovementsDialog() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setView(getLayoutInflater().inflate(R.layout.simple_list, null));
+        builder.setPositiveButton("OK",
+                new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.dismiss();
+                        goToMainActivity();
+                    }
+                });
+        builder.setTitle(playerTeamName + " Improvements");
+        final AlertDialog dialog = builder.create();
+        dialog.show();
+
+        List<String> values = new ArrayList<>();
+        Collections.sort(playerTeam.players, new PlayerOverallComp());
+        for (Player p : playerTeam.players) {
+            String plusMinus = playerImprovementMap.get(p) >= 0 ? "+" : "";
+            values.add(plusMinus + playerImprovementMap.get(p) + "," + p.toString());
+        }
+
+        final ListView listView = (ListView) dialog.findViewById(R.id.listView);
+        listView.setAdapter(new ImprovementsListArrayAdapter(this, values));
+    }
+
     public void showPlayerDialog(final Player p) {
         FragmentTransaction ft = getFragmentManager().beginTransaction();
         DialogFragment newFragment =
@@ -378,11 +427,18 @@ public class RecruitingActivity extends AppCompatActivity {
                 new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                recruitPlayer(playerTeam, p);
-                letComputerTeamsRecruit(true);
-                dialog.dismiss();
-                Toast.makeText(RecruitingActivity.this, "Recruited " + p.name,
-                        Toast.LENGTH_LONG).show();
+                if (playerTeamMoney >= recruitCostMap.get(p)) {
+                    playerTeamMoney -= recruitCostMap.get(p);
+                    updateTextView();
+                    recruitPlayer(playerTeam, p);
+                    letComputerTeamsRecruit(true);
+                    dialog.dismiss();
+                    Toast.makeText(RecruitingActivity.this, "Recruited " + p.name,
+                            Toast.LENGTH_LONG).show();
+                } else {
+                    Toast.makeText(RecruitingActivity.this, "Not enough money!",
+                            Toast.LENGTH_LONG).show();
+                }
             }
         });
         final AlertDialog dialog = builder.create();
@@ -526,6 +582,56 @@ public class RecruitingActivity extends AppCompatActivity {
                         "Starred in a hit dunk highlight video (as the one being dunked on)"
                 };
         return personalities[(int)(Math.random()*personalities.length)];
+    }
+
+    public void finishRecruiting() {
+        for (int i = 0; i < 3; ++i) {
+            letComputerTeamsRecruit(false);
+        }
+
+        for (Team t : teamList) {
+            List<Player> walkOns = t.recruitWalkOns(playerGen);
+            System.out.println(t.getName() + " made " + walkOns.size() + " walk ons");
+            for (Player p : walkOns) {
+                commitments.add(new TeamPlayerCommitment(p, t));
+            }
+        }
+
+        for (TeamPlayerCommitment c : commitments) {
+            // Don't save players til after recruiting
+            if (c.player == null) {
+                System.out.println("commitment has null player: " + c.team.getName());
+            } else {
+                playerImprovementMap.put(c.player, 0);
+                playerDao.save(new PlayerModel(c.player, c.team.getName()));
+            }
+        }
+
+        for (Player p : existingPlayers) {
+            int oldOverall = p.getOverall();
+            PlayerGen.advanceYearRatings(p.ratings);
+            p.updateOverall();
+            int newOverall = p.getOverall();
+            playerImprovementMap.put(p, newOverall - oldOverall);
+            playerDao.updatePlayer(new PlayerModel(p, existingPlayersTeamMap.get(p).getName()));
+        }
+    }
+
+    /**
+     * Class responsible for finishing up recruiting
+     * Done via a AsyncTask so the UI thread isn't overwhelmed.
+     */
+    private class FinishRecruitingTask extends AsyncTask<Void, Void, Void> {
+        @Override
+        protected Void doInBackground(Void... throwaways) {
+            finishRecruiting();
+            return null;
+        }
+        @Override
+        protected void onPostExecute(Void result) {
+            dialogLoading.dismiss();
+            showImprovementsDialog();
+        }
     }
 
 }
