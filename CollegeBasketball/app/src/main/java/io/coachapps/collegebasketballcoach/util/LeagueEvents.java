@@ -1,6 +1,7 @@
 package io.coachapps.collegebasketballcoach.util;
 
 import android.content.Context;
+import android.util.Log;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -98,7 +99,7 @@ public class LeagueEvents {
     public static boolean playRegularSeasonGame(List<Team> teams, Simulator sim,
                                                 boolean simUserGame, String userTeamName) {
         int week = determineLastUnplayedRegularSeasonWeek(teams);
-        System.out.println("Week = " + week);
+        Log.i("LeagueEvents","Week = " + week);
         List<Game> games = new ArrayList<>();
         if (week == Integer.MAX_VALUE) return false;
         for (Team t : teams) {

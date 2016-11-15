@@ -21,6 +21,7 @@ import android.widget.Toast;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 
@@ -87,6 +88,12 @@ public class RecruitingActivity extends AppCompatActivity {
         existingPlayersTeamMap = new HashMap<>();
         try {
             teamList = teamDao.getAllTeams(getYear());
+            Collections.sort(teamList, new Comparator<Team>() {
+                @Override
+                public int compare(Team t1, Team t2) {
+                    return t2.prestige - t1.prestige;
+                }
+            });
             for (Team t : teamList) {
                 for (Player p : t.players) {
                     existingPlayersTeamMap.put(p, t);
@@ -330,7 +337,15 @@ public class RecruitingActivity extends AppCompatActivity {
         dialog.show();
 
         // Show player stats of team from the past year
-        Collections.sort(playerTeam.players, new PlayerOverallComp());
+        Collections.sort(playerTeam.players, new Comparator<Player>() {
+            @Override
+            public int compare(Player p1, Player p2) {
+                if (p1.getPosition() == p2.getPosition()) {
+                    return p2.getOverall() - p1.getOverall();
+                }
+                else return p1.getPosition() - p2.getPosition();
+            }
+        });
         final ListView listView = (ListView) dialog.findViewById(R.id.listView);
         listView.setAdapter(new PlayerStatsRatingsListArrayAdapter(this, playerTeam.players, getYear()-1));
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {

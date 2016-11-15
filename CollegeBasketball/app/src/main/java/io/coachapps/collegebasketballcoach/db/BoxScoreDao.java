@@ -4,6 +4,7 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.util.Log;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -109,6 +110,8 @@ public class BoxScoreDao {
         values.put(Schemas.BoxScoreEntry.WEEK, boxScore.week);
         values.put(Schemas.BoxScoreEntry.STATS, SerializationUtil.serialize(boxScore.playerStats));
         values.put(Schemas.BoxScoreEntry.TEAM_NAME, boxScore.teamName);
+        //Log.i("BoxScoreDao", "Saving boxscore: " + boxScore.playerId + "id, " +
+        // boxScore.year + "yr, " + boxScore.week + "wk, " + boxScore.teamName);
         db.insertOrThrow(Schemas.BoxScoreEntry.TABLE_NAME, null, values);
     }
 

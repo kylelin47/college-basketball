@@ -57,7 +57,7 @@ public class LeagueLeadersListArrayAdapter extends ArrayAdapter<Player> {
 
         Player p = players.get(position);
         playerName.setText(p.name + " [" + DataDisplayer.getYearAbbreviation(p.year) + "]");
-        playerPosition.setText(DataDisplayer.getPositionAbbreviation(position % 5 + 1));
+        playerPosition.setText(p.getLineupPositionStr());
         playerOvrPot.setText(String.valueOf(p.getOverall()) + " / " +
                 DataDisplayer.getLetterGrade(p.getPotential()));
 

@@ -4,6 +4,7 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.util.Log;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -32,7 +33,7 @@ public class GameDao {
 
     }
     private void save(GameModel game, SQLiteDatabase db) {
-        System.out.println("Saving game : " + game.year + "yr, " + game.week + "wk, " + game.awayTeam + " @ " + game.homeTeam);
+        Log.i("GameDao","Saving game : " + game.year + "yr, " + game.week + "wk, " + game.awayTeam + " @ " + game.homeTeam);
         ContentValues values = new ContentValues();
         values.put(Schemas.GameEntry.YEAR, game.year);
         values.put(Schemas.GameEntry.WEEK, game.week);
@@ -82,7 +83,7 @@ public class GameDao {
     }
 
     public GameModel getGame(int year, int week, String homeTeam, String awayTeam) {
-        System.out.println("Getting game : " + year + "yr, " + week + "wk, " + awayTeam + " @ " + homeTeam);
+        Log.i("GameDao","Getting game : " + year + "yr, " + week + "wk, " + awayTeam + " @ " + homeTeam);
         GameModel game = null;
         SQLiteDatabase db = DbHelper.getInstance(context).getReadableDatabase();
         String[] projection = {

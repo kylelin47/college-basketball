@@ -152,7 +152,10 @@ public class Team {
         playerArr[position-1+5] = posPlayers.get(1);
         for (int i = 2; i < posPlayers.size(); ++i) {
             for (int j = 10; j < playerArr.length; ++j) {
-                if (playerArr[j] == null) playerArr[j] = posPlayers.get(i);
+                if (playerArr[j] == null) {
+                    playerArr[j] = posPlayers.get(i);
+                    break;
+                }
             }
         }
     }

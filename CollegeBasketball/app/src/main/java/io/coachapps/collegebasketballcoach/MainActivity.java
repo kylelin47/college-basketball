@@ -132,11 +132,6 @@ public class MainActivity extends AppCompatActivity {
         try {
             league = new League(teamDao.getAllTeams(getYear()));
             teamList = league.getPlayerConference();
-            for (Team t : league.getAllTeams()) {
-                for (Player p : t.players) {
-                    if (p == null) System.out.println(t.getName() + " has null player!");
-                }
-            }
         } catch (IOException | ClassNotFoundException e) {
             Log.e("MainActivity", "Could not retrieve teams", e);
             // PROBABLY JUST CRASH
@@ -371,7 +366,11 @@ public class MainActivity extends AppCompatActivity {
         LeagueResultsEntryDao leagueResultsEntryDao = new LeagueResultsEntryDao(this);
         int currentYear = leagueResultsEntryDao.getCurrentYear();
         Log.i("MainActivity", "Current Year: " + currentYear);
-        return currentYear;
+
+        // Allow recent games and such to be viewed after the last tourney game is played
+        if (!doneWithSeason)
+            return currentYear;
+        else return currentYear - 1;
     }
 
     public void updateUI() {

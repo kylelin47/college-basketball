@@ -143,7 +143,7 @@ public class Simulator {
                 if ( assister == whoPoss ) {
                     return 2;
                 } else {
-                    if ( Math.pow(assister.getPass()/14, 2.4) * Math.random() > 20 ) {
+                    if ( Math.pow(assister.getPass()/14, 2.4) * Math.random() > 17 ) {
                         assister.addAss();
                     }
                     return 2;
@@ -437,7 +437,7 @@ public class Simulator {
      * @return true if the ball was stolen, else false
      */
     private static boolean potTO( Player off ) {
-        return (Math.random() < 0.6 && (off.getPass()+off.getHand()) * Math.random() < 15);
+        return (Math.random() < 0.3 && (off.getPass()+off.getHand()) * Math.random() < 15);
     }
 
     /**

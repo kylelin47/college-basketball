@@ -38,12 +38,7 @@ public class PlayerDao {
                 whereArgs, null, null, null, null)) {
             while (c.moveToNext()) {
                 Player p = createPlayer(c);
-                if (p == null) {
-                    System.out.println("ERROR ERROR Found null player in db for " + teamName);
-                } else {
-                    System.out.println(teamName + " : " + p.toString());
-                    players.add(p);
-                }
+                players.add(p);
             }
         } catch (Exception e) {
             System.out.println(e.toString());
@@ -75,7 +70,6 @@ public class PlayerDao {
     public void updatePlayerRatings(int playerID, PlayerRatings ratings) {
         SQLiteDatabase db = DbHelper.getInstance(context).getWritableDatabase();
         db.beginTransaction();
-        System.out.println("About to update ratings, min = " + ratings.lineupMinutes + ", pos = " + ratings.lineupPosition);
         try {
             String whereClause = Schemas.PlayerEntry._ID + "=?";
             String[] whereArgs = {
@@ -93,14 +87,11 @@ public class PlayerDao {
                             Schemas.PlayerEntry.TEAM)));
                     values.put(Schemas.PlayerEntry.YEAR, cursor.getInt(cursor.getColumnIndexOrThrow(
                             Schemas.PlayerEntry.YEAR)));
-                    System.out.println("updated ratings for " +
-                            cursor.getString(cursor.getColumnIndexOrThrow(Schemas.PlayerEntry.NAME)));
                 }
             }
             values.put(Schemas.PlayerEntry.RATINGS, SerializationUtil.serialize(ratings));
             db.replaceOrThrow(Schemas.PlayerEntry.TABLE_NAME, null, values);
             db.setTransactionSuccessful();
-            System.out.println("donezo");
         } finally {
             db.endTransaction();
         }
