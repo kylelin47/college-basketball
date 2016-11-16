@@ -12,18 +12,18 @@
         <item>Stats</item>
         <item>Recent Games</item>
     </string-array>
-    <!-- First 10 are SOUTH conference, next 10 LAKES, etc. -->
+    <!-- First 10 are COWBOY conference, next 10 LAKES, etc. -->
     <string-array name="team_names">
-        <item>Alabama Alligators</item>
-        <item>Georgia Giants</item>
-        <item>Florida Phlogistons</item>
-        <item>Tennessee Titans</item>
-        <item>Atlanta Aliens</item>
-        <item>New Orleans Newcomers</item>
-        <item>Arkansas Ants</item>
-        <item>Louisiana Lizards</item>
-        <item>Key West Limes</item>
-        <item>Kentucky Kings</item>
+        <item>Oklahoma Oranges</item>
+        <item>Texas Tiggers</item>
+        <item>Houston Howlers</item>
+        <item>Dallas Denizens</item>
+        <item>Nebraska Nitrides</item>
+        <item>Austin Aborigines</item>
+        <item>El Paso Pesos</item>
+        <item>Missouri Moonmen</item>
+        <item>Tulsa Timbers</item>
+        <item>Omaha Eulers</item>
 
         <item>Ohio State Orangutans</item>
         <item>Michigan Miners</item>
@@ -36,6 +36,17 @@
         <item>Cleveland Clowns</item>
         <item>Milwaukee Miscreants</item>
 
+        <item>Colorado Comets</item>
+        <item>Yellowstone Yellers</item>
+        <item>Utah Ululants</item>
+        <item>Denver Dopes</item>
+        <item>Albuquerque Albinos</item>
+        <item>Salt Lake Lakers</item>
+        <item>Wyoming Winners</item>
+        <item>Montana Mopers</item>
+        <item>Las Vegas Legends</item>
+        <item>Phoenix Pterodactyls</item>
+
         <item>New York Nightcrawlers</item>
         <item>Jersey Jerks</item>
         <item>Maine Meerkats</item>
@@ -46,17 +57,6 @@
         <item>Pittsburgh People</item>
         <item>Vermont Voles</item>
         <item>Delaware Deer</item>
-
-        <item>Oklahoma Oranges</item>
-        <item>Texas Tiggers</item>
-        <item>Houston Howlers</item>
-        <item>Dallas Denizens</item>
-        <item>Nebraska Nitrides</item>
-        <item>Austin Aborigines</item>
-        <item>El Paso Pesos</item>
-        <item>Missouri Moonmen</item>
-        <item>Tulsa Timbers</item>
-        <item>Omaha Eulers</item>
 
         <item>California Curlers</item>
         <item>Oregon Ossifiers</item>
@@ -69,16 +69,16 @@
         <item>San Diego Dudes</item>
         <item>Sacramento Sellouts</item>
 
-        <item>Colorado Comets</item>
-        <item>Yellowstone Yellers</item>
-        <item>Utah Ululants</item>
-        <item>Denver Dopes</item>
-        <item>Albuquerque Albinos</item>
-        <item>Salt Lake Lakers</item>
-        <item>Wyoming Winners</item>
-        <item>Montana Mopers</item>
-        <item>Las Vegas Legends</item>
-        <item>Phoenix Pterodactyls</item>
+        <item>Alabama Alligators</item>
+        <item>Georgia Giants</item>
+        <item>Florida Phlogistons</item>
+        <item>Tennessee Titans</item>
+        <item>Atlanta Aliens</item>
+        <item>New Orleans Newcomers</item>
+        <item>Arkansas Ants</item>
+        <item>Louisiana Lizards</item>
+        <item>Key West Limes</item>
+        <item>Kentucky Kings</item>
     </string-array>
         <string name="league_player_names">
         Tim,
