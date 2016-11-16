@@ -5,6 +5,7 @@ import android.app.FragmentTransaction;
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.database.sqlite.SQLiteDatabase;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.AlertDialog;
@@ -35,6 +36,7 @@ import io.coachapps.collegebasketballcoach.adapters.RecruitsListArrayAdapter;
 import io.coachapps.collegebasketballcoach.adapters.StrengthWeaknessListArrayAdapter;
 import io.coachapps.collegebasketballcoach.basketballsim.Player;
 import io.coachapps.collegebasketballcoach.basketballsim.PlayerGen;
+import io.coachapps.collegebasketballcoach.db.DbHelper;
 import io.coachapps.collegebasketballcoach.db.PlayerDao;
 import io.coachapps.collegebasketballcoach.models.PlayerModel;
 import io.coachapps.collegebasketballcoach.util.DataDisplayer;
@@ -597,23 +599,30 @@ public class RecruitingActivity extends AppCompatActivity {
             }
         }
 
-        for (TeamPlayerCommitment c : commitments) {
-            // Don't save players til after recruiting
-            if (c.player == null) {
-                System.out.println("commitment has null player: " + c.team.getName());
-            } else {
-                playerImprovementMap.put(c.player, 0);
-                playerDao.save(new PlayerModel(c.player, c.team.getName()));
+        SQLiteDatabase db = DbHelper.getInstance(this).getReadableDatabase();
+        db.beginTransaction();
+        try {
+            for (TeamPlayerCommitment c : commitments) {
+                // Don't save players til after recruiting
+                if (c.player == null) {
+                    System.out.println("commitment has null player: " + c.team.getName());
+                } else {
+                    playerImprovementMap.put(c.player, 0);
+                    playerDao.save(new PlayerModel(c.player, c.team.getName()));
+                }
             }
-        }
 
-        for (Player p : existingPlayers) {
-            int oldOverall = p.getOverall();
-            PlayerGen.advanceYearRatings(p.ratings);
-            p.updateOverall();
-            int newOverall = p.getOverall();
-            playerImprovementMap.put(p, newOverall - oldOverall);
-            playerDao.updatePlayer(new PlayerModel(p, existingPlayersTeamMap.get(p).getName()));
+            for (Player p : existingPlayers) {
+                int oldOverall = p.getOverall();
+                PlayerGen.advanceYearRatings(p.ratings);
+                p.updateOverall();
+                int newOverall = p.getOverall();
+                playerImprovementMap.put(p, newOverall - oldOverall);
+                playerDao.updatePlayer(new PlayerModel(p, existingPlayersTeamMap.get(p).getName()));
+            }
+            db.setTransactionSuccessful();
+        } finally {
+            db.endTransaction();
         }
     }
 

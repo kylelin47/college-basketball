@@ -213,17 +213,18 @@ public class Simulator {
         double intelMidT = shooter.getMidT();
         int mismMid = shooter.getMidS() - (int)( (float)defender.getOutD()/2 + (float)defender.getIntD()/2 );
         if ( Math.abs(mismMid) > 30 ) {
-            intelMidT += (int)((float)mismMid / 8);
+            intelMidT += (double)mismMid / 300;
         }
         int mismOut = shooter.getOutS() - defender.getOutD();
         if ( Math.abs(mismOut) > 30 ) {
-            intelOutT += (int)((float)mismOut / 8);
+            intelOutT += (double)mismOut / 300;
         }
 
         if ( selShot < intelOutT && intelOutT >= 0 && shooter.getOutS() > 50 ) {
             //3 point shot
             double chance = 22 + (float)shooter.getOutS()/3 + assBonus - (float)defender.getOutD()/6 +
                     offense.getOffStrat().getOutsideBonus() - defense.getDefStrat().getOutsideBonus();
+            chance = chance * ((double)shooter.getOutS()/100);
             if ( chance > Math.random()*100 ) {
                 //made the shot!
                 addToLog(gameLog, getCommentary3ptMake(shooter, defender));
