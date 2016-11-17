@@ -193,7 +193,7 @@ public class MainActivity extends AppCompatActivity {
 
         // Sim games
         bballSim = new Simulator(MainActivity.this);
-        LeagueEvents.scheduleSeason(teamList, this, getYear());
+        LeagueEvents.scheduleSeason(league, this, getYear());
         tryToScheduleConferenceTournament();
         // Set up UI components
         currTeamTextView = (TextView) findViewById(R.id.currentTeamText);

@@ -10,6 +10,7 @@ import java.util.List;
 import java.util.Random;
 
 import io.coachapps.collegebasketballcoach.basketballsim.Game;
+import io.coachapps.collegebasketballcoach.basketballsim.League;
 import io.coachapps.collegebasketballcoach.basketballsim.Player;
 import io.coachapps.collegebasketballcoach.basketballsim.Simulator;
 import io.coachapps.collegebasketballcoach.basketballsim.Team;
@@ -28,22 +29,40 @@ import io.coachapps.collegebasketballcoach.models.Stats;
  */
 
 public class LeagueEvents {
-    public static void scheduleSeason(List<Team> teams, Context context, int year) {
-        List<Team> shuffledTeams = new ArrayList<>(teams);
-        Collections.shuffle(shuffledTeams, new Random(year));
-        int robinRounds = shuffledTeams.size() - 1;
-        int halfRobin = shuffledTeams.size()/2;
+    public static void scheduleSeason(League league, Context context, int year) {
+        int hash = league.getPlayerTeam().getName().hashCode();
         GameDao gameDao = new GameDao(context);
+        Random random = new Random(year + hash);
+        for (League.Conference conference : league.getConferences()) {
+            List<Team> shuffledTeams = new ArrayList<>(league.getConference(conference));
+            Collections.shuffle(shuffledTeams, random);
+            halfRobinScheduling(shuffledTeams, year, gameDao, false);
+            halfRobinScheduling(shuffledTeams, year, gameDao, true);
+            for (Team team : shuffledTeams) {
+                Collections.shuffle(team.gameSchedule, new Random(year));
+            }
+        }
+    }
+
+    private static void halfRobinScheduling(List<Team> teams, int year, GameDao gameDao, boolean
+            swapHomeAndAway) {
+        int robinRounds = teams.size() - 1;
+        int halfRobin = teams.size()/2;
         for (int r = 0; r < robinRounds; ++r) {
             for (int g = 0; g < halfRobin; ++g) {
-                Team home = shuffledTeams.get((r + g) % robinRounds);
+                Team home = teams.get((r + g) % robinRounds);
                 Team away;
                 if ( g == 0 ) {
-                    away = shuffledTeams.get(robinRounds);
+                    away = teams.get(robinRounds);
                 } else {
-                    away = shuffledTeams.get((robinRounds - g + r) % robinRounds);
+                    away = teams.get((robinRounds - g + r) % robinRounds);
                 }
-               scheduleGame(home, away, year, gameDao, Game.GameType.REGULAR_SEASON);
+                if (swapHomeAndAway) {
+                    Team temp = home;
+                    home = away;
+                    away = temp;
+                }
+                scheduleGame(home, away, year, gameDao, Game.GameType.REGULAR_SEASON);
             }
         }
     }
