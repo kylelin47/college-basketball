@@ -31,6 +31,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import io.coachapps.collegebasketballcoach.adapters.GameScheduleListArrayAdapter;
 import io.coachapps.collegebasketballcoach.adapters.LeagueLeadersListArrayAdapter;
@@ -59,7 +60,7 @@ public class MainActivity extends AppCompatActivity {
     Team playerTeam;
     Simulator bballSim;
     League league;
-    List<Team> teamList;
+    List<Team> currentConferenceTeamList;
     HashMap<Integer, Player> playerMap;
     HashMap<Integer, Team> playerTeamMap;
     List<String> teamStrList;
@@ -83,6 +84,7 @@ public class MainActivity extends AppCompatActivity {
     Button playGameButton;
     int lastSelectedTeamPosition = 0;
     volatile boolean canSimWeek = true;
+    AtomicBoolean selectOutOfConferenceTeam = new AtomicBoolean(false);
 
     boolean doneWithSeason = false;
 
@@ -131,12 +133,12 @@ public class MainActivity extends AppCompatActivity {
         final TeamDao teamDao = new TeamDao(this);
         try {
             league = new League(teamDao.getAllTeams(getYear()));
-            teamList = league.getPlayerConference();
+            currentConferenceTeamList = league.getPlayerConference();
         } catch (IOException | ClassNotFoundException e) {
             Log.e("MainActivity", "Could not retrieve teams", e);
             // PROBABLY JUST CRASH
         }
-        if (teamList == null) {
+        if (currentConferenceTeamList == null) {
             final PlayerGen playerGen = new PlayerGen
                     (getString(R.string.league_player_names),
                     getString(R.string.league_last_names), 2016);
@@ -164,7 +166,7 @@ public class MainActivity extends AppCompatActivity {
                     if (playerTeamName.length() >= 3) {
                         dialog.getButton(DialogInterface.BUTTON_POSITIVE).setEnabled(false);
                         league = new League(playerTeamName, MainActivity.this, playerGen);
-                        teamList = league.getPlayerConference();
+                        currentConferenceTeamList = league.getPlayerConference();
                         setEverythingUp();
                         teamDao.saveTeams(league.getAllTeams(), playerTeamName);
                         playerTeam.sortPlayersOvrPosition();
@@ -255,7 +257,7 @@ public class MainActivity extends AppCompatActivity {
                 new AdapterView.OnItemSelectedListener() {
                     public void onItemSelected(
                             AdapterView<?> parent, View view, int position, long id) {
-                        onTeamSpinnerSelection(teamList.get(position));
+                        onTeamSpinnerSelection(currentConferenceTeamList.get(position));
                         lastSelectedTeamPosition = position;
                     }
 
@@ -272,13 +274,17 @@ public class MainActivity extends AppCompatActivity {
         conferenceSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
-                teamList = league.getConference(league.getConferences().get(i));
+                currentConferenceTeamList = league.getConference(league.getConferences().get(i));
                 populateTeamStrList();
                 dataAdapterTeam.notifyDataSetChanged();
-                if (lastSelectedTeamPosition == 0) {
-                    onTeamSpinnerSelection(teamList.get(0));
+                if (selectOutOfConferenceTeam.getAndSet(false)) {
+                    teamSpinner.setSelection(lastSelectedTeamPosition);
                 } else {
-                    examineTeam(teamList.get(0).name);
+                    if (lastSelectedTeamPosition == 0) {
+                        onTeamSpinnerSelection(currentConferenceTeamList.get(0));
+                    } else {
+                        teamSpinner.setSelection(0);
+                    }
                 }
             }
 
@@ -343,20 +349,32 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void examineTeam(String teamName) {
-        int teamIndex = 0;
-        for (int i = 0; i < teamList.size(); ++i) {
-            if (teamList.get(i).getName().equals(teamName)) {
+        int teamIndex = findIndex(currentConferenceTeamList, teamName);
+        if (teamIndex == -1) {
+            selectOutOfConferenceTeam.set(true);
+            League.Conference conference = league.getTeamConference(teamName);
+            lastSelectedTeamPosition = findIndex(league.getConference(conference), teamName);
+            conferenceSpinner.setSelection(league.getConferences().indexOf(conference));
+        } else {
+            teamSpinner.setSelection(teamIndex);
+        }
+    }
+
+    private int findIndex(List<Team> teams, String teamName) {
+        int teamIndex = -1;
+        for (int i = 0; i < teams.size(); ++i) {
+            if (teams.get(i).getName().equals(teamName)) {
                 teamIndex = i;
                 break;
             }
         }
-        teamSpinner.setSelection(teamIndex);
+        return teamIndex;
     }
 
     public void populateMaps() {
         playerMap = new HashMap<>();
         playerTeamMap = new HashMap<>();
-        for (Team t : teamList) {
+        for (Team t : league.getAllTeams()) {
             for (Player p : t.players) {
                 playerMap.put(p.getId(), p);
                 playerTeamMap.put(p.getId(), t);
@@ -378,7 +396,7 @@ public class MainActivity extends AppCompatActivity {
     public void updateUI() {
         rosterListAdapter.notifyDataSetChanged();
         statsListAdapter = new TeamStatsListArrayAdapter(MainActivity.this,
-                DataDisplayer.getTeamStatsCSVs(teamList.get(lastSelectedTeamPosition).getName(),
+                DataDisplayer.getTeamStatsCSVs(currentConferenceTeamList.get(lastSelectedTeamPosition).getName(),
                         this, getYear()), false);
         statsList.setAdapter(statsListAdapter);
         gameListAdapter.notifyDataSetChanged();
@@ -411,7 +429,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void playNextUserGame() {
-        int currGame = LeagueEvents.determineLastUnplayedRegularSeasonWeek(teamList);
+        int currGame = LeagueEvents.determineLastUnplayedRegularSeasonWeek(league.getAllTeams());
         if (currGame != Integer.MAX_VALUE) {
             System.out.println("currGame = " + currGame);
             Game userGame = playerTeam.gameSchedule.get(currGame);
@@ -428,19 +446,10 @@ public class MainActivity extends AppCompatActivity {
 
     private void populateTeamStrList() {
         teamStrList.clear();
-        for (int i = 0; i < teamList.size(); i++) {
-            teamStrList.add( teamList.get(i).prestige +
-                    " (" + teamList.get(i).wins + "-" + teamList.get(i).losses + ")" +
-                            " " + teamList.get(i).getName());
-        }
-    }
-
-    public void updateAllPlayerRatings() {
-        PlayerDao pd = new PlayerDao(this);
-        for (Team t : teamList) {
-            for (Player p : t.players) {
-                pd.updatePlayerRatings(p.getId(), p.ratings);
-            }
+        for (int i = 0; i < currentConferenceTeamList.size(); i++) {
+            teamStrList.add( currentConferenceTeamList.get(i).prestige +
+                    " (" + currentConferenceTeamList.get(i).wins + "-" + currentConferenceTeamList.get(i).losses + ")" +
+                            " " + currentConferenceTeamList.get(i).getName());
         }
     }
 
@@ -622,23 +631,6 @@ public class MainActivity extends AppCompatActivity {
         FragmentTransaction ft = getFragmentManager().beginTransaction();
         DialogFragment newFragment = SetLineupFragment.newInstance(playerTeam.name);
         newFragment.show(ft, "lineup dialog");
-
-        /*
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setView(getLayoutInflater().inflate(R.layout.simple_list, null));
-        builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                dialog.dismiss();
-            }
-        });
-        builder.setTitle("Set Lineup");
-        final AlertDialog dialog = builder.create();
-        dialog.show();
-
-        ListView listView = (ListView) dialog.findViewById(R.id.listView);
-        listView.setAdapter(new SetLineupListArrayAdapter(this, playerTeam.players));
-        */
     }
 
     public void showLeagueLeadersDialog() {
@@ -713,7 +705,7 @@ public class MainActivity extends AppCompatActivity {
         @Override
         protected Void doInBackground(Boolean... simPlayerGame) {
             boolean spg = simPlayerGame[0];
-            LeagueEvents.playRegularSeasonGame(teamList, bballSim, spg, playerTeam.name);
+            LeagueEvents.playRegularSeasonGame(league.getAllTeams(), bballSim, spg, playerTeam.name);
             LeagueEvents.playTournamentRound(tournamentGames, bballSim, spg, playerTeam.name);
             return null;
         }
@@ -728,8 +720,8 @@ public class MainActivity extends AppCompatActivity {
     }
     public void tryToScheduleConferenceTournament() {
         if (!hasScheduledConferenceTournament && LeagueEvents
-                .determineLastUnplayedRegularSeasonWeek(teamList) == Integer.MAX_VALUE) {
-            tournamentGames = LeagueEvents.scheduleConferenceTournament(teamList, MainActivity
+                .determineLastUnplayedRegularSeasonWeek(league.getAllTeams()) == Integer.MAX_VALUE) {
+            tournamentGames = LeagueEvents.scheduleConferenceTournament(currentConferenceTeamList, MainActivity
                     .this);
             hasScheduledConferenceTournament = true;
         }

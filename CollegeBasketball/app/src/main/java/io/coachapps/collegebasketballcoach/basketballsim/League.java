@@ -1,6 +1,7 @@
 package io.coachapps.collegebasketballcoach.basketballsim;
 
 import android.content.Context;
+import android.util.Log;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -10,6 +11,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
+import java.util.Set;
 
 import io.coachapps.collegebasketballcoach.R;
 
@@ -35,6 +37,7 @@ public class League {
     private Team playerTeam;
     private List<String> orderedConferenceNames;
     private List<Conference> orderedConferences;
+    private List<Team> allTeams;
 
     public League(String playerTeamName, Context context, PlayerGen playerGen) {
         String[] teamNames = context.getResources().getStringArray(R.array.team_names);
@@ -85,10 +88,25 @@ public class League {
         return playerTeam;
     }
 
+    public Conference getTeamConference(String teamName) {
+        Set<Map.Entry<Conference, List<Team>>> entrySet = league.entrySet();
+        for (Map.Entry<Conference, List<Team>> entry : entrySet) {
+            for (Team team : entry.getValue()) {
+                if (team.getName().equals(teamName)) {
+                    return entry.getKey();
+                }
+            }
+        }
+        Log.e("League", "Could not find team with name " + teamName);
+        return null;
+    }
+
     public List<Team> getAllTeams() {
-        List<Team> allTeams = new ArrayList<>();
-        for (List<Team> teamsInConference : league.values()) {
-            allTeams.addAll(teamsInConference);
+        if (allTeams == null) {
+            allTeams = new ArrayList<>();
+            for (List<Team> teamsInConference : league.values()) {
+                allTeams.addAll(teamsInConference);
+            }
         }
         return allTeams;
     }

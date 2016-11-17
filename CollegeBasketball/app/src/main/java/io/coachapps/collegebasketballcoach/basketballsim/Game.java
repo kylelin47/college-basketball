@@ -1,7 +1,5 @@
 package io.coachapps.collegebasketballcoach.basketballsim;
 
-import android.util.Log;
-
 import io.coachapps.collegebasketballcoach.models.FullGameResults;
 import io.coachapps.collegebasketballcoach.models.GameModel;
 
@@ -49,6 +47,12 @@ public class Game {
     public Game(Team home, Team away, GameModel gameModel) {
         this.home = home;
         this.away = away;
+        apply(gameModel);
+
+    }
+
+    public void apply(GameModel gameModel) {
+        if (gameModel == null) return;
         this.year = gameModel.year;
         this.homeScore = gameModel.homeStats.points;
         this.awayScore = gameModel.awayStats.points;
@@ -56,9 +60,6 @@ public class Game {
     }
 
     public void schedule(int week, GameType gameType) {
-        if (getHome().gameSchedule.size() != getAway().gameSchedule.size()) {
-            Log.e("Game", "Tried to schedule games with teams with uneven schedules");
-        }
         this.gameType = gameType;
         getHome().gameSchedule.add(week, this);
         getAway().gameSchedule.add(week, this);

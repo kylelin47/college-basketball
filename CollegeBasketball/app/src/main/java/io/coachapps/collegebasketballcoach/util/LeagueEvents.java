@@ -29,17 +29,80 @@ import io.coachapps.collegebasketballcoach.models.Stats;
  */
 
 public class LeagueEvents {
+    //bit of a lie
+    private static final List<Integer> OUT_OF_CONFERENCE_WEEKS = Arrays.asList(3, 5, 7, 9, 11, 13,
+            15, 17, 19, 21);
+
     public static void scheduleSeason(League league, Context context, int year) {
-        int hash = league.getPlayerTeam().getName().hashCode();
         GameDao gameDao = new GameDao(context);
-        Random random = new Random(year + hash);
+        int seed = league.getPlayerTeam().getName().hashCode() + year;
+        Random random = new Random(seed);
         for (League.Conference conference : league.getConferences()) {
             List<Team> shuffledTeams = new ArrayList<>(league.getConference(conference));
             Collections.shuffle(shuffledTeams, random);
             halfRobinScheduling(shuffledTeams, year, gameDao, false);
             halfRobinScheduling(shuffledTeams, year, gameDao, true);
             for (Team team : shuffledTeams) {
-                Collections.shuffle(team.gameSchedule, new Random(year));
+                Collections.shuffle(team.gameSchedule, new Random(seed));
+            }
+            for (Team team : shuffledTeams) {
+                for (Game game : team.gameSchedule) {
+                    if (!game.hasPlayed()) {
+                        GameModel gameModel = gameDao.getGame(year, game.getWeek(), game.getHome().getName(),
+                                game.getAway().getName());
+                        if (gameModel == null) break;
+                        game.apply(gameModel);
+                    }
+                }
+            }
+        }
+        scheduleOutOfConference(league, year, gameDao, random);
+    }
+
+    private static void scheduleOutOfConference(League league, int year, GameDao gameDao, Random
+            random) {
+        List<League.Conference> conferences = league.getConferences();
+        List<List<Team>> shuffledTeams = new ArrayList<>(conferences.size());
+        for (League.Conference conference : conferences) {
+            List<Team> teams = new ArrayList<>(league.getConference(conference));
+            Collections.shuffle(teams, random);
+            shuffledTeams.add(teams);
+        }
+        int robinRounds = conferences.size() - 1;
+        int halfRobin = conferences.size()/2;
+        int week = 0;
+        for (int r = 0; r < robinRounds; ++r) {
+            for (int g = 0; g < halfRobin; ++g) {
+                List<Team> conferenceA = shuffledTeams.get((r + g) % robinRounds);
+                List<Team> conferenceB;
+                if ( g == 0 ) {
+                    conferenceB = shuffledTeams.get(robinRounds);
+                } else {
+                    conferenceB = shuffledTeams.get((robinRounds - g + r) % robinRounds);
+                }
+                scheduleOutOfConference(conferenceA, conferenceB, year, gameDao, week);
+            }
+            week+=2;
+        }
+    }
+
+    private static void scheduleOutOfConference(List<Team> conferenceA, List<Team> conferenceB,
+                                                int year, GameDao gameDao, int weekIndex) {
+        boolean home = true;
+        for (int i = 0; i < conferenceA.size(); i++) {
+            for (int j = 0; j < 2; j++) {
+                Team otherTeam = conferenceB.get(i - i % 2 + j);
+                Team homeTeam = home ? conferenceA.get(i) : otherTeam;
+                Team awayTeam = home ? otherTeam : conferenceA.get(i);
+                home = !home;
+                int week;
+                if (i % 2 == 1) {
+                    week = OUT_OF_CONFERENCE_WEEKS.get(weekIndex + ((j + 1) % 2));
+                } else {
+                    week = OUT_OF_CONFERENCE_WEEKS.get(weekIndex + j);
+                }
+                scheduleGame(homeTeam, awayTeam, year, gameDao, Game.GameType.REGULAR_SEASON,
+                        week, true);
             }
         }
     }
@@ -62,23 +125,25 @@ public class LeagueEvents {
                     home = away;
                     away = temp;
                 }
-                scheduleGame(home, away, year, gameDao, Game.GameType.REGULAR_SEASON);
+                scheduleGame(home, away, year, gameDao, Game.GameType.REGULAR_SEASON, false);
             }
         }
     }
 
-    static Game scheduleGame(Team home, Team away, int year, GameDao gameDao, Game.GameType gameType) {
-        int week = home.gameSchedule.size();
+    static Game scheduleGame(Team home, Team away, int year, GameDao gameDao, Game.GameType
+            gameType, boolean retrievePast) {
+        return scheduleGame(home, away, year, gameDao, gameType, home.gameSchedule.size(), retrievePast);
+    }
+
+    private static Game scheduleGame(Team home, Team away, int year, GameDao gameDao, Game.GameType
+            gameType, int week, boolean retrievePast) {
         GameModel gameModel = null;
-        if (home.gameSchedule.size() == 0 || home.gameSchedule.get(week - 1).hasPlayed()) {
+        if (retrievePast && (home.gameSchedule.size() == 0 || home.gameSchedule.get(week - 1)
+                .hasPlayed())) {
             gameModel = gameDao.getGame(year, week, home.getName(), away.getName());
         }
-        Game gameToSchedule;
-        if (gameModel == null) {
-            gameToSchedule = new Game(home, away, year);
-        } else {
-            gameToSchedule = new Game(home, away, gameModel);
-        }
+        Game gameToSchedule = new Game(home, away, year);
+        gameToSchedule.apply(gameModel);
         gameToSchedule.schedule(week, gameType);
         return gameToSchedule;
     }
