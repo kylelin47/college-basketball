@@ -183,7 +183,7 @@
             android:weightSum="3">
             <RelativeLayout
                 android:layout_weight="1"
-                android:id="@+id/fgaButton"
+                android:id="@+id/fgmButton"
                 style="@style/Widget.AppCompat.Button"
                 android:gravity="center">
                 <TextView
@@ -210,7 +210,7 @@
             </RelativeLayout>
             <RelativeLayout
                 android:layout_weight="1"
-                android:id="@+id/fgmButton"
+                android:id="@+id/fgaButton"
                 style="@style/Widget.AppCompat.Button"
                 android:gravity="center">
                 <TextView
@@ -268,92 +268,7 @@
             android:weightSum="3">
             <RelativeLayout
                 android:layout_weight="1"
-                android:id="@+id/ftaButton"
-                style="@style/Widget.AppCompat.Button"
-                android:gravity="center">
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginEnd="3dp"
-                    android:text="27.7"
-                    android:textColor="#000"
-                    android:textSize="25sp"
-                    android:textStyle="bold"
-                    android:layout_centerVertical="true"
-                    android:id="@+id/ftm"
-                    />
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="FTM"
-                    android:textColor="#999"
-                    android:textSize="15sp"
-                    android:textStyle="bold"
-                    android:id="@+id/ftmLabel"
-                    android:layout_centerVertical="true"
-                    android:layout_toEndOf="@+id/ftm" />
-            </RelativeLayout>
-            <RelativeLayout
-                android:layout_weight="1"
-                android:id="@+id/ftmButton"
-                style="@style/Widget.AppCompat.Button"
-                android:gravity="center">
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginEnd="3dp"
-                    android:text="27.7"
-                    android:textColor="#000"
-                    android:textSize="25sp"
-                    android:textStyle="bold"
-                    android:layout_centerVertical="true"
-                    android:id="@+id/fta"
-                    />
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="FTA"
-                    android:textColor="#999"
-                    android:textSize="15sp"
-                    android:textStyle="bold"
-                    android:id="@+id/ftaLabel"
-                    android:layout_centerVertical="true"
-                    android:layout_toEndOf="@+id/fta" />
-            </RelativeLayout>
-            <RelativeLayout
-                android:layout_weight="1"
-                android:id="@+id/ftPercentButton"
-                style="@style/Widget.AppCompat.Button"
-                android:gravity="center">
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginEnd="3dp"
-                    android:text="27.7"
-                    android:textColor="#000"
-                    android:textSize="25sp"
-                    android:textStyle="bold"
-                    android:layout_centerVertical="true"
-                    android:id="@+id/ftPercent"
-                    />
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="FT%"
-                    android:textColor="#999"
-                    android:textSize="15sp"
-                    android:textStyle="bold"
-                    android:id="@+id/ftPercentLabel"
-                    android:layout_centerVertical="true"
-                    android:layout_toEndOf="@+id/ftPercent" />
-            </RelativeLayout>
-        </TableRow>
-        <TableRow
-            android:layout_width="match_parent"
-            android:weightSum="3">
-            <RelativeLayout
-                android:layout_weight="1"
-                android:id="@+id/threePAButton"
+                android:id="@+id/threePMButton"
                 style="@style/Widget.AppCompat.Button"
                 android:gravity="center">
                 <TextView
@@ -380,7 +295,7 @@
             </RelativeLayout>
             <RelativeLayout
                 android:layout_weight="1"
-                android:id="@+id/threePMButton"
+                android:id="@+id/threePAButton"
                 style="@style/Widget.AppCompat.Button"
                 android:gravity="center">
                 <TextView
@@ -431,6 +346,91 @@
                     android:id="@+id/threePercentLabel"
                     android:layout_centerVertical="true"
                     android:layout_toEndOf="@+id/threePercent" />
+            </RelativeLayout>
+        </TableRow>
+        <TableRow
+            android:layout_width="match_parent"
+            android:weightSum="3">
+            <RelativeLayout
+                android:layout_weight="1"
+                android:id="@+id/ftmButton"
+                style="@style/Widget.AppCompat.Button"
+                android:gravity="center">
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="3dp"
+                    android:text="27.7"
+                    android:textColor="#000"
+                    android:textSize="25sp"
+                    android:textStyle="bold"
+                    android:layout_centerVertical="true"
+                    android:id="@+id/ftm"
+                    />
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="FTM"
+                    android:textColor="#999"
+                    android:textSize="15sp"
+                    android:textStyle="bold"
+                    android:id="@+id/ftmLabel"
+                    android:layout_centerVertical="true"
+                    android:layout_toEndOf="@+id/ftm" />
+            </RelativeLayout>
+            <RelativeLayout
+                android:layout_weight="1"
+                android:id="@+id/ftaButton"
+                style="@style/Widget.AppCompat.Button"
+                android:gravity="center">
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="3dp"
+                    android:text="27.7"
+                    android:textColor="#000"
+                    android:textSize="25sp"
+                    android:textStyle="bold"
+                    android:layout_centerVertical="true"
+                    android:id="@+id/fta"
+                    />
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="FTA"
+                    android:textColor="#999"
+                    android:textSize="15sp"
+                    android:textStyle="bold"
+                    android:id="@+id/ftaLabel"
+                    android:layout_centerVertical="true"
+                    android:layout_toEndOf="@+id/fta" />
+            </RelativeLayout>
+            <RelativeLayout
+                android:layout_weight="1"
+                android:id="@+id/ftPercentButton"
+                style="@style/Widget.AppCompat.Button"
+                android:gravity="center">
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="3dp"
+                    android:text="27.7"
+                    android:textColor="#000"
+                    android:textSize="25sp"
+                    android:textStyle="bold"
+                    android:layout_centerVertical="true"
+                    android:id="@+id/ftPercent"
+                    />
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="FT%"
+                    android:textColor="#999"
+                    android:textSize="15sp"
+                    android:textStyle="bold"
+                    android:id="@+id/ftPercentLabel"
+                    android:layout_centerVertical="true"
+                    android:layout_toEndOf="@+id/ftPercent" />
             </RelativeLayout>
         </TableRow>
         <TableRow

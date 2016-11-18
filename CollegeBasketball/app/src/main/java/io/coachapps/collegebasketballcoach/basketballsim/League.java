@@ -1,6 +1,7 @@
 package io.coachapps.collegebasketballcoach.basketballsim;
 
 import android.content.Context;
+import android.support.annotation.ArrayRes;
 import android.util.Log;
 
 import java.util.ArrayList;
@@ -14,6 +15,8 @@ import java.util.Random;
 import java.util.Set;
 
 import io.coachapps.collegebasketballcoach.R;
+import io.coachapps.collegebasketballcoach.db.YearlyTeamStatsDao;
+import io.coachapps.collegebasketballcoach.models.YearlyTeamStats;
 
 public class League {
     public enum Conference {
@@ -145,7 +148,67 @@ public class League {
         }
     }
 
-    public void assignPollRanks() {
+    public Team getTeam(String teamName) {
+        for (Team t : getAllTeams()) {
+            if (t.getName().equals(teamName)) return t;
+        }
+        Log.e("League", "Could not find team with that name!");
+        return null;
+    }
 
+    public int getPrestigeRank(String teamName) {
+        Team t = getTeam(teamName);
+        if (t != null) {
+            List<Team> sortedTeamList = new ArrayList<>();
+            sortedTeamList.addAll(getAllTeams());
+            Collections.sort(sortedTeamList, new Comparator<Team>() {
+                @Override
+                public int compare(Team a, Team b) {
+                    return b.prestige - a.prestige;
+                }
+            });
+            for (int i = 0; i < sortedTeamList.size(); ++i) {
+                if (sortedTeamList.get(i).getName().equals(teamName)) return i+1;
+            }
+        }
+        return -1;
+    }
+
+    public void assignPollRanks(List<YearlyTeamStats> currentTeamStats) {
+        HashMap<String, Team> nameMap = new HashMap<>();
+        List<Team> sortedTeamList = new ArrayList<>();
+        for (Team t : getAllTeams()) {
+            nameMap.put(t.getName(), t);
+            sortedTeamList.add(t);
+        }
+
+        int WIN_WEIGHT = 200;
+        int DIFF_WEIGHT = 5;
+        int TALENT_WEIGHT = 10;
+        int PRESTIGE_WEIGHT = 10;
+        for (YearlyTeamStats s : currentTeamStats) {
+            Team t = nameMap.get(s.team);
+            t.pollScore =
+                    t.wins * WIN_WEIGHT +
+                            (s.points - s.opp_points) * DIFF_WEIGHT +
+                            t.getTalent() * TALENT_WEIGHT +
+                            t.prestige * PRESTIGE_WEIGHT;
+        }
+
+        Collections.sort(sortedTeamList, new Comparator<Team>() {
+            @Override
+            public int compare(Team a, Team b) {
+                return b.pollScore - a.pollScore;
+            }
+        });
+        for (int i = 0; i < sortedTeamList.size(); ++i) {
+            sortedTeamList.get(i).pollRank = i+1;
+        }
+    }
+
+    public void assignPollRanks(Context context, int year) {
+        YearlyTeamStatsDao yearlyTeamStatsDao = new YearlyTeamStatsDao(context);
+        List<YearlyTeamStats> currentTeamStats = yearlyTeamStatsDao.getTeamStatsOfYear(year);
+        assignPollRanks(currentTeamStats);
     }
 }

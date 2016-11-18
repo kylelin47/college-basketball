@@ -24,6 +24,7 @@ public class Team {
     public String name;
     private boolean isUserTeam;
     public int prestige;
+    public int pollScore;
     public int pollRank;
     public boolean[] startersIn;
 
@@ -89,6 +90,10 @@ public class Team {
         } catch (Exception e) {
             // uh
         }
+    }
+
+    public String getRankNameWLStr() {
+        return "#" + pollRank + " " + name + " (" + wins + "-" + losses + ")";
     }
 
     /**
@@ -326,6 +331,15 @@ public class Team {
             sum[2] = "@ " + gm.getHome().getAbbr();
         }
         return sum;
+    }
+
+    public int getTalent() {
+        int talent = 0;
+        for(int i = 0; i < Math.min(10, players.size()); ++i) {
+            talent += (int)(Math.pow(players.get(i).getOverall(),1.25));
+        }
+
+        return talent/(Math.min(10, players.size()));
     }
 
     public int getWeakestPosition() {

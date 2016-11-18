@@ -1,5 +1,7 @@
 package io.coachapps.collegebasketballcoach.models;
 
+import io.coachapps.collegebasketballcoach.util.DataDisplayer;
+
 public class YearlyTeamStats {
     public String team;
     public int year;
@@ -109,10 +111,14 @@ public class YearlyTeamStats {
                 return getPG(fgm);
             case "FGAPG":
                 return getPG(fga);
+            case "FG%":
+                return (float)(DataDisplayer.round(getFGP()*100, 2));
             case "3FGMPG":
                 return getPG(threePM);
             case "3FGAPG":
                 return getPG(threePA);
+            case "3FG%":
+                return (float)(DataDisplayer.round(get3FGP()*100, 2));
             case "FTMPG":
                 return getPG(ftm);
             case "FTAPG":
@@ -133,10 +139,14 @@ public class YearlyTeamStats {
                 return getPG(opp_fgm);
             case "OFGAPG":
                 return getPG(opp_fga);
+            case "OFG%":
+                return (float)(DataDisplayer.round(getOFGP()*100, 2));
             case "O3FGMPG":
                 return getPG(opp_threePM);
             case "O3FGAPG":
                 return getPG(opp_threePA);
+            case "O3FG%":
+                return (float)(DataDisplayer.round(getO3FGP()*100, 2));
             case "OFTMPG":
                 return getPG(opp_ftm);
             case "OFTAPG":
@@ -154,6 +164,14 @@ public class YearlyTeamStats {
 
     public double get3FGP() {
         return (threePA == 0 ? 0 : (double)threePM/threePA);
+    }
+
+    public double getOFGP() {
+        return (opp_fga == 0 ? 0 : (double)opp_fgm/opp_fga);
+    }
+
+    public double getO3FGP() {
+        return (opp_threePA == 0 ? 0 : (double)opp_threePM/opp_threePA);
     }
 
     public String getFGPStr() {

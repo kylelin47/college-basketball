@@ -8,11 +8,17 @@ import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.List;
 
+import io.coachapps.collegebasketballcoach.adapters.LeagueLeadersListArrayAdapter;
+import io.coachapps.collegebasketballcoach.basketballsim.League;
+import io.coachapps.collegebasketballcoach.basketballsim.Team;
 import io.coachapps.collegebasketballcoach.db.YearlyTeamStatsDao;
 import io.coachapps.collegebasketballcoach.models.YearlyTeamStats;
 
@@ -92,7 +98,7 @@ public class DataDisplayer {
             return num + "th";
         }
     }
-    public static ArrayList<String> getTeamStatsCSVs(String teamName, Context context, int year) {
+    public static ArrayList<String> getTeamStatsCSVs(String teamName, League league, Context context, int year) {
         YearlyTeamStatsDao yearlyTeamStatsDao = new YearlyTeamStatsDao(context);
         List<YearlyTeamStats> currentTeamStats = yearlyTeamStatsDao.getTeamStatsOfYear(year);
         YearlyTeamStats statsOfSelectedTeam = null;
@@ -102,6 +108,7 @@ public class DataDisplayer {
                 break;
             }
         }
+        Team team = league.getTeam(teamName);
         ArrayList<String> teamStatsCSVs = new ArrayList<>();
         teamStatsCSVs.add(",,Rank");
         if (statsOfSelectedTeam == null)  {
@@ -125,6 +132,12 @@ public class DataDisplayer {
         }
         teamStatsCSVs.add(statsOfSelectedTeam.wins + " - " + statsOfSelectedTeam.losses + ",Wins " +
                 "- Losses," + getRankStr(highestIndex + 2));
+
+        if (team != null) {
+            teamStatsCSVs.add(team.pollScore + ",Poll Votes," + getRankStr(team.pollRank));
+            teamStatsCSVs.add(team.prestige + ",Prestige," + getRankStr(league.getPrestigeRank(teamName)));
+        }
+
 
         // This is disgusting
 
@@ -268,7 +281,7 @@ public class DataDisplayer {
         Collections.sort(currentTeamStats, new Comparator<YearlyTeamStats>() {
             @Override
             public int compare(YearlyTeamStats left, YearlyTeamStats right) {
-                return right.getFGP() < left.getFGP() ? 1 : left.getFGP() == right.getFGP() ? 0 : -1;
+                return right.getOFGP() < left.getOFGP() ? 1 : left.getOFGP() == right.getOFGP() ? 0 : -1;
             }
         });
         teamStatsCSVs.add(statsOfSelectedTeam.getOFGPStr() + "%,Opp Field Goal Percentage," +
@@ -297,13 +310,124 @@ public class DataDisplayer {
         Collections.sort(currentTeamStats, new Comparator<YearlyTeamStats>() {
             @Override
             public int compare(YearlyTeamStats left, YearlyTeamStats right) {
-                return right.get3FGP() < left.get3FGP() ? 1 : left.get3FGP() == right.get3FGP() ? 0 : -1;
+                return right.getO3FGP() < left.getO3FGP() ? 1 : left.getO3FGP() == right.getO3FGP() ? 0 : -1;
             }
         });
         teamStatsCSVs.add(statsOfSelectedTeam.getO3FGPStr() + "%,Opp 3 Point Percentage," +
                 getRankStr(currentTeamStats.indexOf(statsOfSelectedTeam) + 1));
 
         return teamStatsCSVs;
+    }
+
+    public static ArrayList<String> getTeamRankingsCSVs(League league, Context context, int year,
+                                    final String category, boolean higherIsBetter) {
+        YearlyTeamStatsDao yearlyTeamStatsDao = new YearlyTeamStatsDao(context);
+        List<YearlyTeamStats> currentTeamStats = yearlyTeamStatsDao.getTeamStatsOfYear(year);
+
+        HashMap<String, Team> nameMap = new HashMap<>();
+        List<Team> sortedTeamList = new ArrayList<>();
+        for (Team t : league.getAllTeams()) {
+            nameMap.put(t.getName(), t);
+            sortedTeamList.add(t);
+        }
+
+        if (higherIsBetter) {
+            Collections.sort(currentTeamStats, new Comparator<YearlyTeamStats>() {
+                @Override
+                public int compare(YearlyTeamStats a, YearlyTeamStats b) {
+                    return b.getPG(category) < a.getPG(category) ?
+                            -1 : a.getPG(category) == b.getPG(category) ? 0 : 1;
+                }
+            });
+        } else {
+            Collections.sort(currentTeamStats, new Comparator<YearlyTeamStats>() {
+                @Override
+                public int compare(YearlyTeamStats a, YearlyTeamStats b) {
+                    return b.getPG(category) < a.getPG(category) ?
+                            1 : a.getPG(category) == b.getPG(category) ? 0 : -1;
+                }
+            });
+        }
+
+        ArrayList<String> teamRankingsCSV = new ArrayList<>();
+        for (int i = 0; i < currentTeamStats.size(); ++i) {
+            teamRankingsCSV.add(getRankStr(i+1) + "," +
+                    nameMap.get(currentTeamStats.get(i).team).getRankNameWLStr() + "," +
+                    currentTeamStats.get(i).getPG(category));
+        }
+
+        return teamRankingsCSV;
+    }
+
+    public static String[] getAllCategories() {
+        return new String[]{
+            "PPG", "APG", "RPG", "SPG", "BPG", "TPG", "FGMPG", "FGAPG", "FG%",
+                    "3FGMPG", "3FGAPG", "3FG%", "FGAPG", "FTMPG", "FTAPG",
+            "OPPG", "OAPG", "ORPG", "OSPG", "OBPG", "OTPG", "OFGMPG", "OFGAPG", "OFG%",
+                    "O3FGMPG", "O3FGAPG", "O3FG%", "OFTMPG", "OFTAPG"};
+    }
+
+    public static String getDescriptionCategory(String cat) {
+        switch (cat) {
+            case "PPG":
+                return "Points Per Game";
+            case "APG":
+                return "Assists Per Game";
+            case "RPG":
+                return "Rebounds Per Game";
+            case "SPG":
+                return "Steals Per Game";
+            case "BPG":
+                return "Blocks Per Game";
+            case "TPG":
+                return "Turnovers Per Game";
+            case "FGMPG":
+                return "Field Goals Made Per Game";
+            case "FGAPG":
+                return "Field Goal Attempts Per Game";
+            case "FG%":
+                return "Field Goal Percentage";
+            case "3FGMPG":
+                return "3 Pointers Made Per Game";
+            case "3FGAPG":
+                return "3 Point Attempts Per Game";
+            case "3FG%":
+                return "3 Point Percentage";
+            case "FTMPG":
+                return "Free Throws Made Per Game";
+            case "FTAPG":
+                return "Free Throw Attempts Per Game";
+            case "OPPG":
+                return "Opp Points Per Game";
+            case "OAPG":
+                return "Opp Assists Per Game";
+            case "ORPG":
+                return "Opp Rebounds Per Game";
+            case "OSPG":
+                return "Opp Steals Per Game";
+            case "OBPG":
+                return "Opp Blocks Per Game";
+            case "OTPG":
+                return "Opp Turnovers Per Game";
+            case "OFGMPG":
+                return "Opp Field Goals Made Per Game";
+            case "OFGAPG":
+                return "Opp Field Goal Attempts Per Game";
+            case "OFG%":
+                return "Opp Field Goal Percentage";
+            case "O3FGMPG":
+                return "Opp 3 Pointers Made Per Game";
+            case "O3FGAPG":
+                return "Opp 3 Point Attempts Per Game";
+            case "O3FG%":
+                return "Opp 3 Point Percentage";
+            case "OFTMPG":
+                return "Opp Free Throws Made Per Game";
+            case "OFTAPG":
+                return "Opp Free Throw Attempts Per Game";
+            default:
+                return "ERROR";
+        }
     }
 
     public static void colorizeRatings(TextView textV) {
@@ -320,5 +444,13 @@ public class DataDisplayer {
         } else if (letter.equals("F") || letter.equals("F+")) {
             textV.setTextColor(Color.parseColor("#990000"));
         }
+    }
+
+    public static double round(double value, int places) {
+        if (places < 0) throw new IllegalArgumentException();
+
+        BigDecimal bd = new BigDecimal(value);
+        bd = bd.setScale(places, RoundingMode.HALF_UP);
+        return bd.doubleValue();
     }
 }
