@@ -74,9 +74,9 @@ public class Game {
         int homeWeek = home.gameSchedule.indexOf(this);
         int awayWeek = away.gameSchedule.indexOf(this);
         if (homeWeek < awayWeek) {
-            swap(home.gameSchedule, homeWeek, awayWeek);
-        } else if (awayWeek < homeWeek) {
             swap(away.gameSchedule, homeWeek, awayWeek);
+        } else if (awayWeek < homeWeek) {
+            swap(home.gameSchedule, homeWeek, awayWeek);
         }
     }
 
