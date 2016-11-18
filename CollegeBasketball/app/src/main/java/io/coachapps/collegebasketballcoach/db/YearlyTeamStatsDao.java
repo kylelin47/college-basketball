@@ -9,6 +9,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import io.coachapps.collegebasketballcoach.models.Stats;
+import io.coachapps.collegebasketballcoach.models.TeamStats;
 import io.coachapps.collegebasketballcoach.models.YearlyTeamStats;
 
 
@@ -18,7 +19,7 @@ public class YearlyTeamStatsDao {
         this.context = context;
     }
 
-    public void recordRelativeTeamRecord(String team, int year, int numWins, int numLosses, Stats stats) {
+    public void recordRelativeTeamRecord(String team, int year, int numWins, int numLosses, TeamStats stats) {
         SQLiteDatabase db = DbHelper.getInstance(context).getWritableDatabase();
         String[] projection = {
                 Schemas.YearlyTeamStatsEntry.WINS,
@@ -35,7 +36,19 @@ public class YearlyTeamStatsDao {
                 Schemas.YearlyTeamStatsEntry.THREEPM,
                 Schemas.YearlyTeamStatsEntry.THREEPA,
                 Schemas.YearlyTeamStatsEntry.FTM,
-                Schemas.YearlyTeamStatsEntry.FTA
+                Schemas.YearlyTeamStatsEntry.FTA,
+                Schemas.YearlyTeamStatsEntry.OPP_POINTS,
+                Schemas.YearlyTeamStatsEntry.OPP_ASSISTS,
+                Schemas.YearlyTeamStatsEntry.OPP_REBOUNDS,
+                Schemas.YearlyTeamStatsEntry.OPP_STEALS,
+                Schemas.YearlyTeamStatsEntry.OPP_BLOCKS,
+                Schemas.YearlyTeamStatsEntry.OPP_TURNOVERS,
+                Schemas.YearlyTeamStatsEntry.OPP_FGM,
+                Schemas.YearlyTeamStatsEntry.OPP_FGA,
+                Schemas.YearlyTeamStatsEntry.OPP_THREEPM,
+                Schemas.YearlyTeamStatsEntry.OPP_THREEPA,
+                Schemas.YearlyTeamStatsEntry.OPP_FTM,
+                Schemas.YearlyTeamStatsEntry.OPP_FTA
         };
         String whereClause = Schemas.YearlyTeamStatsEntry.TEAM + "=? AND " + Schemas
                 .YearlyTeamStatsEntry.YEAR + "=?";
@@ -50,18 +63,33 @@ public class YearlyTeamStatsDao {
                 teamStats = fetchYearlyTeamStats(cursor, team);
                 teamStats.wins += numWins;
                 teamStats.losses += numLosses;
-                teamStats.points += stats.points;
-                teamStats.assists += stats.assists;
-                teamStats.rebounds += stats.defensiveRebounds + stats.offensiveRebounds;
-                teamStats.steals += stats.steals;
-                teamStats.blocks += stats.blocks;
-                teamStats.turnovers += stats.turnovers;
-                teamStats.fgm += stats.fieldGoalsMade;
-                teamStats.fga += stats.fieldGoalsAttempted;
-                teamStats.threePM += stats.threePointsMade;
-                teamStats.threePA += stats.threePointsAttempted;
-                teamStats.ftm += stats.freeThrowsMade;
-                teamStats.fta += stats.freeThrowsAttempted;
+                teamStats.points += stats.stats.points;
+                teamStats.assists += stats.stats.assists;
+                teamStats.rebounds += stats.stats.defensiveRebounds
+                        + stats.stats.offensiveRebounds;
+                teamStats.steals += stats.stats.steals;
+                teamStats.blocks += stats.stats.blocks;
+                teamStats.turnovers += stats.stats.turnovers;
+                teamStats.fgm += stats.stats.fieldGoalsMade;
+                teamStats.fga += stats.stats.fieldGoalsAttempted;
+                teamStats.threePM += stats.stats.threePointsMade;
+                teamStats.threePA += stats.stats.threePointsAttempted;
+                teamStats.ftm += stats.stats.freeThrowsMade;
+                teamStats.fta += stats.stats.freeThrowsAttempted;
+
+                teamStats.opp_points += stats.oppStats.points;
+                teamStats.opp_assists += stats.oppStats.assists;
+                teamStats.opp_rebounds += stats.oppStats.defensiveRebounds
+                        + stats.oppStats.offensiveRebounds;
+                teamStats.opp_steals += stats.oppStats.steals;
+                teamStats.opp_blocks += stats.oppStats.blocks;
+                teamStats.opp_turnovers += stats.oppStats.turnovers;
+                teamStats.opp_fgm += stats.oppStats.fieldGoalsMade;
+                teamStats.opp_fga += stats.oppStats.fieldGoalsAttempted;
+                teamStats.opp_threePM += stats.oppStats.threePointsMade;
+                teamStats.opp_threePA += stats.oppStats.threePointsAttempted;
+                teamStats.opp_ftm += stats.oppStats.freeThrowsMade;
+                teamStats.opp_fta += stats.oppStats.freeThrowsAttempted;
             } else {
                 teamStats = new YearlyTeamStats(team, year, numWins, numLosses, stats);
             }
@@ -87,6 +115,18 @@ public class YearlyTeamStatsDao {
         values.put(Schemas.YearlyTeamStatsEntry.THREEPA, stats.threePA);
         values.put(Schemas.YearlyTeamStatsEntry.FTM, stats.ftm);
         values.put(Schemas.YearlyTeamStatsEntry.FTA, stats.fta);
+        values.put(Schemas.YearlyTeamStatsEntry.OPP_POINTS, stats.opp_points);
+        values.put(Schemas.YearlyTeamStatsEntry.OPP_ASSISTS, stats.opp_assists);
+        values.put(Schemas.YearlyTeamStatsEntry.OPP_REBOUNDS, stats.opp_rebounds);
+        values.put(Schemas.YearlyTeamStatsEntry.OPP_STEALS, stats.opp_steals);
+        values.put(Schemas.YearlyTeamStatsEntry.OPP_BLOCKS, stats.opp_blocks);
+        values.put(Schemas.YearlyTeamStatsEntry.OPP_TURNOVERS, stats.opp_turnovers);
+        values.put(Schemas.YearlyTeamStatsEntry.OPP_FGM, stats.opp_fgm);
+        values.put(Schemas.YearlyTeamStatsEntry.OPP_FGA, stats.opp_fga);
+        values.put(Schemas.YearlyTeamStatsEntry.OPP_THREEPM, stats.opp_threePM);
+        values.put(Schemas.YearlyTeamStatsEntry.OPP_THREEPA, stats.opp_threePA);
+        values.put(Schemas.YearlyTeamStatsEntry.OPP_FTM, stats.opp_ftm);
+        values.put(Schemas.YearlyTeamStatsEntry.OPP_FTA, stats.opp_fta);
         return values;
     }
 
@@ -109,7 +149,19 @@ public class YearlyTeamStatsDao {
                 Schemas.YearlyTeamStatsEntry.THREEPM,
                 Schemas.YearlyTeamStatsEntry.THREEPA,
                 Schemas.YearlyTeamStatsEntry.FTM,
-                Schemas.YearlyTeamStatsEntry.FTA
+                Schemas.YearlyTeamStatsEntry.FTA,
+                Schemas.YearlyTeamStatsEntry.OPP_POINTS,
+                Schemas.YearlyTeamStatsEntry.OPP_ASSISTS,
+                Schemas.YearlyTeamStatsEntry.OPP_REBOUNDS,
+                Schemas.YearlyTeamStatsEntry.OPP_STEALS,
+                Schemas.YearlyTeamStatsEntry.OPP_BLOCKS,
+                Schemas.YearlyTeamStatsEntry.OPP_TURNOVERS,
+                Schemas.YearlyTeamStatsEntry.OPP_FGM,
+                Schemas.YearlyTeamStatsEntry.OPP_FGA,
+                Schemas.YearlyTeamStatsEntry.OPP_THREEPM,
+                Schemas.YearlyTeamStatsEntry.OPP_THREEPA,
+                Schemas.YearlyTeamStatsEntry.OPP_FTM,
+                Schemas.YearlyTeamStatsEntry.OPP_FTA
         };
         String whereClause = Schemas.YearlyTeamStatsEntry.YEAR + " = ?";
         String[] whereArgs = {
@@ -143,7 +195,19 @@ public class YearlyTeamStatsDao {
                 Schemas.YearlyTeamStatsEntry.THREEPM,
                 Schemas.YearlyTeamStatsEntry.THREEPA,
                 Schemas.YearlyTeamStatsEntry.FTM,
-                Schemas.YearlyTeamStatsEntry.FTA
+                Schemas.YearlyTeamStatsEntry.FTA,
+                Schemas.YearlyTeamStatsEntry.OPP_POINTS,
+                Schemas.YearlyTeamStatsEntry.OPP_ASSISTS,
+                Schemas.YearlyTeamStatsEntry.OPP_REBOUNDS,
+                Schemas.YearlyTeamStatsEntry.OPP_STEALS,
+                Schemas.YearlyTeamStatsEntry.OPP_BLOCKS,
+                Schemas.YearlyTeamStatsEntry.OPP_TURNOVERS,
+                Schemas.YearlyTeamStatsEntry.OPP_FGM,
+                Schemas.YearlyTeamStatsEntry.OPP_FGA,
+                Schemas.YearlyTeamStatsEntry.OPP_THREEPM,
+                Schemas.YearlyTeamStatsEntry.OPP_THREEPA,
+                Schemas.YearlyTeamStatsEntry.OPP_FTM,
+                Schemas.YearlyTeamStatsEntry.OPP_FTA
         };
         String whereClause = Schemas.YearlyTeamStatsEntry.TEAM + "=? AND " + Schemas
                 .YearlyTeamStatsEntry.YEAR + " BETWEEN ? AND ?";
@@ -197,6 +261,31 @@ public class YearlyTeamStatsDao {
                 .YearlyTeamStatsEntry.FTM));
         stats.fta = cursor.getInt(cursor.getColumnIndexOrThrow(Schemas
                 .YearlyTeamStatsEntry.FTA));
+
+        stats.opp_points = cursor.getInt(cursor.getColumnIndexOrThrow(Schemas
+                .YearlyTeamStatsEntry.OPP_POINTS));
+        stats.opp_assists = cursor.getInt(cursor.getColumnIndexOrThrow(Schemas
+                .YearlyTeamStatsEntry.OPP_ASSISTS));
+        stats.opp_rebounds = cursor.getInt(cursor.getColumnIndexOrThrow(Schemas
+                .YearlyTeamStatsEntry.OPP_REBOUNDS));
+        stats.opp_steals = cursor.getInt(cursor.getColumnIndexOrThrow(Schemas
+                .YearlyTeamStatsEntry.OPP_STEALS));
+        stats.opp_blocks = cursor.getInt(cursor.getColumnIndexOrThrow(Schemas
+                .YearlyTeamStatsEntry.OPP_BLOCKS));
+        stats.opp_turnovers = cursor.getInt(cursor.getColumnIndexOrThrow(Schemas
+                .YearlyTeamStatsEntry.OPP_TURNOVERS));
+        stats.opp_fgm = cursor.getInt(cursor.getColumnIndexOrThrow(Schemas
+                .YearlyTeamStatsEntry.OPP_FGM));
+        stats.opp_fga = cursor.getInt(cursor.getColumnIndexOrThrow(Schemas
+                .YearlyTeamStatsEntry.OPP_FGA));
+        stats.opp_threePM = cursor.getInt(cursor.getColumnIndexOrThrow(Schemas
+                .YearlyTeamStatsEntry.OPP_THREEPM));
+        stats.opp_threePA = cursor.getInt(cursor.getColumnIndexOrThrow(Schemas
+                .YearlyTeamStatsEntry.OPP_THREEPA));
+        stats.opp_ftm = cursor.getInt(cursor.getColumnIndexOrThrow(Schemas
+                .YearlyTeamStatsEntry.OPP_FTM));
+        stats.opp_fta = cursor.getInt(cursor.getColumnIndexOrThrow(Schemas
+                .YearlyTeamStatsEntry.OPP_FTA));
         return stats;
     }
 }

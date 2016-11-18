@@ -72,7 +72,11 @@ public class GameScheduleListArrayAdapter extends ArrayAdapter<Game> {
                 viewHolder.viewGame.setBackground(ContextCompat.getDrawable(context, R.drawable
                         .button_shape_loss));
             }
+        } else {
+            viewHolder.viewGame.setBackground(ContextCompat.getDrawable(context, R.drawable
+                    .button_shape_neutral));
         }
+
         if (gameSummary[0].equals("Tournament")) {
             viewHolder.gameType.setOnClickListener(new View.OnClickListener() {
                 @Override

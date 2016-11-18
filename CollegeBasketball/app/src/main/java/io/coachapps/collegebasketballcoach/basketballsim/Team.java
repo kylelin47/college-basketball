@@ -24,6 +24,7 @@ public class Team {
     public String name;
     private boolean isUserTeam;
     public int prestige;
+    public int pollRank;
     public boolean[] startersIn;
 
     public volatile Strategy offStrat;

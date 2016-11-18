@@ -13,6 +13,7 @@ public class Game {
 
     public enum GameType {
         REGULAR_SEASON("Reg. Season"),
+        OUT_OF_CONFERENCE("Out Conference"),
         TOURNAMENT_GAME("Tournament"),
         MARCH_MADNESS("March Madness");
         private String value;
@@ -54,8 +55,8 @@ public class Game {
     public void apply(GameModel gameModel) {
         if (gameModel == null) return;
         this.year = gameModel.year;
-        this.homeScore = gameModel.homeStats.points;
-        this.awayScore = gameModel.awayStats.points;
+        this.homeScore = gameModel.homeStats.stats.points;
+        this.awayScore = gameModel.awayStats.stats.points;
         this.beenPlayed = true;
     }
 
@@ -124,15 +125,15 @@ public class Game {
 
     public FullGameResults playGame(Simulator sim) {
         FullGameResults result = sim.playGame(home, away, year, getWeek());
-        homeScore = result.game.homeStats.points;
-        awayScore = result.game.awayStats.points;
+        homeScore = result.game.homeStats.stats.points;
+        awayScore = result.game.awayStats.stats.points;
         beenPlayed = true;
         return result;
     }
 
     void setGameModel(GameModel result) {
-        homeScore = result.homeStats.points;
-        awayScore = result.awayStats.points;
+        homeScore = result.homeStats.stats.points;
+        awayScore = result.awayStats.stats.points;
         beenPlayed = true;
     }
 }

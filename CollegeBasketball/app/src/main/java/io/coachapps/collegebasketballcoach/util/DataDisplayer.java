@@ -75,12 +75,21 @@ public class DataDisplayer {
         if (ind < 0) ind = 0;
         return grades[ind];
     }
-    public static String getRankStr(int rank) {
-        switch (rank) {
-            case 1: return "1st";
-            case 2: return "2nd";
-            case 3: return "4th";
-            default: return rank + "th";
+    public static String getRankStr(int num) {
+        if (num == 11) {
+            return "11th";
+        } else if (num == 12) {
+            return "12th";
+        } else if (num == 13) {
+            return "13th";
+        } else if (num%10 == 1) {
+            return num + "st";
+        } else if (num%10 == 2) {
+            return num + "nd";
+        } else if (num%10 == 3){
+            return num + "rd";
+        } else {
+            return num + "th";
         }
     }
     public static ArrayList<String> getTeamStatsCSVs(String teamName, Context context, int year) {
@@ -126,6 +135,15 @@ public class DataDisplayer {
             }
         });
         teamStatsCSVs.add(statsOfSelectedTeam.getPGDisplay("PPG") + ",Points Per Game," +
+                getRankStr(currentTeamStats.indexOf(statsOfSelectedTeam) + 1));
+
+        Collections.sort(currentTeamStats, new Comparator<YearlyTeamStats>() {
+            @Override
+            public int compare(YearlyTeamStats left, YearlyTeamStats right) {
+                return right.opp_points < left.opp_points ? 1 : left.opp_points == right.opp_points ? 0 : -1;
+            }
+        });
+        teamStatsCSVs.add(statsOfSelectedTeam.getPGDisplay("OPPG") + ",Opp Points Per Game," +
                 getRankStr(currentTeamStats.indexOf(statsOfSelectedTeam) + 1));
 
         Collections.sort(currentTeamStats, new Comparator<YearlyTeamStats>() {
@@ -225,6 +243,64 @@ public class DataDisplayer {
             }
         });
         teamStatsCSVs.add(statsOfSelectedTeam.get3FGPStr() + "%,3 Point Percentage," +
+                getRankStr(currentTeamStats.indexOf(statsOfSelectedTeam) + 1));
+
+        /*
+        Collections.sort(currentTeamStats, new Comparator<YearlyTeamStats>() {
+            @Override
+            public int compare(YearlyTeamStats left, YearlyTeamStats right) {
+                return right.fgm < left.fgm ? 1 : left.fgm == right.fgm ? 0 : -1;
+            }
+        });
+        teamStatsCSVs.add(statsOfSelectedTeam.getPGDisplay("OFGMPG") + ",Opp FGM Per Game," +
+                getRankStr(currentTeamStats.indexOf(statsOfSelectedTeam) + 1));
+
+        Collections.sort(currentTeamStats, new Comparator<YearlyTeamStats>() {
+            @Override
+            public int compare(YearlyTeamStats left, YearlyTeamStats right) {
+                return right.fga < left.fga ? 1 : left.fga == right.fga ? 0 : -1;
+            }
+        });
+        teamStatsCSVs.add(statsOfSelectedTeam.getPGDisplay("OFGAPG") + ",Opp FGA Per Game," +
+                getRankStr(currentTeamStats.indexOf(statsOfSelectedTeam) + 1));
+        */
+
+        Collections.sort(currentTeamStats, new Comparator<YearlyTeamStats>() {
+            @Override
+            public int compare(YearlyTeamStats left, YearlyTeamStats right) {
+                return right.getFGP() < left.getFGP() ? 1 : left.getFGP() == right.getFGP() ? 0 : -1;
+            }
+        });
+        teamStatsCSVs.add(statsOfSelectedTeam.getOFGPStr() + "%,Opp Field Goal Percentage," +
+                getRankStr(currentTeamStats.indexOf(statsOfSelectedTeam) + 1));
+
+        /*
+        Collections.sort(currentTeamStats, new Comparator<YearlyTeamStats>() {
+            @Override
+            public int compare(YearlyTeamStats left, YearlyTeamStats right) {
+                return right.threePM < left.threePM ? 1 : left.threePM == right.threePM ? 0 : -1;
+            }
+        });
+        teamStatsCSVs.add(statsOfSelectedTeam.getPGDisplay("O3FGMPG") + ",Opp 3FGM Per Game," +
+                getRankStr(currentTeamStats.indexOf(statsOfSelectedTeam) + 1));
+
+        Collections.sort(currentTeamStats, new Comparator<YearlyTeamStats>() {
+            @Override
+            public int compare(YearlyTeamStats left, YearlyTeamStats right) {
+                return right.threePA < left.threePA ? 1 : left.threePA == right.threePA ? 0 : -1;
+            }
+        });
+        teamStatsCSVs.add(statsOfSelectedTeam.getPGDisplay("O3FGAPG") + ",Opp 3FGA Per Game," +
+                getRankStr(currentTeamStats.indexOf(statsOfSelectedTeam) + 1));
+        */
+
+        Collections.sort(currentTeamStats, new Comparator<YearlyTeamStats>() {
+            @Override
+            public int compare(YearlyTeamStats left, YearlyTeamStats right) {
+                return right.get3FGP() < left.get3FGP() ? 1 : left.get3FGP() == right.get3FGP() ? 0 : -1;
+            }
+        });
+        teamStatsCSVs.add(statsOfSelectedTeam.getO3FGPStr() + "%,Opp 3 Point Percentage," +
                 getRankStr(currentTeamStats.indexOf(statsOfSelectedTeam) + 1));
 
         return teamStatsCSVs;

@@ -3,12 +3,12 @@ package io.coachapps.collegebasketballcoach.models;
 public class GameModel {
     public String homeTeam;
     public String awayTeam;
-    public Stats homeStats;
-    public Stats awayStats;
+    public TeamStats homeStats;
+    public TeamStats awayStats;
     public int year;
     public int week;
-    public GameModel(String homeTeam, String awayTeam, int year, int week, Stats homeStats, Stats
-            awayStats) {
+    public GameModel(String homeTeam, String awayTeam, int year, int week,
+                     TeamStats homeStats, TeamStats awayStats) {
         this.homeStats = homeStats;
         this.homeTeam = homeTeam;
         this.awayStats = awayStats;

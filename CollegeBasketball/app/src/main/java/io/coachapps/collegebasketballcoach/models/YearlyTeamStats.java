@@ -17,6 +17,18 @@ public class YearlyTeamStats {
     public int threePA;
     public int ftm;
     public int fta;
+    public int opp_points;
+    public int opp_assists;
+    public int opp_rebounds;
+    public int opp_steals;
+    public int opp_blocks;
+    public int opp_turnovers;
+    public int opp_fgm;
+    public int opp_fga;
+    public int opp_threePM;
+    public int opp_threePA;
+    public int opp_ftm;
+    public int opp_fta;
 
     public YearlyTeamStats(String team){
         this.team = team;
@@ -33,24 +45,48 @@ public class YearlyTeamStats {
         this.threePA = 0;
         this.ftm = 0;
         this.fta = 0;
+        this.opp_points = 0;
+        this.opp_assists = 0;
+        this.opp_rebounds = 0;
+        this.opp_steals = 0;
+        this.opp_blocks = 0;
+        this.opp_turnovers = 0;
+        this.opp_fgm = 0;
+        this.opp_fga = 0;
+        this.opp_threePM = 0;
+        this.opp_threePA = 0;
+        this.opp_ftm = 0;
+        this.opp_fta = 0;
     };
-    public YearlyTeamStats(String team, int year, int wins, int losses, Stats stats) {
+    public YearlyTeamStats(String team, int year, int wins, int losses, TeamStats stats) {
         this.team = team;
         this.year = year;
         this.wins = wins;
         this.losses = losses;
-        this.points = stats.points;
-        this.assists = stats.assists;
-        this.rebounds = stats.defensiveRebounds + stats.offensiveRebounds;
-        this.steals = stats.steals;
-        this.blocks = stats.blocks;
-        this.turnovers = stats.turnovers;
-        this.fgm = stats.fieldGoalsMade;
-        this.fga = stats.fieldGoalsAttempted;
-        this.threePM = stats.threePointsMade;
-        this.threePA = stats.threePointsAttempted;
-        this.ftm = stats.freeThrowsMade;
-        this.fta = stats.fieldGoalsAttempted;
+        this.points = stats.stats.points;
+        this.assists = stats.stats.assists;
+        this.rebounds = stats.stats.defensiveRebounds + stats.stats.offensiveRebounds;
+        this.steals = stats.stats.steals;
+        this.blocks = stats.stats.blocks;
+        this.turnovers = stats.stats.turnovers;
+        this.fgm = stats.stats.fieldGoalsMade;
+        this.fga = stats.stats.fieldGoalsAttempted;
+        this.threePM = stats.stats.threePointsMade;
+        this.threePA = stats.stats.threePointsAttempted;
+        this.ftm = stats.stats.freeThrowsMade;
+        this.fta = stats.stats.fieldGoalsAttempted;
+        this.opp_points = stats.oppStats.points;
+        this.opp_assists = stats.oppStats.assists;
+        this.opp_rebounds = stats.oppStats.defensiveRebounds + stats.oppStats.offensiveRebounds;
+        this.opp_steals = stats.oppStats.steals;
+        this.opp_blocks = stats.oppStats.blocks;
+        this.opp_turnovers = stats.oppStats.turnovers;
+        this.opp_fgm = stats.oppStats.fieldGoalsMade;
+        this.opp_fga = stats.oppStats.fieldGoalsAttempted;
+        this.opp_threePM = stats.oppStats.threePointsMade;
+        this.opp_threePA = stats.oppStats.threePointsAttempted;
+        this.opp_ftm = stats.oppStats.freeThrowsMade;
+        this.opp_fta = stats.oppStats.freeThrowsAttempted;
     }
     public String getPGDisplay(String abbreviation) {
         return String.format("%.1f", getPG(abbreviation));
@@ -81,6 +117,30 @@ public class YearlyTeamStats {
                 return getPG(ftm);
             case "FTAPG":
                 return getPG(fta);
+            case "OPPG":
+                return getPG(opp_points);
+            case "OAPG":
+                return getPG(opp_assists);
+            case "ORPG":
+                return getPG(opp_rebounds);
+            case "OSPG":
+                return getPG(opp_steals);
+            case "OBPG":
+                return getPG(opp_blocks);
+            case "OTPG":
+                return getPG(opp_turnovers);
+            case "OFGMPG":
+                return getPG(opp_fgm);
+            case "OFGAPG":
+                return getPG(opp_fga);
+            case "O3FGMPG":
+                return getPG(opp_threePM);
+            case "O3FGAPG":
+                return getPG(opp_threePA);
+            case "OFTMPG":
+                return getPG(opp_ftm);
+            case "OFTAPG":
+                return getPG(opp_fta);
         }
         return -1;
     }
@@ -102,5 +162,13 @@ public class YearlyTeamStats {
 
     public String get3FGPStr() {
         return (threePA == 0 ? "0" : String.format("%.1f", 100*((double)threePM/threePA)));
+    }
+
+    public String getOFGPStr() {
+        return (opp_fga == 0 ? "0" : String.format("%.1f", 100*((double)opp_fgm/opp_fga)));
+    }
+
+    public String getO3FGPStr() {
+        return (opp_threePA == 0 ? "0" : String.format("%.1f", 100*((double)opp_threePM/opp_threePA)));
     }
 }

@@ -38,6 +38,18 @@ public final class Schemas {
         public static final String THREEPA = "threePA";
         public static final String FTM = "ftm";
         public static final String FTA = "fta";
+        public static final String OPP_POINTS = "opp_points";
+        public static final String OPP_ASSISTS = "opp_assists";
+        public static final String OPP_REBOUNDS = "opp_rebounds";
+        public static final String OPP_STEALS = "opp_steals";
+        public static final String OPP_BLOCKS = "opp_blocks";
+        public static final String OPP_TURNOVERS = "opp_turnovers";
+        public static final String OPP_FGM = "opp_fgm";
+        public static final String OPP_FGA = "opp_fga";
+        public static final String OPP_THREEPM = "opp_threePM";
+        public static final String OPP_THREEPA = "opp_threePA";
+        public static final String OPP_FTM = "opp_ftm";
+        public static final String OPP_FTA = "opp_fta";
     }
 
     public static abstract class YearlyPlayerStatsEntry implements BaseColumns {

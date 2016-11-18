@@ -144,4 +144,8 @@ public class League {
             league.put(conference, newList);
         }
     }
+
+    public void assignPollRanks() {
+
+    }
 }

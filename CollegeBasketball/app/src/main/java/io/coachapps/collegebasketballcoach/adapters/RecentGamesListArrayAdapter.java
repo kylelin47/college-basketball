@@ -90,20 +90,20 @@ public class RecentGamesListArrayAdapter extends ArrayAdapter<BoxScore> {
     private String getGameSummaryStr(String teamName, GameModel gameModel) {
         if (gameModel.awayTeam.equals(teamName)) {
             // Away
-            if (gameModel.awayStats.points > gameModel.homeStats.points) {
-                return "W " + gameModel.awayStats.points + "-" + gameModel.homeStats.points +
+            if (gameModel.awayStats.stats.points > gameModel.homeStats.stats.points) {
+                return "W " + gameModel.awayStats.stats.points + "-" + gameModel.homeStats.stats.points +
                         " @ " + gameModel.homeTeam;
             } else {
-                return "L " + gameModel.awayStats.points + "-" + gameModel.homeStats.points +
+                return "L " + gameModel.awayStats.stats.points + "-" + gameModel.homeStats.stats.points +
                         " @ " + gameModel.homeTeam;
             }
         } else {
             // Home
-            if (gameModel.homeStats.points > gameModel.awayStats.points) {
-                return "W " + gameModel.homeStats.points + "-" + gameModel.awayStats.points +
+            if (gameModel.homeStats.stats.points > gameModel.awayStats.stats.points) {
+                return "W " + gameModel.homeStats.stats.points + "-" + gameModel.awayStats.stats.points +
                         " vs " + gameModel.awayTeam;
             } else {
-                return "L " + gameModel.homeStats.points + "-" + gameModel.awayStats.points +
+                return "L " + gameModel.homeStats.stats.points + "-" + gameModel.awayStats.stats.points +
                         " vs " + gameModel.awayTeam;
             }
         }

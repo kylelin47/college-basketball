@@ -21,6 +21,7 @@ import io.coachapps.collegebasketballcoach.models.BoxScore;
 import io.coachapps.collegebasketballcoach.models.FullGameResults;
 import io.coachapps.collegebasketballcoach.models.GameModel;
 import io.coachapps.collegebasketballcoach.models.Stats;
+import io.coachapps.collegebasketballcoach.models.TeamStats;
 
 /**
  * League Events utility class. Will be used to perform various league activities,
@@ -101,7 +102,7 @@ public class LeagueEvents {
                 } else {
                     week = OUT_OF_CONFERENCE_WEEKS.get(weekIndex + j);
                 }
-                scheduleGame(homeTeam, awayTeam, year, gameDao, Game.GameType.REGULAR_SEASON,
+                scheduleGame(homeTeam, awayTeam, year, gameDao, Game.GameType.OUT_OF_CONFERENCE,
                         week, true);
             }
         }
@@ -233,13 +234,15 @@ public class LeagueEvents {
         home.resetLineup();
         away.resetLineup();
 
-        Stats homeStats = new Stats();
+        TeamStats homeStats = new TeamStats();
+        TeamStats awayStats = new TeamStats();
         for (Player player : home.players) {
-            homeStats.add(player.gmStats);
+            homeStats.add(player.gmStats, true);
+            awayStats.add(player.gmStats, false);
         }
-        Stats awayStats = new Stats();
         for (Player player : away.players) {
-            awayStats.add(player.gmStats);
+            awayStats.add(player.gmStats, true);
+            homeStats.add(player.gmStats, false);
         }
         GameModel gameResult = new GameModel(home.name, away.name, year, week, homeStats,
                 awayStats);

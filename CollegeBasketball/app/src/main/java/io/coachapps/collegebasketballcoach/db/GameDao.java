@@ -11,6 +11,7 @@ import java.util.List;
 
 import io.coachapps.collegebasketballcoach.models.GameModel;
 import io.coachapps.collegebasketballcoach.models.Stats;
+import io.coachapps.collegebasketballcoach.models.TeamStats;
 import io.coachapps.collegebasketballcoach.util.SerializationUtil;
 
 public class GameDao {
@@ -44,7 +45,7 @@ public class GameDao {
         db.insert(Schemas.GameEntry.TABLE_NAME, null, values);
         YearlyTeamStatsDao yearlyTeamStatsDao = new YearlyTeamStatsDao(context);
         // ties are impossible
-        if (game.awayStats.points > game.homeStats.points) {
+        if (game.awayStats.stats.points > game.homeStats.stats.points) {
             yearlyTeamStatsDao.recordRelativeTeamRecord(game.awayTeam, game.year, 1, 0, game.awayStats);
             yearlyTeamStatsDao.recordRelativeTeamRecord(game.homeTeam, game.year, 0, 1, game.homeStats);
         } else {
@@ -153,9 +154,9 @@ public class GameDao {
     private GameModel fetchGame(Cursor cursor) {
         int year = cursor.getInt(cursor.getColumnIndexOrThrow(Schemas.GameEntry.YEAR));
         int week = cursor.getInt(cursor.getColumnIndexOrThrow(Schemas.GameEntry.WEEK));
-        Stats homeStats = (Stats) SerializationUtil.deserialize(cursor.getBlob(cursor
+        TeamStats homeStats = (TeamStats) SerializationUtil.deserialize(cursor.getBlob(cursor
                 .getColumnIndexOrThrow(Schemas.GameEntry.HOME_STATS)));
-        Stats awayStats = (Stats) SerializationUtil.deserialize(cursor.getBlob(cursor
+        TeamStats awayStats = (TeamStats) SerializationUtil.deserialize(cursor.getBlob(cursor
                 .getColumnIndexOrThrow(Schemas.GameEntry.AWAY_STATS)));
         String homeTeam = cursor.getString(cursor.getColumnIndexOrThrow(Schemas.GameEntry
                 .HOME_TEAM));
