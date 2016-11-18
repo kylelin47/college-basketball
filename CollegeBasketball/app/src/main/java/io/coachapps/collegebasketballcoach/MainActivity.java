@@ -27,7 +27,6 @@ import android.widget.ViewFlipper;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
@@ -281,7 +280,11 @@ public class MainActivity extends AppCompatActivity {
                 populateTeamStrList();
                 dataAdapterTeam.notifyDataSetChanged();
                 if (selectOutOfConferenceTeam.getAndSet(false)) {
-                    teamSpinner.setSelection(lastSelectedTeamPosition);
+                    if (teamSpinner.getSelectedItemPosition() == lastSelectedTeamPosition) {
+                        onTeamSpinnerSelection(currentConferenceTeamList.get(lastSelectedTeamPosition));
+                    } else {
+                        teamSpinner.setSelection(lastSelectedTeamPosition);
+                    }
                 } else {
                     if (lastSelectedTeamPosition == 0) {
                         onTeamSpinnerSelection(currentConferenceTeamList.get(0));

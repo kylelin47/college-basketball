@@ -1,5 +1,7 @@
 package io.coachapps.collegebasketballcoach.basketballsim;
 
+import java.util.List;
+
 import io.coachapps.collegebasketballcoach.models.FullGameResults;
 import io.coachapps.collegebasketballcoach.models.GameModel;
 
@@ -10,7 +12,6 @@ import io.coachapps.collegebasketballcoach.models.GameModel;
  */
 
 public class Game {
-
     public enum GameType {
         REGULAR_SEASON("Reg. Season"),
         OUT_OF_CONFERENCE("Out Conference"),
@@ -23,6 +24,9 @@ public class Game {
         @Override
         public String toString() {
             return value;
+        }
+        public boolean isTournament() {
+            return (this == TOURNAMENT_GAME || this == MARCH_MADNESS);
         }
     }
 
@@ -65,6 +69,23 @@ public class Game {
         getHome().gameSchedule.add(week, this);
         getAway().gameSchedule.add(week, this);
     }
+
+    public void reschedule() {
+        int homeWeek = home.gameSchedule.indexOf(this);
+        int awayWeek = away.gameSchedule.indexOf(this);
+        if (homeWeek < awayWeek) {
+            swap(home.gameSchedule, homeWeek, awayWeek);
+        } else if (awayWeek < homeWeek) {
+            swap(away.gameSchedule, homeWeek, awayWeek);
+        }
+    }
+
+    private void swap(List<Game> schedule, int indexOne, int indexTwo) {
+        Game temp = schedule.get(indexOne);
+        schedule.set(indexOne, schedule.get(indexTwo));
+        schedule.set(indexTwo, temp);
+    }
+
     /**
      * @return Home team name,Away team name,homeScore,awayScore,year,week,beenPlayed,
      * gameType,homeSeed,awaySeed

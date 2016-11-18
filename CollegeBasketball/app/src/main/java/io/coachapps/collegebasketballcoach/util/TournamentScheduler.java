@@ -65,7 +65,7 @@ public class TournamentScheduler {
             Team home = teams.get(i);
             Team away = teams.get(i+1);
             games.add(LeagueEvents.scheduleGame(home, away, year, gameDao, Game.GameType
-                    .TOURNAMENT_GAME, true));
+                    .TOURNAMENT_GAME));
         }
         if (allGamesPlayed(games)) {
             for (int i = 0; i < teams.size()/2; i++) {
