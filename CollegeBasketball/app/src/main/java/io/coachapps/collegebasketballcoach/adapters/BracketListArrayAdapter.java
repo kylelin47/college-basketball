@@ -80,7 +80,9 @@ public class BracketListArrayAdapter extends ArrayAdapter<String>  {
             public void onClick(View v) {
                 if (gameInfo[6].equals("true")) {
                     bracketDialogFragment.showGameSummaryDialog(getYear(gameInfo),
-                           getWeek(gameInfo), gameInfo[0], gameInfo[1]);
+                           getWeek(gameInfo), gameInfo[0], gameInfo[1],
+                            "(" + gameInfo[8] + ") " + gameInfo[0],
+                            "(" + gameInfo[9] + ") " + gameInfo[1]);
                 }
             }
         });

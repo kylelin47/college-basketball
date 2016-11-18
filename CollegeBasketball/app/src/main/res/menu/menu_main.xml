@@ -4,6 +4,11 @@
     xmlns:tools="http://schemas.android.com/tools"
     tools:context="io.coachapps.collegebasketballcoach.MainActivity">
     <item
+        android:id="@+id/action_my_team"
+        android:orderInCategory="100"
+        android:title="@string/action_my_team"
+        app:showAsAction="never" />
+    <item
         android:id="@+id/action_set_lineup"
         android:orderInCategory="100"
         android:title="@string/action_set_lineup"

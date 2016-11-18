@@ -45,15 +45,17 @@ public class BracketDialogFragment extends DialogFragment {
             savedInstanceState) {
         View view = inflater.inflate(R.layout.bracket, container, false);
         ListView games = (ListView) view.findViewById(bracketGameList);
-        BracketListArrayAdapter bracketListArrayAdapter = new BracketListArrayAdapter(getActivity(), this, tournamentGames);
+        BracketListArrayAdapter bracketListArrayAdapter =
+                new BracketListArrayAdapter(getActivity(), this, tournamentGames);
         games.setAdapter(bracketListArrayAdapter);
         return view;
     }
 
-    public void showGameSummaryDialog(int year, int week, String homeName, String awayName) {
+    public void showGameSummaryDialog(int year, int week, String homeName, String awayName,
+                                      String homeNameSeed, String awayNameSeed) {
         FragmentTransaction ft = getFragmentManager().beginTransaction();
         DialogFragment newFragment = GameSummaryFragment.newInstance(
-                year, week, homeName, awayName);
+                year, week, homeName, awayName, homeNameSeed, awayNameSeed);
         newFragment.show(ft, "game dialog");
     }
     public void examineTeam(String teamName) {

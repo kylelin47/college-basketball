@@ -331,32 +331,51 @@ public class DataDisplayer {
             sortedTeamList.add(t);
         }
 
-        if (higherIsBetter) {
-            Collections.sort(currentTeamStats, new Comparator<YearlyTeamStats>() {
+        if (category.equals("Poll Votes")) {
+            Collections.sort(sortedTeamList, new Comparator<Team>() {
                 @Override
-                public int compare(YearlyTeamStats a, YearlyTeamStats b) {
-                    return b.getPG(category) < a.getPG(category) ?
-                            -1 : a.getPG(category) == b.getPG(category) ? 0 : 1;
+                public int compare(Team a, Team b) {
+                    return b.pollScore - a.pollScore;
                 }
             });
+            ArrayList<String> teamRankingsCSV = new ArrayList<>();
+            for (int i = 0; i < sortedTeamList.size(); ++i) {
+                teamRankingsCSV.add(getRankStr(i+1) + "," +
+                        sortedTeamList.get(i).getNameWLStr() + "," +
+                        sortedTeamList.get(i).pollScore);
+            }
+
+            return teamRankingsCSV;
+
         } else {
-            Collections.sort(currentTeamStats, new Comparator<YearlyTeamStats>() {
-                @Override
-                public int compare(YearlyTeamStats a, YearlyTeamStats b) {
-                    return b.getPG(category) < a.getPG(category) ?
-                            1 : a.getPG(category) == b.getPG(category) ? 0 : -1;
-                }
-            });
-        }
 
-        ArrayList<String> teamRankingsCSV = new ArrayList<>();
-        for (int i = 0; i < currentTeamStats.size(); ++i) {
-            teamRankingsCSV.add(getRankStr(i+1) + "," +
-                    nameMap.get(currentTeamStats.get(i).team).getRankNameWLStr() + "," +
-                    currentTeamStats.get(i).getPG(category));
-        }
+            if (higherIsBetter) {
+                Collections.sort(currentTeamStats, new Comparator<YearlyTeamStats>() {
+                    @Override
+                    public int compare(YearlyTeamStats a, YearlyTeamStats b) {
+                        return b.getPG(category) < a.getPG(category) ?
+                                -1 : a.getPG(category) == b.getPG(category) ? 0 : 1;
+                    }
+                });
+            } else {
+                Collections.sort(currentTeamStats, new Comparator<YearlyTeamStats>() {
+                    @Override
+                    public int compare(YearlyTeamStats a, YearlyTeamStats b) {
+                        return b.getPG(category) < a.getPG(category) ?
+                                1 : a.getPG(category) == b.getPG(category) ? 0 : -1;
+                    }
+                });
+            }
 
-        return teamRankingsCSV;
+            ArrayList<String> teamRankingsCSV = new ArrayList<>();
+            for (int i = 0; i < currentTeamStats.size(); ++i) {
+                teamRankingsCSV.add(getRankStr(i + 1) + "," +
+                        nameMap.get(currentTeamStats.get(i).team).getRankNameWLStr() + "," +
+                        DataDisplayer.round(currentTeamStats.get(i).getPG(category), 2));
+            }
+
+            return teamRankingsCSV;
+        }
     }
 
     public static String[] getAllCategories() {

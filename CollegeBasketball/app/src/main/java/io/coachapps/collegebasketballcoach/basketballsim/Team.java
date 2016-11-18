@@ -96,6 +96,10 @@ public class Team {
         return "#" + pollRank + " " + name + " (" + wins + "-" + losses + ")";
     }
 
+    public String getNameWLStr() {
+        return name + " (" + wins + "-" + losses + ")";
+    }
+
     /**
      * Resets the lineup for the team.
      * Makes sure that a PG SG SF PF C lineup is in place, with all the best players in place.

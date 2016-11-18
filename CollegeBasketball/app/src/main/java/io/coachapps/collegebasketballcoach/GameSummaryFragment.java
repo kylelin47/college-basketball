@@ -42,19 +42,25 @@ public class GameSummaryFragment extends DialogFragment {
     private static final String WEEK_KEY = "week";
     private static final String HOME_KEY = "home";
     private static final String AWAY_KEY = "away";
+    private static final String HOME_WL_KEY = "homeWL";
+    private static final String AWAY_WL_KEY = "awayWL";
 
     PlayerDao playerDao;
     private GameModel gameModel;
     private List<BoxScore> awayBoxScores;
     private List<BoxScore> homeBoxScores;
 
-    public static GameSummaryFragment newInstance(int year, int week, String homeTeam, String awayTeam) {
+    public static GameSummaryFragment newInstance(int year, int week,
+                                                  String homeTeam, String awayTeam,
+                                                  String homeTeamWL, String awayTeamWL) {
         GameSummaryFragment fragment = new GameSummaryFragment();
         Bundle args = new Bundle();
         args.putInt(YEAR_KEY, year);
         args.putInt(WEEK_KEY, week);
         args.putString(HOME_KEY, homeTeam);
         args.putString(AWAY_KEY, awayTeam);
+        args.putString(HOME_WL_KEY, homeTeamWL);
+        args.putString(AWAY_WL_KEY, awayTeamWL);
         fragment.setArguments(args);
         return fragment;
     }
@@ -67,6 +73,8 @@ public class GameSummaryFragment extends DialogFragment {
         int week = getArguments().getInt(WEEK_KEY);
         String homeTeamName = getArguments().getString(HOME_KEY);
         String awayTeamName = getArguments().getString(AWAY_KEY);
+        String homeWL = getArguments().getString(HOME_WL_KEY);
+        String awayWL = getArguments().getString(AWAY_WL_KEY);
         playerDao = new PlayerDao(getActivity());
         // Get GameModel
         GameDao gameDao = new GameDao(getActivity());
@@ -98,11 +106,11 @@ public class GameSummaryFragment extends DialogFragment {
         TextView textAwayWL = (TextView) view.findViewById(R.id.textViewAwayTeamWL);
         TextView textAwayScore = (TextView) view.findViewById(R.id.textViewAwayTeamScore);
 
-        textHomeName.setText(gameModel.homeTeam);
+        textHomeName.setText(getArguments().getString(HOME_WL_KEY));
         textHomeWL.setText("");
         textHomeScore.setText(String.valueOf(gameModel.homeStats.stats.points));
 
-        textAwayName.setText(gameModel.awayTeam);
+        textAwayName.setText(getArguments().getString(AWAY_WL_KEY));
         textAwayWL.setText("");
         textAwayScore.setText(String.valueOf(gameModel.awayStats.stats.points));
 

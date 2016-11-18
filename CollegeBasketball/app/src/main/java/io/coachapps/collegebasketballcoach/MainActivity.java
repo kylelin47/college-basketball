@@ -193,7 +193,7 @@ public class MainActivity extends AppCompatActivity {
     private void setEverythingUp() {
         playerTeam = league.getPlayerTeam();
         league.assignPollRanks(this, getYear());
-        getSupportActionBar().setTitle(playerTeam.name);
+        getSupportActionBar().setTitle(getYear() + " " + playerTeam.name);
 
         // Sim games
         bballSim = new Simulator(MainActivity.this);
@@ -335,6 +335,8 @@ public class MainActivity extends AppCompatActivity {
             showChangeStrategyDialog(playerTeam, null);
         } else if (id == R.id.action_team_rankings) {
             showTeamRankingsDialog();
+        } else if (id == R.id.action_my_team) {
+            examineTeam(playerTeam.getName());
         }
 
         return super.onOptionsItemSelected(item);
@@ -342,7 +344,7 @@ public class MainActivity extends AppCompatActivity {
 
     public void onTeamSpinnerSelection(Team team) {
         int year = getYear();
-        currTeamTextView.setText(team.getName());
+        currTeamTextView.setText(team.getRankNameWLStr());
         // Unless we change the ui, this can be consolidated to a single ListView
         rosterListAdapter = new PlayerStatsListArrayAdapter(MainActivity.this, team.players, year);
         rosterList.setAdapter(rosterListAdapter);
@@ -409,6 +411,7 @@ public class MainActivity extends AppCompatActivity {
                         league, this, getYear()), false);
         statsList.setAdapter(statsListAdapter);
         gameListAdapter.notifyDataSetChanged();
+        currTeamTextView.setText(currentConferenceTeamList.get(lastSelectedTeamPosition).getRankNameWLStr());
         populateTeamStrList();
         dataAdapterTeam.notifyDataSetChanged();
         playGameButton.setEnabled(!playerTeam.gameSchedule.get(playerTeam.gameSchedule.size() -
@@ -478,7 +481,8 @@ public class MainActivity extends AppCompatActivity {
         System.out.println("showing game summary at week " + gm.getWeek());
         FragmentTransaction ft = getFragmentManager().beginTransaction();
         DialogFragment newFragment = GameSummaryFragment.newInstance(
-                gm.getYear(), gm.getWeek(), gm.getHome().getName(), gm.getAway().getName());
+                gm.getYear(), gm.getWeek(), gm.getHome().getName(), gm.getAway().getName(),
+                gm.getHome().getRankNameWLStr(), gm.getAway().getRankNameWLStr());
         newFragment.show(ft, "game dialog");
     }
 
@@ -721,6 +725,7 @@ public class MainActivity extends AppCompatActivity {
         final ListView listView = (ListView) dialog.findViewById(R.id.listView);
         final Spinner spinner = (Spinner) dialog.findViewById(R.id.spinner);
         final List<String> categoryList = new ArrayList<>();
+        categoryList.add("Poll Votes");
         for (String cat : DataDisplayer.getAllCategories()) {
             categoryList.add(DataDisplayer.getDescriptionCategory(cat));
         }
@@ -732,12 +737,19 @@ public class MainActivity extends AppCompatActivity {
                 new AdapterView.OnItemSelectedListener() {
                     public void onItemSelected(
                             AdapterView<?> parent, View view, int position, long id) {
-                        boolean higherIsBetter = false;
-                        if (position <= 14) higherIsBetter = true;
-                        ArrayList<String> teamRankingsCSV =
-                                DataDisplayer.getTeamRankingsCSVs(league, MainActivity.this, getYear(),
-                                        DataDisplayer.getAllCategories()[position], higherIsBetter);
-                        listView.setAdapter(new TeamRankingsListArrayAdapter(MainActivity.this, teamRankingsCSV));
+                        if (position == 0) {
+                            ArrayList<String> teamRankingsCSV =
+                                    DataDisplayer.getTeamRankingsCSVs(league, MainActivity.this, getYear(),
+                                            "Poll Votes", true);
+                            listView.setAdapter(new TeamRankingsListArrayAdapter(MainActivity.this, teamRankingsCSV));
+                        } else {
+                            boolean higherIsBetter = false;
+                            if (position <= 15) higherIsBetter = true;
+                            ArrayList<String> teamRankingsCSV =
+                                    DataDisplayer.getTeamRankingsCSVs(league, MainActivity.this, getYear(),
+                                            DataDisplayer.getAllCategories()[position - 1], higherIsBetter);
+                            listView.setAdapter(new TeamRankingsListArrayAdapter(MainActivity.this, teamRankingsCSV));
+                        }
                     }
 
                     public void onNothingSelected(AdapterView<?> parent) {
