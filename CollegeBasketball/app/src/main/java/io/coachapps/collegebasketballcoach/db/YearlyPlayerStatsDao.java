@@ -7,6 +7,7 @@ import android.database.sqlite.SQLiteDatabase;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.ServiceConfigurationError;
 
 import io.coachapps.collegebasketballcoach.models.BoxScore;
 import io.coachapps.collegebasketballcoach.models.YearlyPlayerStats;
@@ -104,6 +105,26 @@ public class YearlyPlayerStatsDao {
         String limit = String.valueOf(numPlayers);
         try (Cursor cursor = db.query(Schemas.YearlyPlayerStatsEntry.TABLE_NAME, null,
                 whereClause, whereArgs, null, null, orderBy, limit)) {
+            while (cursor.moveToNext()) {
+                YearlyPlayerStats existingStats = new YearlyPlayerStats(
+                        cursor.getInt(cursor.getColumnIndexOrThrow(
+                                Schemas.YearlyPlayerStatsEntry.PLAYER)));
+                addToYearlyPlayerStats(cursor, existingStats);
+                stats.add(existingStats);
+            }
+        }
+        return stats;
+    }
+
+    public List<YearlyPlayerStats> getAllYearlyPlayerStats(int year) {
+        List<YearlyPlayerStats> stats = new ArrayList<>();
+        SQLiteDatabase db = DbHelper.getInstance(context).getReadableDatabase();
+        String whereClause = Schemas.YearlyPlayerStatsEntry.YEAR + "=?";
+        String[] whereArgs = {
+                String.valueOf(year)
+        };
+        try (Cursor cursor = db.query(Schemas.YearlyPlayerStatsEntry.TABLE_NAME, null,
+                whereClause, whereArgs, null, null, null, null)) {
             while (cursor.moveToNext()) {
                 YearlyPlayerStats existingStats = new YearlyPlayerStats(
                         cursor.getInt(cursor.getColumnIndexOrThrow(

@@ -6,6 +6,8 @@ import android.util.Log;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.Comparator;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Random;
@@ -19,10 +21,13 @@ import io.coachapps.collegebasketballcoach.basketballsim.Team;
 import io.coachapps.collegebasketballcoach.db.BoxScoreDao;
 import io.coachapps.collegebasketballcoach.db.GameDao;
 import io.coachapps.collegebasketballcoach.db.LeagueResultsEntryDao;
+import io.coachapps.collegebasketballcoach.db.YearlyPlayerStatsDao;
+import io.coachapps.collegebasketballcoach.models.AwardTeamModel;
 import io.coachapps.collegebasketballcoach.models.BoxScore;
 import io.coachapps.collegebasketballcoach.models.FullGameResults;
 import io.coachapps.collegebasketballcoach.models.GameModel;
 import io.coachapps.collegebasketballcoach.models.TeamStats;
+import io.coachapps.collegebasketballcoach.models.YearlyPlayerStats;
 
 /**
  * League Events utility class. Will be used to perform various league activities,
@@ -179,16 +184,18 @@ public class LeagueEvents {
         }
     }
 
-    public static boolean tryToFinishTournament(List<Game> tournamentGames, Context context) {
+    public static boolean tryToFinishTournament(List<Game> tournamentGames,
+                                                Context context, League league) {
         if (tournamentGames == null || tournamentGames.size() <= 4) {
             return false;
         }
         Game championshipGame = tournamentGames.get(tournamentGames.size() - 1);
         Game previousGame = tournamentGames.get(tournamentGames.size() - 2);
         if (championshipGame.hasPlayed() && championshipGame.getWeek() > previousGame.getWeek()) {
+            List<AwardTeamModel> awardTeams = getAwardTeams(context, league, championshipGame.getYear());
             LeagueResultsEntryDao leagueResultsEntryDao = new LeagueResultsEntryDao(context);
-            leagueResultsEntryDao.save(championshipGame.getYear(), championshipGame.getWinner().name,
-                    0, 0);
+            leagueResultsEntryDao.save(championshipGame.getYear(),
+                    championshipGame.getWinner().name, 0, 0, awardTeams);
             return true;
         }
         return false;
@@ -268,6 +275,7 @@ public class LeagueEvents {
         saveGameResults(fgr.boxScores, Arrays.asList(fgr.game), context);
         return fgr.game;
     }
+
     public static int determineLastUnplayedRegularSeasonWeek(List<Team> teams) {
         int minWeek = Integer.MAX_VALUE;
         for (Team t : teams) {
@@ -279,5 +287,54 @@ public class LeagueEvents {
             }
         }
         return minWeek;
+    }
+
+    public static List<AwardTeamModel> getAwardTeams(Context context, League league, int year) {
+        YearlyPlayerStatsDao yps = new YearlyPlayerStatsDao(context);
+        List<YearlyPlayerStats> playerStatsList = yps.getAllYearlyPlayerStats(year);
+        Log.i("LeagueEvents", "playerStatsList size = " + playerStatsList.size());
+
+        // Sort all stats by points+assists+rebounds
+        Collections.sort(playerStatsList, new Comparator<YearlyPlayerStats>() {
+            @Override
+            public int compare(YearlyPlayerStats a, YearlyPlayerStats b) {
+                return (b.playerStats.points + b.playerStats.defensiveRebounds +
+                        b.playerStats.offensiveRebounds + b.playerStats.assists) -
+                           (a.playerStats.points + a.playerStats.defensiveRebounds +
+                            a.playerStats.offensiveRebounds + a.playerStats.assists);
+            }
+        });
+
+        // Need a way to find positions given a player ID
+        HashMap<Integer, Integer> idPositionMap = new HashMap<>();
+        for (Team t : league.getAllTeams()) {
+            for (Player p : t.players) {
+                idPositionMap.put(p.getId(), p.getLineupPosition()%5+1);
+            }
+        }
+
+        // Assign players to the award teams
+        List<AwardTeamModel> awardTeamList = new ArrayList<>();
+        for (int i = 0; i < 3; ++i) {
+            awardTeamList.add(new AwardTeamModel());
+        }
+
+        for (YearlyPlayerStats pStats : playerStatsList) {
+            int position = idPositionMap.get(pStats.playerId);
+            for (AwardTeamModel team : awardTeamList) {
+                if (team.getIdPosition(position) == 0) {
+                    team.setIdPosition(position, pStats.playerId);
+                    break;
+                }
+            }
+        }
+
+        for (AwardTeamModel team : awardTeamList) {
+            for (int i = 1; i < 6; ++i) {
+                Log.i("LeagueEvents", "Pos: " + i + ", ID: " + team.getIdPosition(i));
+            }
+        }
+
+        return awardTeamList;
     }
 }

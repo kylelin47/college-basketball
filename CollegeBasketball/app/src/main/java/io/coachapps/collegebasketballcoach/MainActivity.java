@@ -52,6 +52,8 @@ import io.coachapps.collegebasketballcoach.db.PlayerDao;
 import io.coachapps.collegebasketballcoach.db.Schemas;
 import io.coachapps.collegebasketballcoach.db.TeamDao;
 import io.coachapps.collegebasketballcoach.db.YearlyPlayerStatsDao;
+import io.coachapps.collegebasketballcoach.models.AwardTeamModel;
+import io.coachapps.collegebasketballcoach.models.LeagueResults;
 import io.coachapps.collegebasketballcoach.models.YearlyPlayerStats;
 import io.coachapps.collegebasketballcoach.util.DataDisplayer;
 import io.coachapps.collegebasketballcoach.util.LeagueEvents;
@@ -416,11 +418,12 @@ public class MainActivity extends AppCompatActivity {
         dataAdapterTeam.notifyDataSetChanged();
         playGameButton.setEnabled(!playerTeam.gameSchedule.get(playerTeam.gameSchedule.size() -
                 1).hasPlayed());
-        if (LeagueEvents.tryToFinishTournament(tournamentGames, this)) {
+        if (LeagueEvents.tryToFinishTournament(tournamentGames, this, league)) {
             Log.i("MainActivity", "Finished tournament");
             // enter recruiting
             doneWithSeason = true;
             simGameButton.setText("Recruit");
+            showEndOfSeasonDialog();
             //onNewYear(); // for testing
         }
     }
@@ -756,6 +759,45 @@ public class MainActivity extends AppCompatActivity {
                         // do nothing
                     }
                 });
+    }
+
+    public void showEndOfSeasonDialog() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setView(getLayoutInflater().inflate(R.layout.simple_list, null));
+        builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.dismiss();
+            }
+        });
+        builder.setTitle("End Of Season");
+        final AlertDialog dialog = builder.create();
+        dialog.show();
+
+        final LeagueResultsEntryDao leagueResultsDao = new LeagueResultsEntryDao(this);
+        populateMaps();
+
+        Log.i("MainActivity", "leagueResults year: " + (leagueResultsDao.getCurrentYear()-1));
+        LeagueResults leagueResults = leagueResultsDao.getLeagueResults(
+                leagueResultsDao.getCurrentYear()-1, leagueResultsDao.getCurrentYear()-1).get(0);
+
+        List<AwardTeamModel> awardTeams = new ArrayList<>();
+        awardTeams.add(leagueResults.allAmer1st);
+        awardTeams.add(leagueResults.allAmer2nd);
+        awardTeams.add(leagueResults.allAmer3rd);
+        List<Player> allAmericans = new ArrayList<>();
+        for (int r = 0; r < awardTeams.size(); ++r) {
+            for (int i = 1; i < 6; ++i) {
+                int id = awardTeams.get(r).getIdPosition(i);
+                Log.i("MainActivity", "Pos: " + (playerMap.get(id).getLineupPosition()%5+1) + " AllAmerican id " + id);
+                allAmericans.add(playerMap.get(id));
+            }
+        }
+
+        ListView listView = (ListView) dialog.findViewById(R.id.listView);
+        listView.setAdapter(new PlayerStatsListArrayAdapter(
+                this, allAmericans, leagueResultsDao.getCurrentYear()-1));
+
     }
 
     /**

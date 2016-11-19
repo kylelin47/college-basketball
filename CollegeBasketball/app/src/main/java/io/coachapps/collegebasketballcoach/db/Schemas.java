@@ -91,6 +91,9 @@ public final class Schemas {
         public static final String CHAMPION = "champion";
         public static final String MVP = "mvp";
         public static final String DPOY = "dpoy";
+        public static final String ALL_AMER_1ST = "allAmer1st";
+        public static final String ALL_AMER_2ND = "allAmer2nd";
+        public static final String ALL_AMER_3RD = "allAmer3rd";
     }
 
     public static abstract class BoxScoreEntry implements BaseColumns {
