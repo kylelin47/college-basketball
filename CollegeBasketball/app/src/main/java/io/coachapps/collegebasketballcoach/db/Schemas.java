@@ -91,9 +91,13 @@ public final class Schemas {
         public static final String CHAMPION = "champion";
         public static final String MVP = "mvp";
         public static final String DPOY = "dpoy";
-        public static final String ALL_AMER_1ST = "allAmer1st";
-        public static final String ALL_AMER_2ND = "allAmer2nd";
-        public static final String ALL_AMER_3RD = "allAmer3rd";
+        public static final String ALL_AMERCANS = "allAmericans";
+        public static final String ALL_COWBOY = "allCowboy";
+        public static final String ALL_LAKES = "allLakes";
+        public static final String ALL_MOUNTAINS = "allMountains";
+        public static final String ALL_NORTH = "allNorth";
+        public static final String ALL_PACIFIC = "allPacific";
+        public static final String ALL_SOUTH = "allSouth";
     }
 
     public static abstract class BoxScoreEntry implements BaseColumns {

@@ -16,7 +16,7 @@ public class DbHelper extends SQLiteOpenHelper {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
     }
 
-    public static final int DATABASE_VERSION = 14;
+    public static final int DATABASE_VERSION = 15;
     public static final String DATABASE_NAME = "CollegeBasketball.db";
 
     private static final String INTEGER_TYPE = " INTEGER";
@@ -73,9 +73,13 @@ public class DbHelper extends SQLiteOpenHelper {
                     Schemas.LeagueResultsEntry.CHAMPION + TEXT_TYPE + COMMA_SEP +
                     Schemas.LeagueResultsEntry.MVP + INTEGER_TYPE + COMMA_SEP +
                     Schemas.LeagueResultsEntry.DPOY + INTEGER_TYPE + COMMA_SEP +
-                    Schemas.LeagueResultsEntry.ALL_AMER_1ST + BLOB_TYPE + COMMA_SEP +
-                    Schemas.LeagueResultsEntry.ALL_AMER_2ND + BLOB_TYPE + COMMA_SEP +
-                    Schemas.LeagueResultsEntry.ALL_AMER_3RD + BLOB_TYPE + COMMA_SEP +
+                    Schemas.LeagueResultsEntry.ALL_AMERCANS + BLOB_TYPE + COMMA_SEP +
+                    Schemas.LeagueResultsEntry.ALL_COWBOY + BLOB_TYPE + COMMA_SEP +
+                    Schemas.LeagueResultsEntry.ALL_LAKES + BLOB_TYPE + COMMA_SEP +
+                    Schemas.LeagueResultsEntry.ALL_MOUNTAINS + BLOB_TYPE + COMMA_SEP +
+                    Schemas.LeagueResultsEntry.ALL_NORTH + BLOB_TYPE + COMMA_SEP +
+                    Schemas.LeagueResultsEntry.ALL_PACIFIC + BLOB_TYPE + COMMA_SEP +
+                    Schemas.LeagueResultsEntry.ALL_SOUTH + BLOB_TYPE + COMMA_SEP +
                     Schemas.LeagueResultsEntry.YEAR + INTEGER_TYPE +
                     " );";
 

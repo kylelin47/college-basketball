@@ -14,6 +14,15 @@
         <item>Stats</item>
         <item>Recent Games</item>
     </string-array>
+    <string-array name="season_awards_choices">
+        <item>All Americans</item>
+        <item>All-Cowboy Teams</item>
+        <item>All-Lakes Teams</item>
+        <item>All-Mountains Teams</item>
+        <item>All-North Teams</item>
+        <item>All-Pacific Teams</item>
+        <item>All-South Teams</item>
+    </string-array>
     <!-- First 10 are COWBOY conference, next 10 LAKES, etc. -->
     <string-array name="team_names">
         <item>Oklahoma Oranges</item>

@@ -35,6 +35,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 import io.coachapps.collegebasketballcoach.adapters.GameScheduleListArrayAdapter;
 import io.coachapps.collegebasketballcoach.adapters.LeagueLeadersListArrayAdapter;
+import io.coachapps.collegebasketballcoach.adapters.PlayerAwardTeamListArrayAdapter;
 import io.coachapps.collegebasketballcoach.adapters.PlayerStatsListArrayAdapter;
 import io.coachapps.collegebasketballcoach.adapters.TeamRankingsListArrayAdapter;
 import io.coachapps.collegebasketballcoach.adapters.TeamStatsListArrayAdapter;
@@ -54,6 +55,7 @@ import io.coachapps.collegebasketballcoach.db.TeamDao;
 import io.coachapps.collegebasketballcoach.db.YearlyPlayerStatsDao;
 import io.coachapps.collegebasketballcoach.models.AwardTeamModel;
 import io.coachapps.collegebasketballcoach.models.LeagueResults;
+import io.coachapps.collegebasketballcoach.models.ThreeAwardTeams;
 import io.coachapps.collegebasketballcoach.models.YearlyPlayerStats;
 import io.coachapps.collegebasketballcoach.util.DataDisplayer;
 import io.coachapps.collegebasketballcoach.util.LeagueEvents;
@@ -763,14 +765,14 @@ public class MainActivity extends AppCompatActivity {
 
     public void showEndOfSeasonDialog() {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setView(getLayoutInflater().inflate(R.layout.simple_list, null));
+        builder.setView(getLayoutInflater().inflate(R.layout.spinner_list, null));
         builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 dialog.dismiss();
             }
         });
-        builder.setTitle("End Of Season");
+        builder.setTitle("End Of Season Awards");
         final AlertDialog dialog = builder.create();
         dialog.show();
 
@@ -778,25 +780,37 @@ public class MainActivity extends AppCompatActivity {
         populateMaps();
 
         Log.i("MainActivity", "leagueResults year: " + (leagueResultsDao.getCurrentYear()-1));
-        LeagueResults leagueResults = leagueResultsDao.getLeagueResults(
+        final LeagueResults leagueResults = leagueResultsDao.getLeagueResults(
                 leagueResultsDao.getCurrentYear()-1, leagueResultsDao.getCurrentYear()-1).get(0);
 
-        List<AwardTeamModel> awardTeams = new ArrayList<>();
-        awardTeams.add(leagueResults.allAmer1st);
-        awardTeams.add(leagueResults.allAmer2nd);
-        awardTeams.add(leagueResults.allAmer3rd);
-        List<Player> allAmericans = new ArrayList<>();
-        for (int r = 0; r < awardTeams.size(); ++r) {
-            for (int i = 1; i < 6; ++i) {
-                int id = awardTeams.get(r).getIdPosition(i);
-                Log.i("MainActivity", "Pos: " + (playerMap.get(id).getLineupPosition()%5+1) + " AllAmerican id " + id);
-                allAmericans.add(playerMap.get(id));
-            }
-        }
+        final ListView listView = (ListView) dialog.findViewById(R.id.listView);
 
-        ListView listView = (ListView) dialog.findViewById(R.id.listView);
-        listView.setAdapter(new PlayerStatsListArrayAdapter(
-                this, allAmericans, leagueResultsDao.getCurrentYear()-1));
+        final Spinner spinner = (Spinner) dialog.findViewById(R.id.spinner);
+        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this,
+                R.array.season_awards_choices, android.R.layout.simple_spinner_item);
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spinner.setAdapter(adapter);
+        spinner.setOnItemSelectedListener(
+                new AdapterView.OnItemSelectedListener() {
+                    public void onItemSelected(
+                            AdapterView<?> parent, View view, int position, long id) {
+                        // Look at the right category
+                        List<Player> awardWinners = new ArrayList<Player>();
+                        ThreeAwardTeams awardTeams = leagueResults.getTeam(position);
+                        for (int t = 0; t < 3; ++t) {
+                            for (int pos = 1; pos < 6; pos++) {
+                                int pid = awardTeams.get(t).getIdPosition(pos);
+                                awardWinners.add(playerMap.get(pid));
+                            }
+                        }
+                        listView.setAdapter(new PlayerAwardTeamListArrayAdapter(
+                                MainActivity.this, awardWinners, playerTeamMap, getYear()));
+                    }
+
+                    public void onNothingSelected(AdapterView<?> parent) {
+                        // do nothing
+                    }
+                });
 
     }
 
