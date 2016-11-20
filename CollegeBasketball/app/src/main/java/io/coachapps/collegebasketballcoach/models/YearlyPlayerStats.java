@@ -25,6 +25,17 @@ public class YearlyPlayerStats {
         this.playerId = boxScore.playerId;
         this.playerStats = new Stats(boxScore.playerStats);
     }
+
+    public int getMVPScore() {
+        return (int)((playerStats.points + playerStats.assists + playerStats.offensiveRebounds +
+                playerStats.defensiveRebounds) * getPG("FG%"));
+    }
+
+    public int getDPOYScore() {
+        return (playerStats.blocks*5 + playerStats.steals*5 + playerStats.offensiveRebounds +
+                playerStats.defensiveRebounds);
+    }
+
     public String getPGDisplay(final String abbreviation) {
         if (abbreviation.contains("%")) {
             return String.valueOf((int)getPG(abbreviation));

@@ -6,6 +6,7 @@
     <string name="action_set_strategy">Set Team Strategy</string>
     <string name="action_team_rankings">Team Rankings</string>
     <string name="action_league_leaders">League Leaders</string>
+    <string name="action_season_awards">Season Awards</string>
     <string name="recruiting_loading_msg">
         "Finishing recruiting, signing walk-ons, and sending players to training camp. Please wait."
     </string>
@@ -13,8 +14,11 @@
         <item>Ratings</item>
         <item>Stats</item>
         <item>Recent Games</item>
+        <item>Awards</item>
     </string-array>
     <string-array name="season_awards_choices">
+        <item>Player of the Year</item>
+        <item>Defensive Player of the Year</item>
         <item>All Americans</item>
         <item>All-Cowboy Teams</item>
         <item>All-Lakes Teams</item>

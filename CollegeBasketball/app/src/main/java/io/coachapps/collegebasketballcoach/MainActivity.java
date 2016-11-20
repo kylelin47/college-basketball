@@ -341,6 +341,10 @@ public class MainActivity extends AppCompatActivity {
             showTeamRankingsDialog();
         } else if (id == R.id.action_my_team) {
             examineTeam(playerTeam.getName());
+        } else if (id == R.id.action_season_awards) {
+            if (doneWithSeason) {
+                showEndOfSeasonDialog();
+            }
         }
 
         return super.onOptionsItemSelected(item);
@@ -796,15 +800,30 @@ public class MainActivity extends AppCompatActivity {
                             AdapterView<?> parent, View view, int position, long id) {
                         // Look at the right category
                         List<Player> awardWinners = new ArrayList<Player>();
-                        ThreeAwardTeams awardTeams = leagueResults.getTeam(position);
-                        for (int t = 0; t < 3; ++t) {
-                            for (int pos = 1; pos < 6; pos++) {
-                                int pid = awardTeams.get(t).getIdPosition(pos);
-                                awardWinners.add(playerMap.get(pid));
+                        if (position < 2) {
+                            // MVP or DPOY
+                            if (position == 0) awardWinners.add(playerMap.get(leagueResults.mvpId));
+                            else awardWinners.add(playerMap.get(leagueResults.dpoyId));
+                        } else {
+                            // Award Teams
+                            ThreeAwardTeams awardTeams = leagueResults.getTeam(position-2);
+                            for (int t = 0; t < 3; ++t) {
+                                for (int pos = 1; pos < 6; pos++) {
+                                    int pid = awardTeams.get(t).getIdPosition(pos);
+                                    awardWinners.add(playerMap.get(pid));
+                                }
                             }
                         }
                         listView.setAdapter(new PlayerAwardTeamListArrayAdapter(
                                 MainActivity.this, awardWinners, playerTeamMap, getYear()));
+                        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                            @Override
+                            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                                Player p = ((PlayerAwardTeamListArrayAdapter) listView
+                                        .getAdapter()).getItem(position);
+                                showPlayerDialog(p);
+                            }
+                        });
                     }
 
                     public void onNothingSelected(AdapterView<?> parent) {

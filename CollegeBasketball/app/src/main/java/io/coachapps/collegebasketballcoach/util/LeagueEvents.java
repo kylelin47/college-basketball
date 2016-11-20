@@ -193,10 +193,14 @@ public class LeagueEvents {
         Game championshipGame = tournamentGames.get(tournamentGames.size() - 1);
         Game previousGame = tournamentGames.get(tournamentGames.size() - 2);
         if (championshipGame.hasPlayed() && championshipGame.getWeek() > previousGame.getWeek()) {
-            List<ThreeAwardTeams> awardTeams = getAllAwardTeams(context, league, championshipGame.getYear());
+            YearlyPlayerStatsDao yps = new YearlyPlayerStatsDao(context);
+            List<YearlyPlayerStats> playerStatsList = yps.getAllYearlyPlayerStats(championshipGame.getYear());
+            List<ThreeAwardTeams> awardTeams = getAllAwardTeams(playerStatsList, league);
+            int mvpID = getMVP(playerStatsList, league);
+            int dpoyID = getDPOY(playerStatsList, league);
             LeagueResultsEntryDao leagueResultsEntryDao = new LeagueResultsEntryDao(context);
             leagueResultsEntryDao.save(championshipGame.getYear(),
-                    championshipGame.getWinner().name, 0, 0, awardTeams);
+                    championshipGame.getWinner().name, mvpID, dpoyID, awardTeams);
             return true;
         }
         return false;
@@ -290,19 +294,37 @@ public class LeagueEvents {
         return minWeek;
     }
 
-    public static List<ThreeAwardTeams> getAllAwardTeams(Context context, League league, int year) {
-        YearlyPlayerStatsDao yps = new YearlyPlayerStatsDao(context);
-        List<YearlyPlayerStats> playerStatsList = yps.getAllYearlyPlayerStats(year);
+    public static int getMVP(List<YearlyPlayerStats> playerStatsList, League league) {
+        Collections.sort(playerStatsList, new Comparator<YearlyPlayerStats>() {
+            @Override
+            public int compare(YearlyPlayerStats a, YearlyPlayerStats b) {
+                return b.getMVPScore() - a.getMVPScore();
+            }
+        });
+
+        return playerStatsList.get(0).playerId;
+    }
+
+    public static int getDPOY(List<YearlyPlayerStats> playerStatsList, League league) {
+        Collections.sort(playerStatsList, new Comparator<YearlyPlayerStats>() {
+            @Override
+            public int compare(YearlyPlayerStats a, YearlyPlayerStats b) {
+                return b.getDPOYScore() - a.getDPOYScore();
+            }
+        });
+
+        return playerStatsList.get(0).playerId;
+    }
+
+    public static List<ThreeAwardTeams> getAllAwardTeams(List<YearlyPlayerStats> playerStatsList,
+                                                         League league) {
         Log.i("LeagueEvents", "playerStatsList size = " + playerStatsList.size());
 
         // Sort all stats by points+assists+rebounds
         Collections.sort(playerStatsList, new Comparator<YearlyPlayerStats>() {
             @Override
             public int compare(YearlyPlayerStats a, YearlyPlayerStats b) {
-                return (b.playerStats.points + b.playerStats.defensiveRebounds +
-                        b.playerStats.offensiveRebounds + b.playerStats.assists) -
-                           (a.playerStats.points + a.playerStats.defensiveRebounds +
-                            a.playerStats.offensiveRebounds + a.playerStats.assists);
+                return b.getMVPScore() - a.getMVPScore();
             }
         });
 

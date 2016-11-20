@@ -18,8 +18,8 @@ public class LeagueResultsEntryDao {
         this.context = context;
     }
 
-    public void save(int year, String championTeamName, int dpoyId,
-                     int mvpId, List<ThreeAwardTeams> awardTeams) {
+    public void save(int year, String championTeamName, int mvpId,
+                     int dpoyId, List<ThreeAwardTeams> awardTeams) {
         SQLiteDatabase db = DbHelper.getInstance(context).getReadableDatabase();
         ContentValues values = new ContentValues();
         values.put(Schemas.LeagueResultsEntry.YEAR, year);
@@ -91,12 +91,14 @@ public class LeagueResultsEntryDao {
     }
     private LeagueResults fetchLeagueResults(Cursor cursor) {
         LeagueResults results = new LeagueResults();
-        results.dpoyId = cursor.getInt(cursor.getColumnIndexOrThrow(Schemas.LeagueResultsEntry
-                .DPOY));
-        results.mvpId = cursor.getInt(cursor.getColumnIndexOrThrow(Schemas.LeagueResultsEntry.DPOY));
-        results.championTeamName = cursor.getString(cursor.getColumnIndexOrThrow(Schemas
-                .LeagueResultsEntry.CHAMPION));
-        results.year = cursor.getInt(cursor.getColumnIndexOrThrow(Schemas.LeagueResultsEntry.YEAR));
+        results.dpoyId = cursor.getInt(cursor
+                .getColumnIndexOrThrow(Schemas.LeagueResultsEntry.DPOY));
+        results.mvpId = cursor.getInt(cursor
+                .getColumnIndexOrThrow(Schemas.LeagueResultsEntry.MVP));
+        results.championTeamName = cursor.getString(cursor
+                .getColumnIndexOrThrow(Schemas.LeagueResultsEntry.CHAMPION));
+        results.year = cursor.getInt(cursor
+                .getColumnIndexOrThrow(Schemas.LeagueResultsEntry.YEAR));
         results.allAmericans = (ThreeAwardTeams) SerializationUtil.deserialize(cursor.getBlob(cursor
                 .getColumnIndexOrThrow(Schemas.LeagueResultsEntry.ALL_AMERCANS)));
         results.allCowboy = (ThreeAwardTeams) SerializationUtil.deserialize(cursor.getBlob(cursor

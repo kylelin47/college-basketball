@@ -76,6 +76,12 @@ public class PlayerDialogFragment extends DialogFragment {
                                 RecentGamesFragment.newInstance(player.getId(), year);
                         getChildFragmentManager().beginTransaction().replace(R.id.fragment_container,
                                 recentGamesFragment).commit();
+                    } else if (i == 3) {
+                        PlayerAwardsFragment awardsFragment =
+                                PlayerAwardsFragment.newInstance(
+                                        player.getId(), teamName, year - player.year + 1, year);
+                        getChildFragmentManager().beginTransaction().replace(R.id.fragment_container,
+                                awardsFragment).commit();
                     }
                 }
                 previouslySelected = i;
