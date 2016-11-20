@@ -249,10 +249,9 @@ public class GameSimThread extends Thread {
             List<Team> winners = determineLatestWinners(tournamentGames);
             Game lastGame = tournamentGames.get(tournamentGames.size() - 1);
             tournamentGames.addAll(tournamentScheduler.scheduleTournament(winners, lastGame
-                    .getYear()));
-        } else {
-            ((MainActivity) activity).tryToScheduleConferenceTournament();
+                    .getYear(), lastGame.gameType));
         }
+        ((MainActivity) activity).tryToScheduleTournaments();
 
         activity.runOnUiThread(new Runnable() {
             @Override
@@ -277,7 +276,6 @@ public class GameSimThread extends Thread {
     /**
      * Returns a string that is prefixed to any event in the game log.
      * Ex: 0:01 Q4 ALA 98 - 95 FLA
-     * @return
      */
     private String getEventPrefix() {
         Team poss_team;

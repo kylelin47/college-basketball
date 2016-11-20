@@ -8,23 +8,18 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.LinearLayout;
-import android.widget.LinearLayout.LayoutParams;
 import android.widget.TextView;
 
-import java.util.ArrayList;
 import java.util.List;
+import java.util.ListIterator;
 
-import io.coachapps.collegebasketballcoach.fragments.BracketDialogFragment;
 import io.coachapps.collegebasketballcoach.R;
+import io.coachapps.collegebasketballcoach.basketballsim.Game;
+import io.coachapps.collegebasketballcoach.fragments.BracketDialogFragment;
 
 public class BracketListArrayAdapter extends ArrayAdapter<String>  {
     private final Context context;
-    /**
-     *   Array of game toString()
-     */
-    private String[][] gameSummaries;
-    // boundaries to place rounds
-    private List<Integer> boundaries;
+    private List<String> gameSummaries;
     private final BracketDialogFragment bracketDialogFragment;
 
     public BracketListArrayAdapter(Context context, BracketDialogFragment bracketDialogFragment,
@@ -32,67 +27,89 @@ public class BracketListArrayAdapter extends ArrayAdapter<String>  {
         super(context, R.layout.game_result_list_item, games);
         this.context = context;
         this.bracketDialogFragment = bracketDialogFragment;
-        setGames(games);
+        this.gameSummaries = games;
         setBoundaries();
     }
 
-    private void setGames(List<String> games) {
-        gameSummaries = new String[games.size()][8];
-        for (int i = 0; i < games.size(); i++) {
-            gameSummaries[i] = games.get(i).split(",");
+    private void setBoundaries() {
+        gameSummaries.add(0, "Round 1");
+        ListIterator<String> iterator = gameSummaries.listIterator();
+        iterator.next();
+        int prev = getWeek(iterator.next().split(","));
+        int round = 2;
+        for (; iterator.hasNext();) {
+            int currentWeek = getWeek(iterator.next().split(","));
+            if (currentWeek != prev) {
+                iterator.previous();
+                iterator.add("Round " + round++);
+                iterator.next();
+            }
+            prev = currentWeek;
         }
     }
 
-    private void setBoundaries() {
-        boundaries = new ArrayList<>();
-        for (int i = 1; i < gameSummaries.length; i++) {
-            if (getWeek(gameSummaries[i]) != getWeek(gameSummaries[i-1])) {
-                boundaries.add(i - 1);
-            }
-        }
+    private static class ViewHolder {
+        TextView textHomeName;
+        TextView textAwayName;
+        Button gameButton;
     }
 
     @Override
     @NonNull
     public View getView(final int position, View convertView, @NonNull ViewGroup parent) {
+        ViewHolder viewHolder;
         LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        // maybe later
         View rowView = inflater.inflate(R.layout.bracket_list_item, parent, false);
-
-        TextView textHomeName = (TextView) rowView.findViewById(R.id.bracketListHomeTeam);
-        TextView textAwayName = (TextView) rowView.findViewById(R.id.bracketListAwayTeam);
-        Button gameButton = (Button) rowView.findViewById(R.id.bracketListGameButton);
-        if (boundaries.contains(position)) {
+        viewHolder = new ViewHolder();
+        viewHolder.textHomeName = (TextView) rowView.findViewById(R.id.bracketListHomeTeam);
+        viewHolder.textAwayName = (TextView) rowView.findViewById(R.id.bracketListAwayTeam);
+        viewHolder.gameButton = (Button) rowView.findViewById(R.id.bracketListGameButton);
+        if (gameSummaries.get(position).contains("Round")) {
             LinearLayout rootLayout = (LinearLayout) rowView.findViewById(R.id.bracketListRootLayout);
             TextView round = new TextView(context);
-            round.setText("Round " + (boundaries.indexOf(position) + 2));
-            round.setLayoutParams(new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT));
+            round.setText(gameSummaries.get(position));
+            round.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT));
             rootLayout.addView(round);
+            viewHolder.textAwayName.setVisibility(View.GONE);
+            viewHolder.gameButton.setVisibility(View.GONE);
+            viewHolder.textHomeName.setVisibility(View.GONE);
+            return rowView;
         }
-        final String[] gameInfo = gameSummaries[position];
-        textHomeName.setText(gameInfo[0] + " (" + gameInfo[8] + ")");
-        textAwayName.setText(gameInfo[1] + " (" + gameInfo[9] + ")");
-        if (gameInfo[6].equals("true")) {
-            gameButton.setText(gameInfo[2] + " - " + gameInfo[3]);
+        final String[] gameInfo = gameSummaries.get(position).split(",");
+        final String homeSeed;
+        final String awaySeed;
+        if (gameInfo[7].equals(Game.GameType.MARCH_MADNESS.toString())) {
+            homeSeed = gameInfo[10];
+            awaySeed = gameInfo[11];
         } else {
-            gameButton.setText("---");
+            homeSeed = gameInfo[8];
+            awaySeed = gameInfo[9];
         }
-        gameButton.setOnClickListener(new View.OnClickListener() {
+        viewHolder.textHomeName.setText(gameInfo[0] + " (" + homeSeed + ")");
+        viewHolder.textAwayName.setText(gameInfo[1] + " (" + awaySeed + ")");
+        if (gameInfo[6].equals("true")) {
+            viewHolder.gameButton.setText(gameInfo[2] + " - " + gameInfo[3]);
+        } else {
+            viewHolder.gameButton.setText("---");
+        }
+        viewHolder.gameButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 if (gameInfo[6].equals("true")) {
                     bracketDialogFragment.showGameSummaryDialog(getYear(gameInfo),
                            getWeek(gameInfo), gameInfo[0], gameInfo[1],
-                            "(" + gameInfo[8] + ") " + gameInfo[0],
-                            "(" + gameInfo[9] + ") " + gameInfo[1]);
+                            "(" + homeSeed + ") " + gameInfo[0],
+                            "(" + awaySeed + ") " + gameInfo[1]);
                 }
             }
         });
-        textHomeName.setOnClickListener(new View.OnClickListener() {
+        viewHolder.textHomeName.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 bracketDialogFragment.examineTeam(gameInfo[0]);
             }
         });
-        textAwayName.setOnClickListener(new View.OnClickListener() {
+        viewHolder.textAwayName.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 bracketDialogFragment.examineTeam(gameInfo[1]);

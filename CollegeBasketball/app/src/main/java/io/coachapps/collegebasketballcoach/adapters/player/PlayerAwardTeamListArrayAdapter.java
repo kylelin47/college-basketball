@@ -1,13 +1,14 @@
 package io.coachapps.collegebasketballcoach.adapters.player;
 
 import android.content.Context;
+import android.support.annotation.NonNull;
+import android.util.SparseArray;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.TextView;
 
-import java.util.HashMap;
 import java.util.List;
 
 import io.coachapps.collegebasketballcoach.R;
@@ -25,11 +26,11 @@ import io.coachapps.collegebasketballcoach.util.DataDisplayer;
 public class PlayerAwardTeamListArrayAdapter extends ArrayAdapter<Player> {
     private final Context context;
     private final List<Player> players;
-    private final HashMap<Integer, Team> playerTeamMap;
+    private final SparseArray<Team> playerTeamMap;
     private final int currentYear;
 
     public PlayerAwardTeamListArrayAdapter(Context context, List<Player> players,
-                                           HashMap<Integer, Team> playerTeamMap, int year) {
+                                           SparseArray<Team> playerTeamMap, int year) {
         super(context, R.layout.award_team_list_item, players);
         this.context = context;
         this.players = players;
@@ -50,7 +51,8 @@ public class PlayerAwardTeamListArrayAdapter extends ArrayAdapter<Player> {
     }
 
     @Override
-    public View getView(final int position, View convertView, ViewGroup parent) {
+    @NonNull
+    public View getView(final int position, View convertView, @NonNull ViewGroup parent) {
         PlayerAwardTeamListArrayAdapter.ViewHolder viewHolder;
         if (convertView == null) {
             LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);

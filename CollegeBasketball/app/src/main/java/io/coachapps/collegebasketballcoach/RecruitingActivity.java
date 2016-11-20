@@ -37,6 +37,7 @@ import io.coachapps.collegebasketballcoach.basketballsim.Player;
 import io.coachapps.collegebasketballcoach.basketballsim.PlayerGen;
 import io.coachapps.collegebasketballcoach.db.DbHelper;
 import io.coachapps.collegebasketballcoach.db.PlayerDao;
+import io.coachapps.collegebasketballcoach.db.Schemas;
 import io.coachapps.collegebasketballcoach.fragments.PlayerDialogFragment;
 import io.coachapps.collegebasketballcoach.models.PlayerModel;
 import io.coachapps.collegebasketballcoach.util.DataDisplayer;
@@ -619,6 +620,7 @@ public class RecruitingActivity extends AppCompatActivity {
                 playerImprovementMap.put(p, newOverall - oldOverall);
                 playerDao.updatePlayer(new PlayerModel(p, existingPlayersTeamMap.get(p).getName()));
             }
+            db.delete(Schemas.BoxScoreEntry.TABLE_NAME, null, null);
             db.setTransactionSuccessful();
         } finally {
             db.endTransaction();

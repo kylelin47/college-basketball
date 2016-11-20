@@ -45,8 +45,8 @@ public class GameScheduleListArrayAdapter extends ArrayAdapter<Game> {
     @NonNull
     public View getView(final int position, View convertView, @NonNull ViewGroup parent) {
         ViewHolder viewHolder;
-        String[] gameSummary = team.getGameSummaryStr(position);
-        if (convertView == null || gameSummary[0].equals("Tournament")) {
+        String[] gameSummary = team.getGameSummaryStr(games.get(position));
+        if (convertView == null || games.get(position).gameType.isTournament()) {
             LayoutInflater inflater = (LayoutInflater) context
                     .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
             convertView = inflater.inflate(R.layout.game_schedule_list_item, parent, false);
@@ -77,14 +77,15 @@ public class GameScheduleListArrayAdapter extends ArrayAdapter<Game> {
                     .button_shape_neutral));
         }
 
-        if (gameSummary[0].equals("Tournament")) {
+        if (games.get(position).gameType.isTournament()) {
             viewHolder.gameType.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    mainAct.showBracketDialog();
+                    mainAct.showBracketDialog(games.get(position).gameType);
                 }
             });
         }
+
         viewHolder.viewGame.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 // Examine game summary
@@ -111,7 +112,13 @@ public class GameScheduleListArrayAdapter extends ArrayAdapter<Game> {
         return convertView;
     }
 
+    @Override
     public Game getItem(int position) {
         return games.get(position);
+    }
+
+    @Override
+    public int getCount() {
+        return games.size();
     }
 }

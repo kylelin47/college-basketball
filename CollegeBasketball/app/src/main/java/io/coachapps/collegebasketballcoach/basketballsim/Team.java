@@ -16,7 +16,8 @@ public class Team {
     public List<Player> players;
     public int wins;
     public int losses;
-    public int seed;
+    public int conferenceSeed;
+    public int madnessSeed;
     public String conference;
 
     public List<Game> gameSchedule;
@@ -315,24 +316,23 @@ public class Team {
         System.out.println(name + " DIDN'T PICK ENOUGH PEOPLE!");
     }
 
-    public String[] getGameSummaryStr(int gameNumber) {
+    public String[] getGameSummaryStr(Game game) {
         String[] sum = new String[3];
-        Game gm = gameSchedule.get(gameNumber);
-        sum[0] = gm.gameType.toString();
-        if (gm.hasPlayed()) {
-            if (gm.getWinner() == this) {
-                sum[1] = gm.getWinnerString();
+        sum[0] = game.gameType.toString();
+        if (game.hasPlayed()) {
+            if (game.getWinner() == this) {
+                sum[1] = game.getWinnerString();
             } else {
-                sum[1] = gm.getLoserString();
+                sum[1] = game.getLoserString();
             }
         } else {
             sum[1] = "---";
         }
 
-        if (gm.getHome() == this) {
-            sum[2] = "vs " + gm.getAway().getAbbr();
+        if (game.getHome() == this) {
+            sum[2] = "vs " + game.getAway().getAbbr();
         } else {
-            sum[2] = "@ " + gm.getHome().getAbbr();
+            sum[2] = "@ " + game.getHome().getAbbr();
         }
         return sum;
     }

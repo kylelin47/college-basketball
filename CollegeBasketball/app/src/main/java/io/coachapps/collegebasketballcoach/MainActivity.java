@@ -11,6 +11,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.InputType;
 import android.util.Log;
+import android.util.SparseArray;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -29,16 +30,15 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.HashMap;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 
+import io.coachapps.collegebasketballcoach.adapters.TeamRankingsListArrayAdapter;
+import io.coachapps.collegebasketballcoach.adapters.TeamStatsListArrayAdapter;
 import io.coachapps.collegebasketballcoach.adapters.game.GameScheduleListArrayAdapter;
 import io.coachapps.collegebasketballcoach.adapters.player.LeagueLeadersListArrayAdapter;
 import io.coachapps.collegebasketballcoach.adapters.player.PlayerAwardTeamListArrayAdapter;
 import io.coachapps.collegebasketballcoach.adapters.player.PlayerStatsListArrayAdapter;
-import io.coachapps.collegebasketballcoach.adapters.TeamRankingsListArrayAdapter;
-import io.coachapps.collegebasketballcoach.adapters.TeamStatsListArrayAdapter;
 import io.coachapps.collegebasketballcoach.basketballsim.Game;
 import io.coachapps.collegebasketballcoach.basketballsim.GameSimThread;
 import io.coachapps.collegebasketballcoach.basketballsim.League;
@@ -64,15 +64,13 @@ import io.coachapps.collegebasketballcoach.util.DataDisplayer;
 import io.coachapps.collegebasketballcoach.util.LeagueEvents;
 
 public class MainActivity extends AppCompatActivity {
-    boolean hasScheduledConferenceTournament;
     Team playerTeam;
     Simulator bballSim;
     League league;
     List<Team> currentConferenceTeamList;
-    HashMap<Integer, Player> playerMap;
-    HashMap<Integer, Team> playerTeamMap;
+    SparseArray<Player> playerMap;
+    SparseArray<Team> playerTeamMap;
     List<String> teamStrList;
-    List<Game> tournamentGames;
 
     Spinner teamSpinner;
     Spinner conferenceSpinner;
@@ -205,7 +203,7 @@ public class MainActivity extends AppCompatActivity {
         // Sim games
         bballSim = new Simulator(MainActivity.this);
         LeagueEvents.scheduleSeason(league, this, getYear());
-        tryToScheduleConferenceTournament();
+        tryToScheduleTournaments();
         // Set up UI components
         currTeamTextView = (TextView) findViewById(R.id.currentTeamText);
         final ViewFlipper vf = (ViewFlipper) findViewById(R.id.viewFlipper);
@@ -316,7 +314,6 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        // Populate hashmaps to store id->player and id->team
         populateMaps();
     }
 
@@ -363,9 +360,10 @@ public class MainActivity extends AppCompatActivity {
         statsListAdapter = new TeamStatsListArrayAdapter(MainActivity.this,
                 DataDisplayer.getTeamStatsCSVs(team.getName(), league, this, year), false);
         statsList.setAdapter(statsListAdapter);
-
+        List<Game> games = new ArrayList<>(team.gameSchedule);
+        games.removeAll(Collections.singleton(null));
         gameListAdapter = new GameScheduleListArrayAdapter(MainActivity.this, MainActivity.this,
-                team, team.gameSchedule);
+                team, games);
         gameList.setAdapter(gameListAdapter);
     }
 
@@ -393,8 +391,8 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void populateMaps() {
-        playerMap = new HashMap<>();
-        playerTeamMap = new HashMap<>();
+        playerMap = new SparseArray<>();
+        playerTeamMap = new SparseArray<>();
         for (Team t : league.getAllTeams()) {
             for (Player p : t.players) {
                 playerMap.put(p.getId(), p);
@@ -417,23 +415,26 @@ public class MainActivity extends AppCompatActivity {
     public void updateUI() {
         league.assignPollRanks(this, getYear());
         rosterListAdapter.notifyDataSetChanged();
+        Team currentTeam = currentConferenceTeamList.get(lastSelectedTeamPosition);
         statsListAdapter = new TeamStatsListArrayAdapter(MainActivity.this,
-                DataDisplayer.getTeamStatsCSVs(currentConferenceTeamList.get(lastSelectedTeamPosition).getName(),
-                        league, this, getYear()), false);
+                DataDisplayer.getTeamStatsCSVs(currentTeam.getName(), league, this, getYear()), false);
         statsList.setAdapter(statsListAdapter);
+        Game lastGame = currentTeam.gameSchedule.get(currentTeam.gameSchedule.size() - 1);
+        if (lastGame != null && gameListAdapter.getPosition(lastGame) == -1) {
+            gameListAdapter.add(lastGame);
+        }
         gameListAdapter.notifyDataSetChanged();
-        currTeamTextView.setText(currentConferenceTeamList.get(lastSelectedTeamPosition).getRankNameWLStr());
+        currTeamTextView.setText(currentTeam.getRankNameWLStr());
         populateTeamStrList();
         dataAdapterTeam.notifyDataSetChanged();
         playGameButton.setEnabled(!playerTeam.gameSchedule.get(playerTeam.gameSchedule.size() -
                 1).hasPlayed());
-        if (LeagueEvents.tryToFinishTournament(tournamentGames, this, league)) {
-            Log.i("MainActivity", "Finished tournament");
+        if (LeagueEvents.tryToFinishSeason(this, league)) {
+            Log.i("MainActivity", "Finished season");
             // enter recruiting
             doneWithSeason = true;
             simGameButton.setText("Recruit");
             showEndOfSeasonDialog();
-            //onNewYear(); // for testing
         }
     }
 
@@ -484,9 +485,16 @@ public class MainActivity extends AppCompatActivity {
         newFragment.show(ft, "player dialog");
     }
 
-    public void showBracketDialog() {
+    public void showBracketDialog(Game.GameType gameType) {
+        if (!gameType.isTournament()) return;
         FragmentTransaction ft = getFragmentManager().beginTransaction();
-        DialogFragment newFragment = BracketDialogFragment.newInstance(tournamentGames);
+        DialogFragment newFragment;
+        if (gameType == Game.GameType.TOURNAMENT_GAME) {
+            newFragment = BracketDialogFragment.newInstance(league.getTournamentGames
+                            (League.Conference.valueOf(currentConferenceTeamList.get(0).conference)));
+        } else {
+            newFragment = BracketDialogFragment.newInstance(league.getMarchMadnessGames());
+        }
         newFragment.show(ft, "bracket dialog");
     }
     public void showGameSummaryDialog(final Game gm) {
@@ -516,6 +524,11 @@ public class MainActivity extends AppCompatActivity {
         uiElements.textViewHomeScore = (TextView) dialog.findViewById(R.id.gameDialogScoreHome);
         uiElements.textViewAwayScore = (TextView) dialog.findViewById(R.id.gameDialogScoreAway);
 
+        List<Game> tournamentGames = league.getMarchMadnessGames();
+        if (tournamentGames == null) {
+            tournamentGames = league.getTournamentGames(League.Conference.valueOf(playerTeam
+                    .conference));
+        }
         final GameSimThread t = new GameSimThread(this, this, uiElements, gm, tournamentGames);
 
         Spinner dialogSpinner = (Spinner) dialog.findViewById(R.id.spinnerGameDialog);
@@ -699,7 +712,7 @@ public class MainActivity extends AppCompatActivity {
                                 getYear(), 25, schemaCategoryList.get(position));
                         List<Player> players = new ArrayList<>();
                         for (YearlyPlayerStats stats : leaders) {
-                            if (playerMap.containsKey(stats.playerId)) {
+                            if (playerMap.get(stats.playerId) != null) {
                                 players.add(playerMap.get(stats.playerId));
                             }
                         }
@@ -835,7 +848,14 @@ public class MainActivity extends AppCompatActivity {
                 });
 
     }
-
+    public void tryToScheduleTournaments() {
+        if (LeagueEvents.determineLastUnplayedRegularSeasonWeek(league.getAllTeams()) == Integer.MAX_VALUE) {
+            league.scheduleConferenceTournament(MainActivity.this);
+        }
+        if (league.conferenceTournamentFinished()) {
+            league.scheduleMarchMadness(MainActivity.this);
+        }
+    }
     /**
      * Class responsible for simulating a week.
      * Done via a AsyncTask so the UI thread isn't overwhelmed.
@@ -845,24 +865,15 @@ public class MainActivity extends AppCompatActivity {
         protected Void doInBackground(Boolean... simPlayerGame) {
             boolean spg = simPlayerGame[0];
             LeagueEvents.playRegularSeasonGame(league.getAllTeams(), bballSim, spg, playerTeam.name);
-            LeagueEvents.playTournamentRound(tournamentGames, bballSim, spg, playerTeam.name);
+            LeagueEvents.playTournamentRound(league, bballSim, spg, playerTeam.name);
             return null;
         }
         @Override
         protected void onPostExecute(Void result) {
-            updateUI();
             canSimWeek = true;
             simGameButton.setEnabled(true);
-            playGameButton.setEnabled(true);
-            tryToScheduleConferenceTournament();
-        }
-    }
-    public void tryToScheduleConferenceTournament() {
-        if (!hasScheduledConferenceTournament && LeagueEvents
-                .determineLastUnplayedRegularSeasonWeek(league.getAllTeams()) == Integer.MAX_VALUE) {
-            tournamentGames = LeagueEvents.scheduleConferenceTournament(currentConferenceTeamList, MainActivity
-                    .this);
-            hasScheduledConferenceTournament = true;
+            tryToScheduleTournaments();
+            updateUI();
         }
     }
 }

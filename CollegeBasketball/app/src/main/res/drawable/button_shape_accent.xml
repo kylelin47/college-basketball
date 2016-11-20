@@ -39,6 +39,25 @@
         </shape>
     </item>
 
+    <item android:state_enabled="false" >
+        <shape>
+            <gradient
+                android:endColor="@color/grey"
+                android:startColor="@color/grey"
+                android:angle="270" />
+            <stroke
+                android:width="3dp"
+                android:color="@color/grey" />
+            <corners
+                android:radius="1dp" />
+            <padding
+                android:left="10dp"
+                android:top="10dp"
+                android:right="10dp"
+                android:bottom="10dp" />
+        </shape>
+    </item>
+
     <item>
         <shape>
             <gradient

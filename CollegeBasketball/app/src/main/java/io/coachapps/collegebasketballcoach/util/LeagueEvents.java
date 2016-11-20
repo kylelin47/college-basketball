@@ -2,12 +2,11 @@ package io.coachapps.collegebasketballcoach.util;
 
 import android.content.Context;
 import android.util.Log;
+import android.util.SparseIntArray;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Random;
@@ -37,167 +36,84 @@ import io.coachapps.collegebasketballcoach.models.YearlyPlayerStats;
  */
 
 public class LeagueEvents {
-    //bit of a lie
-    private static final List<Integer> OUT_OF_CONFERENCE_WEEKS = Arrays.asList(3, 5, 7, 9, 11, 13,
-            15, 17, 19, 21);
-
     public static void scheduleSeason(League league, Context context, int year) {
         int seed = league.getPlayerTeam().getName().hashCode() + year;
         Random random = new Random(seed);
+        RegularSeasonScheduler scheduler = new RegularSeasonScheduler();
         for (League.Conference conference : league.getConferences()) {
             List<Team> shuffledTeams = new ArrayList<>(league.getConference(conference));
             Collections.shuffle(shuffledTeams, random);
-            halfRobinScheduling(shuffledTeams, year, false);
-            halfRobinScheduling(shuffledTeams, year, true);
+            scheduler.halfRobinScheduling(shuffledTeams, year, false);
+            scheduler.halfRobinScheduling(shuffledTeams, year, true);
             for (Team team : shuffledTeams) {
                 Collections.shuffle(team.gameSchedule, new Random(seed));
             }
         }
-        scheduleOutOfConference(league, year, random);
+        scheduler.scheduleOutOfConference(league, year, random);
         Set<Game> visited = new HashSet<> ();
         GameDao gameDao = new GameDao(context);
-        for (League.Conference conference : league.getConferences()) {
-            for (Team team : league.getConference(conference)) {
-                for (Game game : team.gameSchedule) {
-                    if (!game.hasPlayed() && !visited.contains(game)) {
-                        visited.add(game);
-                        GameModel gameModel = gameDao.getGame(year, game.getWeek(), game.getHome().getName(),
-                                game.getAway().getName());
-                        if (gameModel == null) break;
-                        game.apply(gameModel);
-                    }
+        for (Team team : league.getAllTeams()) {
+            for (int i = 0; i < team.gameSchedule.size(); i++) {
+                Game game = team.gameSchedule.get(i);
+                if (i > 0 && !team.gameSchedule.get(i - 1).hasPlayed()) break;
+                if (!visited.contains(game)) {
+                    visited.add(game);
+                    GameModel gameModel = gameDao.getGame(year, i, game.getHome().getName(),
+                            game.getAway().getName());
+                    if (gameModel == null) break;
+                    game.apply(gameModel);
                 }
-            }
-        }
-    }
-
-    private static void scheduleOutOfConference(League league, int year, Random
-            random) {
-        List<League.Conference> conferences = league.getConferences();
-        List<List<Team>> shuffledTeams = new ArrayList<>(conferences.size());
-        for (League.Conference conference : conferences) {
-            List<Team> teams = new ArrayList<>(league.getConference(conference));
-            Collections.shuffle(teams, random);
-            shuffledTeams.add(teams);
-        }
-        int robinRounds = conferences.size() - 1;
-        int halfRobin = conferences.size()/2;
-        int week = 0;
-        List<Game> games = new ArrayList<>();
-        for (int r = 0; r < robinRounds; ++r) {
-            for (int g = 0; g < halfRobin; ++g) {
-                List<Team> conferenceA = shuffledTeams.get((r + g) % robinRounds);
-                List<Team> conferenceB;
-                if ( g == 0 ) {
-                    conferenceB = shuffledTeams.get(robinRounds);
-                } else {
-                    conferenceB = shuffledTeams.get((robinRounds - g + r) % robinRounds);
-                }
-                scheduleOutOfConferenceGames(conferenceA, conferenceB, year, week, games, random);
-            }
-            week+=2;
-        }
-        for (Game game : games) {
-            game.reschedule();
-        }
-    }
-
-    private static void scheduleOutOfConferenceGames(List<Team> conferenceA, List<Team>
-            conferenceB, int year, int weekIndex, List<Game> games, Random random) {
-        for (int i = 0; i < conferenceA.size(); i++) {
-            Team teamA = conferenceA.get(i);
-            for (int j = 0; j < 2; j++) {
-                Team teamB = conferenceB.get(i - (i % 2) + j);
-                int week;
-                if (i % 2 == 1) {
-                    week = OUT_OF_CONFERENCE_WEEKS.get(weekIndex + ((j + 1) % 2));
-                } else {
-                    week = OUT_OF_CONFERENCE_WEEKS.get(weekIndex + j);
-                }
-                if (random.nextBoolean()) {
-                    games.add(scheduleGame(teamA, teamB, year, null, Game.GameType
-                            .OUT_OF_CONFERENCE, week));
-                } else {
-                    games.add(scheduleGame(teamB, teamA, year, null, Game.GameType
-                            .OUT_OF_CONFERENCE, week));
-                }
-
-            }
-        }
-    }
-
-    private static void halfRobinScheduling(List<Team> teams, int year, boolean
-            swapHomeAndAway) {
-        int robinRounds = teams.size() - 1;
-        int halfRobin = teams.size()/2;
-        for (int r = 0; r < robinRounds; ++r) {
-            for (int g = 0; g < halfRobin; ++g) {
-                Team home = teams.get((r + g) % robinRounds);
-                Team away;
-                if ( g == 0 ) {
-                    away = teams.get(robinRounds);
-                } else {
-                    away = teams.get((robinRounds - g + r) % robinRounds);
-                }
-                if (swapHomeAndAway) {
-                    Team temp = home;
-                    home = away;
-                    away = temp;
-                }
-                scheduleGame(home, away, year, null, Game.GameType.REGULAR_SEASON);
             }
         }
     }
 
     static Game scheduleGame(Team home, Team away, int year, GameDao gameDao, Game.GameType
             gameType) {
-        return scheduleGame(home, away, year, gameDao, gameType, home.gameSchedule.size());
+        return RegularSeasonScheduler.scheduleGame(home, away, year, gameDao, gameType, home
+                .gameSchedule.size());
     }
 
-    // Set GameDao to null if you don't want to try and retrieve the past
-    private static Game scheduleGame(Team home, Team away, int year, GameDao gameDao, Game.GameType
-            gameType, int week) {
-        GameModel gameModel = null;
-        if (gameDao != null && (home.gameSchedule.size() == 0 || home.gameSchedule.get(week - 1)
-                .hasPlayed())) {
-            gameModel = gameDao.getGame(year, week, home.getName(), away.getName());
-        }
-        Game gameToSchedule = new Game(home, away, year);
-        gameToSchedule.apply(gameModel);
-        gameToSchedule.schedule(week, gameType);
-        return gameToSchedule;
-    }
-
-    public static List<Game> scheduleConferenceTournament(List<Team> teams, Context context) {
-        TournamentScheduler tournamentScheduler = new TournamentScheduler(context);
-        return tournamentScheduler.scheduleConferenceTournament(teams);
-    }
-
-    public static void playTournamentRound(List<Game> tournamentGames, Simulator sim, boolean
+    public static void playTournamentRound(League league, Simulator sim, boolean
             simUserGame, String userTeamName) {
-        if (tournamentGames == null) return;
-        List<Team> winners = playGames(tournamentGames, sim, simUserGame, userTeamName);
         TournamentScheduler tournamentScheduler = new TournamentScheduler(sim.context);
-        Game lastGame = tournamentGames.get(tournamentGames.size() - 1);
-        if (simUserGame) {
-            tournamentGames.addAll(
-                    tournamentScheduler.scheduleTournament(winners, lastGame.getYear()));
+        League.Conference playerConference = League.Conference.valueOf(league.getPlayerTeam()
+                .conference);
+        if (league.conferenceTournamentFinished()) {
+            List<Game> tournamentGames = league.getMarchMadnessGames();
+            List<Team> winners = playGames(tournamentGames, sim, simUserGame, userTeamName);
+            Game lastGame = tournamentGames.get(tournamentGames.size() - 1);
+            if (simUserGame) {
+                tournamentGames.addAll(
+                        tournamentScheduler.scheduleTournament(winners, lastGame.getYear(), Game
+                                .GameType.MARCH_MADNESS));
+            }
+        } else {
+            for (League.Conference conference : League.Conference.values()) {
+                List<Game> tournamentGames = league.getTournamentGames(conference);
+                if (tournamentGames == null) return;
+                List<Team> winners = playGames(tournamentGames, sim, simUserGame, userTeamName);
+                Game lastGame = tournamentGames.get(tournamentGames.size() - 1);
+                if (simUserGame || playerConference != conference) {
+                    tournamentGames.addAll(
+                            tournamentScheduler.scheduleTournament(winners, lastGame.getYear(), Game.GameType.TOURNAMENT_GAME));
+                }
+            }
         }
     }
 
-    public static boolean tryToFinishTournament(List<Game> tournamentGames,
-                                                Context context, League league) {
-        if (tournamentGames == null || tournamentGames.size() <= 4) {
+    public static boolean tryToFinishSeason(Context context, League league) {
+        List<Game> marchMadness = league.getMarchMadnessGames();
+        if (marchMadness == null || marchMadness.size() <= 4) {
             return false;
         }
-        Game championshipGame = tournamentGames.get(tournamentGames.size() - 1);
-        Game previousGame = tournamentGames.get(tournamentGames.size() - 2);
+        Game championshipGame = marchMadness.get(marchMadness.size() - 1);
+        Game previousGame = marchMadness.get(marchMadness.size() - 2);
         if (championshipGame.hasPlayed() && championshipGame.getWeek() > previousGame.getWeek()) {
             YearlyPlayerStatsDao yps = new YearlyPlayerStatsDao(context);
             List<YearlyPlayerStats> playerStatsList = yps.getAllYearlyPlayerStats(championshipGame.getYear());
             List<ThreeAwardTeams> awardTeams = getAllAwardTeams(playerStatsList, league);
-            int mvpID = getMVP(playerStatsList, league);
-            int dpoyID = getDPOY(playerStatsList, league);
+            int mvpID = getMVP(playerStatsList);
+            int dpoyID = getDPOY(playerStatsList);
             LeagueResultsEntryDao leagueResultsEntryDao = new LeagueResultsEntryDao(context);
             leagueResultsEntryDao.save(championshipGame.getYear(),
                     championshipGame.getWinner().name, mvpID, dpoyID, awardTeams);
@@ -219,16 +135,13 @@ public class LeagueEvents {
         return true;
     }
 
-    // returns the winners
     private static List<Team> playGames(List<Game> games, Simulator sim, boolean simUserGame,
                                         String userTeamName) {
         List<BoxScore> boxScores = new ArrayList<>();
         List<GameModel> gamesToSave = new ArrayList<>();
         List<Team> winners = new ArrayList<>();
         for (Game game : games) {
-            if (!game.hasPlayed() && (simUserGame ||
-                    (!game.getAway().getName().equals(userTeamName) &&
-                            !game.getHome().getName().equals(userTeamName)))) {
+            if (!game.hasPlayed() && (simUserGame || !game.hasTeam(userTeamName))) {
                 FullGameResults fgr = game.playGame(sim);
                 boxScores.addAll(fgr.boxScores);
                 gamesToSave.add(fgr.game);
@@ -277,7 +190,7 @@ public class LeagueEvents {
     public static GameModel saveGameResult(Context context, Team home, Team away, int year, int
             week) {
         FullGameResults fgr = getGameResult(home, away, year, week);
-        saveGameResults(fgr.boxScores, Arrays.asList(fgr.game), context);
+        saveGameResults(fgr.boxScores, Collections.singletonList(fgr.game), context);
         return fgr.game;
     }
 
@@ -285,8 +198,8 @@ public class LeagueEvents {
         int minWeek = Integer.MAX_VALUE;
         for (Team t : teams) {
             for (Game game : t.gameSchedule) {
-                if (!game.gameType.isTournament() && !game.hasPlayed() && game.getWeek() <
-                        minWeek) {
+                if (game != null && !game.gameType.isTournament() && !game.hasPlayed() && game
+                        .getWeek() < minWeek) {
                     minWeek = game.getWeek();
                 }
             }
@@ -294,7 +207,7 @@ public class LeagueEvents {
         return minWeek;
     }
 
-    public static int getMVP(List<YearlyPlayerStats> playerStatsList, League league) {
+    private static int getMVP(List<YearlyPlayerStats> playerStatsList) {
         Collections.sort(playerStatsList, new Comparator<YearlyPlayerStats>() {
             @Override
             public int compare(YearlyPlayerStats a, YearlyPlayerStats b) {
@@ -305,7 +218,7 @@ public class LeagueEvents {
         return playerStatsList.get(0).playerId;
     }
 
-    public static int getDPOY(List<YearlyPlayerStats> playerStatsList, League league) {
+    private static int getDPOY(List<YearlyPlayerStats> playerStatsList) {
         Collections.sort(playerStatsList, new Comparator<YearlyPlayerStats>() {
             @Override
             public int compare(YearlyPlayerStats a, YearlyPlayerStats b) {
@@ -316,7 +229,7 @@ public class LeagueEvents {
         return playerStatsList.get(0).playerId;
     }
 
-    public static List<ThreeAwardTeams> getAllAwardTeams(List<YearlyPlayerStats> playerStatsList,
+    private static List<ThreeAwardTeams> getAllAwardTeams(List<YearlyPlayerStats> playerStatsList,
                                                          League league) {
         Log.i("LeagueEvents", "playerStatsList size = " + playerStatsList.size());
 
@@ -357,7 +270,7 @@ public class LeagueEvents {
                                                          List<ThreeAwardTeams> threeAwardTeamsList,
                                                          int awardTeamPosition) {
         // Need a way to find positions given a player ID
-        HashMap<Integer, Integer> idPositionMap = new HashMap<>();
+        SparseIntArray idPositionMap = new SparseIntArray();
         for (Team t : teams) {
             for (Player p : t.players) {
                 idPositionMap.put(p.getId(), p.getLineupPosition()%5+1);
@@ -372,13 +285,12 @@ public class LeagueEvents {
 
         for (YearlyPlayerStats pStats : playerStatsList) {
             // Only add the player to the award team if he is apart of the relevant teams
-            if (idPositionMap.containsKey(pStats.playerId)) {
-                int position = idPositionMap.get(pStats.playerId);
-                for (AwardTeamModel team : awardTeamList) {
-                    if (team.getIdPosition(position) == 0) {
-                        team.setIdPosition(position, pStats.playerId);
-                        break;
-                    }
+            int position = idPositionMap.get(pStats.playerId, -1);
+            if (position == -1) continue;
+            for (AwardTeamModel team : awardTeamList) {
+                if (team.getIdPosition(position) == 0) {
+                    team.setIdPosition(position, pStats.playerId);
+                    break;
                 }
             }
         }

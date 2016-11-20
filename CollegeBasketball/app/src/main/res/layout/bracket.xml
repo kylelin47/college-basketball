@@ -4,9 +4,8 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:padding="10dp">
-
     <TextView
-        android:text="Conference Tournament"
+        android:text="@string/conference_tournament_title"
         android:textAppearance="?android:attr/textAppearanceLarge"
         android:textAlignment="gravity"
         android:gravity="center"
@@ -15,15 +14,17 @@
         android:id="@+id/bracketTitle"
         android:textStyle="bold"
         android:paddingBottom="5dp"/>
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Round 1"/>
-    <ListView
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:paddingTop="5dp"
-        android:paddingBottom="5dp"
-        android:id="@+id/bracketGameList">
-    </ListView>
+        android:orientation="vertical">
+        <ListView
+            android:layout_width="match_parent"
+            android:layout_height="0dip"
+            android:layout_weight="1"
+            android:paddingTop="5dp"
+            android:paddingBottom="5dp"
+            android:id="@+id/bracketGameList">
+        </ListView>
+    </LinearLayout>
 </LinearLayout>

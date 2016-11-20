@@ -7,7 +7,6 @@ import android.database.sqlite.SQLiteDatabase;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.ServiceConfigurationError;
 
 import io.coachapps.collegebasketballcoach.models.BoxScore;
 import io.coachapps.collegebasketballcoach.models.YearlyPlayerStats;
@@ -19,7 +18,7 @@ public class YearlyPlayerStatsDao {
         this.context = context;
     }
 
-    public void updateYearlyPlayerStats(List<BoxScore> boxScores) {
+    void updateYearlyPlayerStats(List<BoxScore> boxScores) {
         SQLiteDatabase db = DbHelper.getInstance(context).getWritableDatabase();
         db.beginTransaction();
         try {

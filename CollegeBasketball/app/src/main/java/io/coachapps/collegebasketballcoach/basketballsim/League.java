@@ -1,7 +1,6 @@
 package io.coachapps.collegebasketballcoach.basketballsim;
 
 import android.content.Context;
-import android.support.annotation.ArrayRes;
 import android.util.Log;
 
 import java.util.ArrayList;
@@ -17,6 +16,7 @@ import java.util.Set;
 import io.coachapps.collegebasketballcoach.R;
 import io.coachapps.collegebasketballcoach.db.YearlyTeamStatsDao;
 import io.coachapps.collegebasketballcoach.models.YearlyTeamStats;
+import io.coachapps.collegebasketballcoach.util.TournamentScheduler;
 
 public class League {
     public enum Conference {
@@ -41,6 +41,9 @@ public class League {
     private List<String> orderedConferenceNames;
     private List<Conference> orderedConferences;
     private List<Team> allTeams;
+    private TournamentScheduler tournamentScheduler;
+    private Map<Conference, List<Game>> conferenceTournament;
+    private List<Game> marchMadness;
 
     public League(String playerTeamName, Context context, PlayerGen playerGen) {
         String[] teamNames = context.getResources().getStringArray(R.array.team_names);
@@ -64,6 +67,42 @@ public class League {
         }
         sortAll();
     }
+
+    public List<Game> getMarchMadnessGames() {
+        return marchMadness;
+    }
+
+    public void scheduleConferenceTournament(Context context) {
+        if (conferenceTournament != null) return;
+        if (tournamentScheduler == null) tournamentScheduler = new TournamentScheduler(context);
+        conferenceTournament = new HashMap<>();
+        for (Map.Entry<Conference, List<Team>> teams : league.entrySet()) {
+            conferenceTournament.put(teams.getKey(), tournamentScheduler
+                    .scheduleConferenceTournament(teams.getValue()));
+        }
+    }
+
+    public void scheduleMarchMadness(Context context) {
+        if (marchMadness != null) return;
+        if (tournamentScheduler == null) tournamentScheduler = new TournamentScheduler(context);
+        marchMadness = tournamentScheduler.scheduleMarchMadness(conferenceTournament, getAllTeams());
+    }
+
+    public boolean conferenceTournamentFinished() {
+        if (conferenceTournament == null) return false;
+        for (List<Game> conferenceGames : conferenceTournament.values()) {
+            if (conferenceGames.size() !=  7 || !conferenceGames.get(conferenceGames.size() - 1).hasPlayed()) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    public List<Game> getTournamentGames(Conference conference) {
+        if (conferenceTournament == null) return null;
+        return conferenceTournament.get(conference);
+    }
+
     public List<Conference> getConferences() {
         if (orderedConferences == null) {
             orderedConferences = new ArrayList<>(Arrays.asList(Conference.values()));
@@ -174,7 +213,7 @@ public class League {
         return -1;
     }
 
-    public void assignPollRanks(List<YearlyTeamStats> currentTeamStats) {
+    private void assignPollRanks(List<YearlyTeamStats> currentTeamStats) {
         HashMap<String, Team> nameMap = new HashMap<>();
         List<Team> sortedTeamList = new ArrayList<>();
         for (Team t : getAllTeams()) {

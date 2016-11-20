@@ -8,6 +8,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ListView;
+import android.widget.TextView;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -16,8 +17,10 @@ import io.coachapps.collegebasketballcoach.MainActivity;
 import io.coachapps.collegebasketballcoach.R;
 import io.coachapps.collegebasketballcoach.adapters.game.BracketListArrayAdapter;
 import io.coachapps.collegebasketballcoach.basketballsim.Game;
+import io.coachapps.collegebasketballcoach.basketballsim.League;
 
 import static io.coachapps.collegebasketballcoach.R.id.bracketGameList;
+import static io.coachapps.collegebasketballcoach.R.id.bracketTitle;
 
 public class BracketDialogFragment extends DialogFragment {
     private List<String> tournamentGames;
@@ -46,6 +49,14 @@ public class BracketDialogFragment extends DialogFragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle
             savedInstanceState) {
         View view = inflater.inflate(R.layout.bracket, container, false);
+        TextView title = (TextView) view.findViewById(bracketTitle);
+        String[] gameSummary = tournamentGames.get(1).split(",");
+        if (gameSummary[7].equals(Game.GameType.MARCH_MADNESS.toString())) {
+            title.setText(getResources().getString(R.string.march_madness_title));
+        } else {
+            title.setText(String.format(getResources().getString(R.string
+                    .conference_tournament_title), League.Conference.valueOf(gameSummary[12])));
+        }
         ListView games = (ListView) view.findViewById(bracketGameList);
         BracketListArrayAdapter bracketListArrayAdapter =
                 new BracketListArrayAdapter(getActivity(), this, tournamentGames);

@@ -88,15 +88,19 @@ public class Game {
 
     /**
      * @return Home team name,Away team name,homeScore,awayScore,year,week,beenPlayed,
-     * gameType,homeSeed,awaySeed
+     * gameType,homeConfSeed,awayConfSeed,homeMarchSeed,awayMarchSeed,homeConference
      */
     @Override
     public String toString() {
         return home.getName() + "," + away.getName() + "," + homeScore + "," + awayScore + "," +
-                year + "," + getWeek() + "," + beenPlayed + "," + gameType.toString() + "," + home.seed +
-                "," + away.seed;
+                year + "," + getWeek() + "," + beenPlayed + "," + gameType.toString() + "," +
+                home.conferenceSeed + "," + away.conferenceSeed + "," + home.madnessSeed + "," +
+                away.madnessSeed + "," + home.conference;
     }
 
+    public boolean hasTeam(String teamName) {
+        return (home.getName().equals(teamName) || away.getName().equals(teamName));
+    }
     public Team getHome() {
         return home;
     }

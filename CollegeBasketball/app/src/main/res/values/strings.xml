@@ -10,6 +10,12 @@
     <string name="recruiting_loading_msg">
         "Finishing recruiting, signing walk-ons, and sending players to training camp. Please wait."
     </string>
+    <string name="conference_tournament_title">
+        "%s Tournament"
+    </string>
+    <string name="march_madness_title">
+        "March Madness"
+    </string>
     <string-array name="player_display_choices">
         <item>Ratings</item>
         <item>Stats</item>
