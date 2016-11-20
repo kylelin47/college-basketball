@@ -1,4 +1,4 @@
-package io.coachapps.collegebasketballcoach;
+package io.coachapps.collegebasketballcoach.fragments;
 
 import android.os.Bundle;
 import android.app.Fragment;
@@ -7,6 +7,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import io.coachapps.collegebasketballcoach.R;
 import io.coachapps.collegebasketballcoach.models.PlayerRatings;
 
 public class PlayerRatingsFragment extends Fragment {

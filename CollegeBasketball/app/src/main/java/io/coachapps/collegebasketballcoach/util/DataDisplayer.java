@@ -2,10 +2,6 @@ package io.coachapps.collegebasketballcoach.util;
 
 import android.content.Context;
 import android.graphics.Color;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.ListAdapter;
-import android.widget.ListView;
 import android.widget.TextView;
 
 import java.math.BigDecimal;
@@ -16,7 +12,6 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 
-import io.coachapps.collegebasketballcoach.adapters.LeagueLeadersListArrayAdapter;
 import io.coachapps.collegebasketballcoach.basketballsim.League;
 import io.coachapps.collegebasketballcoach.basketballsim.Team;
 import io.coachapps.collegebasketballcoach.db.YearlyTeamStatsDao;

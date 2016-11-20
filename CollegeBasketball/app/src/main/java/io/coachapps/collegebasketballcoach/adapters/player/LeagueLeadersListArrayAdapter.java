@@ -1,4 +1,4 @@
-package io.coachapps.collegebasketballcoach.adapters;
+package io.coachapps.collegebasketballcoach.adapters.player;
 
 import android.content.Context;
 import android.view.LayoutInflater;
@@ -9,10 +9,8 @@ import android.widget.TextView;
 
 import java.util.List;
 
-import io.coachapps.collegebasketballcoach.MainActivity;
 import io.coachapps.collegebasketballcoach.R;
 import io.coachapps.collegebasketballcoach.basketballsim.Player;
-import io.coachapps.collegebasketballcoach.db.YearlyPlayerStatsDao;
 import io.coachapps.collegebasketballcoach.models.YearlyPlayerStats;
 import io.coachapps.collegebasketballcoach.util.DataDisplayer;
 

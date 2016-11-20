@@ -33,10 +33,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 
-import io.coachapps.collegebasketballcoach.adapters.GameScheduleListArrayAdapter;
-import io.coachapps.collegebasketballcoach.adapters.LeagueLeadersListArrayAdapter;
-import io.coachapps.collegebasketballcoach.adapters.PlayerAwardTeamListArrayAdapter;
-import io.coachapps.collegebasketballcoach.adapters.PlayerStatsListArrayAdapter;
+import io.coachapps.collegebasketballcoach.adapters.game.GameScheduleListArrayAdapter;
+import io.coachapps.collegebasketballcoach.adapters.player.LeagueLeadersListArrayAdapter;
+import io.coachapps.collegebasketballcoach.adapters.player.PlayerAwardTeamListArrayAdapter;
+import io.coachapps.collegebasketballcoach.adapters.player.PlayerStatsListArrayAdapter;
 import io.coachapps.collegebasketballcoach.adapters.TeamRankingsListArrayAdapter;
 import io.coachapps.collegebasketballcoach.adapters.TeamStatsListArrayAdapter;
 import io.coachapps.collegebasketballcoach.basketballsim.Game;
@@ -53,7 +53,10 @@ import io.coachapps.collegebasketballcoach.db.PlayerDao;
 import io.coachapps.collegebasketballcoach.db.Schemas;
 import io.coachapps.collegebasketballcoach.db.TeamDao;
 import io.coachapps.collegebasketballcoach.db.YearlyPlayerStatsDao;
-import io.coachapps.collegebasketballcoach.models.AwardTeamModel;
+import io.coachapps.collegebasketballcoach.fragments.BracketDialogFragment;
+import io.coachapps.collegebasketballcoach.fragments.GameSummaryFragment;
+import io.coachapps.collegebasketballcoach.fragments.PlayerDialogFragment;
+import io.coachapps.collegebasketballcoach.fragments.SetLineupFragment;
 import io.coachapps.collegebasketballcoach.models.LeagueResults;
 import io.coachapps.collegebasketballcoach.models.ThreeAwardTeams;
 import io.coachapps.collegebasketballcoach.models.YearlyPlayerStats;
@@ -799,7 +802,7 @@ public class MainActivity extends AppCompatActivity {
                     public void onItemSelected(
                             AdapterView<?> parent, View view, int position, long id) {
                         // Look at the right category
-                        List<Player> awardWinners = new ArrayList<Player>();
+                        List<Player> awardWinners = new ArrayList<>();
                         if (position < 2) {
                             // MVP or DPOY
                             if (position == 0) awardWinners.add(playerMap.get(leagueResults.mvpId));

@@ -1,7 +1,6 @@
-package io.coachapps.collegebasketballcoach.adapters;
+package io.coachapps.collegebasketballcoach.adapters.recruiting;
 
 import android.content.Context;
-import android.graphics.Color;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,7 +11,6 @@ import java.util.HashMap;
 import java.util.List;
 
 import io.coachapps.collegebasketballcoach.R;
-import io.coachapps.collegebasketballcoach.RecruitingActivity;
 import io.coachapps.collegebasketballcoach.basketballsim.Player;
 import io.coachapps.collegebasketballcoach.util.DataDisplayer;
 

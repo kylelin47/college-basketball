@@ -1,4 +1,4 @@
-package io.coachapps.collegebasketballcoach.adapters;
+package io.coachapps.collegebasketballcoach.adapters.player;
 
 import android.content.Context;
 import android.view.LayoutInflater;
@@ -16,17 +16,16 @@ import io.coachapps.collegebasketballcoach.models.YearlyPlayerStats;
 import io.coachapps.collegebasketballcoach.util.DataDisplayer;
 
 /**
- * Adapter for displaying players with their ratings and stats
- * Created by jojones on 11/14/16.
+ * Array Adapter for displaying players in the roster tab in MainActivity.
+ * Created by Achi Jones on 9/14/2016.
  */
-
-public class PlayerStatsRatingsListArrayAdapter extends ArrayAdapter<Player> {
+public class PlayerStatsListArrayAdapter extends ArrayAdapter<Player> {
     private final Context context;
     public final List<Player> players;
     private int currentYear;
 
-    public PlayerStatsRatingsListArrayAdapter(Context context, List<Player> values, int currentYear) {
-        super(context, R.layout.stats_ratings_list_item, values);
+    public PlayerStatsListArrayAdapter(Context context, List<Player> values, int currentYear) {
+        super(context, R.layout.roster_list_item, values);
         this.context = context;
         this.players = values;
         this.currentYear = currentYear;
@@ -41,11 +40,6 @@ public class PlayerStatsRatingsListArrayAdapter extends ArrayAdapter<Player> {
         TextView playerRPG;
         TextView playerAPG;
         TextView playerFGP;
-
-        TextView playerShooting;
-        TextView playerDefense;
-        TextView playerPassing;
-        TextView playerRebounding;
     }
 
     @Override
@@ -53,7 +47,7 @@ public class PlayerStatsRatingsListArrayAdapter extends ArrayAdapter<Player> {
         ViewHolder viewHolder;
         if (convertView == null) {
             LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-            convertView = inflater.inflate(R.layout.stats_ratings_list_item, parent, false);
+            convertView = inflater.inflate(R.layout.roster_list_item, parent, false);
             viewHolder = new ViewHolder();
             viewHolder.playerName = (TextView) convertView.findViewById(R.id.textViewName);
             viewHolder.playerPosition = (TextView) convertView.findViewById(R.id.textViewPosition);
@@ -63,12 +57,6 @@ public class PlayerStatsRatingsListArrayAdapter extends ArrayAdapter<Player> {
             viewHolder.playerRPG = (TextView) convertView.findViewById(R.id.textViewRPG);
             viewHolder.playerAPG = (TextView) convertView.findViewById(R.id.textViewAPG);
             viewHolder.playerFGP = (TextView) convertView.findViewById(R.id.textViewFGP);
-
-            viewHolder.playerShooting   = (TextView) convertView.findViewById(R.id.textViewShooting);
-            viewHolder.playerDefense    = (TextView) convertView.findViewById(R.id.textViewDefense);
-            viewHolder.playerPassing    = (TextView) convertView.findViewById(R.id.textViewPassing);
-            viewHolder.playerRebounding = (TextView) convertView.findViewById(R.id.textViewRebounding);
-
             convertView.setTag(viewHolder);
         } else {
             viewHolder = (ViewHolder) convertView.getTag();
@@ -77,7 +65,11 @@ public class PlayerStatsRatingsListArrayAdapter extends ArrayAdapter<Player> {
         Player p = players.get(position);
         viewHolder.playerName.setText(p.name + " [" + DataDisplayer.getYearAbbreviation(p.year) +
                 "]");
-        viewHolder.playerPosition.setText(DataDisplayer.getPositionAbbreviation(p.getPosition()));
+        if (position < 10) {
+            viewHolder.playerPosition.setText(DataDisplayer.getPositionAbbreviation(position % 5 + 1));
+        } else {
+            viewHolder.playerPosition.setText("DNP");
+        }
         viewHolder.playerOvrPot.setText(String.valueOf(p.getOverall()) + " / " +
                 DataDisplayer.getLetterGrade(p.getPotential()));
 
@@ -91,22 +83,7 @@ public class PlayerStatsRatingsListArrayAdapter extends ArrayAdapter<Player> {
             viewHolder.playerAPG.setText(currentStats.getPGDisplay("APG"));
             viewHolder.playerFGP.setText(currentStats.getPGDisplay("FG%")+
                     "/"+currentStats.getPGDisplay("3P%"));
-        } else {
-            viewHolder.playerPPG.setText("N/A");
-            viewHolder.playerRPG.setText("N/A");
-            viewHolder.playerAPG.setText("N/A");
-            viewHolder.playerFGP.setText("N/A");
         }
-
-        viewHolder.playerShooting.setText(DataDisplayer.getLetterGrade(p.getCompositeShooting()));
-        viewHolder.playerDefense.setText(DataDisplayer.getLetterGrade(p.getCompositeDefense()));
-        viewHolder.playerPassing.setText(DataDisplayer.getLetterGrade(p.getCompositePassing()));
-        viewHolder.playerRebounding.setText(DataDisplayer.getLetterGrade(p.getCompositeRebounding()));
-
-        DataDisplayer.colorizeRatings(viewHolder.playerShooting);
-        DataDisplayer.colorizeRatings(viewHolder.playerDefense);
-        DataDisplayer.colorizeRatings(viewHolder.playerPassing);
-        DataDisplayer.colorizeRatings(viewHolder.playerRebounding);
 
         return convertView;
     }

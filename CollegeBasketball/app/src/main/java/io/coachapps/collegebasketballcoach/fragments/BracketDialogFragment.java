@@ -1,4 +1,4 @@
-package io.coachapps.collegebasketballcoach;
+package io.coachapps.collegebasketballcoach.fragments;
 
 
 import android.app.DialogFragment;
@@ -12,7 +12,9 @@ import android.widget.ListView;
 import java.util.ArrayList;
 import java.util.List;
 
-import io.coachapps.collegebasketballcoach.adapters.BracketListArrayAdapter;
+import io.coachapps.collegebasketballcoach.MainActivity;
+import io.coachapps.collegebasketballcoach.R;
+import io.coachapps.collegebasketballcoach.adapters.game.BracketListArrayAdapter;
 import io.coachapps.collegebasketballcoach.basketballsim.Game;
 
 import static io.coachapps.collegebasketballcoach.R.id.bracketGameList;

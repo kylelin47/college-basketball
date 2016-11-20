@@ -13,7 +13,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import io.coachapps.collegebasketballcoach.MainActivity;
-import io.coachapps.collegebasketballcoach.adapters.PlayerGameStatsListArrayAdapter;
+import io.coachapps.collegebasketballcoach.adapters.player.PlayerGameStatsListArrayAdapter;
 import io.coachapps.collegebasketballcoach.models.GameModel;
 import io.coachapps.collegebasketballcoach.util.LeagueEvents;
 import io.coachapps.collegebasketballcoach.util.TournamentScheduler;

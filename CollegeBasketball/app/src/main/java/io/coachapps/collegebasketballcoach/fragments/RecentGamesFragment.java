@@ -1,4 +1,4 @@
-package io.coachapps.collegebasketballcoach;
+package io.coachapps.collegebasketballcoach.fragments;
 
 import android.app.Fragment;
 import android.os.Bundle;
@@ -9,8 +9,8 @@ import android.widget.ListView;
 
 import java.util.List;
 
-import io.coachapps.collegebasketballcoach.adapters.PlayerBoxScoreListArrayAdapter;
-import io.coachapps.collegebasketballcoach.adapters.RecentGamesListArrayAdapter;
+import io.coachapps.collegebasketballcoach.R;
+import io.coachapps.collegebasketballcoach.adapters.game.RecentGamesListArrayAdapter;
 import io.coachapps.collegebasketballcoach.db.BoxScoreDao;
 import io.coachapps.collegebasketballcoach.models.BoxScore;
 

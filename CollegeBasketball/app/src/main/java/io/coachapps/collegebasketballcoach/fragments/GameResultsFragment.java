@@ -1,20 +1,16 @@
-package io.coachapps.collegebasketballcoach;
+package io.coachapps.collegebasketballcoach.fragments;
 
 import android.app.DialogFragment;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
-import android.widget.Spinner;
-import android.widget.TextView;
 
 import java.util.List;
 
+import io.coachapps.collegebasketballcoach.R;
 import io.coachapps.collegebasketballcoach.basketballsim.Simulator;
 import io.coachapps.collegebasketballcoach.basketballsim.Team;
-import io.coachapps.collegebasketballcoach.util.DataDisplayer;
 
 /**
  * DialogFragment used to display results of several games as they are being simmed.

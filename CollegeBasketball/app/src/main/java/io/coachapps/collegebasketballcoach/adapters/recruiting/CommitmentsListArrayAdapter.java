@@ -1,4 +1,4 @@
-package io.coachapps.collegebasketballcoach.adapters;
+package io.coachapps.collegebasketballcoach.adapters.recruiting;
 
 import android.content.Context;
 import android.view.LayoutInflater;

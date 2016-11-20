@@ -1,4 +1,4 @@
-package io.coachapps.collegebasketballcoach;
+package io.coachapps.collegebasketballcoach.fragments;
 
 import android.app.DialogFragment;
 import android.os.Bundle;
@@ -10,6 +10,7 @@ import android.widget.ArrayAdapter;
 import android.widget.Spinner;
 import android.widget.TextView;
 
+import io.coachapps.collegebasketballcoach.R;
 import io.coachapps.collegebasketballcoach.basketballsim.Player;
 import io.coachapps.collegebasketballcoach.util.DataDisplayer;
 

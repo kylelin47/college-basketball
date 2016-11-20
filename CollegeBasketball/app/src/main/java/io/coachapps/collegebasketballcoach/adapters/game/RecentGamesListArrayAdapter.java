@@ -1,4 +1,4 @@
-package io.coachapps.collegebasketballcoach.adapters;
+package io.coachapps.collegebasketballcoach.adapters.game;
 
 import android.content.Context;
 import android.view.LayoutInflater;
@@ -10,14 +10,10 @@ import android.widget.TextView;
 import java.util.List;
 
 import io.coachapps.collegebasketballcoach.R;
-import io.coachapps.collegebasketballcoach.basketballsim.Game;
-import io.coachapps.collegebasketballcoach.basketballsim.Player;
 import io.coachapps.collegebasketballcoach.db.GameDao;
-import io.coachapps.collegebasketballcoach.db.PlayerDao;
 import io.coachapps.collegebasketballcoach.models.BoxScore;
 import io.coachapps.collegebasketballcoach.models.GameModel;
 import io.coachapps.collegebasketballcoach.models.Stats;
-import io.coachapps.collegebasketballcoach.util.DataDisplayer;
 
 /**
  * Adapter for displaying a player's recent games.

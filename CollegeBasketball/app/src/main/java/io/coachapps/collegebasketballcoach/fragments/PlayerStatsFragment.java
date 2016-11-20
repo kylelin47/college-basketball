@@ -1,4 +1,4 @@
-package io.coachapps.collegebasketballcoach;
+package io.coachapps.collegebasketballcoach.fragments;
 
 import android.app.Fragment;
 import android.graphics.Color;
@@ -20,6 +20,7 @@ import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
 
+import io.coachapps.collegebasketballcoach.R;
 import io.coachapps.collegebasketballcoach.db.YearlyPlayerStatsDao;
 import io.coachapps.collegebasketballcoach.models.YearlyPlayerStats;
 

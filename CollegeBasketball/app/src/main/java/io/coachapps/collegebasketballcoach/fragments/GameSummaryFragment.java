@@ -1,4 +1,4 @@
-package io.coachapps.collegebasketballcoach;
+package io.coachapps.collegebasketballcoach.fragments;
 
 import android.app.DialogFragment;
 import android.os.Bundle;
@@ -16,7 +16,9 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
-import io.coachapps.collegebasketballcoach.adapters.PlayerBoxScoreListArrayAdapter;
+import io.coachapps.collegebasketballcoach.MainActivity;
+import io.coachapps.collegebasketballcoach.R;
+import io.coachapps.collegebasketballcoach.adapters.player.PlayerBoxScoreListArrayAdapter;
 import io.coachapps.collegebasketballcoach.adapters.TeamStatsListArrayAdapter;
 import io.coachapps.collegebasketballcoach.basketballsim.Player;
 import io.coachapps.collegebasketballcoach.db.BoxScoreDao;

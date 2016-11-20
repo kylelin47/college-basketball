@@ -1,4 +1,4 @@
-package io.coachapps.collegebasketballcoach.adapters;
+package io.coachapps.collegebasketballcoach.adapters.game;
 
 import android.content.Context;
 import android.support.annotation.NonNull;

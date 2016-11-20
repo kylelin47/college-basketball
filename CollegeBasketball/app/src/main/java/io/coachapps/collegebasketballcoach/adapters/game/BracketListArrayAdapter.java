@@ -1,4 +1,4 @@
-package io.coachapps.collegebasketballcoach.adapters;
+package io.coachapps.collegebasketballcoach.adapters.game;
 
 import android.content.Context;
 import android.support.annotation.NonNull;
@@ -14,7 +14,7 @@ import android.widget.TextView;
 import java.util.ArrayList;
 import java.util.List;
 
-import io.coachapps.collegebasketballcoach.BracketDialogFragment;
+import io.coachapps.collegebasketballcoach.fragments.BracketDialogFragment;
 import io.coachapps.collegebasketballcoach.R;
 
 public class BracketListArrayAdapter extends ArrayAdapter<String>  {

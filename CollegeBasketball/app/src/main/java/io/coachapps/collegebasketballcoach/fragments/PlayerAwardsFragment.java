@@ -1,4 +1,4 @@
-package io.coachapps.collegebasketballcoach;
+package io.coachapps.collegebasketballcoach.fragments;
 
 import android.app.Fragment;
 import android.os.Bundle;
@@ -10,7 +10,8 @@ import android.widget.ListView;
 import java.util.ArrayList;
 import java.util.List;
 
-import io.coachapps.collegebasketballcoach.adapters.PlayerAwardsListArrayAdapter;
+import io.coachapps.collegebasketballcoach.R;
+import io.coachapps.collegebasketballcoach.adapters.player.PlayerAwardsListArrayAdapter;
 import io.coachapps.collegebasketballcoach.db.LeagueResultsEntryDao;
 import io.coachapps.collegebasketballcoach.models.LeagueResults;
 import io.coachapps.collegebasketballcoach.util.DataDisplayer;
