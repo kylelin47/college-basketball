@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">College Basketball Coach</string>
+    <string name="app_name">College Hoops Coach</string>
     <string name="title_activity_main">MainActivity</string>
     <string name="action_my_team">Go To My Team</string>
     <string name="action_set_lineup">Set Lineup</string>
@@ -461,5 +461,5 @@
     </string>
     <string name="title_activity_team_stats">Team Stats</string>
     <string name="title_activity_recruiting">RecruitingActivity</string>
-    <string name="title_activity_start">StartActivity</string>
+    <string name="title_activity_start">College Hoops Coach</string>
 </resources>

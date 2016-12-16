@@ -13,24 +13,28 @@
     tools:context="io.coachapps.collegebasketballcoach.StartActivity"
     tools:showIn="@layout/activity_start">
 
-    <TextView
-        android:text="College Hoops Coach"
+    <ImageView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentTop="true"
+        android:layout_marginTop="10dp"
         android:layout_centerHorizontal="true"
-        android:layout_marginTop="100dp"
-        android:id="@+id/textViewTitle" />
+        android:id="@+id/imageLogo"
+        android:adjustViewBounds="true"
+        android:maxWidth="300dp"
+        android:maxHeight="400dp"
+        android:scaleType="fitCenter"
+        android:padding="5dp" />
 
     <Button
         android:text="New Game"
         android:layout_width="200dp"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/textViewTitle"
+        android:layout_below="@+id/imageLogo"
         android:layout_centerHorizontal="true"
         android:id="@+id/buttonNewGame"
         android:background="@drawable/button_shape_primary"
         android:textColor="#ffffff"
+        android:layout_marginTop="25dp"
         android:layout_margin="5dp"/>
 
     <Button

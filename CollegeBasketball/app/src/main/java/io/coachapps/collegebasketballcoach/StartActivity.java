@@ -9,6 +9,8 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageView;
+import android.widget.Toast;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -29,6 +31,15 @@ public class StartActivity extends AppCompatActivity {
         setContentView(R.layout.activity_start);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+        getSupportActionBar().setTitle("College Hoops Coach");
+
+        ImageView imageLogo = (ImageView) findViewById(R.id.imageLogo);
+        try {
+            imageLogo.setImageResource(R.drawable.logo_small);
+        } catch (OutOfMemoryError e) {
+            Toast.makeText(StartActivity.this, "Error displaying logo",
+                    Toast.LENGTH_SHORT).show();
+        }
 
         Button newGameButton = (Button) findViewById(R.id.buttonNewGame);
         newGameButton.setOnClickListener(new View.OnClickListener() {
