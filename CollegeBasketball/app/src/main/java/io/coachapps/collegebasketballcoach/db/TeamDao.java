@@ -6,12 +6,14 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 
 import java.io.IOException;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
 import io.coachapps.collegebasketballcoach.basketballsim.Player;
 import io.coachapps.collegebasketballcoach.basketballsim.Team;
 import io.coachapps.collegebasketballcoach.models.PlayerModel;
+import io.coachapps.collegebasketballcoach.util.SerializationUtil;
 
 public class TeamDao {
     private Context context;
@@ -106,6 +108,7 @@ public class TeamDao {
                 int teamPrestige = teamPrestiges.get(i);
                 Team team = new Team(teamName, playerDao.getPlayers(teamName),
                         teamPrestige, isPlayerCheckers.get(i)==1, conferences.get(i));
+                //System.out.println(team.getName() + " found with prestige = " + team.prestige);
                 String[] teamProjection = {
                         Schemas.YearlyTeamStatsEntry.WINS,
                         Schemas.YearlyTeamStatsEntry.LOSSES
@@ -132,5 +135,24 @@ public class TeamDao {
             db.endTransaction();
         }
         return teams;
+    }
+
+    public void updateTeam(Team team) {
+        SQLiteDatabase db = DbHelper.getInstance(context).getWritableDatabase();
+
+        String whereClause = Schemas.TeamEntry.NAME + " = ?";
+        String[] whereArgs = {
+                team.getName()
+        };
+
+        ContentValues values = new ContentValues();
+        values.put(Schemas.TeamEntry.PRESTIGE, team.prestige);
+        int rows = db.update(Schemas.TeamEntry.TABLE_NAME, values, whereClause, whereArgs);
+        if (rows > 0) {
+            //System.out.println("Success Updating " + team.getName() + " to prestige = " + team.prestige);
+        } else {
+            //System.out.println("Didn't update any rows.");
+        }
+
     }
 }

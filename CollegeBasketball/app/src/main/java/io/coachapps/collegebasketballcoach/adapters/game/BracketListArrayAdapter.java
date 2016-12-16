@@ -80,8 +80,8 @@ public class BracketListArrayAdapter extends ArrayAdapter<String>  {
         final String homeSeed;
         final String awaySeed;
         if (gameInfo[7].equals(Game.GameType.MARCH_MADNESS.toString())) {
-            homeSeed = gameInfo[10];
-            awaySeed = gameInfo[11];
+            homeSeed = "" + ((Integer.parseInt(gameInfo[10]) - 1)/4 + 1);
+            awaySeed = "" + ((Integer.parseInt(gameInfo[11]) - 1)/4 + 1);
         } else {
             homeSeed = gameInfo[8];
             awaySeed = gameInfo[9];

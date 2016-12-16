@@ -3,6 +3,12 @@ package io.coachapps.collegebasketballcoach.models;
 public class LeagueResults {
     public int year;
     public String championTeamName;
+    public String cowboyChampTeamName;
+    public String lakesChampTeamName;
+    public String mountainsChampTeamName;
+    public String northChampTeamName;
+    public String pacificChampTeamName;
+    public String southChampTeamName;
     public int dpoyId;
     public int mvpId;
     public ThreeAwardTeams allAmericans;

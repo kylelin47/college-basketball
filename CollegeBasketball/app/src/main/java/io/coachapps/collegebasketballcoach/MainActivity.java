@@ -4,6 +4,7 @@ import android.app.DialogFragment;
 import android.app.FragmentTransaction;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.database.sqlite.SQLiteDatabase;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.AlertDialog;
@@ -24,15 +25,22 @@ import android.widget.ScrollView;
 import android.widget.SeekBar;
 import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.Toast;
 import android.widget.ViewFlipper;
 
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.OutputStreamWriter;
+import java.io.Writer;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 
+import io.coachapps.collegebasketballcoach.adapters.ChampionsListArrayAdapter;
 import io.coachapps.collegebasketballcoach.adapters.TeamRankingsListArrayAdapter;
 import io.coachapps.collegebasketballcoach.adapters.TeamStatsListArrayAdapter;
 import io.coachapps.collegebasketballcoach.adapters.game.GameScheduleListArrayAdapter;
@@ -93,6 +101,7 @@ public class MainActivity extends AppCompatActivity {
     AtomicBoolean selectOutOfConferenceTeam = new AtomicBoolean(false);
 
     boolean doneWithSeason = false;
+    int numGamesPlayerTeam = 0;
 
     @Override
     protected void onDestroy() {
@@ -237,7 +246,7 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View view) {
                 if (!doneWithSeason) {
                     advanceGame(true);
-                } else startRecruiting();
+                } else showSeasonSummaryDialog();
             }
         });
         playGameButton = (Button) findViewById(R.id.playGameButton);
@@ -438,10 +447,96 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    private void startRecruiting() {
-        Intent intent = new Intent(this, RecruitingActivity.class);
-        finish();
-        startActivity(intent);
+    public void showSummaryToast() {
+        if (playerTeam.getNumGamesPlayed() > numGamesPlayerTeam) {
+            Toast.makeText(MainActivity.this, playerTeam.getLastGameSummary(),
+                    Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    private void showSeasonSummaryDialog() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("Season Summary")
+                .setMessage(getSeasonSummaryStr())
+                .setPositiveButton("Go to Offseason", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        advanceToOffSeason();
+                    }
+                });
+        AlertDialog dialog = builder.create();
+        dialog.show();
+    }
+
+    public String getSeasonSummaryStr() {
+        boolean wonConfChamp = false;
+        boolean wonNatChamp = false;
+
+        League.Conference playerConf = league.getTeamConference(playerTeam.getName());
+        if (league.getConfChampionshipGame(playerConf).getWinner().getName().equals(playerTeam.getName())) {
+            wonConfChamp = true;
+        }
+        if (LeagueEvents.getChampions(league) != null && LeagueEvents.getChampions(league)[0].equals(playerTeam.getName())) {
+            wonNatChamp = true;
+        }
+        StringBuilder sb = new StringBuilder();
+        String str = "Your team, the " + playerTeam.getName() + ", finished the season ranked #" + playerTeam.pollRank +
+                " with " + playerTeam.wins + " wins and " + playerTeam.losses + " losses.\n\n";
+        sb.append(str);
+
+        int diff = playerTeam.getPrestigeDiff();
+        if (diff > 0) {
+            sb.append("You exceeded expectations this year and have been awarded with +" + diff + " prestige!\n\n");
+        } else if (diff == 0) {
+            sb.append("You met expectations, and didn't gain or lose prestige.\n\n");
+        } else {
+            sb.append("You fell short of expectations, and recruits took notice. You lost " + Math.abs(diff) + " prestige.\n\n");
+        }
+
+        if (wonConfChamp) {
+            sb.append("You won your conference championship! Your fans and boosters are pleased, and you are awarded with +4 prestige.\n\n");
+        }
+        if (wonNatChamp) {
+            sb.append("You won the National Championship! Great job! Fans, boosters, and recruits are impressed with your coaching. You are awarded with +10 prestige!\n\n");
+        }
+
+        return sb.toString();
+    }
+
+    public void advanceToOffSeason() {
+        // Set new prestiges for all the teams and start the recruiting activity
+        // 30 wins for 100 prestige, 10 wins for 0 prestige
+        SQLiteDatabase db = DbHelper.getInstance(this).getReadableDatabase();
+        TeamDao teamDao = new TeamDao(this);
+        db.beginTransaction();
+        try {
+            String[] champs = LeagueEvents.getChampions(league);
+            for (Team t : league.getAllTeams()) {
+                int diff = t.getPrestigeDiff();
+                if (champs[0].equals(t.getName())) diff += 10;
+                for (int i = 1; i < 7; ++i) {
+                    if (champs[i].equals(t.getName())) diff += 4;
+                }
+                t.prestige += diff;
+                if (t.prestige < 5) t.prestige = 5;
+                if (t.prestige > 95) t.prestige = 95;
+                teamDao.updateTeam(t);
+            }
+            db.setTransactionSuccessful();
+        } finally {
+            db.endTransaction();
+        }
+
+        File recruitingFile = new File(getFilesDir(), "current_state");
+        try (Writer writer = new BufferedWriter(new OutputStreamWriter(
+                new FileOutputStream(recruitingFile), "utf-8"))) {
+            writer.write("RECRUITING");
+        } catch (Exception e) {
+            System.out.println(e.toString());
+        }
+
+        Intent myIntent = new Intent(MainActivity.this, RecruitingActivity.class);
+        MainActivity.this.startActivity(myIntent);
     }
 
     public void advanceGame(boolean simPlayerGame) {
@@ -449,6 +544,7 @@ public class MainActivity extends AppCompatActivity {
             canSimWeek = false;
             simGameButton.setEnabled(false);
             playGameButton.setEnabled(false);
+            numGamesPlayerTeam = playerTeam.getNumGamesPlayed();
             new SimulateGameTask().execute(simPlayerGame);
         }
     }
@@ -519,6 +615,7 @@ public class MainActivity extends AppCompatActivity {
         uiElements.listViewGameStats = (ListView) dialog.findViewById(R.id.listViewGameDialogStats);
         uiElements.seekBarGameSpeed = (SeekBar) dialog.findViewById(R.id.seekBarSimSpeed);
         uiElements.buttonCallTimeout = (Button) dialog.findViewById(R.id.buttonCallTimeout);
+        uiElements.buttonPause = (Button) dialog.findViewById(R.id.buttonPause);
         uiElements.textViewHomeAbbr = (TextView) dialog.findViewById(R.id.gameDialogAbbrHome);
         uiElements.textViewAwayAbbr = (TextView) dialog.findViewById(R.id.gameDialogAbbrAway);
         uiElements.textViewHomeScore = (TextView) dialog.findViewById(R.id.gameDialogScoreHome);
@@ -575,6 +672,23 @@ public class MainActivity extends AppCompatActivity {
                 if (t.isPlaying()) {
                     t.togglePause();
                     showChangeStrategyDialog(playerTeam, t);
+                } else {
+                    dialog.dismiss();
+                    updateUI();
+                }
+            }
+        });
+
+        uiElements.buttonPause.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                // Perform action on click
+                if (t.isPlaying()) {
+                    t.togglePause();
+                    if (t.isGamePaused()) {
+                        uiElements.buttonPause.setText("Resume");
+                    } else {
+                        uiElements.buttonPause.setText("Pause");
+                    }
                 } else {
                     dialog.dismiss();
                     updateUI();
@@ -717,7 +831,7 @@ public class MainActivity extends AppCompatActivity {
                             }
                         }
                         listView.setAdapter(new LeagueLeadersListArrayAdapter(
-                                MainActivity.this, players, leaders));
+                                MainActivity.this, players, leaders, playerTeamMap, playerTeam.getName()));
                         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                             @Override
                             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
@@ -766,14 +880,16 @@ public class MainActivity extends AppCompatActivity {
                             ArrayList<String> teamRankingsCSV =
                                     DataDisplayer.getTeamRankingsCSVs(league, MainActivity.this, getYear(),
                                             "Poll Votes", true);
-                            listView.setAdapter(new TeamRankingsListArrayAdapter(MainActivity.this, teamRankingsCSV));
+                            listView.setAdapter(new TeamRankingsListArrayAdapter(MainActivity.this,
+                                    teamRankingsCSV, playerTeam.getRankNameWLStr()));
                         } else {
                             boolean higherIsBetter = false;
                             if (position <= 15) higherIsBetter = true;
                             ArrayList<String> teamRankingsCSV =
                                     DataDisplayer.getTeamRankingsCSVs(league, MainActivity.this, getYear(),
                                             DataDisplayer.getAllCategories()[position - 1], higherIsBetter);
-                            listView.setAdapter(new TeamRankingsListArrayAdapter(MainActivity.this, teamRankingsCSV));
+                            listView.setAdapter(new TeamRankingsListArrayAdapter(MainActivity.this,
+                                    teamRankingsCSV, playerTeam.getRankNameWLStr()));
                         }
                     }
 
@@ -816,30 +932,48 @@ public class MainActivity extends AppCompatActivity {
                             AdapterView<?> parent, View view, int position, long id) {
                         // Look at the right category
                         List<Player> awardWinners = new ArrayList<>();
-                        if (position < 2) {
+                        if (position == 0) {
+                            listView.setAdapter(new ChampionsListArrayAdapter(MainActivity.this,
+                                    DataDisplayer.getCSVChampions(leagueResults, league)));
+                        }
+                        else if (position < 3) {
                             // MVP or DPOY
-                            if (position == 0) awardWinners.add(playerMap.get(leagueResults.mvpId));
+                            if (position == 1) awardWinners.add(playerMap.get(leagueResults.mvpId));
                             else awardWinners.add(playerMap.get(leagueResults.dpoyId));
+
+                            listView.setAdapter(new PlayerAwardTeamListArrayAdapter(
+                                    MainActivity.this, awardWinners, playerTeamMap, getYear(),
+                                    playerTeam.getRankNameWLStr()));
+                            listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                                @Override
+                                public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                                    Player p = ((PlayerAwardTeamListArrayAdapter) listView
+                                            .getAdapter()).getItem(position);
+                                    showPlayerDialog(p);
+                                }
+                            });
                         } else {
                             // Award Teams
-                            ThreeAwardTeams awardTeams = leagueResults.getTeam(position-2);
+                            ThreeAwardTeams awardTeams = leagueResults.getTeam(position-3);
                             for (int t = 0; t < 3; ++t) {
                                 for (int pos = 1; pos < 6; pos++) {
                                     int pid = awardTeams.get(t).getIdPosition(pos);
                                     awardWinners.add(playerMap.get(pid));
                                 }
                             }
+                            listView.setAdapter(new PlayerAwardTeamListArrayAdapter(
+                                    MainActivity.this, awardWinners, playerTeamMap, getYear(),
+                                    playerTeam.getRankNameWLStr()));
+                            listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                                @Override
+                                public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                                    Player p = ((PlayerAwardTeamListArrayAdapter) listView
+                                            .getAdapter()).getItem(position);
+                                    showPlayerDialog(p);
+                                }
+                            });
                         }
-                        listView.setAdapter(new PlayerAwardTeamListArrayAdapter(
-                                MainActivity.this, awardWinners, playerTeamMap, getYear()));
-                        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-                            @Override
-                            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                                Player p = ((PlayerAwardTeamListArrayAdapter) listView
-                                        .getAdapter()).getItem(position);
-                                showPlayerDialog(p);
-                            }
-                        });
+
                     }
 
                     public void onNothingSelected(AdapterView<?> parent) {
@@ -861,9 +995,10 @@ public class MainActivity extends AppCompatActivity {
      * Done via a AsyncTask so the UI thread isn't overwhelmed.
      */
     private class SimulateGameTask extends AsyncTask<Boolean, Void, Void> {
+        boolean spg;
         @Override
         protected Void doInBackground(Boolean... simPlayerGame) {
-            boolean spg = simPlayerGame[0];
+            spg = simPlayerGame[0];
             LeagueEvents.playRegularSeasonGame(league.getAllTeams(), bballSim, spg, playerTeam.name);
             LeagueEvents.playTournamentRound(league, bballSim, spg, playerTeam.name);
             return null;
@@ -873,6 +1008,7 @@ public class MainActivity extends AppCompatActivity {
             canSimWeek = true;
             simGameButton.setEnabled(true);
             tryToScheduleTournaments();
+            if (spg) showSummaryToast();
             updateUI();
         }
     }

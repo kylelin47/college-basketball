@@ -23,6 +23,7 @@
         <item>Awards</item>
     </string-array>
     <string-array name="season_awards_choices">
+        <item>Tournament Results</item>
         <item>Player of the Year</item>
         <item>Defensive Player of the Year</item>
         <item>All Americans</item>
@@ -456,4 +457,5 @@
     </string>
     <string name="title_activity_team_stats">Team Stats</string>
     <string name="title_activity_recruiting">RecruitingActivity</string>
+    <string name="title_activity_start">StartActivity</string>
 </resources>

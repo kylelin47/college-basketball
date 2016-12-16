@@ -117,11 +117,35 @@
         android:max="100"
         android:id="@+id/seekBarSimSpeed" />
 
-    <Button
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="0dp"
+        android:layout_height="0dip"
         android:layout_weight="1"
-        android:text="Call Timeout"
-        android:id="@+id/buttonCallTimeout"/>
+        android:gravity="center|bottom"
+        android:orientation="vertical" >
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+            <Button
+                android:layout_width="0dip"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:text="Call Timeout"
+                android:id="@+id/buttonCallTimeout"
+                android:background="@drawable/button_shape_accent"
+                android:textColor="#ffffff"
+                android:layout_margin="5dp"/>
+            <Button
+                android:text="Pause"
+                android:layout_width="0dip"
+                android:layout_weight="1"
+                android:layout_height="match_parent"
+                android:id="@+id/buttonPause"
+                android:background="@drawable/button_shape_primary"
+                android:textColor="#ffffff"
+                android:layout_margin="5dp"/>
+        </LinearLayout>
+
+    </LinearLayout>
 
 </LinearLayout>

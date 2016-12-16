@@ -89,6 +89,12 @@ public final class Schemas {
         public static final String TABLE_NAME = "leagueResults";
         public static final String YEAR = "year";
         public static final String CHAMPION = "champion";
+        public static final String COWBOY_CHAMPION = "cowboyChampion";
+        public static final String LAKES_CHAMPION = "lakesChampion";
+        public static final String MOUNTAINS_CHAMPION = "mountainsChampion";
+        public static final String NORTH_CHAMPION = "northChampion";
+        public static final String PACIFIC_CHAMPION = "pacificChampion";
+        public static final String SOUTH_CHAMPION = "southChampion";
         public static final String MVP = "mvp";
         public static final String DPOY = "dpoy";
         public static final String ALL_AMERCANS = "allAmericans";

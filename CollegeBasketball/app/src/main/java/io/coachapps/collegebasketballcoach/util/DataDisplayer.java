@@ -15,6 +15,7 @@ import java.util.List;
 import io.coachapps.collegebasketballcoach.basketballsim.League;
 import io.coachapps.collegebasketballcoach.basketballsim.Team;
 import io.coachapps.collegebasketballcoach.db.YearlyTeamStatsDao;
+import io.coachapps.collegebasketballcoach.models.LeagueResults;
 import io.coachapps.collegebasketballcoach.models.YearlyTeamStats;
 
 public class DataDisplayer {
@@ -371,6 +372,18 @@ public class DataDisplayer {
 
             return teamRankingsCSV;
         }
+    }
+
+    public static List<String> getCSVChampions(LeagueResults leagueResults, League league) {
+        List<String> list = new ArrayList<>();
+        list.add("National Champions," + league.getTeam(leagueResults.championTeamName).getRankNameWLStr());
+        list.add("Cowboy Champions," + league.getTeam(leagueResults.cowboyChampTeamName).getRankNameWLStr());
+        list.add("Lakes Champions," + league.getTeam(leagueResults.lakesChampTeamName).getRankNameWLStr());
+        list.add("Mountains Champions," + league.getTeam(leagueResults.mountainsChampTeamName).getRankNameWLStr());
+        list.add("North Champions," + league.getTeam(leagueResults.northChampTeamName).getRankNameWLStr());
+        list.add("Pacific Champions," + league.getTeam(leagueResults.pacificChampTeamName).getRankNameWLStr());
+        list.add("South Champions," + league.getTeam(leagueResults.southChampTeamName).getRankNameWLStr());
+        return list;
     }
 
     public static String[] getAllCategories() {

@@ -32,6 +32,7 @@ public class GameSimThread extends Thread {
         public ListView listViewGameStats;
         public SeekBar seekBarGameSpeed;
         public Button buttonCallTimeout;
+        public Button buttonPause;
 
         public TextView textViewHomeAbbr;
         public TextView textViewAwayAbbr;
@@ -308,6 +309,10 @@ public class GameSimThread extends Thread {
 
     public boolean isPlaying() {
         return playing;
+    }
+
+    public boolean isGamePaused() {
+        return isPaused;
     }
 
     public void updateStatsAdapter(boolean homeOrAway) {

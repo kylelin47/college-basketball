@@ -1,6 +1,7 @@
 package io.coachapps.collegebasketballcoach.adapters.player;
 
 import android.content.Context;
+import android.graphics.Color;
 import android.support.annotation.NonNull;
 import android.util.SparseArray;
 import android.view.LayoutInflater;
@@ -25,17 +26,20 @@ import io.coachapps.collegebasketballcoach.util.DataDisplayer;
 
 public class PlayerAwardTeamListArrayAdapter extends ArrayAdapter<Player> {
     private final Context context;
+    private final String playerTeam;
     private final List<Player> players;
     private final SparseArray<Team> playerTeamMap;
     private final int currentYear;
 
     public PlayerAwardTeamListArrayAdapter(Context context, List<Player> players,
-                                           SparseArray<Team> playerTeamMap, int year) {
+                                           SparseArray<Team> playerTeamMap, int year,
+                                           String playerTeam) {
         super(context, R.layout.award_team_list_item, players);
         this.context = context;
         this.players = players;
         this.playerTeamMap = playerTeamMap;
         this.currentYear = year;
+        this.playerTeam = playerTeam;
     }
 
     private static class ViewHolder {
@@ -74,6 +78,12 @@ public class PlayerAwardTeamListArrayAdapter extends ArrayAdapter<Player> {
         }
 
         Player p = players.get(position);
+        if (playerTeam.equals(playerTeamMap.get(p.getId()).getRankNameWLStr())) {
+            // Highlight user player
+            viewHolder.playerTeam.setTextColor(Color.parseColor("#DD5600"));
+        } else {
+            viewHolder.playerTeam.setTextColor(Color.parseColor("#000000"));
+        }
         viewHolder.playerTeam.setText(playerTeamMap.get(p.getId()).getRankNameWLStr());
         viewHolder.playerName.setText(p.name + " [" + DataDisplayer.getYearAbbreviation(p.year) +
                 "]");

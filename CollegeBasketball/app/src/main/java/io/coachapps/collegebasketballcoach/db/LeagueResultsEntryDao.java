@@ -18,13 +18,19 @@ public class LeagueResultsEntryDao {
         this.context = context;
     }
 
-    public void save(int year, String championTeamName, int mvpId,
+    public void save(int year, String[] champions, int mvpId,
                      int dpoyId, List<ThreeAwardTeams> awardTeams) {
         SQLiteDatabase db = DbHelper.getInstance(context).getReadableDatabase();
         ContentValues values = new ContentValues();
         values.put(Schemas.LeagueResultsEntry.YEAR, year);
         values.put(Schemas.LeagueResultsEntry.DPOY, dpoyId);
-        values.put(Schemas.LeagueResultsEntry.CHAMPION, championTeamName);
+        values.put(Schemas.LeagueResultsEntry.CHAMPION, champions[0]);
+        values.put(Schemas.LeagueResultsEntry.COWBOY_CHAMPION, champions[1]);
+        values.put(Schemas.LeagueResultsEntry.LAKES_CHAMPION, champions[2]);
+        values.put(Schemas.LeagueResultsEntry.MOUNTAINS_CHAMPION, champions[3]);
+        values.put(Schemas.LeagueResultsEntry.NORTH_CHAMPION, champions[4]);
+        values.put(Schemas.LeagueResultsEntry.PACIFIC_CHAMPION, champions[5]);
+        values.put(Schemas.LeagueResultsEntry.SOUTH_CHAMPION, champions[6]);
         values.put(Schemas.LeagueResultsEntry.MVP, mvpId);
         values.put(Schemas.LeagueResultsEntry.ALL_AMERCANS,
                 SerializationUtil.serialize(awardTeams.get(0)));
@@ -66,6 +72,12 @@ public class LeagueResultsEntryDao {
                 Schemas.LeagueResultsEntry.YEAR,
                 Schemas.LeagueResultsEntry.DPOY,
                 Schemas.LeagueResultsEntry.CHAMPION,
+                Schemas.LeagueResultsEntry.COWBOY_CHAMPION,
+                Schemas.LeagueResultsEntry.LAKES_CHAMPION,
+                Schemas.LeagueResultsEntry.MOUNTAINS_CHAMPION,
+                Schemas.LeagueResultsEntry.NORTH_CHAMPION,
+                Schemas.LeagueResultsEntry.PACIFIC_CHAMPION,
+                Schemas.LeagueResultsEntry.SOUTH_CHAMPION,
                 Schemas.LeagueResultsEntry.MVP,
                 Schemas.LeagueResultsEntry.ALL_AMERCANS,
                 Schemas.LeagueResultsEntry.ALL_COWBOY,
@@ -97,6 +109,18 @@ public class LeagueResultsEntryDao {
                 .getColumnIndexOrThrow(Schemas.LeagueResultsEntry.MVP));
         results.championTeamName = cursor.getString(cursor
                 .getColumnIndexOrThrow(Schemas.LeagueResultsEntry.CHAMPION));
+        results.cowboyChampTeamName = cursor.getString(cursor
+                .getColumnIndexOrThrow(Schemas.LeagueResultsEntry.COWBOY_CHAMPION));
+        results.lakesChampTeamName = cursor.getString(cursor
+                .getColumnIndexOrThrow(Schemas.LeagueResultsEntry.LAKES_CHAMPION));
+        results.mountainsChampTeamName = cursor.getString(cursor
+                .getColumnIndexOrThrow(Schemas.LeagueResultsEntry.MOUNTAINS_CHAMPION));
+        results.northChampTeamName = cursor.getString(cursor
+                .getColumnIndexOrThrow(Schemas.LeagueResultsEntry.NORTH_CHAMPION));
+        results.pacificChampTeamName = cursor.getString(cursor
+                .getColumnIndexOrThrow(Schemas.LeagueResultsEntry.PACIFIC_CHAMPION));
+        results.southChampTeamName = cursor.getString(cursor
+                .getColumnIndexOrThrow(Schemas.LeagueResultsEntry.SOUTH_CHAMPION));
         results.year = cursor.getInt(cursor
                 .getColumnIndexOrThrow(Schemas.LeagueResultsEntry.YEAR));
         results.allAmericans = (ThreeAwardTeams) SerializationUtil.deserialize(cursor.getBlob(cursor

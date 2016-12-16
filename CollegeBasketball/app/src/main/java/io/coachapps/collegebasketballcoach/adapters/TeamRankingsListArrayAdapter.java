@@ -1,6 +1,7 @@
 package io.coachapps.collegebasketballcoach.adapters;
 
 import android.content.Context;
+import android.graphics.Color;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -18,12 +19,14 @@ import io.coachapps.collegebasketballcoach.R;
 
 public class TeamRankingsListArrayAdapter extends ArrayAdapter<String> {
     private final Context context;
+    private final String userTeam;
     public final ArrayList<String> values;
 
-    public TeamRankingsListArrayAdapter(Context context, ArrayList<String> values) {
+    public TeamRankingsListArrayAdapter(Context context, ArrayList<String> values, String userTeam) {
         super(context, R.layout.team_rankings_list_item, values);
         this.context = context;
         this.values = values;
+        this.userTeam = userTeam;
     }
 
     @Override
@@ -40,6 +43,13 @@ public class TeamRankingsListArrayAdapter extends ArrayAdapter<String> {
         textLeft.setText(teamStat[0]);
         textCenter.setText(teamStat[1]);
         textRight.setText(teamStat[2]);
+
+        if (userTeam.equals(teamStat[1])) {
+            // User Team, highlight using accent color
+            textLeft.setTextColor(Color.parseColor("#DD5600"));
+            textCenter.setTextColor(Color.parseColor("#DD5600"));
+            textRight.setTextColor(Color.parseColor("#DD5600"));
+        }
 
         return rowView;
     }

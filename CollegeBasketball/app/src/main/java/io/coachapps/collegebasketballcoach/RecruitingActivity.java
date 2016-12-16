@@ -21,7 +21,12 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.OutputStreamWriter;
+import java.io.Writer;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -136,7 +141,12 @@ public class RecruitingActivity extends AppCompatActivity {
         recruitPersonalityMap = new HashMap<>();
         commitments = new ArrayList<>();
         for (Player p : availableRecruits) {
-            recruitCostMap.put(p, (int)(((Math.random()*50 + 75)*(p.getOverall()-60))/5));
+            if (p.getOverall() > 65) {
+                recruitCostMap.put(p, (int)(50 + Math.random()*50 + Math.pow(2*(p.getOverall() - 65), 1.75)));
+            }
+            else {
+                recruitCostMap.put(p, (int)(50 + Math.random()*50));
+            }
             if (recruitCostMap.get(p) < 50) recruitCostMap.put(p, 50);
         }
         for (Player p : availableRecruits) {
@@ -187,6 +197,14 @@ public class RecruitingActivity extends AppCompatActivity {
     }
 
     public void goToMainActivity() {
+        File recruitingFile = new File(getFilesDir(), "current_state");
+        try (Writer writer = new BufferedWriter(new OutputStreamWriter(
+                new FileOutputStream(recruitingFile), "utf-8"))) {
+            writer.write("SEASON");
+        } catch (Exception e) {
+            System.out.println(e.toString());
+        }
+
         Intent intent = new Intent(this, MainActivity.class);
         startActivity(intent);
     }

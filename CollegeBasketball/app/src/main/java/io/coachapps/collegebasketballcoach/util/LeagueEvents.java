@@ -116,10 +116,30 @@ public class LeagueEvents {
             int dpoyID = getDPOY(playerStatsList);
             LeagueResultsEntryDao leagueResultsEntryDao = new LeagueResultsEntryDao(context);
             leagueResultsEntryDao.save(championshipGame.getYear(),
-                    championshipGame.getWinner().name, mvpID, dpoyID, awardTeams);
+                    getChampions(league), mvpID, dpoyID, awardTeams);
             return true;
         }
         return false;
+    }
+
+    public static String[] getChampions(League league) {
+        String[] champions = new String[7];
+
+        List<Game> marchMadness = league.getMarchMadnessGames();
+        if (marchMadness == null || marchMadness.size() <= 4) {
+            return null;
+        }
+        Game championshipGame = marchMadness.get(marchMadness.size() - 1);
+
+        champions[0] = championshipGame.getWinner().getName();
+        champions[1] = league.getConfChampionshipGame(League.Conference.COWBOY).getWinner().getName();
+        champions[2] = league.getConfChampionshipGame(League.Conference.LAKES).getWinner().getName();
+        champions[3] = league.getConfChampionshipGame(League.Conference.MOUNTAINS).getWinner().getName();
+        champions[4] = league.getConfChampionshipGame(League.Conference.NORTH).getWinner().getName();
+        champions[5] = league.getConfChampionshipGame(League.Conference.PACIFIC).getWinner().getName();
+        champions[6] = league.getConfChampionshipGame(League.Conference.SOUTH).getWinner().getName();
+
+        return champions;
     }
 
     public static boolean playRegularSeasonGame(List<Team> teams, Simulator sim,

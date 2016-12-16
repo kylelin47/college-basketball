@@ -200,6 +200,10 @@ public class Team {
     public int getPrestige() {
         return prestige;
     }
+
+    public int getPrestigeDiff() {
+        return (3*wins - prestige)/2;
+    }
     
     public void addPlayer( Player player ) {
         //add player (used by AI)
@@ -335,6 +339,46 @@ public class Team {
             sum[2] = "@ " + game.getHome().getAbbr();
         }
         return sum;
+    }
+
+    public String[] getGameSummaryFullStr(Game game) {
+        String[] sum = new String[3];
+        sum[0] = game.gameType.toString();
+        if (game.hasPlayed()) {
+            if (game.getWinner() == this) {
+                sum[1] = game.getWinnerString();
+            } else {
+                sum[1] = game.getLoserString();
+            }
+        } else {
+            sum[1] = "---";
+        }
+
+        if (game.getHome() == this) {
+            sum[2] = "vs " + game.getAway().getNameWLStr();
+        } else {
+            sum[2] = "@ " + game.getHome().getNameWLStr();
+        }
+        return sum;
+    }
+
+    public int getNumGamesPlayed() {
+        int num = 0;
+        for (Game g : gameSchedule) {
+            if (g == null) break;
+            if (g.hasPlayed()) num++;
+        }
+        return num;
+    }
+
+    public String getLastGameSummary() {
+        Game lastGame = null;
+        for (Game g : gameSchedule) {
+            if (g.hasPlayed()) lastGame = g;
+            else break;
+        }
+        String[] summary = getGameSummaryFullStr(lastGame);
+        return summary[1] + " " + summary[2];
     }
 
     public int getTalent() {

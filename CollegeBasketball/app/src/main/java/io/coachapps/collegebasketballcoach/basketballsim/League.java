@@ -98,6 +98,11 @@ public class League {
         return true;
     }
 
+    public Game getConfChampionshipGame(Conference conference) {
+        List<Game> confGames = conferenceTournament.get(conference);
+        return confGames.get(confGames.size() - 1);
+    }
+
     public List<Game> getTournamentGames(Conference conference) {
         if (conferenceTournament == null) return null;
         return conferenceTournament.get(conference);
