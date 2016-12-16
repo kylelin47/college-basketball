@@ -6,6 +6,7 @@
     <string name="action_set_strategy">Set Team Strategy</string>
     <string name="action_team_rankings">Team Rankings</string>
     <string name="action_league_leaders">League Leaders</string>
+    <string name="action_league_history">League History</string>
     <string name="action_season_awards">Season Awards</string>
     <string name="recruiting_loading_msg">
         "Finishing recruiting, signing walk-ons, and sending players to training camp. Please wait."
@@ -33,6 +34,9 @@
         <item>All-North Teams</item>
         <item>All-Pacific Teams</item>
         <item>All-South Teams</item>
+    </string-array>
+    <string-array name="league_history_choices">
+        <item>League History</item>
     </string-array>
     <!-- First 10 are COWBOY conference, next 10 LAKES, etc. -->
     <string-array name="team_names">

@@ -26,6 +26,7 @@ public final class Schemas {
         public static final String YEAR = "year";
         public static final String WINS = "wins";
         public static final String LOSSES = "losses";
+        public static final String SUMMARY = "summary";
         public static final String POINTS = "points";
         public static final String ASSISTS = "assists";
         public static final String REBOUNDS = "rebounds";

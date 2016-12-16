@@ -323,4 +323,52 @@ public class LeagueEvents {
             }
         }
     }
+
+    public static String getTeamSeasonSummaryStr(Team team) {
+        // Should be like "Won Conf Championship, Made Sweet Sixteen"
+        boolean madeConfTourny = false;
+        int numConfWins = 0;
+        boolean madeMarchMadness = false;
+        int numMarchWins = 0;
+        for (Game g : team.gameSchedule) {
+            if (g != null) {
+                if (g.gameType == Game.GameType.TOURNAMENT_GAME) {
+                    madeConfTourny = true;
+                    if (g.getWinner().getName().equals(team.getName())) {
+                        numConfWins++;
+                    }
+                } else if (g.gameType == Game.GameType.MARCH_MADNESS) {
+                    madeMarchMadness = true;
+                    if (g.getWinner().getName().equals(team.getName())) {
+                        numMarchWins++;
+                    }
+                }
+            }
+        }
+
+        String confSum;
+        if (!madeConfTourny) {
+            confSum = "Missed Conf Tournament, ";
+        } else {
+            if (numConfWins == 3) confSum = "Won Conference, ";
+            else if (numConfWins == 2) confSum = "Made Conf Finals, ";
+            else if (numConfWins == 1) confSum = "Made Conf Semifinals, ";
+            else confSum = "Made Conf Tournament, ";
+        }
+
+        String marchSum;
+        if (!madeMarchMadness) {
+            marchSum = "Missed March Madness";
+        } else {
+            // 32 16 8 4 2 1
+            if (numMarchWins == 5) marchSum = "Won National Championship";
+            else if (numMarchWins == 4) marchSum = "Made Tournament Final";
+            else if (numMarchWins == 3) marchSum = "Made Final Four";
+            else if (numMarchWins == 2) marchSum = "Made Elite Eight";
+            else if (numMarchWins == 1) marchSum = "Made Sweet Sixteen";
+            else marchSum = "Made March Madness";
+        }
+
+        return confSum + marchSum;
+    }
 }

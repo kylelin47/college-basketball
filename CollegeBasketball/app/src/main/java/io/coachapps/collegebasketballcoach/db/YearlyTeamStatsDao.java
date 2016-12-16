@@ -25,6 +25,7 @@ public class YearlyTeamStatsDao {
                 Schemas.YearlyTeamStatsEntry.WINS,
                 Schemas.YearlyTeamStatsEntry.LOSSES,
                 Schemas.YearlyTeamStatsEntry.YEAR,
+                Schemas.YearlyTeamStatsEntry.SUMMARY,
                 Schemas.YearlyTeamStatsEntry.POINTS,
                 Schemas.YearlyTeamStatsEntry.ASSISTS,
                 Schemas.YearlyTeamStatsEntry.REBOUNDS,
@@ -137,6 +138,7 @@ public class YearlyTeamStatsDao {
                 Schemas.YearlyTeamStatsEntry.TEAM,
                 Schemas.YearlyTeamStatsEntry.WINS,
                 Schemas.YearlyTeamStatsEntry.LOSSES,
+                Schemas.YearlyTeamStatsEntry.SUMMARY,
                 Schemas.YearlyTeamStatsEntry.YEAR,
                 Schemas.YearlyTeamStatsEntry.POINTS,
                 Schemas.YearlyTeamStatsEntry.ASSISTS,
@@ -176,14 +178,14 @@ public class YearlyTeamStatsDao {
         }
         return stats;
     }
-    public List<YearlyTeamStats> getTeamStatsFromYears(String team, int beginYear, int
-            endYear) {
+    public List<YearlyTeamStats> getTeamStatsFromYears(String team, int beginYear, int endYear) {
         List<YearlyTeamStats> stats = new ArrayList<>();
         SQLiteDatabase db = DbHelper.getInstance(context).getReadableDatabase();
         String[] projection = {
                 Schemas.YearlyTeamStatsEntry.WINS,
                 Schemas.YearlyTeamStatsEntry.LOSSES,
                 Schemas.YearlyTeamStatsEntry.YEAR,
+                Schemas.YearlyTeamStatsEntry.SUMMARY,
                 Schemas.YearlyTeamStatsEntry.POINTS,
                 Schemas.YearlyTeamStatsEntry.ASSISTS,
                 Schemas.YearlyTeamStatsEntry.REBOUNDS,
@@ -225,6 +227,7 @@ public class YearlyTeamStatsDao {
         }
         return stats;
     }
+
     private YearlyTeamStats fetchYearlyTeamStats(Cursor cursor) {
         return fetchYearlyTeamStats(cursor, cursor.getString(cursor.getColumnIndexOrThrow(Schemas
                 .YearlyTeamStatsEntry.TEAM)));
@@ -237,6 +240,8 @@ public class YearlyTeamStatsDao {
                 .YearlyTeamStatsEntry.LOSSES));
         stats.year = cursor.getInt(cursor.getColumnIndexOrThrow(Schemas
                 .YearlyTeamStatsEntry.YEAR));
+        stats.summary = cursor.getString(cursor.getColumnIndexOrThrow(Schemas
+                .YearlyTeamStatsEntry.SUMMARY));
         stats.points = cursor.getInt(cursor.getColumnIndexOrThrow(Schemas
                 .YearlyTeamStatsEntry.POINTS));
         stats.assists = cursor.getInt(cursor.getColumnIndexOrThrow(Schemas
@@ -287,5 +292,20 @@ public class YearlyTeamStatsDao {
         stats.opp_fta = cursor.getInt(cursor.getColumnIndexOrThrow(Schemas
                 .YearlyTeamStatsEntry.OPP_FTA));
         return stats;
+    }
+
+    public void updateSummary(String summary, String teamName, int year) {
+        SQLiteDatabase db = DbHelper.getInstance(context).getWritableDatabase();
+
+        String whereClause = Schemas.YearlyTeamStatsEntry.TEAM + " = ? AND " +
+                Schemas.YearlyTeamStatsEntry.YEAR + " = ?";
+        String[] whereArgs = {
+                teamName,
+                String.valueOf(year)
+        };
+
+        ContentValues values = new ContentValues();
+        values.put(Schemas.YearlyTeamStatsEntry.SUMMARY, summary);
+        db.update(Schemas.YearlyTeamStatsEntry.TABLE_NAME, values, whereClause, whereArgs);
     }
 }

@@ -148,11 +148,5 @@ public class TeamDao {
         ContentValues values = new ContentValues();
         values.put(Schemas.TeamEntry.PRESTIGE, team.prestige);
         int rows = db.update(Schemas.TeamEntry.TABLE_NAME, values, whereClause, whereArgs);
-        if (rows > 0) {
-            //System.out.println("Success Updating " + team.getName() + " to prestige = " + team.prestige);
-        } else {
-            //System.out.println("Didn't update any rows.");
-        }
-
     }
 }

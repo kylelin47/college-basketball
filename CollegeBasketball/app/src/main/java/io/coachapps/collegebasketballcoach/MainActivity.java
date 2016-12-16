@@ -41,6 +41,8 @@ import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import io.coachapps.collegebasketballcoach.adapters.ChampionsListArrayAdapter;
+import io.coachapps.collegebasketballcoach.adapters.LeagueHistoryListArrayAdapter;
+import io.coachapps.collegebasketballcoach.adapters.TeamHistoryListArrayAdapter;
 import io.coachapps.collegebasketballcoach.adapters.TeamRankingsListArrayAdapter;
 import io.coachapps.collegebasketballcoach.adapters.TeamStatsListArrayAdapter;
 import io.coachapps.collegebasketballcoach.adapters.game.GameScheduleListArrayAdapter;
@@ -61,6 +63,7 @@ import io.coachapps.collegebasketballcoach.db.PlayerDao;
 import io.coachapps.collegebasketballcoach.db.Schemas;
 import io.coachapps.collegebasketballcoach.db.TeamDao;
 import io.coachapps.collegebasketballcoach.db.YearlyPlayerStatsDao;
+import io.coachapps.collegebasketballcoach.db.YearlyTeamStatsDao;
 import io.coachapps.collegebasketballcoach.fragments.BracketDialogFragment;
 import io.coachapps.collegebasketballcoach.fragments.GameSummaryFragment;
 import io.coachapps.collegebasketballcoach.fragments.PlayerDialogFragment;
@@ -68,6 +71,7 @@ import io.coachapps.collegebasketballcoach.fragments.SetLineupFragment;
 import io.coachapps.collegebasketballcoach.models.LeagueResults;
 import io.coachapps.collegebasketballcoach.models.ThreeAwardTeams;
 import io.coachapps.collegebasketballcoach.models.YearlyPlayerStats;
+import io.coachapps.collegebasketballcoach.models.YearlyTeamStats;
 import io.coachapps.collegebasketballcoach.util.DataDisplayer;
 import io.coachapps.collegebasketballcoach.util.LeagueEvents;
 
@@ -354,6 +358,8 @@ public class MainActivity extends AppCompatActivity {
             if (doneWithSeason) {
                 showEndOfSeasonDialog();
             }
+        } else if (id == R.id.action_league_history) {
+            showLeagueHistoryDialog();
         }
 
         return super.onOptionsItemSelected(item);
@@ -508,6 +514,7 @@ public class MainActivity extends AppCompatActivity {
         // 30 wins for 100 prestige, 10 wins for 0 prestige
         SQLiteDatabase db = DbHelper.getInstance(this).getReadableDatabase();
         TeamDao teamDao = new TeamDao(this);
+        YearlyTeamStatsDao yearlyTeamStatsDao = new YearlyTeamStatsDao(this);
         db.beginTransaction();
         try {
             String[] champs = LeagueEvents.getChampions(league);
@@ -521,6 +528,7 @@ public class MainActivity extends AppCompatActivity {
                 if (t.prestige < 5) t.prestige = 5;
                 if (t.prestige > 95) t.prestige = 95;
                 teamDao.updateTeam(t);
+                yearlyTeamStatsDao.updateSummary(LeagueEvents.getTeamSeasonSummaryStr(t), t.getName(), getYear());
             }
             db.setTransactionSuccessful();
         } finally {
@@ -897,6 +905,60 @@ public class MainActivity extends AppCompatActivity {
                         // do nothing
                     }
                 });
+    }
+
+    public void showLeagueHistoryDialog() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setView(getLayoutInflater().inflate(R.layout.spinner_list, null));
+        builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.dismiss();
+            }
+        });
+        builder.setTitle("League History");
+        final AlertDialog dialog = builder.create();
+        dialog.show();
+
+        final LeagueResultsEntryDao historyDao = new LeagueResultsEntryDao(this);
+        final YearlyTeamStatsDao teamStatsDao = new YearlyTeamStatsDao(this);
+
+        final ListView listView = (ListView) dialog.findViewById(R.id.listView);
+
+        final Spinner spinner = (Spinner) dialog.findViewById(R.id.spinner);
+        final List<String> leagueHistoryChoices = new ArrayList<>();
+        leagueHistoryChoices.add("League History");
+        leagueHistoryChoices.add(playerTeam.getName());
+        for (Team t : league.getAllTeams()) {
+            if (t != playerTeam) {
+                leagueHistoryChoices.add(t.getName());
+            }
+        }
+        ArrayAdapter<String> dataAdapter = new ArrayAdapter<>(this,
+                android.R.layout.simple_spinner_item, leagueHistoryChoices);
+        dataAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spinner.setAdapter(dataAdapter);
+        spinner.setOnItemSelectedListener(
+                new AdapterView.OnItemSelectedListener() {
+                    public void onItemSelected(
+                            AdapterView<?> parent, View view, int position, long id) {
+                        // Look at the right category
+                        if (position == 0) {
+                            listView.setAdapter(new LeagueHistoryListArrayAdapter(MainActivity.this,
+                                    historyDao.getLeagueResults(2016, getYear())));
+                        } else {
+                            List<YearlyTeamStats> teamStatsList =
+                                    teamStatsDao.getTeamStatsFromYears(
+                                            leagueHistoryChoices.get(position), 2016, getYear());
+                            listView.setAdapter(new TeamHistoryListArrayAdapter(MainActivity.this, teamStatsList));
+                        }
+                    }
+
+                    public void onNothingSelected(AdapterView<?> parent) {
+                        // do nothing
+                    }
+                });
+
     }
 
     public void showEndOfSeasonDialog() {

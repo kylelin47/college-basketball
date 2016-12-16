@@ -7,6 +7,7 @@ public class YearlyTeamStats {
     public int year;
     public int wins;
     public int losses;
+    public String summary;
     public int points;
     public int assists;
     public int rebounds;

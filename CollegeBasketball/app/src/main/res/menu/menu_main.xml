@@ -33,5 +33,10 @@
         android:orderInCategory="100"
         android:title="@string/action_season_awards"
         app:showAsAction="never" />
+    <item
+        android:id="@+id/action_league_history"
+        android:orderInCategory="100"
+        android:title="@string/action_league_history"
+        app:showAsAction="never" />
 
 </menu>
