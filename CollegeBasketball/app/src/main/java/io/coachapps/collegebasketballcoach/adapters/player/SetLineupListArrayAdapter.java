@@ -59,7 +59,7 @@ public class SetLineupListArrayAdapter extends ArrayAdapter<Player> {
         }
         playerOvrPot.setText(String.valueOf(p.getOverall()) + " / " +
                 DataDisplayer.getLetterGrade(p.getPotential()) +
-                " (Pref Pos: " + DataDisplayer.getPositionAbbreviation(p.getPosition()) + ")");
+                " (Pref: " + DataDisplayer.getPositionAbbreviation(p.getPosition()) + ")");
 
         TextView playerShooting   = (TextView) convertView.findViewById(R.id.textViewShooting);
         TextView playerDefense    = (TextView) convertView.findViewById(R.id.textViewDefense);

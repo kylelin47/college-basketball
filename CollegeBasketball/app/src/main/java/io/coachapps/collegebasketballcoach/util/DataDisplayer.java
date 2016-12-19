@@ -338,7 +338,7 @@ public class DataDisplayer {
             for (int i = 0; i < sortedTeamList.size(); ++i) {
                 teamRankingsCSV.add(getRankStr(i+1) + "," +
                         sortedTeamList.get(i).getNameWLStr() + "," +
-                        sortedTeamList.get(i).pollScore);
+                        (sortedTeamList.get(i).pollScore/10));
             }
 
             return teamRankingsCSV;

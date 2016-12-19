@@ -1,6 +1,7 @@
 package io.coachapps.collegebasketballcoach.adapters.game;
 
 import android.content.Context;
+import android.graphics.Color;
 import android.support.annotation.NonNull;
 import android.support.v4.content.ContextCompat;
 import android.view.LayoutInflater;
@@ -78,6 +79,11 @@ public class GameScheduleListArrayAdapter extends ArrayAdapter<Game> {
         }
 
         if (games.get(position).gameType.isTournament()) {
+            if (games.get(position).gameType == Game.GameType.TOURNAMENT_GAME) {
+                viewHolder.gameType.setTextColor(Color.parseColor("#347378"));
+            } else if (games.get(position).gameType == Game.GameType.MARCH_MADNESS) {
+                viewHolder.gameType.setTextColor(Color.parseColor("#DD5600"));
+            }
             viewHolder.gameType.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {

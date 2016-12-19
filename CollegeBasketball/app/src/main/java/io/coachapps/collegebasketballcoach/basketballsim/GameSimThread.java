@@ -43,7 +43,7 @@ public class GameSimThread extends Thread {
     private Activity activity;
     private Context context;
     private PlayerGameStatsListArrayAdapter statsAdapter;
-    private GameDialogElements uiElements;
+    public GameDialogElements uiElements;
 
     private StringBuilder gameLog;
     private StringBuilder gameEvents;
@@ -252,12 +252,12 @@ public class GameSimThread extends Thread {
             tournamentGames.addAll(tournamentScheduler.scheduleTournament(winners, lastGame
                     .getYear(), lastGame.gameType));
         }
-        ((MainActivity) activity).tryToScheduleTournaments();
 
         activity.runOnUiThread(new Runnable() {
             @Override
             public void run() {
                 // Update the button to say done
+                ((MainActivity) activity).tryToScheduleTournaments(true);
                 uiElements.buttonCallTimeout.setText("Done");
             }
         });

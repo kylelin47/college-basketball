@@ -334,9 +334,9 @@ public class Team {
         }
 
         if (game.getHome() == this) {
-            sum[2] = "vs " + game.getAway().getAbbr();
+            sum[2] = "vs #" + game.getAway().pollRank + " " + game.getAway().getAbbr();
         } else {
-            sum[2] = "@ " + game.getHome().getAbbr();
+            sum[2] = "@ #" + game.getHome().pollRank + " " + game.getHome().getAbbr();
         }
         return sum;
     }

@@ -1,9 +1,15 @@
 package io.coachapps.collegebasketballcoach.util;
 
 import android.content.Context;
+import android.database.sqlite.SQLiteDatabase;
 import android.util.Log;
 import android.util.SparseIntArray;
 
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.OutputStreamWriter;
+import java.io.Writer;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -18,9 +24,12 @@ import io.coachapps.collegebasketballcoach.basketballsim.Player;
 import io.coachapps.collegebasketballcoach.basketballsim.Simulator;
 import io.coachapps.collegebasketballcoach.basketballsim.Team;
 import io.coachapps.collegebasketballcoach.db.BoxScoreDao;
+import io.coachapps.collegebasketballcoach.db.DbHelper;
 import io.coachapps.collegebasketballcoach.db.GameDao;
 import io.coachapps.collegebasketballcoach.db.LeagueResultsEntryDao;
+import io.coachapps.collegebasketballcoach.db.TeamDao;
 import io.coachapps.collegebasketballcoach.db.YearlyPlayerStatsDao;
+import io.coachapps.collegebasketballcoach.db.YearlyTeamStatsDao;
 import io.coachapps.collegebasketballcoach.models.AwardTeamModel;
 import io.coachapps.collegebasketballcoach.models.BoxScore;
 import io.coachapps.collegebasketballcoach.models.FullGameResults;
@@ -109,14 +118,53 @@ public class LeagueEvents {
         Game championshipGame = marchMadness.get(marchMadness.size() - 1);
         Game previousGame = marchMadness.get(marchMadness.size() - 2);
         if (championshipGame.hasPlayed() && championshipGame.getWeek() > previousGame.getWeek()) {
+            // Assign awards to all the players and teams
             YearlyPlayerStatsDao yps = new YearlyPlayerStatsDao(context);
             List<YearlyPlayerStats> playerStatsList = yps.getAllYearlyPlayerStats(championshipGame.getYear());
             List<ThreeAwardTeams> awardTeams = getAllAwardTeams(playerStatsList, league);
             int mvpID = getMVP(playerStatsList);
             int dpoyID = getDPOY(playerStatsList);
+            String[] champs = getChampions(league);
             LeagueResultsEntryDao leagueResultsEntryDao = new LeagueResultsEntryDao(context);
             leagueResultsEntryDao.save(championshipGame.getYear(),
-                    getChampions(league), mvpID, dpoyID, awardTeams);
+                    champs, mvpID, dpoyID, awardTeams);
+
+            // Set new prestiges for all the teams and start the recruiting activity
+            // 30 wins for 100 prestige, 10 wins for 0 prestige
+            SQLiteDatabase db = DbHelper.getInstance(context).getReadableDatabase();
+            TeamDao teamDao = new TeamDao(context);
+            YearlyTeamStatsDao yearlyTeamStatsDao = new YearlyTeamStatsDao(context);
+            db.beginTransaction();
+            try {
+                for (Team t : league.getAllTeams()) {
+                    int diff = t.getPrestigeDiff();
+                    if (champs[0].equals(t.getName())) {
+                        if (diff < 0) diff = 0;
+                        diff += 10;
+                    }
+                    for (int i = 1; i < 7; ++i) {
+                        if (champs[i].equals(t.getName())) diff += 4;
+                    }
+                    t.prestige += diff;
+                    if (t.prestige < 5) t.prestige = 5;
+                    if (t.prestige > 95) t.prestige = 95;
+                    teamDao.updateTeam(t);
+                    yearlyTeamStatsDao.updateSummary(LeagueEvents.getTeamSeasonSummaryStr(t),
+                            t.getName(), leagueResultsEntryDao.getCurrentYear()-1);
+                }
+                db.setTransactionSuccessful();
+            } finally {
+                db.endTransaction();
+            }
+
+            File recruitingFile = new File(context.getFilesDir(), "current_state");
+            try (Writer writer = new BufferedWriter(new OutputStreamWriter(
+                    new FileOutputStream(recruitingFile), "utf-8"))) {
+                writer.write("RECRUITING");
+            } catch (Exception e) {
+                System.out.println(e.toString());
+            }
+
             return true;
         }
         return false;

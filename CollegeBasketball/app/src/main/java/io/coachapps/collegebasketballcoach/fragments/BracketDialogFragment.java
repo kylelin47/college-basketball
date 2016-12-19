@@ -24,9 +24,11 @@ import static io.coachapps.collegebasketballcoach.R.id.bracketTitle;
 
 public class BracketDialogFragment extends DialogFragment {
     private List<String> tournamentGames;
+    private String userTeamName;
     private final static String GAMES_KEY = "games";
+    private final static String USER_TEAM_KEY = "userTeam";
 
-    public static BracketDialogFragment newInstance(List<Game> games) {
+    public static BracketDialogFragment newInstance(List<Game> games, String userTeamName) {
         BracketDialogFragment fragment = new BracketDialogFragment();
         Bundle args = new Bundle();
         ArrayList<String> tournamentGames = new ArrayList<>(games.size());
@@ -34,6 +36,7 @@ public class BracketDialogFragment extends DialogFragment {
             tournamentGames.add(game.toString());
         }
         args.putSerializable(GAMES_KEY, tournamentGames);
+        args.putString(USER_TEAM_KEY, userTeamName);
         fragment.setArguments(args);
         return fragment;
     }
@@ -43,6 +46,7 @@ public class BracketDialogFragment extends DialogFragment {
         super.onCreate(savedInstanceState);
         setStyle(STYLE_NO_FRAME, android.R.style.Theme_DeviceDefault_Light);
         tournamentGames = (ArrayList<String>) getArguments().getSerializable(GAMES_KEY);
+        userTeamName = getArguments().getString(USER_TEAM_KEY);
     }
 
     @Override
@@ -59,7 +63,7 @@ public class BracketDialogFragment extends DialogFragment {
         }
         ListView games = (ListView) view.findViewById(bracketGameList);
         BracketListArrayAdapter bracketListArrayAdapter =
-                new BracketListArrayAdapter(getActivity(), this, tournamentGames);
+                new BracketListArrayAdapter(getActivity(), this, tournamentGames, userTeamName);
         games.setAdapter(bracketListArrayAdapter);
         return view;
     }

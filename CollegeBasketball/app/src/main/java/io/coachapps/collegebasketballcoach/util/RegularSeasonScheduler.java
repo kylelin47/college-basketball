@@ -14,8 +14,8 @@ import io.coachapps.collegebasketballcoach.models.GameModel;
 
 class RegularSeasonScheduler {
     //bit of a lie
-    private static final List<Integer> OUT_OF_CONFERENCE_WEEKS = Arrays.asList(3, 5, 7, 9, 11, 13,
-            15, 17, 19, 21);
+    private static final List<Integer> OUT_OF_CONFERENCE_WEEKS = Arrays.asList(0, 1, 2, 3, 4, 9,
+            13, 17, 19, 21);
     void scheduleOutOfConference(League league, int year, Random random) {
         List<League.Conference> conferences = league.getConferences();
         List<List<Team>> shuffledTeams = new ArrayList<>(conferences.size());

@@ -75,7 +75,7 @@
                 android:layout_marginEnd="3dp"
                 android:text="27"
                 android:textColor="#000"
-                android:textSize="15sp"
+                android:textSize="14sp"
                 android:id="@+id/textViewPTS"
                 />
             <TextView
@@ -100,7 +100,7 @@
                 android:layout_marginEnd="3dp"
                 android:text="6"
                 android:textColor="#000"
-                android:textSize="15sp"
+                android:textSize="14sp"
                 android:id="@+id/textViewREB"
                 />
             <TextView
@@ -125,7 +125,7 @@
                 android:layout_marginEnd="3dp"
                 android:text="8"
                 android:textColor="#000"
-                android:textSize="15sp"
+                android:textSize="14sp"
                 android:id="@+id/textViewAST"
                 />
             <TextView
@@ -141,7 +141,7 @@
 
         <RelativeLayout
             android:layout_width="0dip"
-            android:layout_weight="1.5"
+            android:layout_weight="1.7"
             android:layout_height="wrap_content"
             android:gravity="center">
             <TextView
@@ -150,7 +150,7 @@
                 android:layout_marginEnd="3dp"
                 android:text="15/22"
                 android:textColor="#000"
-                android:textSize="15sp"
+                android:textSize="14sp"
                 android:id="@+id/textViewFGMA"
                 />
             <TextView
@@ -166,7 +166,7 @@
 
         <RelativeLayout
             android:layout_width="0dip"
-            android:layout_weight="1.5"
+            android:layout_weight="1.7"
             android:layout_height="wrap_content"
             android:gravity="center">
             <TextView
@@ -175,7 +175,7 @@
                 android:layout_marginEnd="3dp"
                 android:text="5/7"
                 android:textColor="#000"
-                android:textSize="15sp"
+                android:textSize="14sp"
                 android:id="@+id/textView3GMA"
                 />
             <TextView
@@ -200,7 +200,7 @@
                 android:layout_marginEnd="3dp"
                 android:text="2"
                 android:textColor="#000"
-                android:textSize="15sp"
+                android:textSize="14sp"
                 android:id="@+id/textViewBLK"
                 />
             <TextView
@@ -225,7 +225,7 @@
                 android:layout_marginEnd="3dp"
                 android:text="0"
                 android:textColor="#000"
-                android:textSize="15sp"
+                android:textSize="14sp"
                 android:id="@+id/textViewSTL"
                 />
             <TextView

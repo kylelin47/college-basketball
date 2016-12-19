@@ -107,6 +107,14 @@ public class MainActivity extends AppCompatActivity {
     boolean doneWithSeason = false;
     int numGamesPlayerTeam = 0;
 
+    boolean shownMadeMissedConfDialog = false;
+    boolean shownMadeMissedMarchDialog = false;
+
+    public void onBackPressed() {
+        Intent myIntent = new Intent(MainActivity.this, StartActivity.class);
+        MainActivity.this.startActivity(myIntent);
+    }
+
     @Override
     protected void onDestroy() {
         super.onDestroy();
@@ -216,7 +224,7 @@ public class MainActivity extends AppCompatActivity {
         // Sim games
         bballSim = new Simulator(MainActivity.this);
         LeagueEvents.scheduleSeason(league, this, getYear());
-        tryToScheduleTournaments();
+        tryToScheduleTournaments(false);
         // Set up UI components
         currTeamTextView = (TextView) findViewById(R.id.currentTeamText);
         final ViewFlipper vf = (ViewFlipper) findViewById(R.id.viewFlipper);
@@ -493,7 +501,7 @@ public class MainActivity extends AppCompatActivity {
         int diff = playerTeam.getPrestigeDiff();
         if (diff > 0) {
             sb.append("You exceeded expectations this year and have been awarded with +" + diff + " prestige!\n\n");
-        } else if (diff == 0) {
+        } else if (diff == 0 || wonNatChamp) {
             sb.append("You met expectations, and didn't gain or lose prestige.\n\n");
         } else {
             sb.append("You fell short of expectations, and recruits took notice. You lost " + Math.abs(diff) + " prestige.\n\n");
@@ -510,39 +518,6 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void advanceToOffSeason() {
-        // Set new prestiges for all the teams and start the recruiting activity
-        // 30 wins for 100 prestige, 10 wins for 0 prestige
-        SQLiteDatabase db = DbHelper.getInstance(this).getReadableDatabase();
-        TeamDao teamDao = new TeamDao(this);
-        YearlyTeamStatsDao yearlyTeamStatsDao = new YearlyTeamStatsDao(this);
-        db.beginTransaction();
-        try {
-            String[] champs = LeagueEvents.getChampions(league);
-            for (Team t : league.getAllTeams()) {
-                int diff = t.getPrestigeDiff();
-                if (champs[0].equals(t.getName())) diff += 10;
-                for (int i = 1; i < 7; ++i) {
-                    if (champs[i].equals(t.getName())) diff += 4;
-                }
-                t.prestige += diff;
-                if (t.prestige < 5) t.prestige = 5;
-                if (t.prestige > 95) t.prestige = 95;
-                teamDao.updateTeam(t);
-                yearlyTeamStatsDao.updateSummary(LeagueEvents.getTeamSeasonSummaryStr(t), t.getName(), getYear());
-            }
-            db.setTransactionSuccessful();
-        } finally {
-            db.endTransaction();
-        }
-
-        File recruitingFile = new File(getFilesDir(), "current_state");
-        try (Writer writer = new BufferedWriter(new OutputStreamWriter(
-                new FileOutputStream(recruitingFile), "utf-8"))) {
-            writer.write("RECRUITING");
-        } catch (Exception e) {
-            System.out.println(e.toString());
-        }
-
         Intent myIntent = new Intent(MainActivity.this, RecruitingActivity.class);
         MainActivity.this.startActivity(myIntent);
     }
@@ -595,9 +570,9 @@ public class MainActivity extends AppCompatActivity {
         DialogFragment newFragment;
         if (gameType == Game.GameType.TOURNAMENT_GAME) {
             newFragment = BracketDialogFragment.newInstance(league.getTournamentGames
-                            (League.Conference.valueOf(currentConferenceTeamList.get(0).conference)));
+                            (League.Conference.valueOf(currentConferenceTeamList.get(0).conference)), playerTeam.getName());
         } else {
-            newFragment = BracketDialogFragment.newInstance(league.getMarchMadnessGames());
+            newFragment = BracketDialogFragment.newInstance(league.getMarchMadnessGames(), playerTeam.getName());
         }
         newFragment.show(ft, "bracket dialog");
     }
@@ -678,7 +653,7 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View v) {
                 // Perform action on click
                 if (t.isPlaying()) {
-                    t.togglePause();
+                    if (!t.isGamePaused()) t.togglePause();
                     showChangeStrategyDialog(playerTeam, t);
                 } else {
                     dialog.dismiss();
@@ -714,7 +689,14 @@ public class MainActivity extends AppCompatActivity {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         //do nothing?
-                        if (t != null) t.togglePause();
+                        if (t != null) {
+                            t.togglePause();
+                            if (t.isGamePaused()) {
+                                t.uiElements.buttonPause.setText("Resume");
+                            } else {
+                                t.uiElements.buttonPause.setText("Pause");
+                            }
+                        }
                     }
                 })
                 .setView(getLayoutInflater().inflate(R.layout.team_strategy_dialog, null));
@@ -1044,14 +1026,69 @@ public class MainActivity extends AppCompatActivity {
                 });
 
     }
-    public void tryToScheduleTournaments() {
+
+    public void tryToScheduleTournaments(boolean showDialogs) {
         if (LeagueEvents.determineLastUnplayedRegularSeasonWeek(league.getAllTeams()) == Integer.MAX_VALUE) {
             league.scheduleConferenceTournament(MainActivity.this);
+            if (!shownMadeMissedConfDialog && showDialogs) {
+                boolean made = false;
+                for (Game g : playerTeam.gameSchedule) {
+                    if (g != null && g.gameType == Game.GameType.TOURNAMENT_GAME) {
+                        made = true;
+                        break;
+                    }
+                }
+                showMadeMissedTourneyDialog(Game.GameType.TOURNAMENT_GAME, made);
+                shownMadeMissedConfDialog = true;
+            }
         }
         if (league.conferenceTournamentFinished()) {
+            System.out.println("Conf tourney finished");
             league.scheduleMarchMadness(MainActivity.this);
+            if (!shownMadeMissedMarchDialog && showDialogs) {
+                boolean made = false;
+                for (Game g : playerTeam.gameSchedule) {
+                    if (g != null && g.gameType == Game.GameType.MARCH_MADNESS) {
+                        made = true;
+                        break;
+                    }
+                }
+                showMadeMissedTourneyDialog(Game.GameType.MARCH_MADNESS, made);
+                shownMadeMissedMarchDialog = true;
+            }
+        } else {
+            System.out.println("Conference tourney not finished.");
         }
     }
+
+    public void showMadeMissedTourneyDialog(Game.GameType gameType, boolean madeTourney) {
+        String message = "";
+        if (gameType == Game.GameType.TOURNAMENT_GAME) {
+            if (madeTourney) {
+                message = "Congratulations! Your team has been invited to participate in the Conference Tournament!";
+            } else {
+                message = "Sorry coach. Your team was not invited to the Conference Tournament.";
+            }
+        } else if (gameType == Game.GameType.MARCH_MADNESS) {
+            if (madeTourney) {
+                message = "Congratulations! Your team is going to March Madness!";
+            } else {
+                message = "Better luck next year. Your team wasn't invited to participate in March Madness.";
+            }
+        }
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setMessage(message)
+                .setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        // Actually overwrite
+                        dialog.dismiss();
+                    }
+                });
+        AlertDialog dialog2 = builder.create();
+        dialog2.show();
+    }
+
     /**
      * Class responsible for simulating a week.
      * Done via a AsyncTask so the UI thread isn't overwhelmed.
@@ -1069,7 +1106,7 @@ public class MainActivity extends AppCompatActivity {
         protected void onPostExecute(Void result) {
             canSimWeek = true;
             simGameButton.setEnabled(true);
-            tryToScheduleTournaments();
+            tryToScheduleTournaments(true);
             if (spg) showSummaryToast();
             updateUI();
         }

@@ -25,6 +25,7 @@ public class TournamentScheduler {
             int leftWins = getNonMarchMadnessWins(left);
             int rightWins = getNonMarchMadnessWins(right);
             return rightWins - leftWins;
+            //return right.pollScore - left.pollScore;
         }
         private int getNonMarchMadnessWins(Team team) {
             int wins = 0;
@@ -48,7 +49,8 @@ public class TournamentScheduler {
         private int getRegularSeasonWins(Team team) {
             int regularSeasonWins = 0;
             for (Game game : team.gameSchedule) {
-                if (!(game.gameType.isTournament()) && game.getWinner() == team) {
+                if (!(game.gameType.isTournament()) &&
+                        game.gameType == Game.GameType.REGULAR_SEASON && game.getWinner() == team) {
                     regularSeasonWins++;
                 }
             }

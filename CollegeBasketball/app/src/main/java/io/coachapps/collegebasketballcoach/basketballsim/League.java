@@ -237,6 +237,15 @@ public class League {
                             (s.points - s.opp_points) * DIFF_WEIGHT +
                             t.getTalent() * TALENT_WEIGHT +
                             t.prestige * PRESTIGE_WEIGHT;
+            for (Game g : t.gameSchedule) {
+                int count = 0;
+                if (g != null && g.hasPlayed() &&
+                        g.gameType == Game.GameType.MARCH_MADNESS && g.getWinner() == t) {
+                    // Won a march madness game
+                    count++;
+                }
+                t.pollScore += count * WIN_WEIGHT * 3;
+            }
         }
 
         Collections.sort(sortedTeamList, new Comparator<Team>() {

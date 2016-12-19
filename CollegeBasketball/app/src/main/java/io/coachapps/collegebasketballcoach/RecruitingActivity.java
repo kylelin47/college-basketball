@@ -89,6 +89,10 @@ public class RecruitingActivity extends AppCompatActivity {
 
     List<TeamPlayerCommitment> commitments;
 
+    public void onBackPressed() {
+        endRecruiting();
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -176,10 +180,7 @@ public class RecruitingActivity extends AppCompatActivity {
         doneButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                dialogLoading = ProgressDialog.show(RecruitingActivity.this, "",
-                        getResources().getString(R.string.recruiting_loading_msg), true);
-                dialogLoading.setCancelable(false);
-                new FinishRecruitingTask().execute();
+                endRecruiting();
             }
         });
         viewTeamButton = (Button) findViewById(R.id.viewTeamButton);
@@ -194,6 +195,30 @@ public class RecruitingActivity extends AppCompatActivity {
         fillSpinner();
 
         showPlayersLeavingDialog();
+    }
+
+    public void endRecruiting() {
+        android.app.AlertDialog.Builder builder = new android.app.AlertDialog.Builder(RecruitingActivity.this);
+        builder.setMessage("Are you sure you are done with recruiting? Any open positions will be filled by walk-ons.")
+                .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        // Actually overwrite
+                        dialogLoading = ProgressDialog.show(RecruitingActivity.this, "",
+                                getResources().getString(R.string.recruiting_loading_msg), true);
+                        dialogLoading.setCancelable(false);
+                        new FinishRecruitingTask().execute();
+                    }
+                })
+                .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        // Do nothing
+                        dialog.dismiss();
+                    }
+                });
+        android.app.AlertDialog dialog = builder.create();
+        dialog.show();
     }
 
     public void goToMainActivity() {
@@ -412,6 +437,7 @@ public class RecruitingActivity extends AppCompatActivity {
                     }
                 });
         builder.setTitle(playerTeamName + " Improvements");
+        builder.setCancelable(false);
         final AlertDialog dialog = builder.create();
         dialog.show();
 

@@ -16,7 +16,7 @@
             android:text="GSW"
             android:id="@+id/gameDialogAbbrAway"
             android:textAppearance="?android:attr/textAppearanceLarge"
-            android:textSize="30sp"
+            android:textSize="22sp"
             android:textAlignment="gravity"
             android:textStyle="bold"
             android:textColor="#555"
@@ -65,7 +65,7 @@
             android:text="CLE"
             android:id="@+id/gameDialogAbbrHome"
             android:textAppearance="?android:attr/textAppearanceLarge"
-            android:textSize="30sp"
+            android:textSize="22sp"
             android:textAlignment="gravity"
             android:textStyle="bold"
             android:textColor="#555"
@@ -79,6 +79,7 @@
     <Spinner
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:padding="5dp"
         android:id="@+id/spinnerGameDialog">
     </Spinner>
 

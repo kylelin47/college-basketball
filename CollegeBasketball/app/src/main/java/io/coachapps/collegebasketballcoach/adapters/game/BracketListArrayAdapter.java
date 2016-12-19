@@ -1,6 +1,8 @@
 package io.coachapps.collegebasketballcoach.adapters.game;
 
 import android.content.Context;
+import android.content.res.ColorStateList;
+import android.graphics.Color;
 import android.support.annotation.NonNull;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -21,13 +23,15 @@ public class BracketListArrayAdapter extends ArrayAdapter<String>  {
     private final Context context;
     private List<String> gameSummaries;
     private final BracketDialogFragment bracketDialogFragment;
+    private final String userTeamName;
 
     public BracketListArrayAdapter(Context context, BracketDialogFragment bracketDialogFragment,
-                                   List<String> games) {
+                                   List<String> games, String userTeamName) {
         super(context, R.layout.game_result_list_item, games);
         this.context = context;
         this.bracketDialogFragment = bracketDialogFragment;
         this.gameSummaries = games;
+        this.userTeamName = userTeamName;
         setBoundaries();
     }
 
@@ -86,8 +90,22 @@ public class BracketListArrayAdapter extends ArrayAdapter<String>  {
             homeSeed = gameInfo[8];
             awaySeed = gameInfo[9];
         }
-        viewHolder.textHomeName.setText(gameInfo[0] + " (" + homeSeed + ")");
-        viewHolder.textAwayName.setText(gameInfo[1] + " (" + awaySeed + ")");
+
+        viewHolder.textHomeName.setText("(" + homeSeed + ") " + getShortName(gameInfo[0]));
+        viewHolder.textAwayName.setText("(" + awaySeed + ") " + getShortName(gameInfo[1]));
+        if (gameInfo[0].equals(userTeamName)) {
+            // Highlight user team
+            viewHolder.textHomeName.setTextColor(Color.parseColor("#DD5600"));
+        } else {
+            viewHolder.textHomeName.setTextColor(Color.parseColor("#000000"));
+        }
+        if (gameInfo[1].equals(userTeamName)) {
+            // Highlight user team
+            viewHolder.textAwayName.setTextColor(Color.parseColor("#DD5600"));
+        } else {
+            viewHolder.textAwayName.setTextColor(Color.parseColor("#000000"));
+        }
+
         if (gameInfo[6].equals("true")) {
             viewHolder.gameButton.setText(gameInfo[2] + " - " + gameInfo[3]);
         } else {
@@ -122,5 +140,23 @@ public class BracketListArrayAdapter extends ArrayAdapter<String>  {
     }
     private int getWeek(String[] gameSummary) {
         return Integer.valueOf(gameSummary[5]);
+    }
+    private String getShortName(String teamName) {
+        if (teamName.equals(userTeamName)) return teamName;
+        try {
+            String[] strSplit = teamName.split(" ");
+            String name = "";
+            for (int i = 0; i < strSplit.length-1; ++i) {
+                if (i != 0) {
+                    name += " " + strSplit[i];
+                } else {
+                    name += strSplit[i];
+                }
+            }
+            return name;
+        } catch (Exception e) {
+            // whoops
+            return teamName;
+        }
     }
 }

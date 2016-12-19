@@ -64,7 +64,7 @@
                 android:layout_marginEnd="3dp"
                 android:text="0.0"
                 android:textColor="#000"
-                android:textSize="18sp"
+                android:textSize="16sp"
                 android:textStyle="bold"
                 android:id="@+id/textViewPPG"
                 />
@@ -91,7 +91,7 @@
                 android:layout_marginEnd="3dp"
                 android:text="0.0"
                 android:textColor="#000"
-                android:textSize="18sp"
+                android:textSize="16sp"
                 android:textStyle="bold"
                 android:id="@+id/textViewRPG"
                 />
@@ -118,7 +118,7 @@
                 android:layout_marginEnd="3dp"
                 android:text="0.0"
                 android:textColor="#000"
-                android:textSize="18sp"
+                android:textSize="16sp"
                 android:textStyle="bold"
                 android:id="@+id/textViewAPG"
                 />
@@ -145,7 +145,7 @@
                 android:layout_marginEnd="3dp"
                 android:text="0/0"
                 android:textColor="#000"
-                android:textSize="18sp"
+                android:textSize="16sp"
                 android:textStyle="bold"
                 android:id="@+id/textViewFGP"
                 />
