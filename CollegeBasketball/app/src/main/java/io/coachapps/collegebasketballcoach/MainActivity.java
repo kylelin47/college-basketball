@@ -466,6 +466,40 @@ public class MainActivity extends AppCompatActivity {
             Toast.makeText(MainActivity.this, playerTeam.getLastGameSummary(),
                     Toast.LENGTH_SHORT).show();
         }
+
+        // Made/missed conference tournament
+        if (!shownMadeMissedConfDialog) {
+            int numConfGames = league.getNumConfTourneyGames();
+            Log.i("MainActivity", "numConfGames = " + numConfGames);
+            if (numConfGames == 1) {
+                boolean made = false;
+                for (Game g : playerTeam.gameSchedule) {
+                    if (g != null && g.gameType == Game.GameType.TOURNAMENT_GAME) {
+                        made = true;
+                        break;
+                    }
+                }
+                showMadeMissedTourneyDialog(Game.GameType.TOURNAMENT_GAME, made);
+                shownMadeMissedConfDialog = true;
+            }
+        }
+
+        // Made/missed march madness
+        if (!shownMadeMissedMarchDialog) {
+            int numMarchGames = league.getNumMarchMadnessGames();
+            Log.i("MainActivity", "numMarchGames = " + numMarchGames);
+            if (numMarchGames == 1) {
+                boolean made = false;
+                for (Game g : playerTeam.gameSchedule) {
+                    if (g != null && g.gameType == Game.GameType.MARCH_MADNESS) {
+                        made = true;
+                        break;
+                    }
+                }
+                showMadeMissedTourneyDialog(Game.GameType.MARCH_MADNESS, made);
+                shownMadeMissedMarchDialog = true;
+            }
+        }
     }
 
     private void showSeasonSummaryDialog() {
@@ -738,6 +772,7 @@ public class MainActivity extends AppCompatActivity {
                             AdapterView<?> parent, View view, int position, long id) {
                         //offStratDescription.setText(tsOff[position].getStratDescription());
                         userTeam.setOffStrat(tsOff[position]);
+                        offStratDescription.setText(tsOff[position].getDescription());
                     }
 
                     public void onNothingSelected(AdapterView<?> parent) {
@@ -759,6 +794,7 @@ public class MainActivity extends AppCompatActivity {
                             AdapterView<?> parent, View view, int position, long id) {
                         //defStratDescription.setText(tsDef[position].getStratDescription());
                         userTeam.setDefStrat(tsDef[position]);
+                        defStratDescription.setText(tsDef[position].getDescription());
                     }
 
                     public void onNothingSelected(AdapterView<?> parent) {
@@ -1030,34 +1066,9 @@ public class MainActivity extends AppCompatActivity {
     public void tryToScheduleTournaments(boolean showDialogs) {
         if (LeagueEvents.determineLastUnplayedRegularSeasonWeek(league.getAllTeams()) == Integer.MAX_VALUE) {
             league.scheduleConferenceTournament(MainActivity.this);
-            if (!shownMadeMissedConfDialog && showDialogs) {
-                boolean made = false;
-                for (Game g : playerTeam.gameSchedule) {
-                    if (g != null && g.gameType == Game.GameType.TOURNAMENT_GAME) {
-                        made = true;
-                        break;
-                    }
-                }
-                showMadeMissedTourneyDialog(Game.GameType.TOURNAMENT_GAME, made);
-                shownMadeMissedConfDialog = true;
-            }
         }
         if (league.conferenceTournamentFinished()) {
-            System.out.println("Conf tourney finished");
             league.scheduleMarchMadness(MainActivity.this);
-            if (!shownMadeMissedMarchDialog && showDialogs) {
-                boolean made = false;
-                for (Game g : playerTeam.gameSchedule) {
-                    if (g != null && g.gameType == Game.GameType.MARCH_MADNESS) {
-                        made = true;
-                        break;
-                    }
-                }
-                showMadeMissedTourneyDialog(Game.GameType.MARCH_MADNESS, made);
-                shownMadeMissedMarchDialog = true;
-            }
-        } else {
-            System.out.println("Conference tourney not finished.");
         }
     }
 

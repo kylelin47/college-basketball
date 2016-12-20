@@ -8,23 +8,35 @@ package io.coachapps.collegebasketballcoach.basketballsim;
 public class Strategy {
 
     public enum Strats {
-        DRIBBLE_DRIVE("Dribble Drive"),
-        MOTION("Motion"),
-        RUN_AND_GUN("Run and Gun"),
-        TRIANGLE("Triangle"),
-        MAN_TO_MAN("Man to Man"),
-        ONE_THREE_ONE_ZONE("1-3-1 Zone"),
-        TWO_THREE_ZONE("2-3 Zone"),
-        DOUBLE_TEAM("Double Team");
+        DRIBBLE_DRIVE("Dribble Drive",
+                "Encourages your PG to drive and pass out to his teammates for open shots. Relies on good passing from your PG."),
+        MOTION("Motion",
+                "Offense filled with passing, screening, and cutting. Can be a thing of beauty, if your players are smart enough."),
+        RUN_AND_GUN("Run and Gun",
+                "Encourages cross-court passes and a fast pace to get easy shots. Of course, sometimes those risks can lead to turnovers."),
+        TRIANGLE("Triangle",
+                "Relies on smart play from your PG and C in order to take smart shots. Generally a conservative, slower paced offense."),
+        MAN_TO_MAN("Man to Man",
+                "The simplest defense of all, where each player guards an opposing player."),
+        ONE_THREE_ONE_ZONE("1-3-1 Zone",
+                "Riskier defense that encourages trapping and getting steals. However, with only one man on the inside, it can give up easy dunks and lay-ups."),
+        TWO_THREE_ZONE("2-3 Zone",
+                "The most common zone defense, which places emphasis on interior defense at the risk of giving up perimeter shots.");
 
         private String name;
+        private String description;
 
-        Strats(String name) {
+        Strats(String name, String description) {
             this.name = name;
+            this.description = description;
         }
 
         public String getName() {
             return name;
+        }
+
+        public String getDescription() {
+            return description;
         }
 
         public static Strats[] getOffStrats() {
@@ -32,7 +44,7 @@ public class Strategy {
         }
 
         public static Strats[] getDefStrats() {
-            return new Strats[]{MAN_TO_MAN, ONE_THREE_ONE_ZONE, TWO_THREE_ZONE, DOUBLE_TEAM};
+            return new Strats[]{MAN_TO_MAN, ONE_THREE_ONE_ZONE, TWO_THREE_ZONE};
         }
 
     }
@@ -95,12 +107,6 @@ public class Strategy {
                 stealBonus = 20;
                 break;
             case TWO_THREE_ZONE:
-                insideBonus = 5;
-                midrangeBonus = 0;
-                outsideBonus = -4;
-                stealBonus = 0;
-                break;
-            case DOUBLE_TEAM:
                 insideBonus = 5;
                 midrangeBonus = 0;
                 outsideBonus = -4;

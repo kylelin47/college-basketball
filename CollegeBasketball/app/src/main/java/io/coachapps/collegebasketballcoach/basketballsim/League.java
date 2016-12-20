@@ -228,23 +228,29 @@ public class League {
 
         int WIN_WEIGHT = 200;
         int DIFF_WEIGHT = 5;
-        int TALENT_WEIGHT = 10;
+        int TALENT_WEIGHT = 20;
         int PRESTIGE_WEIGHT = 10;
-        for (YearlyTeamStats s : currentTeamStats) {
-            Team t = nameMap.get(s.team);
-            t.pollScore =
-                    t.wins * WIN_WEIGHT +
-                            (s.points - s.opp_points) * DIFF_WEIGHT +
-                            t.getTalent() * TALENT_WEIGHT +
-                            t.prestige * PRESTIGE_WEIGHT;
-            for (Game g : t.gameSchedule) {
-                int count = 0;
-                if (g != null && g.hasPlayed() &&
-                        g.gameType == Game.GameType.MARCH_MADNESS && g.getWinner() == t) {
-                    // Won a march madness game
-                    count++;
+        if (currentTeamStats.isEmpty()) {
+            for (Team t : getAllTeams()) {
+                t.pollScore = t.getTalent() * TALENT_WEIGHT + t.prestige * PRESTIGE_WEIGHT;
+            }
+        } else {
+            for (YearlyTeamStats s : currentTeamStats) {
+                Team t = nameMap.get(s.team);
+                t.pollScore =
+                        t.wins * WIN_WEIGHT +
+                                (s.points - s.opp_points) * DIFF_WEIGHT +
+                                t.getTalent() * TALENT_WEIGHT +
+                                t.prestige * PRESTIGE_WEIGHT;
+                for (Game g : t.gameSchedule) {
+                    int count = 0;
+                    if (g != null && g.hasPlayed() &&
+                            g.gameType == Game.GameType.MARCH_MADNESS && g.getWinner() == t) {
+                        // Won a march madness game
+                        count++;
+                    }
+                    t.pollScore += count * WIN_WEIGHT * 3;
                 }
-                t.pollScore += count * WIN_WEIGHT * 3;
             }
         }
 
@@ -263,5 +269,49 @@ public class League {
         YearlyTeamStatsDao yearlyTeamStatsDao = new YearlyTeamStatsDao(context);
         List<YearlyTeamStats> currentTeamStats = yearlyTeamStatsDao.getTeamStatsOfYear(year);
         assignPollRanks(currentTeamStats);
+    }
+
+    public int getNumConfTourneyGames() {
+        int numConfGames = 0;
+        for (Team t : getAllTeams()) {
+            int teamConfGames = 0;
+            Game g;
+            for (int i = t.gameSchedule.size()-1; i >= 0; --i) {
+                g = t.gameSchedule.get(i);
+                if (g != null) {
+                    if (g.gameType == Game.GameType.TOURNAMENT_GAME) {
+                        teamConfGames++;
+                    } else if (g.gameType == Game.GameType.REGULAR_SEASON) {
+                        break;
+                    }
+                }
+            }
+            numConfGames = Math.max(numConfGames, teamConfGames);
+        }
+
+        return numConfGames;
+    }
+
+    public int getNumMarchMadnessGames() {
+        int numMMGames = 0;
+        for (Team t : getAllTeams()) {
+            int teamMMGames = 0;
+            Game g;
+            for (int i = t.gameSchedule.size()-1; i >= 0; --i) {
+                g = t.gameSchedule.get(i);
+                if (g != null) {
+                    System.out.println(t.getName() + " " + i + " : " + g.gameType.toString());
+                    if (g.gameType == Game.GameType.MARCH_MADNESS) {
+                        teamMMGames++;
+                        System.out.println(t.getName() + " mm games: " + String.valueOf(teamMMGames));
+                    } else if (g.gameType == Game.GameType.REGULAR_SEASON) {
+                        break;
+                    }
+                }
+            }
+            numMMGames = Math.max(numMMGames, teamMMGames);
+        }
+
+        return numMMGames;
     }
 }
