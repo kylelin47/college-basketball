@@ -31,6 +31,7 @@ public class DataDisplayer {
             case 3: return "Junior";
             case 4: return "Senior";
             case 5: return "Graduate";
+            case 6: return "Pro";
             default: return "Unknown";
         }
     }
@@ -42,6 +43,7 @@ public class DataDisplayer {
             case 3: return "Jr";
             case 4: return "Sr";
             case 5: return "Gr";
+            case 6: return "Pro";
             default: return "Unknown";
         }
     }
@@ -458,7 +460,12 @@ public class DataDisplayer {
     }
 
     public static void colorizeRatings(TextView textV) {
-        String letter = textV.getText().toString();
+        String letter;
+        if (textV.getText().toString().split(" ").length == 2) {
+            letter = textV.getText().toString().split(" ")[1];
+        } else {
+            letter = textV.getText().toString();
+        }
         // The last index is always the rating: A+, C, etc
         if (letter.equals("A") || letter.equals("A+")) {
             textV.setTextColor(Color.parseColor("#006600"));

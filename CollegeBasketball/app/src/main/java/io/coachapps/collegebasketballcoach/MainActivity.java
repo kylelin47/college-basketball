@@ -28,12 +28,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.ViewFlipper;
 
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.OutputStreamWriter;
-import java.io.Writer;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -158,18 +153,81 @@ public class MainActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
 
         final TeamDao teamDao = new TeamDao(this);
+        final PlayerGen playerGen = new PlayerGen
+                (getString(R.string.league_player_names),
+                        getString(R.string.league_last_names), 2016);
         try {
-            league = new League(teamDao.getAllTeams(getYear()));
+            league = new League(teamDao.getAllTeams(getYear(), playerGen));
             currentConferenceTeamList = league.getPlayerConference();
         } catch (IOException | ClassNotFoundException e) {
             Log.e("MainActivity", "Could not retrieve teams", e);
             // PROBABLY JUST CRASH
         }
         if (currentConferenceTeamList == null) {
-            final PlayerGen playerGen = new PlayerGen
-                    (getString(R.string.league_player_names),
-                    getString(R.string.league_last_names), 2016);
 
+            AlertDialog.Builder builder = new AlertDialog.Builder(this);
+            builder.setView(getLayoutInflater().inflate(R.layout.new_game_dialog, null));
+            builder.setTitle("New Game");
+            builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    // do nothing
+                }
+            });
+            builder.setCancelable(false);
+            final AlertDialog dialog = builder.create();
+            dialog.show();
+
+            final Spinner spinnerDifficulty = (Spinner) dialog.findViewById(R.id.spinnerDifficulty);
+            final Spinner spinnerConference = (Spinner) dialog.findViewById(R.id.spinnerConference);
+            final EditText editTextTeamName = (EditText) dialog.findViewById(R.id.editTextTeamName);
+
+            List<String> difficultyList = new ArrayList<>();
+            difficultyList.add("Easy");
+            difficultyList.add("Normal");
+            difficultyList.add("Hard");
+            ArrayAdapter<String> spinnerDifficultyAdapter = new ArrayAdapter<>(this,
+                    android.R.layout.simple_spinner_item, difficultyList);
+            spinnerDifficultyAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+            spinnerDifficulty.setAdapter(spinnerDifficultyAdapter);
+
+            List<String> conferenceList = new ArrayList<>();
+            conferenceList.add("Cowboy");
+            conferenceList.add("Lakes");
+            conferenceList.add("Mountains");
+            conferenceList.add("North");
+            conferenceList.add("Pacific");
+            conferenceList.add("South");
+            ArrayAdapter<String> spinnerConferenceAdapter = new ArrayAdapter<>(this,
+                    android.R.layout.simple_spinner_item, conferenceList);
+            spinnerConferenceAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+            spinnerConference.setAdapter(spinnerConferenceAdapter);
+
+            dialog.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener(new View
+                    .OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Log.i("MainActivity", "Set team name");
+                    String playerTeamName = editTextTeamName.getText().toString().trim();
+                    if (playerTeamName.length() >= 3) {
+                        dialog.getButton(DialogInterface.BUTTON_POSITIVE).setEnabled(false);
+                        league = new League(playerTeamName, MainActivity.this, playerGen,
+                                spinnerDifficulty.getSelectedItemPosition(),
+                                spinnerConference.getSelectedItemPosition());
+                        currentConferenceTeamList = league.getPlayerConference();
+                        setEverythingUp();
+                        teamDao.saveTeams(league.getAllTeams(), playerTeamName);
+                        playerTeam.sortPlayersOvrPosition();
+                        PlayerDao pd = new PlayerDao(MainActivity.this);
+                        for (Player p : playerTeam.players) {
+                            pd.updatePlayerRatings(p.getId(), p.ratings);
+                        }
+                        dialog.dismiss();
+                    }
+                }
+            });
+
+            /*
             AlertDialog.Builder builder = new AlertDialog.Builder(this);
             builder.setTitle("Input Your Team Name");
             final EditText input = new EditText(this);
@@ -205,6 +263,9 @@ public class MainActivity extends AppCompatActivity {
                     }
                 }
             });
+            */
+
+
         } else {
             playerTeam = league.getPlayerTeam();
             playerTeam.sortPlayersOvrPosition();
@@ -830,9 +891,9 @@ public class MainActivity extends AppCompatActivity {
         final Spinner spinner = (Spinner) dialog.findViewById(R.id.spinner);
         final List<String> categoryList = new ArrayList<>();
         final List<String> schemaCategoryList = new ArrayList<>();
-        categoryList.add("Points");
-        categoryList.add("Rebounds");
-        categoryList.add("Assists");
+        categoryList.add("Total Points");
+        categoryList.add("Total Rebounds");
+        categoryList.add("Total Assists");
         categoryList.add("Field Goals Made");
         categoryList.add("Three Pointers Made");
         schemaCategoryList.add(Schemas.YearlyPlayerStatsEntry.POINTS);
@@ -963,11 +1024,12 @@ public class MainActivity extends AppCompatActivity {
                         // Look at the right category
                         if (position == 0) {
                             listView.setAdapter(new LeagueHistoryListArrayAdapter(MainActivity.this,
-                                    historyDao.getLeagueResults(2016, getYear())));
+                                    historyDao.getLeagueResults(2016, getYear()), playerTeam.getName()));
                         } else {
                             List<YearlyTeamStats> teamStatsList =
                                     teamStatsDao.getTeamStatsFromYears(
                                             leagueHistoryChoices.get(position), 2016, getYear());
+                            teamStatsList.add(0, null);
                             listView.setAdapter(new TeamHistoryListArrayAdapter(MainActivity.this, teamStatsList));
                         }
                     }

@@ -66,17 +66,17 @@ public class Strategy {
 
             // Offense
             case DRIBBLE_DRIVE:
-                insideBonus = -3;
+                insideBonus = -2;
                 midrangeBonus = 3 * (double)t.getPG().getPass()/100;
                 outsideBonus = 5 * (double)t.getPG().getPass()/100;
-                stealBonus = 0;
+                stealBonus = -5;
                 break;
             case MOTION:
                 double iq = getCollectiveIQ()/100;
-                insideBonus = 3 * iq;
+                insideBonus = 4 * iq;
                 midrangeBonus = 3 * iq;
                 outsideBonus = 3 * iq;
-                stealBonus = 15;
+                stealBonus = 8;
                 break;
             case RUN_AND_GUN:
                 // Bonuses are only applied some of the time
@@ -86,11 +86,11 @@ public class Strategy {
                 stealBonus = 20;
                 break;
             case TRIANGLE:
-                double iqPGC = (double)(team.getPG().getBBallIQ() + team.getC().getBBallIQ())/100;
-                insideBonus = 5 * iqPGC;
+                double iqPGC = (double)(team.getPG().getBBallIQ() + team.getC().getBBallIQ())/200;
+                insideBonus = 4 * iqPGC;
                 midrangeBonus = 2 * iqPGC;
-                outsideBonus = 2 * iqPGC;
-                stealBonus = -10;
+                outsideBonus = 1 * iqPGC;
+                stealBonus = -8;
                 break;
 
             // Defense

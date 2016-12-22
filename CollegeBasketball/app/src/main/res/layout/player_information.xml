@@ -82,7 +82,8 @@
         android:layout_height="wrap_content"
         android:id="@+id/spinnerPlayerStats"
         android:layout_below="@+id/textViewPreferredPosition"
-        android:spinnerMode="dropdown" />
+        android:spinnerMode="dropdown"
+        android:padding="10dp"/>
 
     <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
                  android:id="@+id/fragment_container"

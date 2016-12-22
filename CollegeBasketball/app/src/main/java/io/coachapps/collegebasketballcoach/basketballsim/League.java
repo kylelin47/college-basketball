@@ -45,7 +45,7 @@ public class League {
     private Map<Conference, List<Game>> conferenceTournament;
     private List<Game> marchMadness;
 
-    public League(String playerTeamName, Context context, PlayerGen playerGen) {
+    public League(String playerTeamName, Context context, PlayerGen playerGen, int difficulty, int conference) {
         String[] teamNames = context.getResources().getStringArray(R.array.team_names);
         Conference[] conferences = Conference.values();
         for (int i = 0; i < conferences.length; i++) {
@@ -57,7 +57,7 @@ public class League {
                         conferences[i].name()));
             }
         }
-        addPlayerTeam(playerTeamName, playerGen);
+        addPlayerTeam(playerTeamName, playerGen, difficulty, conference);
         sortAll();
     }
     public League(List<Team> allTeams) {
@@ -173,10 +173,11 @@ public class League {
             });
         }
     }
-    private void addPlayerTeam(String newTeamName, PlayerGen playerGen) {
+    private void addPlayerTeam(String newTeamName, PlayerGen playerGen, int difficulty, int conference) {
         Conference[] conferences = Conference.values();
-        Conference choice = conferences[RANDOM.nextInt(conferences.length)];
-        playerTeam = new Team(newTeamName, 20, playerGen, true, choice.name());
+        Conference choice = conferences[conference];
+        // difficulty 0 = ez, 1 = normal, 2 = hard
+        playerTeam = new Team(newTeamName, 20 + 30*(2 - difficulty), playerGen, true, choice.name());
         List<Team> teamsInConference = league.get(choice);
         teamsInConference.set(RANDOM.nextInt(teamsInConference.size()), playerTeam);
     }
@@ -250,6 +251,7 @@ public class League {
                         count++;
                     }
                     t.pollScore += count * WIN_WEIGHT * 3;
+                    if (count == 5) t.pollScore += WIN_WEIGHT * 50;
                 }
             }
         }

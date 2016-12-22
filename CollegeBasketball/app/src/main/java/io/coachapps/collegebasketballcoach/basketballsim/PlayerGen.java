@@ -77,16 +77,16 @@ public class PlayerGen {
             height -= 3*Math.random() + 3;
             weight -= 30*Math.random();
             speed += 5*Math.random() + 5;
-            int_s -= 8*Math.random() + 8;
-            mid_s += 10*Math.random() - 5;
-            out_s += 10*Math.random() - 5;
+            int_s += 8*Math.random() - 5;
+            mid_s += 13*Math.random() - 5;
+            out_s += 14*Math.random() - 5;
             passing += 10*Math.random() + 5;
             handling += 10*Math.random();
             steal += 10*Math.random() - 2;
-            block -= 20*Math.random() + 20;
-            int_d -= 8*Math.random() + 8;
-            out_d += 10*Math.random() - 5;
-            rebounding -= 20*Math.random() + 10;
+            block += 20*Math.random() - 20;
+            int_d += 8*Math.random() - 8;
+            out_d += 10*Math.random() - 2;
+            rebounding += 20*Math.random() - 17;
         } else if ( position == 2 ) {
             // Shooting Guard
             height += 4*Math.random() - 3;
@@ -94,44 +94,44 @@ public class PlayerGen {
             speed += 6*Math.random();
             int_s += 16*Math.random() - 8;
             mid_s += 13*Math.random() - 5;
-            out_s += 13*Math.random() - 5;
+            out_s += 16*Math.random() - 5;
             passing += 10*Math.random();
             handling += 10*Math.random() - 2;
             steal += 10*Math.random() - 5;
-            block -= 20*Math.random() + 10;
-            int_d -= 5*Math.random() + 5;
-            out_d += 10*Math.random() - 5;
-            rebounding -= 10*Math.random() + 5;
+            block += 20*Math.random() - 10;
+            int_d += 5*Math.random() - 5;
+            out_d += 10*Math.random() - 2;
+            rebounding += 10*Math.random() - 5;
         } else if ( position == 3 ) {
             // Small Forward
             height += 6*Math.random() - 2;
             weight += 40*Math.random() - 10;
             speed += 16*Math.random() - 8;
-            int_s += 20*Math.random() - 8;
-            mid_s += 20*Math.random() - 10;
-            out_s += 20*Math.random() - 10;
-            passing += 20*Math.random() - 10;
+            int_s += 18*Math.random() - 8;
+            mid_s += 16*Math.random() - 8;
+            out_s += 14*Math.random() - 8;
+            passing += 16*Math.random() - 10;
             handling += 20*Math.random() - 10;
             steal += 20*Math.random() - 10;
-            block += 15*Math.random() - 5;
-            int_d += 15*Math.random() - 5;
-            out_d += 15*Math.random() - 5;
-            rebounding += 15*Math.random() - 5;
+            block += 8*Math.random() - 5;
+            int_d += 8*Math.random() - 5;
+            out_d += 8*Math.random() - 5;
+            rebounding += 10*Math.random() - 5;
         } else if ( position == 4 ) {
             // Power Forward
             height += 6*Math.random() + 1;
             weight += 40*Math.random() + 20;
             speed += 15*Math.random() - 15;
-            int_s += 20*Math.random() - 5;
-            mid_s += 16*Math.random() - 8;
-            out_s += 12*Math.random() - 6;
+            int_s += 15*Math.random() - 5;
+            mid_s += 14*Math.random() - 8;
+            out_s += 10*Math.random() - 6;
             passing += 20*Math.random() - 15;
             handling += 20*Math.random() - 20;
             steal += 20*Math.random() - 15;
-            block += 20*Math.random() - 5;
-            int_d += 20*Math.random() - 5;
+            block += 15*Math.random() - 5;
+            int_d += 15*Math.random() - 5;
             out_d += 10*Math.random() - 8;
-            rebounding += 20*Math.random() - 5;
+            rebounding += 15*Math.random() - 5;
         } else if ( position == 5 ) {
             // Center
             height += 8*Math.random() + 2;
@@ -139,13 +139,13 @@ public class PlayerGen {
             speed += 20*Math.random() - 30;
             int_s += 10*Math.random() + 5;
             mid_s += 20*Math.random() - 15;
-            out_s += 30*Math.random() - 45;
-            passing += 20*Math.random() - 20;
+            out_s += 30*Math.random() - 30;
+            passing += 20*Math.random() - 15;
             handling += 30*Math.random() - 40;
             steal += 30*Math.random() - 40;
             block += 10*Math.random() + 5;
             int_d += 10*Math.random() + 5;
-            out_d += 20*Math.random() - 20;
+            out_d += 20*Math.random() - 15;
             rebounding += 12*Math.random() + 5;
         }
         
@@ -307,7 +307,7 @@ public class PlayerGen {
             advanceYearRatings(ratings);
         }
         
-        return new Player(name, ratings, att, currID++, year);
+        return new Player(name, ratings, null, currID++, year);
     }
 
     public static void advanceYearRatings(PlayerRatings ratings) {

@@ -11,6 +11,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import io.coachapps.collegebasketballcoach.basketballsim.Player;
+import io.coachapps.collegebasketballcoach.basketballsim.PlayerGen;
 import io.coachapps.collegebasketballcoach.basketballsim.Team;
 import io.coachapps.collegebasketballcoach.models.PlayerModel;
 import io.coachapps.collegebasketballcoach.util.SerializationUtil;
@@ -70,7 +71,7 @@ public class TeamDao {
      * Do this once at the beginning of the main activity
      * @return All teams and players found in the database. Empty list if none found
      */
-    public List<Team> getAllTeams(int year) throws IOException, ClassNotFoundException {
+    public List<Team> getAllTeams(int year, PlayerGen playerGen) throws IOException, ClassNotFoundException {
         // inner joins would give better performance
         PlayerDao playerDao = new PlayerDao(context);
         List<Team> teams = new ArrayList<>();
@@ -128,6 +129,7 @@ public class TeamDao {
                                 .YearlyTeamStatsEntry.LOSSES));
                     }
                 }
+                fillPositions(team, playerGen, playerDao);
                 teams.add(team);
             }
             db.setTransactionSuccessful();
@@ -148,5 +150,27 @@ public class TeamDao {
         ContentValues values = new ContentValues();
         values.put(Schemas.TeamEntry.PRESTIGE, team.prestige);
         int rows = db.update(Schemas.TeamEntry.TABLE_NAME, values, whereClause, whereArgs);
+    }
+
+    public void fillPositions(Team team, PlayerGen playerGen, PlayerDao playerDao) {
+        for (int i = 1; i < 6; ++i) {
+            int count = 0;
+            for (Player p : team.players) {
+                if (p.getPosition() == i) {
+                    count++;
+                }
+            }
+            if (count < 2) {
+                Player p = playerGen.genPlayer(i, 50, 1);
+                team.players.add(p);
+                playerDao.save(new PlayerModel(p, team.getName()));
+            }
+        }
+
+        try {
+            team.resetLineup();
+        } catch (Exception e) {
+            // lol
+        }
     }
 }

@@ -32,6 +32,10 @@ public class Team {
     public volatile Strategy offStrat;
     public volatile Strategy defStrat;
 
+    private static final int PRO_OVERALL = 90;
+    private static final double PRO_CHANCE_USER = 0.5;
+    private static final double PRO_CHANCE_CPU = 0.2;
+
     public Team( String name, List<Player> players, int prestige, boolean isUserTeam, String conference ) {
         this.players = players;
         this.name = name;
@@ -202,7 +206,7 @@ public class Team {
     }
 
     public int getPrestigeDiff() {
-        return (3*wins - prestige)/2;
+        return (3*wins - prestige)/3;
     }
     
     public void addPlayer( Player player ) {
@@ -429,12 +433,22 @@ public class Team {
     }
 
     public void removeSeniorsAndAddYear() {
+        List<Player> pros = new ArrayList<>();
         List<Player> seniors = new ArrayList<>();
         for (Player p : players) {
             p.year++;
             if (p.year == 5) seniors.add(p);
+            else if (p.year > 2 && p.getOverall() >= PRO_OVERALL &&
+                    ((isPlayer() && Math.random() < PRO_CHANCE_USER) ||
+                            (!isPlayer() && Math.random() < PRO_CHANCE_CPU))) {
+                p.year = 6;
+                pros.add(p);
+            }
         }
         for (Player p : seniors) {
+            players.remove(p);
+        }
+        for (Player p : pros) {
             players.remove(p);
         }
     }
@@ -443,7 +457,9 @@ public class Team {
         List<Player> walkOns = new ArrayList<>();
         for (int i = 1; i < 6; ++i) {
             while (getPosTotals(i) < 2) {
-                Player p = playerGen.genPlayer(i, 25, 1);
+                int walkOnPrestige = 20;
+                if (!isPlayer()) walkOnPrestige = prestige;
+                Player p = playerGen.genPlayer(i, walkOnPrestige, 1);
                 players.add(p);
                 walkOns.add(p);
             }

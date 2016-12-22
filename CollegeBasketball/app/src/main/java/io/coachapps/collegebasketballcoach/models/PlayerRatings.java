@@ -22,4 +22,19 @@ public class PlayerRatings implements Serializable {
     // Variables needed for when users customize lineup/minutes
     public int lineupMinutes;
     public int lineupPosition;
+
+    // Offense: Ins Mid Out Usage
+    public int getAggregateOffense() {
+        return (insideShooting + midrangeShooting + outsideShooting)/3;
+    }
+
+    // Fundamentals: Pass Hand IQ Steal
+    public int getAggregateFundamentals() {
+        return (passing*3 + handling + bballIQ*2 + steal)/7;
+    }
+
+    // Defense: Block Ind Perd Rebound
+    public int getAggregateDefense() {
+        return (block + insideDefense*3 + perimeterDefense*3 + rebounding)/8;
+    }
 }

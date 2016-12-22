@@ -101,13 +101,15 @@ public class RecruitingActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
 
         // Get all teams from DB
+        playerGen = new PlayerGen(getString(R.string.league_player_names),
+                getString(R.string.league_last_names), getYear());
         playerDao = new PlayerDao(this);
         teamDao = new TeamDao(this);
         existingPlayers = new ArrayList<>();
         existingPlayersTeamMap = new HashMap<>();
         playerImprovementMap = new HashMap<>();
         try {
-            teamList = teamDao.getAllTeams(getYear());
+            teamList = teamDao.getAllTeams(getYear(), playerGen);
             Collections.sort(teamList, new Comparator<Team>() {
                 @Override
                 public int compare(Team t1, Team t2) {
@@ -137,8 +139,6 @@ public class RecruitingActivity extends AppCompatActivity {
         }
 
         // Make recruits
-        playerGen = new PlayerGen(getString(R.string.league_player_names),
-                getString(R.string.league_last_names), getYear());
         availableRecruits = playerGen.genRecruits(NUM_RECRUITS);
         Collections.sort(availableRecruits, new PlayerOverallComp());
         recruitCostMap = new HashMap<>();
@@ -334,7 +334,7 @@ public class RecruitingActivity extends AppCompatActivity {
 
     public void showPlayersLeavingDialog() {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setView(getLayoutInflater().inflate(R.layout.simple_list, null));
+        builder.setView(getLayoutInflater().inflate(R.layout.spinner_list, null));
         builder.setPositiveButton("OK",
                 new DialogInterface.OnClickListener() {
                     @Override
@@ -346,23 +346,66 @@ public class RecruitingActivity extends AppCompatActivity {
         final AlertDialog dialog = builder.create();
         dialog.show();
 
-        List<Player> playerTeamSeniors = new ArrayList<>();
+        // Graduating seniors
+        final List<Player> playerTeamSeniors = new ArrayList<>();
         for (Player p : existingPlayers) {
-            if (existingPlayersTeamMap.get(p) == playerTeam && p.year > 4) {
+            if (existingPlayersTeamMap.get(p) == playerTeam && p.year == 5) {
                 playerTeamSeniors.add(p);
             }
         }
         Collections.sort(playerTeamSeniors, new PlayerOverallComp());
 
-        final ListView listView = (ListView) dialog.findViewById(R.id.listView);
-        listView.setAdapter(new PlayerStatsRatingsListArrayAdapter(this, playerTeamSeniors, getYear()-1));
-        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Player p = ((PlayerStatsRatingsListArrayAdapter)(listView.getAdapter())).getItem(position);
-                showPlayerDialog(p);
+        // Players leaving early for the pros
+        final List<Player> playersLeavingEarly = new ArrayList<>();
+        for (Player p : existingPlayers) {
+            if (existingPlayersTeamMap.get(p) == playerTeam && p.year == 6) {
+                playersLeavingEarly.add(p);
             }
-        });
+        }
+        Collections.sort(playersLeavingEarly, new PlayerOverallComp());
+
+        final ListView listView = (ListView) dialog.findViewById(R.id.listView);
+        final Spinner spinner = (Spinner) dialog.findViewById(R.id.spinner);
+        final List<String> categoryList = new ArrayList<>();
+        categoryList.add("Players Leaving For Pros");
+        categoryList.add("Players Graduating");
+        ArrayAdapter<String> spinnerAdapter = new ArrayAdapter<>(this,
+                android.R.layout.simple_spinner_item, categoryList);
+        spinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spinner.setAdapter(spinnerAdapter);
+        spinner.setOnItemSelectedListener(
+                new AdapterView.OnItemSelectedListener() {
+                    public void onItemSelected(
+                            AdapterView<?> parent, View view, int position, long id) {
+                        if (position == 0) {
+                            listView.setAdapter(new PlayerStatsRatingsListArrayAdapter(
+                                    RecruitingActivity.this, playersLeavingEarly, getYear() - 1));
+                            listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                                @Override
+                                public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                                    Player p = ((PlayerStatsRatingsListArrayAdapter)
+                                            (listView.getAdapter())).getItem(position);
+                                    showPlayerDialog(p);
+                                }
+                            });
+                        } else {
+                            listView.setAdapter(new PlayerStatsRatingsListArrayAdapter(
+                                    RecruitingActivity.this, playerTeamSeniors, getYear() - 1));
+                            listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                                @Override
+                                public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                                    Player p = ((PlayerStatsRatingsListArrayAdapter)
+                                            (listView.getAdapter())).getItem(position);
+                                    showPlayerDialog(p);
+                                }
+                            });
+                        }
+                    }
+
+                    public void onNothingSelected(AdapterView<?> parent) {
+                        // do nothing
+                    }
+                });
     }
 
     public void showCommitmentsDialog() {

@@ -27,7 +27,8 @@ public class PlayerDao {
                 Schemas.PlayerEntry._ID,
                 Schemas.PlayerEntry.NAME,
                 Schemas.PlayerEntry.RATINGS,
-                Schemas.PlayerEntry.YEAR
+                Schemas.PlayerEntry.YEAR,
+                Schemas.PlayerEntry.TEAM
         };
         String whereClause = Schemas.PlayerEntry.TEAM + " = ? AND " +
                 Schemas.PlayerEntry.YEAR + " < 5";
@@ -52,7 +53,8 @@ public class PlayerDao {
                 Schemas.PlayerEntry._ID,
                 Schemas.PlayerEntry.NAME,
                 Schemas.PlayerEntry.RATINGS,
-                Schemas.PlayerEntry.YEAR
+                Schemas.PlayerEntry.YEAR,
+                Schemas.PlayerEntry.TEAM
         };
         String whereClause = Schemas.PlayerEntry._ID + " = ?";
         String[] whereArgs = {
@@ -122,9 +124,10 @@ public class PlayerDao {
     private Player createPlayer(Cursor cursor) {
         int id = cursor.getInt(cursor.getColumnIndexOrThrow(Schemas.PlayerEntry._ID));
         String name = cursor.getString(cursor.getColumnIndexOrThrow(Schemas.PlayerEntry.NAME));
+        String teamName = cursor.getString(cursor.getColumnIndexOrThrow(Schemas.PlayerEntry.TEAM));
         int year = cursor.getInt(cursor.getColumnIndexOrThrow(Schemas.PlayerEntry.YEAR));
         PlayerRatings ratings = (PlayerRatings) SerializationUtil.deserialize(cursor.getBlob(cursor
                     .getColumnIndexOrThrow(Schemas.PlayerEntry.RATINGS)));
-        return new Player(name, ratings, null, id, year);
+        return new Player(name, ratings, teamName, id, year);
     }
 }

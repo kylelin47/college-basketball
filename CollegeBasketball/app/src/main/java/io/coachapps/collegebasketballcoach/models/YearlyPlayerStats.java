@@ -27,13 +27,15 @@ public class YearlyPlayerStats {
     }
 
     public int getMVPScore() {
+        int games = gamesPlayed + 40;
         return (int)((playerStats.points + playerStats.assists + playerStats.offensiveRebounds +
-                playerStats.defensiveRebounds) * getPG("FG%"));
+                playerStats.defensiveRebounds)/games * getPG("FG%"));
     }
 
     public int getDPOYScore() {
+        int games = gamesPlayed + 40;
         return (playerStats.blocks*5 + playerStats.steals*5 + playerStats.offensiveRebounds +
-                playerStats.defensiveRebounds);
+                playerStats.defensiveRebounds)/games;
     }
 
     public String getPGDisplay(final String abbreviation) {

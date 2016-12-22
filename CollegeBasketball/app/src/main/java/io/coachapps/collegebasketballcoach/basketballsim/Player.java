@@ -18,7 +18,7 @@ public class Player implements Serializable {
     public String attributes;
     // 0 is to be recruited, 1-2-3-4 are college years, 5 is done
     public int year;
-
+    public String teamName; // don't use unless you know its there
     private int overall;
 
     public PlayerRatings ratings;
@@ -27,16 +27,14 @@ public class Player implements Serializable {
 
     public boolean onCourt;
     
-    public Player(String name, PlayerRatings ratings, String att, int id, int year) {
+    public Player(String name, PlayerRatings ratings, String teamName, int id, int year) {
         this.name = name;
-        this.attributes = att;
+        this.teamName = teamName;
         this.id = id;
         this.ratings = ratings;
         this.year = year;
 
-        overall = (int) Math.round( Math.pow(getIntS(), 1.3) + Math.pow(getMidS(), 1.3) + Math.pow(getOutS(), 1.3) + Math.pow(getPass(), 1.1) + getHand() +
-                Math.pow(getStl(), 1.1) + Math.pow(getBlk(), 1.1) + Math.pow(getIntD(), 1.2) + Math.pow(getOutD(), 1.2) + Math.pow(getReb(), 1.2) );
-        overall = (100*overall)/2500;
+        updateOverall();
 
         gmStats = new Stats();
     }
@@ -93,6 +91,96 @@ public class Player implements Serializable {
         return overall;
     }
     public void updateOverall() {
+
+        /*
+        int weight_ints = 2;
+        int weight_mids = 2;
+        int weight_outs = 2;
+        int weight_pass = 2;
+        int weight_hand = 2;
+        int weight_stl = 2;
+        int weight_blk = 2;
+        int weight_intd = 2;
+        int weight_outd = 2;
+        int weight_reb = 2;
+
+        // Weights must add up to 20
+
+        if (getPosition() == 1) {
+            // PG
+            weight_ints = 3;
+            weight_mids = 2;
+            weight_outs = 3;
+            weight_pass = 3;
+            weight_hand = 2;
+            weight_stl = 1;
+            weight_blk = 1;
+            weight_intd = 2;
+            weight_outd = 2;
+            weight_reb = 1;
+        } else if (getPosition() == 2) {
+            // SG
+            weight_ints = 3;
+            weight_mids = 3;
+            weight_outs = 3;
+            weight_pass = 2;
+            weight_hand = 1;
+            weight_stl = 1;
+            weight_blk = 1;
+            weight_intd = 2;
+            weight_outd = 3;
+            weight_reb = 1;
+        } else if (getPosition() == 3) {
+            // SF
+            weight_ints = 3;
+            weight_mids = 2;
+            weight_outs = 2;
+            weight_pass = 2;
+            weight_hand = 1;
+            weight_stl = 1;
+            weight_blk = 1;
+            weight_intd = 3;
+            weight_outd = 3;
+            weight_reb = 2;
+        } else if (getPosition() == 4) {
+            // PF
+            weight_ints = 3;
+            weight_mids = 2;
+            weight_outs = 2;
+            weight_pass = 1;
+            weight_hand = 1;
+            weight_stl = 1;
+            weight_blk = 2;
+            weight_intd = 3;
+            weight_outd = 2;
+            weight_reb = 3;
+        } else if (getPosition() == 5) {
+            // C
+            weight_ints = 3;
+            weight_mids = 2;
+            weight_outs = 1;
+            weight_pass = 1;
+            weight_hand = 1;
+            weight_stl = 1;
+            weight_blk = 2;
+            weight_intd = 3;
+            weight_outd = 2;
+            weight_reb = 4;
+        }
+
+        overall = weight_ints * getIntS() +
+                weight_mids * getMidS() +
+                weight_outs * getOutS() +
+                weight_pass * getPass() +
+                weight_hand * getHand() +
+                weight_stl * getStl() +
+                weight_blk * getBlk() +
+                weight_intd * getIntD() +
+                weight_outd * getOutD() +
+                weight_reb * getReb();
+        overall = overall/20;
+        */
+
         overall = (int) Math.round( Math.pow(getIntS(), 1.3) + Math.pow(getMidS(), 1.3) + Math.pow(getOutS(), 1.3) + Math.pow(getPass(), 1.1) + getHand() +
                 Math.pow(getStl(), 1.1) + Math.pow(getBlk(), 1.1) + Math.pow(getIntD(), 1.2) + Math.pow(getOutD(), 1.2) + Math.pow(getReb(), 1.2) );
         overall = (100*overall)/2500;

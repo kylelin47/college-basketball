@@ -9,6 +9,7 @@ import android.widget.TextView;
 
 import io.coachapps.collegebasketballcoach.R;
 import io.coachapps.collegebasketballcoach.models.PlayerRatings;
+import io.coachapps.collegebasketballcoach.util.DataDisplayer;
 
 public class PlayerRatingsFragment extends Fragment {
     private static final String RATINGS_KEY = "playerRatings";
@@ -32,6 +33,7 @@ public class PlayerRatingsFragment extends Fragment {
     private PlayerRatings getPlayerRatings() {
         return (PlayerRatings) getArguments().getSerializable(RATINGS_KEY);
     }
+
     private void fillRatings(PlayerRatings playerRatings, View view) {
         ((TextView) view.findViewById(R.id.insideShooting)).setText(String.valueOf(playerRatings
                 .insideShooting));
@@ -51,5 +53,18 @@ public class PlayerRatingsFragment extends Fragment {
         ((TextView) view.findViewById(R.id.rebounding)).setText(String.valueOf(playerRatings
                 .rebounding));
         ((TextView) view.findViewById(R.id.usage)).setText(String.valueOf(playerRatings.usage));
+        ((TextView) view.findViewById(R.id.iq)).setText(String.valueOf(playerRatings.bballIQ));
+
+        TextView offense = (TextView) view.findViewById(R.id.offenseLabel);
+        offense.setText("Offense: " + DataDisplayer.getLetterGrade(playerRatings.getAggregateOffense()));
+        DataDisplayer.colorizeRatings(offense);
+
+        TextView fundamentals = (TextView) view.findViewById(R.id.fundamentalsLabel);
+        fundamentals.setText("Fundamentals: " + DataDisplayer.getLetterGrade(playerRatings.getAggregateFundamentals()));
+        DataDisplayer.colorizeRatings(fundamentals);
+
+        TextView defense = (TextView) view.findViewById(R.id.defenseLabel);
+        defense.setText("Defense: " + DataDisplayer.getLetterGrade(playerRatings.getAggregateDefense()));
+        DataDisplayer.colorizeRatings(defense);
     }
 }
