@@ -44,7 +44,9 @@ import io.coachapps.collegebasketballcoach.db.DbHelper;
 import io.coachapps.collegebasketballcoach.db.PlayerDao;
 import io.coachapps.collegebasketballcoach.db.Schemas;
 import io.coachapps.collegebasketballcoach.fragments.PlayerDialogFragment;
+import io.coachapps.collegebasketballcoach.models.LeagueResults;
 import io.coachapps.collegebasketballcoach.models.PlayerModel;
+import io.coachapps.collegebasketballcoach.models.ThreeAwardTeams;
 import io.coachapps.collegebasketballcoach.util.DataDisplayer;
 import io.coachapps.collegebasketballcoach.util.PlayerOverallComp;
 import io.coachapps.collegebasketballcoach.basketballsim.Team;
@@ -63,6 +65,16 @@ public class RecruitingActivity extends AppCompatActivity {
     }
 
     private static final int NUM_RECRUITS = 300;
+
+    private static final int HOF_SCORE    = 200;
+    private static final int MVP_SCORE    = 200;
+    private static final int DPOY_SCORE   = 100;
+    private static final int ALL_AMER_1st = 100;
+    private static final int ALL_AMER_2nd = 75;
+    private static final int ALL_AMER_3rd = 50;
+    private static final int ALL_CONF_1st = 50;
+    private static final int ALL_CONF_2nd = 30;
+    private static final int ALL_CONF_3rd = 10;
 
     PlayerDao playerDao;
     TeamDao teamDao;
@@ -716,6 +728,9 @@ public class RecruitingActivity extends AppCompatActivity {
             }
         }
 
+        LeagueResultsEntryDao leagueResultsEntryDao = new LeagueResultsEntryDao(this);
+        List<LeagueResults> leagueResultsList = leagueResultsEntryDao.getLeagueResults(getYear()-4, getYear());
+
         SQLiteDatabase db = DbHelper.getInstance(this).getReadableDatabase();
         db.beginTransaction();
         try {
@@ -730,11 +745,19 @@ public class RecruitingActivity extends AppCompatActivity {
             }
 
             for (Player p : existingPlayers) {
-                int oldOverall = p.getOverall();
-                PlayerGen.advanceYearRatings(p.ratings);
-                p.updateOverall();
-                int newOverall = p.getOverall();
-                playerImprovementMap.put(p, newOverall - oldOverall);
+                // Hall of Fame check
+                if (p.year == 5 || p.year == 6) {
+                    if (getHallOfFameScore(leagueResultsList, p) >= HOF_SCORE) {
+                        p.year = 7;
+                    }
+                } else {
+                    int oldOverall = p.getOverall();
+                    PlayerGen.advanceYearRatings(p.ratings);
+                    p.updateOverall();
+                    int newOverall = p.getOverall();
+                    playerImprovementMap.put(p, newOverall - oldOverall);
+                }
+
                 playerDao.updatePlayer(new PlayerModel(p, existingPlayersTeamMap.get(p).getName()));
             }
             db.delete(Schemas.BoxScoreEntry.TABLE_NAME, null, null);
@@ -742,6 +765,56 @@ public class RecruitingActivity extends AppCompatActivity {
         } finally {
             db.endTransaction();
         }
+    }
+
+    private int getHallOfFameScore(List<LeagueResults> leagueResultsList, Player player) {
+        int score = 0;
+        int id = player.getId();
+        for (LeagueResults results : leagueResultsList) {
+
+            if (results.mvpId == id) {
+                // MVP
+                score += MVP_SCORE;
+            }
+            if (results.dpoyId == id) {
+                // DPOY
+                score += DPOY_SCORE;
+            }
+
+            // All Americans
+            if (results.allAmericans.firstTeam.contains(id)) {
+                score += ALL_AMER_1st;
+            }
+            else if (results.allAmericans.secondTeam.contains(id)) {
+                score += ALL_AMER_2nd;
+            }
+            else if (results.allAmericans.thirdTeam.contains(id)) {
+                score += ALL_AMER_3rd;
+            }
+
+            // All Conference Teams
+            score += checkConfAwardTeams(results.allCowboy, id);
+            score += checkConfAwardTeams(results.allLakes, id);
+            score += checkConfAwardTeams(results.allMountains, id);
+            score += checkConfAwardTeams(results.allNorth, id);
+            score += checkConfAwardTeams(results.allPacific, id);
+            score += checkConfAwardTeams(results.allSouth, id);
+        }
+
+        return score;
+    }
+
+    private int checkConfAwardTeams(ThreeAwardTeams teams, int id) {
+        if (teams.firstTeam.contains(id)) {
+            return ALL_CONF_1st;
+        }
+        else if (teams.secondTeam.contains(id)) {
+            return ALL_CONF_2nd;
+        }
+        else if (teams.thirdTeam.contains(id)) {
+            return ALL_CONF_3rd;
+        }
+        return 0;
     }
 
     /**

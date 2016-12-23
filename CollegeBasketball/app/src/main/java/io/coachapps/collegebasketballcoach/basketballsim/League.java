@@ -228,9 +228,9 @@ public class League {
         }
 
         int WIN_WEIGHT = 200;
-        int DIFF_WEIGHT = 5;
-        int TALENT_WEIGHT = 20;
-        int PRESTIGE_WEIGHT = 10;
+        int DIFF_WEIGHT = 3;
+        int TALENT_WEIGHT = 10;
+        int PRESTIGE_WEIGHT = 5;
         if (currentTeamStats.isEmpty()) {
             for (Team t : getAllTeams()) {
                 t.pollScore = t.getTalent() * TALENT_WEIGHT + t.prestige * PRESTIGE_WEIGHT;

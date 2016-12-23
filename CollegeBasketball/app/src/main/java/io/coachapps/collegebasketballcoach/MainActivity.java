@@ -41,6 +41,7 @@ import io.coachapps.collegebasketballcoach.adapters.TeamHistoryListArrayAdapter;
 import io.coachapps.collegebasketballcoach.adapters.TeamRankingsListArrayAdapter;
 import io.coachapps.collegebasketballcoach.adapters.TeamStatsListArrayAdapter;
 import io.coachapps.collegebasketballcoach.adapters.game.GameScheduleListArrayAdapter;
+import io.coachapps.collegebasketballcoach.adapters.player.HallOfFameListArrayAdapter;
 import io.coachapps.collegebasketballcoach.adapters.player.LeagueLeadersListArrayAdapter;
 import io.coachapps.collegebasketballcoach.adapters.player.PlayerAwardTeamListArrayAdapter;
 import io.coachapps.collegebasketballcoach.adapters.player.PlayerStatsListArrayAdapter;
@@ -429,6 +430,8 @@ public class MainActivity extends AppCompatActivity {
             }
         } else if (id == R.id.action_league_history) {
             showLeagueHistoryDialog();
+        } else if (id == R.id.action_hall_of_fame) {
+            showHallOfFameDialog();
         }
 
         return super.onOptionsItemSelected(item);
@@ -656,6 +659,13 @@ public class MainActivity extends AppCompatActivity {
         DialogFragment newFragment =
                 PlayerDialogFragment.newInstance(p, playerTeamMap.get(p.getId()).getName(),
                         getYear());
+        newFragment.show(ft, "player dialog");
+    }
+
+    public void showPlayerDialog(final Player p, final String teamName, int year) {
+        FragmentTransaction ft = getFragmentManager().beginTransaction();
+        DialogFragment newFragment =
+                PlayerDialogFragment.newInstance(p, teamName, year);
         newFragment.show(ft, "player dialog");
     }
 
@@ -933,6 +943,43 @@ public class MainActivity extends AppCompatActivity {
                         // do nothing
                     }
                 });
+    }
+
+    public void showHallOfFameDialog() {
+        try {
+            PlayerDao playerDao = new PlayerDao(this);
+            List<Player> hofPlayers = playerDao.getHoFPlayers();
+
+            AlertDialog.Builder builder = new AlertDialog.Builder(this);
+            builder.setView(getLayoutInflater().inflate(R.layout.simple_list, null));
+            builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    dialog.dismiss();
+                }
+            });
+            builder.setTitle("Hall Of Fame");
+            final AlertDialog dialog = builder.create();
+            dialog.show();
+
+            final ListView listView = (ListView) dialog.findViewById(R.id.listView);
+            listView.setAdapter(new HallOfFameListArrayAdapter(this, hofPlayers,
+                    getYear(), playerTeam.getName()));
+            listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                @Override
+                public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                    Player p = ((HallOfFameListArrayAdapter) listView
+                            .getAdapter()).getItem(position);
+                    YearlyPlayerStatsDao statsDao = new YearlyPlayerStatsDao(MainActivity.this);
+                    List<YearlyPlayerStats> stats = statsDao.getPlayerStatsFromYears(p.getId(), 2016, getYear());
+                    int year = getYear();
+                    if (stats.size() > 0) year = stats.get(stats.size() - 1).year;
+                    showPlayerDialog(p, p.teamName, year);
+                }
+            });
+        } catch (Exception e) {
+            Log.e("MainActivity", "Something went wrong when getting HoF");
+        }
     }
 
     public void showTeamRankingsDialog() {

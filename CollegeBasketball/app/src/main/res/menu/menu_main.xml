@@ -38,5 +38,10 @@
         android:orderInCategory="100"
         android:title="@string/action_league_history"
         app:showAsAction="never" />
+    <item
+        android:id="@+id/action_hall_of_fame"
+        android:orderInCategory="100"
+        android:title="@string/action_hall_of_fame"
+        app:showAsAction="never" />
 
 </menu>

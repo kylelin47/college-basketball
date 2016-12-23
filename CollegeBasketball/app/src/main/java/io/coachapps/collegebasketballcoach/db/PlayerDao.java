@@ -47,6 +47,30 @@ public class PlayerDao {
         return players;
     }
 
+    public List<Player> getHoFPlayers() throws IOException, ClassNotFoundException {
+        List<Player> players = new ArrayList<>();
+        SQLiteDatabase db = DbHelper.getInstance(context).getReadableDatabase();
+        String[] projection = {
+                Schemas.PlayerEntry._ID,
+                Schemas.PlayerEntry.NAME,
+                Schemas.PlayerEntry.RATINGS,
+                Schemas.PlayerEntry.YEAR,
+                Schemas.PlayerEntry.TEAM
+        };
+        String whereClause = Schemas.PlayerEntry.YEAR + " = 7";
+        String orderBy = Schemas.PlayerEntry.TEAM + " ASC";
+        try (Cursor c = db.query(Schemas.PlayerEntry.TABLE_NAME, projection, whereClause,
+                null, null, null, orderBy, null)) {
+            while (c.moveToNext()) {
+                Player p = createPlayer(c);
+                players.add(p);
+            }
+        } catch (Exception e) {
+            System.out.println(e.toString());
+        }
+        return players;
+    }
+
     public Player getPlayer(int playerId) {
         SQLiteDatabase db = DbHelper.getInstance(context).getReadableDatabase();
         String[] projection = {

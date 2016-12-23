@@ -45,4 +45,11 @@ public class AwardTeamModel implements Serializable {
         }
     }
 
+    public boolean contains(int id) {
+        for (int i = 1; i < 6; ++i) {
+            if (getIdPosition(i) == id) return true;
+        }
+        return false;
+    }
+
 }

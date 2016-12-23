@@ -7,6 +7,7 @@
     <string name="action_team_rankings">Team Rankings</string>
     <string name="action_league_leaders">League Leaders</string>
     <string name="action_league_history">League History</string>
+    <string name="action_hall_of_fame">Hall Of Fame</string>
     <string name="action_season_awards">Season Awards</string>
     <string name="recruiting_loading_msg">
         "Finishing recruiting, signing walk-ons, and sending players to training camp. Please wait."
@@ -19,7 +20,8 @@
     </string>
     <string-array name="player_display_choices">
         <item>Ratings</item>
-        <item>Stats</item>
+        <item>Yearly Stats</item>
+        <item>Career Stats</item>
         <item>Recent Games</item>
         <item>Awards</item>
     </string-array>

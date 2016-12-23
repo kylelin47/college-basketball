@@ -73,11 +73,16 @@ public class PlayerDialogFragment extends DialogFragment {
                         getChildFragmentManager().beginTransaction().replace(R.id.fragment_container,
                                 playerStatsFragment).commit();
                     } else if (i == 2) {
+                        CareerStatsFragment careerStatsFragment =
+                                CareerStatsFragment.newInstance(player.getId(), year);
+                        getChildFragmentManager().beginTransaction().replace(R.id.fragment_container,
+                                careerStatsFragment).commit();
+                    } else if (i == 3) {
                         RecentGamesFragment recentGamesFragment =
                                 RecentGamesFragment.newInstance(player.getId(), year);
                         getChildFragmentManager().beginTransaction().replace(R.id.fragment_container,
                                 recentGamesFragment).commit();
-                    } else if (i == 3) {
+                    } else if (i == 4) {
                         PlayerAwardsFragment awardsFragment =
                                 PlayerAwardsFragment.newInstance(
                                         player.getId(), teamName, year - player.year + 1, year);

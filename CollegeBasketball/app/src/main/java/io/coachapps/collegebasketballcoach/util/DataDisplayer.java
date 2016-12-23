@@ -32,6 +32,7 @@ public class DataDisplayer {
             case 4: return "Senior";
             case 5: return "Graduate";
             case 6: return "Pro";
+            case 7: return "HoF";
             default: return "Unknown";
         }
     }
@@ -44,6 +45,7 @@ public class DataDisplayer {
             case 4: return "Sr";
             case 5: return "Gr";
             case 6: return "Pro";
+            case 7: return "HoF";
             default: return "Unknown";
         }
     }

@@ -103,9 +103,9 @@ public class Strategy {
                 stealBonus = 0;
                 break;
             case ONE_THREE_ONE_ZONE:
-                insideBonus = -8;
-                midrangeBonus = 0;
-                outsideBonus = 0;
+                insideBonus = -6;
+                midrangeBonus = 1;
+                outsideBonus = 2;
                 stealBonus = 20;
                 break;
             case TWO_THREE_ZONE:

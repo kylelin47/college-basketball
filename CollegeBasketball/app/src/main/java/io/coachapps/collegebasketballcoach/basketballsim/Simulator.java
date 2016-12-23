@@ -170,7 +170,7 @@ public class Simulator {
                         // Calculate each players rebounding advantage
                         rebAdvArr[r] = offense.players.get(r+2).getReb() - defense.players.get(r+2).getReb();
                     }
-                    double rebAdv = 0.175 * (rebAdvArr[ (int)(Math.random() * 3) ] + rebAdvArr[ (int)(Math.random() * 3) ]);
+                    double rebAdv = 0.2 * (rebAdvArr[ (int)(Math.random() * 3) ] + rebAdvArr[ (int)(Math.random() * 3) ]);
                     if ( Math.random()*100 + rebAdv > 25 ) {
                         // Defensive rebound
                         Player rebounder = findRebounder(defense);

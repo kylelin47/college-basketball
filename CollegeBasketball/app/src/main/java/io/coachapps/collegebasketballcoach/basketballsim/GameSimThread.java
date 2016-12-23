@@ -234,31 +234,33 @@ public class GameSimThread extends Thread {
 
         } // End playing loop
 
-        if (hscore > ascore) {
-            home.wins++;
-            away.losses++;
-        } else {
-            home.losses++;
-            away.wins++;
-        }
-
-        GameModel gameResult =
-                LeagueEvents.saveGameResult(context, home, away, gm.getYear(), gm.getWeek(), numOT);
-        gm.setGameModel(gameResult);
-        if (tournamentGames != null) {
-            TournamentScheduler tournamentScheduler = new TournamentScheduler(context);
-            List<Team> winners = determineLatestWinners(tournamentGames);
-            Game lastGame = tournamentGames.get(tournamentGames.size() - 1);
-            tournamentGames.addAll(tournamentScheduler.scheduleTournament(winners, lastGame
-                    .getYear(), lastGame.gameType));
-        }
-
         activity.runOnUiThread(new Runnable() {
             @Override
             public void run() {
+                if (hscore > ascore) {
+                    home.wins++;
+                    away.losses++;
+                } else {
+                    home.losses++;
+                    away.wins++;
+                }
+
+                GameModel gameResult =
+                        LeagueEvents.saveGameResult(context, home, away, gm.getYear(), gm.getWeek(), numOT);
+                gm.setGameModel(gameResult);
+                if (tournamentGames != null) {
+                    TournamentScheduler tournamentScheduler = new TournamentScheduler(context);
+                    List<Team> winners = determineLatestWinners(tournamentGames);
+                    Game lastGame = tournamentGames.get(tournamentGames.size() - 1);
+                    tournamentGames.addAll(tournamentScheduler.scheduleTournament(winners, lastGame
+                            .getYear(), lastGame.gameType));
+                }
+
                 // Update the button to say done
                 ((MainActivity) activity).tryToScheduleTournaments(true);
+                ((MainActivity) activity).updateUI();
                 uiElements.buttonCallTimeout.setText("Done");
+                uiElements.buttonPause.setText("Done");
             }
         });
 
