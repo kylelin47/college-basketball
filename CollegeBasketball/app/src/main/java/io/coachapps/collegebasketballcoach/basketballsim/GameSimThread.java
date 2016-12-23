@@ -243,7 +243,7 @@ public class GameSimThread extends Thread {
         }
 
         GameModel gameResult =
-                LeagueEvents.saveGameResult(context, home, away, gm.getYear(), gm.getWeek());
+                LeagueEvents.saveGameResult(context, home, away, gm.getYear(), gm.getWeek(), numOT);
         gm.setGameModel(gameResult);
         if (tournamentGames != null) {
             TournamentScheduler tournamentScheduler = new TournamentScheduler(context);

@@ -228,7 +228,7 @@ public class LeagueEvents {
         bsd.save(boxScores);
     }
 
-    public static FullGameResults getGameResult(Team home, Team away, int year, int week) {
+    public static FullGameResults getGameResult(Team home, Team away, int year, int week, int numOT) {
         List<BoxScore> boxScores = new ArrayList<>();
         for (Player p : home.players) {
             boxScores.add(p.getGameBoxScore(year, week, home.getName()));
@@ -250,14 +250,14 @@ public class LeagueEvents {
             awayStats.add(player.gmStats, true);
             homeStats.add(player.gmStats, false);
         }
-        GameModel gameResult = new GameModel(home.name, away.name, year, week, homeStats,
-                awayStats);
+        GameModel gameResult = new GameModel(home.name, away.name,
+                year, week, homeStats, awayStats, numOT);
         return new FullGameResults(boxScores, gameResult);
     }
 
     public static GameModel saveGameResult(Context context, Team home, Team away, int year, int
-            week) {
-        FullGameResults fgr = getGameResult(home, away, year, week);
+            week, int numOT) {
+        FullGameResults fgr = getGameResult(home, away, year, week, numOT);
         saveGameResults(fgr.boxScores, Collections.singletonList(fgr.game), context);
         return fgr.game;
     }

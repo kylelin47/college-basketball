@@ -40,6 +40,7 @@ public class GameDao {
         values.put(Schemas.GameEntry.WEEK, game.week);
         values.put(Schemas.GameEntry.AWAY_TEAM, game.awayTeam);
         values.put(Schemas.GameEntry.HOME_TEAM, game.homeTeam);
+        values.put(Schemas.GameEntry.NUM_OT, game.numOT);
         values.put(Schemas.GameEntry.AWAY_STATS, SerializationUtil.serialize(game.awayStats));
         values.put(Schemas.GameEntry.HOME_STATS, SerializationUtil.serialize(game.homeStats));
         db.insert(Schemas.GameEntry.TABLE_NAME, null, values);
@@ -63,7 +64,8 @@ public class GameDao {
                 Schemas.GameEntry.YEAR,
                 Schemas.GameEntry.WEEK,
                 Schemas.GameEntry.HOME_STATS,
-                Schemas.GameEntry.HOME_TEAM
+                Schemas.GameEntry.HOME_TEAM,
+                Schemas.GameEntry.NUM_OT
         };
         String whereClause = "(" + Schemas.GameEntry.HOME_TEAM + "=? OR " + Schemas.GameEntry
                 .AWAY_TEAM + " =?) AND " + Schemas.GameEntry.YEAR + " BETWEEN ? AND ?";
@@ -93,7 +95,8 @@ public class GameDao {
                 Schemas.GameEntry.YEAR,
                 Schemas.GameEntry.WEEK,
                 Schemas.GameEntry.HOME_STATS,
-                Schemas.GameEntry.HOME_TEAM
+                Schemas.GameEntry.HOME_TEAM,
+                Schemas.GameEntry.NUM_OT
         };
 
         String whereClause = Schemas.GameEntry.HOME_TEAM + "=? AND "
@@ -127,7 +130,8 @@ public class GameDao {
                 Schemas.GameEntry.YEAR,
                 Schemas.GameEntry.WEEK,
                 Schemas.GameEntry.HOME_STATS,
-                Schemas.GameEntry.HOME_TEAM
+                Schemas.GameEntry.HOME_TEAM,
+                Schemas.GameEntry.NUM_OT
         };
 
         String whereClause = "(" + Schemas.GameEntry.HOME_TEAM + "=? OR "
@@ -154,6 +158,7 @@ public class GameDao {
     private GameModel fetchGame(Cursor cursor) {
         int year = cursor.getInt(cursor.getColumnIndexOrThrow(Schemas.GameEntry.YEAR));
         int week = cursor.getInt(cursor.getColumnIndexOrThrow(Schemas.GameEntry.WEEK));
+        int numOT = cursor.getInt(cursor.getColumnIndexOrThrow(Schemas.GameEntry.NUM_OT));
         TeamStats homeStats = (TeamStats) SerializationUtil.deserialize(cursor.getBlob(cursor
                 .getColumnIndexOrThrow(Schemas.GameEntry.HOME_STATS)));
         TeamStats awayStats = (TeamStats) SerializationUtil.deserialize(cursor.getBlob(cursor
@@ -162,6 +167,6 @@ public class GameDao {
                 .HOME_TEAM));
         String awayTeam = cursor.getString(cursor.getColumnIndexOrThrow(Schemas.GameEntry
                 .AWAY_TEAM));
-        return new GameModel(homeTeam, awayTeam, year, week, homeStats, awayStats);
+        return new GameModel(homeTeam, awayTeam, year, week, homeStats, awayStats, numOT);
     }
 }

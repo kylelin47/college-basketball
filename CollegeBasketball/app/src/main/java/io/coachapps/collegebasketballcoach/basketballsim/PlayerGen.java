@@ -94,12 +94,12 @@ public class PlayerGen {
             speed += 6*Math.random();
             int_s += 16*Math.random() - 8;
             mid_s += 13*Math.random() - 5;
-            out_s += 16*Math.random() - 5;
-            passing += 10*Math.random();
+            out_s += 15*Math.random() - 5;
+            passing += 10*Math.random() - 3;
             handling += 10*Math.random() - 2;
             steal += 10*Math.random() - 5;
-            block += 20*Math.random() - 10;
-            int_d += 5*Math.random() - 5;
+            block += 20*Math.random() - 15;
+            int_d += 5*Math.random() - 7;
             out_d += 10*Math.random() - 2;
             rebounding += 10*Math.random() - 5;
         } else if ( position == 3 ) {

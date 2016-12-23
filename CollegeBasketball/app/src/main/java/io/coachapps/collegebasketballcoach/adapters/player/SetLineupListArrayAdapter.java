@@ -110,7 +110,7 @@ public class SetLineupListArrayAdapter extends ArrayAdapter<Player> {
             playerDao.updatePlayerRatings(players.get(position).getId(),
                     players.get(position).ratings);
         }
-        seekBarMinutes.setProgress(players.get(position).getLineupMinutes()*3);
+        seekBarMinutes.setProgress((players.get(position).getLineupMinutes()-8)*4);
         seekBarMinutes.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onStopTrackingTouch(SeekBar seekBar) {
@@ -131,8 +131,8 @@ public class SetLineupListArrayAdapter extends ArrayAdapter<Player> {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
                 if (position < 5) {
-                    players.get(position).setLineupMinutes(seekBarMinutes.getProgress() / 3);
-                    players.get(position + 5).setLineupMinutes(40 - seekBarMinutes.getProgress() / 3);
+                    players.get(position).setLineupMinutes(8 + seekBarMinutes.getProgress() / 4);
+                    players.get(position + 5).setLineupMinutes(32 - seekBarMinutes.getProgress() / 4);
                 }
             }
         });

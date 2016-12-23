@@ -60,7 +60,6 @@ public class GameScheduleListArrayAdapter extends ArrayAdapter<Game> {
             viewHolder = (ViewHolder) convertView.getTag();
         }
 
-
         viewHolder.gameType.setText( gameSummary[0] );
         viewHolder.viewGame.setText( gameSummary[1] );
         viewHolder.viewOpponent.setText( gameSummary[2] );

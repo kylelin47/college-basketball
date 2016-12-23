@@ -36,6 +36,7 @@ public class Game {
 
     private int homeScore;
     private int awayScore;
+    private int numOT;
     private boolean beenPlayed;
     public GameType gameType;
 
@@ -46,6 +47,7 @@ public class Game {
 
         homeScore = 0;
         awayScore = 0;
+        numOT = 0;
         beenPlayed = false;
     }
 
@@ -53,7 +55,6 @@ public class Game {
         this.home = home;
         this.away = away;
         apply(gameModel);
-
     }
 
     public void apply(GameModel gameModel) {
@@ -61,6 +62,7 @@ public class Game {
         this.year = gameModel.year;
         this.homeScore = gameModel.homeStats.stats.points;
         this.awayScore = gameModel.awayStats.stats.points;
+        this.numOT = gameModel.numOT;
         this.beenPlayed = true;
     }
 
@@ -126,13 +128,17 @@ public class Game {
         return beenPlayed;
     }
 
+    public int getNumOT() {
+        return numOT;
+    }
+
     public Team getWinner() {
         if (!beenPlayed) return null;
         if (homeScore > awayScore) return home;
         else return away;
     }
 
-    String getWinnerString() {
+    public String getWinnerString() {
         if (homeScore > awayScore) {
             return "W " + homeScore + "-" + awayScore;
         } else {
@@ -140,7 +146,7 @@ public class Game {
         }
     }
 
-    String getLoserString() {
+    public String getLoserString() {
         if (homeScore > awayScore) {
             return "L " + awayScore + "-" + homeScore;
         } else {
@@ -148,11 +154,18 @@ public class Game {
         }
     }
 
+    public String getOTString() {
+        if (numOT == 0) return "";
+        else if (numOT == 1) return "OT";
+        else return numOT + "OT";
+    }
+
     public FullGameResults playGame(Simulator sim) {
         FullGameResults result = sim.playGame(home, away, year, getWeek());
         homeScore = result.game.homeStats.stats.points;
         awayScore = result.game.awayStats.stats.points;
         beenPlayed = true;
+        numOT = result.game.numOT;
         return result;
     }
 
@@ -160,5 +173,6 @@ public class Game {
         homeScore = result.homeStats.stats.points;
         awayScore = result.awayStats.stats.points;
         beenPlayed = true;
+        numOT = result.numOT;
     }
 }

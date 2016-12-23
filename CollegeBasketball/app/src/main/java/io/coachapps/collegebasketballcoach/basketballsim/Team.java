@@ -329,9 +329,9 @@ public class Team {
         sum[0] = game.gameType.toString();
         if (game.hasPlayed()) {
             if (game.getWinner() == this) {
-                sum[1] = game.getWinnerString();
+                sum[1] = game.getWinnerString() + " " + game.getOTString();
             } else {
-                sum[1] = game.getLoserString();
+                sum[1] = game.getLoserString() + " " + game.getOTString();
             }
         } else {
             sum[1] = "---";

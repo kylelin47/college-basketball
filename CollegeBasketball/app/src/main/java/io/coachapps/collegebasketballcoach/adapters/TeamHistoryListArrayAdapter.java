@@ -63,17 +63,28 @@ public class TeamHistoryListArrayAdapter extends ArrayAdapter<YearlyTeamStats> {
             int totalLoss = 0;
             int totalCCs = 0;
             int totalNCs = 0;
+            int totalFFs = 0;
             for (YearlyTeamStats yrStats : values) {
                 if (yrStats != null) {
                     totalWins += yrStats.wins;
                     totalLoss += yrStats.losses;
-                    if (yrStats.summary != null && yrStats.summary.contains("Won Conference")) totalCCs++;
-                    if (yrStats.summary != null && yrStats.summary.contains("Won National Championship")) totalNCs++;
+
+                    if (yrStats.summary != null && yrStats.summary.contains("Won Conference")) {
+                        totalCCs++;
+                    }
+
+                    if (yrStats.summary != null && yrStats.summary.contains("Won National Championship")) {
+                        totalNCs++;
+                        totalFFs++;
+                    }
+                    else if (yrStats.summary != null && yrStats.summary.contains("Made Final Four")) {
+                        totalFFs++;
+                    }
                 }
             }
             textViewTop.setText("Total W-L: " + totalWins + "-" + totalLoss);
             textViewMiddle.setText("Conference Championships: " + totalCCs);
-            textViewBottom.setText("National Championships: " + totalNCs);
+            textViewBottom.setText("Final Fours: " + totalFFs + "\nNational Championships: " + totalNCs);
             textViewTop.setTextColor(Color.parseColor("#000000"));
         }
 

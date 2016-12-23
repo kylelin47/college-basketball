@@ -30,11 +30,11 @@ public class PlayerRatings implements Serializable {
 
     // Fundamentals: Pass Hand IQ Steal
     public int getAggregateFundamentals() {
-        return (passing*3 + handling + bballIQ*2 + steal)/7;
+        return (passing*3 + handling + bballIQ*2 + rebounding*2)/8;
     }
 
     // Defense: Block Ind Perd Rebound
     public int getAggregateDefense() {
-        return (block + insideDefense*3 + perimeterDefense*3 + rebounding)/8;
+        return (block + insideDefense*3 + perimeterDefense*3 + steal)/8;
     }
 }

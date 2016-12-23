@@ -26,6 +26,7 @@ public class Simulator {
         int hscore = 0; //score of home team
         int ascore = 0; //score of away team
         boolean playing = true;
+        int numOT = 0;
         
         int home_tot_outd = home.getPG().getOutD() + home.getSG().getOutD() + home.getSF().getOutD() + 
                            home.getPF().getOutD() + home.getC().getOutD();
@@ -72,6 +73,7 @@ public class Simulator {
                     poss_home = true;
                     poss_away = false;
                     max_gametime += 300;
+                    numOT++;
                 }
             }
         }
@@ -84,7 +86,7 @@ public class Simulator {
             away.wins++;
         }
 
-        return LeagueEvents.getGameResult(home, away, year, week);
+        return LeagueEvents.getGameResult(home, away, year, week, numOT);
     }
 
     /**

@@ -30,7 +30,8 @@ public class TournamentScheduler {
         private int getNonMarchMadnessWins(Team team) {
             int wins = 0;
             for (Game game : team.gameSchedule) {
-                if (!(game.gameType == Game.GameType.MARCH_MADNESS) && game.getWinner() == team) {
+                if (game.gameType != Game.GameType.MARCH_MADNESS &&
+                        game.getWinner() == team) {
                     wins++;
                 }
             }
@@ -129,7 +130,9 @@ public class TournamentScheduler {
             marchMadnessTeams.add(team);
             if (marchMadnessTeams.size() == 32) break;
         }
-        return new ArrayList<>(marchMadnessTeams);
+        ArrayList<Team> listTeams = new ArrayList<>(marchMadnessTeams);
+        Collections.sort(listTeams, seeder);
+        return listTeams;
     }
 
     public List<Game> scheduleTournament(List<Team> teams, int year, Game.GameType gameType) {

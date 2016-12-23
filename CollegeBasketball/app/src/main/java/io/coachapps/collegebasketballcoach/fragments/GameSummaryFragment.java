@@ -100,6 +100,17 @@ public class GameSummaryFragment extends DialogFragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.game_summary, container, false);
 
+        TextView textOT = (TextView) view.findViewById(R.id.textViewOT);
+        if (gameModel.numOT == 0) {
+            textOT.setVisibility(View.GONE);
+        } else {
+            if (gameModel.numOT == 1) {
+                textOT.setText("OT");
+            } else {
+                textOT.setText(gameModel.numOT + "OT");
+            }
+        }
+
         TextView textHomeName = (TextView) view.findViewById(R.id.textViewHomeTeamName);
         TextView textHomeWL = (TextView) view.findViewById(R.id.textViewHomeTeamWL);
         TextView textHomeScore = (TextView) view.findViewById(R.id.textViewHomeTeamScore);

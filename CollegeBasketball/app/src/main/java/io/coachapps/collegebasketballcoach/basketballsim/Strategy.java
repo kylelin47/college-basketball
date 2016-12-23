@@ -49,6 +49,8 @@ public class Strategy {
 
     }
 
+    private static final double RUN_AND_GUN_CHANCE = 0.25;
+
     public final Strats strat;
 
     private final Team team;
@@ -66,7 +68,7 @@ public class Strategy {
 
             // Offense
             case DRIBBLE_DRIVE:
-                insideBonus = -2;
+                insideBonus = 0;
                 midrangeBonus = 3 * (double)t.getPG().getPass()/100;
                 outsideBonus = 5 * (double)t.getPG().getPass()/100;
                 stealBonus = -5;
@@ -146,7 +148,7 @@ public class Strategy {
 
     public double getInsideBonus() {
         if (strat == Strats.RUN_AND_GUN) {
-            if (Math.random() < 0.25) return insideBonus;
+            if (Math.random() < RUN_AND_GUN_CHANCE) return insideBonus;
             else return 0;
         } else {
             return insideBonus;
@@ -155,7 +157,7 @@ public class Strategy {
 
     public double getMidrangeBonus() {
         if (strat == Strats.RUN_AND_GUN) {
-            if (Math.random() < 0.25) return midrangeBonus;
+            if (Math.random() < RUN_AND_GUN_CHANCE) return midrangeBonus;
             else return 0;
         } else {
             return midrangeBonus;
@@ -164,7 +166,7 @@ public class Strategy {
 
     public double getOutsideBonus() {
         if (strat == Strats.RUN_AND_GUN) {
-            if (Math.random() < 0.25) return outsideBonus;
+            if (Math.random() < RUN_AND_GUN_CHANCE) return outsideBonus;
             else return 0;
         } else {
             return outsideBonus;

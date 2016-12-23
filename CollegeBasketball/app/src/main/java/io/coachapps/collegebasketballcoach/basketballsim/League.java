@@ -251,7 +251,7 @@ public class League {
                         count++;
                     }
                     t.pollScore += count * WIN_WEIGHT * 3;
-                    if (count == 5) t.pollScore += WIN_WEIGHT * 50;
+                    if (count == 5) t.pollScore += WIN_WEIGHT * 100;
                 }
             }
         }

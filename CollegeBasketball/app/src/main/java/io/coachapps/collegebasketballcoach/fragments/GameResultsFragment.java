@@ -17,6 +17,10 @@ import io.coachapps.collegebasketballcoach.basketballsim.Team;
  * Created by jojones on 10/24/16.
  */
 
+/**
+ * THIS CLASS IS NOT BEING USED.
+ */
+
 public class GameResultsFragment extends DialogFragment {
 
     public class SimInfo {

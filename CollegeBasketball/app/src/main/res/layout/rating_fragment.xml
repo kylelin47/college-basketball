@@ -198,17 +198,17 @@
                 android:textStyle="bold"
                 android:textAlignment="center"
                 android:gravity="center_horizontal"
-                android:id="@+id/steal"
+                android:id="@+id/rebounding"
                 />
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Stealing"
+                android:text="Rebound"
                 android:textColor="#333"
                 android:textSize="15sp"
                 android:textAlignment="center"
-                android:layout_below="@+id/steal"
-                android:id="@+id/stealLabel"/>
+                android:layout_below="@+id/rebounding"
+                android:id="@+id/reboundingLabel"/>
         </RelativeLayout>
         <RelativeLayout
             android:layout_width="0dip"
@@ -341,17 +341,17 @@
                 android:textStyle="bold"
                 android:textAlignment="center"
                 android:gravity="center_horizontal"
-                android:id="@+id/rebounding"
+                android:id="@+id/steal"
                 />
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Rebound"
+                android:text="Stealing"
                 android:textColor="#333"
                 android:textSize="15sp"
                 android:textAlignment="center"
-                android:layout_below="@+id/rebounding"
-                android:id="@+id/reboundingLabel"/>
+                android:layout_below="@+id/steal"
+                android:id="@+id/stealLabel"/>
         </RelativeLayout>
     </LinearLayout>
 </LinearLayout>

@@ -157,14 +157,16 @@ public class RecruitingActivity extends AppCompatActivity {
             int personality = (int)(10*Math.random());
             if (personality == 0) {
                 // Hometown discount
-                recruitPersonalityMap.put(p, "Grew up a fan of the " + playerTeamName);
+                recruitPersonalityMap.put(p, "Grew up a fan of the " + playerTeamName + ".");
                 recruitCostMap.put(p, (recruitCostMap.get(p)*3)/4);
+            /*
             } else if (personality == 1) {
                 // Wants to be a hero
-                recruitPersonalityMap.put(p, "Wants to be the star of his own team");
+                recruitPersonalityMap.put(p, "Wants to be the star of his own team.");
             } else if (personality == 2) {
                 // Wants to play for winner
-                recruitPersonalityMap.put(p, "Winning is the most important thing, wants to play for proven winner");
+                recruitPersonalityMap.put(p, "Winning is the most important thing, wants to play for proven winner.");
+            */
             } else {
                 recruitPersonalityMap.put(p, getRandomPersonality());
             }
@@ -363,6 +365,19 @@ public class RecruitingActivity extends AppCompatActivity {
             }
         }
         Collections.sort(playersLeavingEarly, new PlayerOverallComp());
+
+        // Add money for players that leave early
+        int bonusMoney = playersLeavingEarly.size() * 200;
+        playerTeamMoney += bonusMoney;
+        if (bonusMoney == 0) {
+            Toast.makeText(RecruitingActivity.this, "None of your players left early for the pros.",
+                    Toast.LENGTH_SHORT).show();
+        } else {
+            Toast.makeText(RecruitingActivity.this, playersLeavingEarly.size() +
+                    " of your players left early for the pros, granting you $" + bonusMoney + " extra recruiting budget.",
+                    Toast.LENGTH_LONG).show();
+        }
+        updateTextView();
 
         final ListView listView = (ListView) dialog.findViewById(R.id.listView);
         final Spinner spinner = (Spinner) dialog.findViewById(R.id.spinner);
@@ -661,14 +676,29 @@ public class RecruitingActivity extends AppCompatActivity {
     private String getRandomPersonality() {
         String[] personalities =
                 {
-                        "Known to be a joker in the locker room",
-                        "He is all business on the court, takes the game very seriously",
-                        "Grew up the son of an NBA player and has been around the game his whole life",
-                        "Came from a very bad neighborhood, and used basketball to escape",
-                        "Was a late bloomer in high school, didn't make the varsity team until his senior year",
-                        "Was also a 5-star football prospect, but ultimately chose basketball",
-                        "Tore his ACL in his junior year, but bounced back in a big way",
-                        "Starred in a hit dunk highlight video (as the one being dunked on)"
+                        "Known to be a joker in the locker room.",
+                        "He is all business on the court, takes the game very seriously.",
+                        "Grew up the son of an NBA player and has been around the game his whole life.",
+                        "Came from a very bad neighborhood, and used basketball to escape.",
+                        "Was a late bloomer in high school, didn't make the varsity team until his senior year.",
+                        "Was also a 5-star football prospect, but ultimately chose basketball.",
+                        "Tore his ACL in his junior year, but bounced back in a big way.",
+                        "Starred in a hit dunk highlight video (as the one being dunked on).",
+                        "Spends more time browsing reddit than watching film.",
+                        "Lost ten pounds in the last year.",
+                        "A great athlete and a great student. Had a 4.0 all through high school.",
+                        "He was 5'3\" until a growth spurt his junior year.",
+                        "Has a sweet tooth, eats candy bars during halftime.",
+                        "He wanted to be a track star but a foot injury kept him off that path.",
+                        "Is prolific on social media, has 50,000 Twitter followers.",
+                        "Wants to go to a school close to a Chik-Fil-A.",
+                        "Is known to play College Hoops Coach during class.",
+                        "Doesn't like to talk about practice.",
+                        "Has a burger named after him in his hometown.",
+                        "Shows tremendous flash and flair. Loves to put on a show.",
+                        "Likes to celebrate a lot on the court, and is very expressive.",
+                        "Started on his varsity team as a freshman.",
+                        "Has nerves of steel, good at making comebacks at the end of a game."
                 };
         return personalities[(int)(Math.random()*personalities.length)];
     }
