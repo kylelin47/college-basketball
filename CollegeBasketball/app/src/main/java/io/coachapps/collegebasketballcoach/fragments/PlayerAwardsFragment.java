@@ -66,38 +66,39 @@ public class PlayerAwardsFragment extends Fragment {
         List<String> playerAwardsCSV = new ArrayList<>();
         for (int i = 0; i < leagueAwards.size(); ++i) {
             StringBuilder sb = new StringBuilder();
-            if (leagueAwards.get(i).championTeamName.equals(getTeam())) sb.append("National Champion\n");
-            if (leagueAwards.get(i).mvpId == getPlayerID()) sb.append("Player of the Year\n");
-            if (leagueAwards.get(i).dpoyId == getPlayerID()) sb.append("Defensive Player of the Year\n");
-            for (int t = 0; t < 3; ++t) {
-                for (int pos = 1; pos < 6; ++pos) {
-                    if (leagueAwards.get(i).allAmericans.get(t).getIdPosition(pos) == getPlayerID()) {
-                        sb.append(DataDisplayer.getRankStr(t+1) + " Team All-American\n");
-                    }
-                    if (leagueAwards.get(i).allCowboy.get(t).getIdPosition(pos) == getPlayerID()) {
-                        sb.append(DataDisplayer.getRankStr(t+1) + " Team All-Cowboy\n");
-                    }
-                    else if (leagueAwards.get(i).allLakes.get(t).getIdPosition(pos) == getPlayerID()) {
-                        sb.append(DataDisplayer.getRankStr(t+1) + " Team All-Lakes\n");
-                    }
-                    else if (leagueAwards.get(i).allMountains.get(t).getIdPosition(pos) == getPlayerID()) {
-                        sb.append(DataDisplayer.getRankStr(t+1) + " Team All-Mountains\n");
-                    }
-                    else if (leagueAwards.get(i).allNorth.get(t).getIdPosition(pos) == getPlayerID()) {
-                        sb.append(DataDisplayer.getRankStr(t+1) + " Team All-North\n");
-                    }
-                    else if (leagueAwards.get(i).allPacific.get(t).getIdPosition(pos) == getPlayerID()) {
-                        sb.append(DataDisplayer.getRankStr(t+1) + " Team All-Pacific\n");
-                    }
-                    else if (leagueAwards.get(i).allSouth.get(t).getIdPosition(pos) == getPlayerID()) {
-                        sb.append(DataDisplayer.getRankStr(t+1) + " Team All-South\n");
+            try {
+                if (leagueAwards.get(i).championTeamName.equals(getTeam()))
+                    sb.append("National Champion\n");
+                if (leagueAwards.get(i).mvpId == getPlayerID()) sb.append("Player of the Year\n");
+                if (leagueAwards.get(i).dpoyId == getPlayerID())
+                    sb.append("Defensive Player of the Year\n");
+                for (int t = 0; t < 3; ++t) {
+                    for (int pos = 1; pos < 6; ++pos) {
+                        if (leagueAwards.get(i).allAmericans.get(t).getIdPosition(pos) == getPlayerID()) {
+                            sb.append(DataDisplayer.getRankStr(t + 1) + " Team All-American\n");
+                        }
+                        if (leagueAwards.get(i).allCowboy.get(t).getIdPosition(pos) == getPlayerID()) {
+                            sb.append(DataDisplayer.getRankStr(t + 1) + " Team All-Cowboy\n");
+                        } else if (leagueAwards.get(i).allLakes.get(t).getIdPosition(pos) == getPlayerID()) {
+                            sb.append(DataDisplayer.getRankStr(t + 1) + " Team All-Lakes\n");
+                        } else if (leagueAwards.get(i).allMountains.get(t).getIdPosition(pos) == getPlayerID()) {
+                            sb.append(DataDisplayer.getRankStr(t + 1) + " Team All-Mountains\n");
+                        } else if (leagueAwards.get(i).allNorth.get(t).getIdPosition(pos) == getPlayerID()) {
+                            sb.append(DataDisplayer.getRankStr(t + 1) + " Team All-North\n");
+                        } else if (leagueAwards.get(i).allPacific.get(t).getIdPosition(pos) == getPlayerID()) {
+                            sb.append(DataDisplayer.getRankStr(t + 1) + " Team All-Pacific\n");
+                        } else if (leagueAwards.get(i).allSouth.get(t).getIdPosition(pos) == getPlayerID()) {
+                            sb.append(DataDisplayer.getRankStr(t + 1) + " Team All-South\n");
+                        }
                     }
                 }
-            }
-            if (sb.length() != 0) {
-                playerAwardsCSV.add(leagueAwards.get(i).year + ":," + sb.toString().trim());
-            } else {
-                playerAwardsCSV.add(leagueAwards.get(i).year + ":,None");
+                if (sb.length() != 0) {
+                    playerAwardsCSV.add(leagueAwards.get(i).year + ":," + sb.toString().trim());
+                } else {
+                    playerAwardsCSV.add(leagueAwards.get(i).year + ":,None");
+                }
+            } catch (Exception e) {
+                // Something went wrong...
             }
         }
 

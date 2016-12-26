@@ -233,7 +233,7 @@ public class League {
         int PRESTIGE_WEIGHT = 5;
         if (currentTeamStats.isEmpty()) {
             for (Team t : getAllTeams()) {
-                t.pollScore = t.getTalent() * TALENT_WEIGHT + t.prestige * PRESTIGE_WEIGHT;
+                t.pollScore = t.calculateTalent() * TALENT_WEIGHT + t.prestige * PRESTIGE_WEIGHT;
             }
         } else {
             for (YearlyTeamStats s : currentTeamStats) {
@@ -241,7 +241,7 @@ public class League {
                 t.pollScore =
                         t.wins * WIN_WEIGHT +
                                 (s.points - s.opp_points) * DIFF_WEIGHT +
-                                t.getTalent() * TALENT_WEIGHT +
+                                t.calculateTalent() * TALENT_WEIGHT +
                                 t.prestige * PRESTIGE_WEIGHT;
                 for (Game g : t.gameSchedule) {
                     int count = 0;

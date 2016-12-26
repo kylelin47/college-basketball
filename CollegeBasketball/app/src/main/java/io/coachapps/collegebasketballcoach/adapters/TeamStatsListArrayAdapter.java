@@ -53,12 +53,14 @@ public class TeamStatsListArrayAdapter extends ArrayAdapter<String> {
             try {
                 double left = Double.parseDouble(teamStat[0]);
                 double right = Double.parseDouble(teamStat[2]);
-                if (left > right) {
+                if ((left > right && !teamStat[1].contains("Opp")) ||
+                        (left < right && teamStat[1].contains("Opp"))) {
                     textLeft.setTextSize(TypedValue.COMPLEX_UNIT_SP, bigSize);
                     textRight.setTextSize(TypedValue.COMPLEX_UNIT_SP, smallSize);
                     textLeft.setTypeface(null, Typeface.BOLD);
                     textRight.setTypeface(null, Typeface.NORMAL);
-                } else if (right > left) {
+                } else if ((right > left && !teamStat[1].contains("Opp")) ||
+                        (right < left && teamStat[1].contains("Opp"))) {
                     textLeft.setTextSize(TypedValue.COMPLEX_UNIT_SP, smallSize);
                     textRight.setTextSize(TypedValue.COMPLEX_UNIT_SP, bigSize);
                     textLeft.setTypeface(null, Typeface.NORMAL);

@@ -27,7 +27,7 @@
 
     <Button
         android:text="New Game"
-        android:layout_width="200dp"
+        android:layout_width="300dp"
         android:layout_height="wrap_content"
         android:layout_below="@+id/imageLogo"
         android:layout_centerHorizontal="true"
@@ -39,7 +39,7 @@
 
     <Button
         android:text="Continue"
-        android:layout_width="200dp"
+        android:layout_width="300dp"
         android:layout_height="wrap_content"
         android:id="@+id/buttonContinue"
         android:layout_below="@+id/buttonNewGame"
@@ -47,4 +47,37 @@
         android:background="@drawable/button_shape_accent"
         android:textColor="#ffffff"
         android:layout_margin="5dp"/>
+
+    <LinearLayout
+        android:layout_width="300dp"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_below="@+id/buttonContinue"
+        android:layout_centerHorizontal="true">
+        <Button
+            android:text="Rate App"
+            android:layout_width="0dip"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:id="@+id/buttonRate"
+            android:background="@drawable/button_shape_accent"
+            android:textColor="#ffffff"
+            android:layout_margin="5dp"/>
+        <Button
+            android:text="Reddit"
+            android:layout_width="0dip"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:id="@+id/buttonReddit"
+            android:background="@drawable/button_shape_primary"
+            android:textColor="#ffffff"
+            android:layout_margin="5dp"/>
+    </LinearLayout>
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:textAlignment="center"
+        android:text="coachapps.io"/>
 </RelativeLayout>

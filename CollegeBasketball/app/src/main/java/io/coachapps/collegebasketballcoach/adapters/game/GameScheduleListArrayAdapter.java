@@ -97,6 +97,8 @@ public class GameScheduleListArrayAdapter extends ArrayAdapter<Game> {
                 Game gm = getItem(position);
                 if (gm.hasPlayed()) {
                     mainAct.showGameSummaryDialog(gm);
+                } else {
+                    mainAct.showGamePreviewDialog(gm);
                 }
             }
         });

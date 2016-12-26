@@ -1,6 +1,7 @@
 package io.coachapps.collegebasketballcoach.basketballsim;
 
 import android.content.Context;
+import android.util.Log;
 
 import io.coachapps.collegebasketballcoach.models.FullGameResults;
 import io.coachapps.collegebasketballcoach.util.LeagueEvents;
@@ -208,6 +209,11 @@ public class Simulator {
             //shooter gets bonus for having a good passer
             assBonus = (int)((float)(assister.getPass() - 75)/5);
         }
+
+        //Log.i("Simulator", offense.getName() + " talent: " + offense.getOvrTalent());
+        //Log.i("Simulator", defense.getName() + " talent: " + defense.getOvrTalent());
+        // Hack so that better teams perform better :^)
+        assBonus += (offense.getOvrTalent() - defense.getOvrTalent())/20;
         
         double selShot = Math.random();
         //get intelligent tendencies based on mismatches

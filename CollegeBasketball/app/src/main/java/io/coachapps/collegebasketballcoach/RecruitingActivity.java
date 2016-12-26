@@ -69,11 +69,11 @@ public class RecruitingActivity extends AppCompatActivity {
     private static final int HOF_SCORE    = 200;
     private static final int MVP_SCORE    = 200;
     private static final int DPOY_SCORE   = 100;
-    private static final int ALL_AMER_1st = 100;
-    private static final int ALL_AMER_2nd = 75;
-    private static final int ALL_AMER_3rd = 50;
-    private static final int ALL_CONF_1st = 50;
-    private static final int ALL_CONF_2nd = 30;
+    private static final int ALL_AMER_1st = 80;
+    private static final int ALL_AMER_2nd = 60;
+    private static final int ALL_AMER_3rd = 40;
+    private static final int ALL_CONF_1st = 40;
+    private static final int ALL_CONF_2nd = 25;
     private static final int ALL_CONF_3rd = 10;
 
     PlayerDao playerDao;
@@ -770,35 +770,37 @@ public class RecruitingActivity extends AppCompatActivity {
     private int getHallOfFameScore(List<LeagueResults> leagueResultsList, Player player) {
         int score = 0;
         int id = player.getId();
-        for (LeagueResults results : leagueResultsList) {
+        try {
+            for (LeagueResults results : leagueResultsList) {
 
-            if (results.mvpId == id) {
-                // MVP
-                score += MVP_SCORE;
-            }
-            if (results.dpoyId == id) {
-                // DPOY
-                score += DPOY_SCORE;
-            }
+                if (results.mvpId == id) {
+                    // MVP
+                    score += MVP_SCORE;
+                }
+                if (results.dpoyId == id) {
+                    // DPOY
+                    score += DPOY_SCORE;
+                }
 
-            // All Americans
-            if (results.allAmericans.firstTeam.contains(id)) {
-                score += ALL_AMER_1st;
-            }
-            else if (results.allAmericans.secondTeam.contains(id)) {
-                score += ALL_AMER_2nd;
-            }
-            else if (results.allAmericans.thirdTeam.contains(id)) {
-                score += ALL_AMER_3rd;
-            }
+                // All Americans
+                if (results.allAmericans.firstTeam.contains(id)) {
+                    score += ALL_AMER_1st;
+                } else if (results.allAmericans.secondTeam.contains(id)) {
+                    score += ALL_AMER_2nd;
+                } else if (results.allAmericans.thirdTeam.contains(id)) {
+                    score += ALL_AMER_3rd;
+                }
 
-            // All Conference Teams
-            score += checkConfAwardTeams(results.allCowboy, id);
-            score += checkConfAwardTeams(results.allLakes, id);
-            score += checkConfAwardTeams(results.allMountains, id);
-            score += checkConfAwardTeams(results.allNorth, id);
-            score += checkConfAwardTeams(results.allPacific, id);
-            score += checkConfAwardTeams(results.allSouth, id);
+                // All Conference Teams
+                score += checkConfAwardTeams(results.allCowboy, id);
+                score += checkConfAwardTeams(results.allLakes, id);
+                score += checkConfAwardTeams(results.allMountains, id);
+                score += checkConfAwardTeams(results.allNorth, id);
+                score += checkConfAwardTeams(results.allPacific, id);
+                score += checkConfAwardTeams(results.allSouth, id);
+            }
+        } catch (Exception e) {
+            // uh oh
         }
 
         return score;

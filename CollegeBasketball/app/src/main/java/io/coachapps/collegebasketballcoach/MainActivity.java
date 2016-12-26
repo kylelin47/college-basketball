@@ -681,13 +681,48 @@ public class MainActivity extends AppCompatActivity {
         }
         newFragment.show(ft, "bracket dialog");
     }
+
     public void showGameSummaryDialog(final Game gm) {
-        System.out.println("showing game summary at week " + gm.getWeek());
         FragmentTransaction ft = getFragmentManager().beginTransaction();
         DialogFragment newFragment = GameSummaryFragment.newInstance(
                 gm.getYear(), gm.getWeek(), gm.getHome().getName(), gm.getAway().getName(),
                 gm.getHome().getRankNameWLStr(), gm.getAway().getRankNameWLStr());
         newFragment.show(ft, "game dialog");
+    }
+
+    public void showGamePreviewDialog(final Game gm) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setView(getLayoutInflater().inflate(R.layout.game_preview_dialog, null));
+        builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                //do nothing?
+                dialog.dismiss();;
+            }
+        });
+        final AlertDialog dialog = builder.create();
+        dialog.show();
+
+        ListView listView = (ListView) dialog.findViewById(R.id.listViewGamePreview);
+
+        TextView textHomeName = (TextView) dialog.findViewById(R.id.textViewHomeTeamName);
+        TextView textHomeWL = (TextView) dialog.findViewById(R.id.textViewHomeTeamWL);
+        TextView textHomeRank = (TextView) dialog.findViewById(R.id.textViewHomeTeamScore);
+
+        TextView textAwayName = (TextView) dialog.findViewById(R.id.textViewAwayTeamName);
+        TextView textAwayWL = (TextView) dialog.findViewById(R.id.textViewAwayTeamWL);
+        TextView textAwayRank = (TextView) dialog.findViewById(R.id.textViewAwayTeamScore);
+
+        textHomeName.setText(gm.getHome().getName());
+        textAwayName.setText(gm.getAway().getName());
+        textHomeWL.setText("(" + gm.getHome().wins + "-" + gm.getHome().losses + ")");
+        textAwayWL.setText("(" + gm.getAway().wins + "-" + gm.getAway().losses + ")");
+        textHomeRank.setText("#" + gm.getHome().pollRank);
+        textAwayRank.setText("#" + gm.getAway().pollRank);
+
+        ArrayList<String> teamComparison = DataDisplayer.getGamePreviewComparison(this, getYear(), gm);
+
+        listView.setAdapter(new TeamStatsListArrayAdapter(this, teamComparison, true));
     }
 
     public void showGameSimDialog(final Game gm) {
@@ -1018,7 +1053,7 @@ public class MainActivity extends AppCompatActivity {
                                     teamRankingsCSV, playerTeam.getRankNameWLStr()));
                         } else {
                             boolean higherIsBetter = false;
-                            if (position <= 15) higherIsBetter = true;
+                            if (position <= 13) higherIsBetter = true;
                             ArrayList<String> teamRankingsCSV =
                                     DataDisplayer.getTeamRankingsCSVs(league, MainActivity.this, getYear(),
                                             DataDisplayer.getAllCategories()[position - 1], higherIsBetter);

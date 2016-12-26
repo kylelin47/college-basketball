@@ -77,6 +77,9 @@ public class TeamHistoryListArrayAdapter extends ArrayAdapter<YearlyTeamStats> {
                         totalNCs++;
                         totalFFs++;
                     }
+                    else if (yrStats.summary != null && yrStats.summary.contains("Made Tournament Final")) {
+                        totalFFs++;
+                    }
                     else if (yrStats.summary != null && yrStats.summary.contains("Made Final Four")) {
                         totalFFs++;
                     }

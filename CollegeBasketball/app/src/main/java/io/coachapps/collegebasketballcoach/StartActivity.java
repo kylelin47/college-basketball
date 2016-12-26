@@ -4,6 +4,7 @@ import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.sqlite.SQLiteDatabase;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
@@ -56,6 +57,30 @@ public class StartActivity extends AppCompatActivity {
             public void onClick(View v) {
                 // Perform action on click
                 continueGame();
+            }
+        });
+
+        Button rateAppButton = (Button) findViewById(R.id.buttonRate);
+        rateAppButton.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                // Perform action on click
+                try {
+                    startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("market://details?id=io.coachapps.collegebasketballcoach")));
+                } catch (android.content.ActivityNotFoundException anfe) {
+                    startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("https://play.google.com/store/apps/details?id=io.coachapps.collegebasketballcoach")));
+                }
+            }
+        });
+
+        Button redditButton = (Button) findViewById(R.id.buttonReddit);
+        redditButton.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                // Perform action on click
+                Intent intent = new Intent();
+                intent.setAction(Intent.ACTION_VIEW);
+                intent.addCategory(Intent.CATEGORY_BROWSABLE);
+                intent.setData(Uri.parse("http://m.reddit.com/r/hoopscoach"));
+                startActivity(intent);
             }
         });
     }

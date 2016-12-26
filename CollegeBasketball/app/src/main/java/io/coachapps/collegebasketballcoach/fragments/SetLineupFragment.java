@@ -83,6 +83,23 @@ public class SetLineupFragment extends DialogFragment {
             selectedIndex = -1;
             return;
         }
+
+        if (players.get(a).getLineupMinutes() > 33) {
+            players.get(a).setLineupMinutes(33);
+            players.get(b).setLineupMinutes(7);
+        } else if (players.get(b).getLineupMinutes() > 33) {
+            players.get(b).setLineupMinutes(33);
+            players.get(a).setLineupMinutes(7);
+        }
+
+        if (players.get(a).getLineupMinutes() < 7) {
+            players.get(a).setLineupMinutes(7);
+            players.get(b).setLineupMinutes(33);
+        } else if (players.get(b).getLineupMinutes() < 7) {
+            players.get(b).setLineupMinutes(7);
+            players.get(a).setLineupMinutes(33);
+        }
+
         players.get(a).setLineupPosition(b);
         players.get(b).setLineupPosition(a);
         playerDao.updatePlayerRatings(players.get(a).getId(),
@@ -100,6 +117,12 @@ public class SetLineupFragment extends DialogFragment {
             } else {
                 players.get(i).setLineupMinutes(backUpMinutes[i-5]);
             }
+        }
+        // Set DNPs to 0 minutes
+        for (int i = 10; i < players.size(); ++i) {
+            players.get(i).setLineupMinutes(0);
+            playerDao.updatePlayerRatings(players.get(i).getId(),
+                    players.get(i).ratings);
         }
         selectedIndex = -1;
     }

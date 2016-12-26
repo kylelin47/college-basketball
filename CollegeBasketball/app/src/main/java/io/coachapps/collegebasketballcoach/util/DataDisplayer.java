@@ -12,10 +12,12 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 
+import io.coachapps.collegebasketballcoach.basketballsim.Game;
 import io.coachapps.collegebasketballcoach.basketballsim.League;
 import io.coachapps.collegebasketballcoach.basketballsim.Team;
 import io.coachapps.collegebasketballcoach.db.YearlyTeamStatsDao;
 import io.coachapps.collegebasketballcoach.models.LeagueResults;
+import io.coachapps.collegebasketballcoach.models.YearlyPlayerStats;
 import io.coachapps.collegebasketballcoach.models.YearlyTeamStats;
 
 public class DataDisplayer {
@@ -378,6 +380,37 @@ public class DataDisplayer {
         }
     }
 
+    public static ArrayList<String> getGamePreviewComparison(Context context, int year, Game gm) {
+        YearlyTeamStatsDao yearlyTeamStatsDao = new YearlyTeamStatsDao(context);
+        List<YearlyTeamStats> currentTeamStats = yearlyTeamStatsDao.getTeamStatsOfYear(year);
+
+        YearlyTeamStats homeStats = null;
+        YearlyTeamStats awayStats = null;
+        for (YearlyTeamStats teamStats : currentTeamStats) {
+            if (teamStats.team.equals(gm.getHome().getName())) {
+                homeStats = teamStats;
+            } else if (teamStats.team.equals(gm.getAway().getName())) {
+                awayStats = teamStats;
+            }
+        }
+
+        if (homeStats != null && awayStats != null) {
+            ArrayList<String> stats = new ArrayList<>();
+            stats.add(gm.getAway().getName() + ", ," + gm.getHome().getName());
+            stats.add(awayStats.getPGDisplay("PPG") + ",Points Per Game," + homeStats.getPGDisplay("PPG"));
+            stats.add(awayStats.getPGDisplay("OPPG") + ",Opp Points Per Game," + homeStats.getPGDisplay("OPPG"));
+            stats.add(awayStats.getPGDisplay("FG%") + ",Field Goal Percentage," + homeStats.getPGDisplay("FG%"));
+            stats.add(awayStats.getPGDisplay("OFG%") + ",Opp Field Goal Percentage," + homeStats.getPGDisplay("OFG%"));
+            stats.add(awayStats.getPGDisplay("3FG%") + ",3 Point Percentage," + homeStats.getPGDisplay("3FG%"));
+            stats.add(awayStats.getPGDisplay("O3FG%") + ",Opp 3 Point Percentage," + homeStats.getPGDisplay("O3FG%"));
+            stats.add(awayStats.getPGDisplay("RPG") + ",Rebounds Per Game," + homeStats.getPGDisplay("RPG"));
+            stats.add(awayStats.getPGDisplay("APG") + ",Assists Per Game," + homeStats.getPGDisplay("APG"));
+            return stats;
+        } else {
+            return new ArrayList<>();
+        }
+    }
+
     public static List<String> getCSVChampions(LeagueResults leagueResults, League league) {
         List<String> list = new ArrayList<>();
         list.add("National Champions," + league.getTeam(leagueResults.championTeamName).getRankNameWLStr());
@@ -393,7 +426,7 @@ public class DataDisplayer {
     public static String[] getAllCategories() {
         return new String[]{
             "PPG", "APG", "RPG", "SPG", "BPG", "TPG", "FGMPG", "FGAPG", "FG%",
-                    "3FGMPG", "3FGAPG", "3FG%", "FGAPG", "FTMPG", "FTAPG",
+                    "3FGMPG", "3FGAPG", "3FG%", "FGAPG", //"FTMPG", "FTAPG",
             "OPPG", "OAPG", "ORPG", "OSPG", "OBPG", "OTPG", "OFGMPG", "OFGAPG", "OFG%",
                     "O3FGMPG", "O3FGAPG", "O3FG%", "OFTMPG", "OFTAPG"};
     }

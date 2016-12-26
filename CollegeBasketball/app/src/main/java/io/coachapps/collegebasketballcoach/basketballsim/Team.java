@@ -27,6 +27,7 @@ public class Team {
     public int prestige;
     public int pollScore;
     public int pollRank;
+    public int ovrTalent;
     public boolean[] startersIn;
 
     public volatile Strategy offStrat;
@@ -110,6 +111,7 @@ public class Team {
      * Makes sure that a PG SG SF PF C lineup is in place, with all the best players in place.
      */
     public void resetLineup() {
+        ovrTalent = calculateTalent();
         if (isUserTeam) {
             sortPlayersLineupPosition();
         } else {
@@ -385,13 +387,17 @@ public class Team {
         return summary[1] + " " + summary[2];
     }
 
-    public int getTalent() {
+    public int calculateTalent() {
         int talent = 0;
         for(int i = 0; i < Math.min(10, players.size()); ++i) {
             talent += (int)(Math.pow(players.get(i).getOverall(),1.25));
         }
 
         return talent/(Math.min(10, players.size()));
+    }
+
+    public int getOvrTalent() {
+        return ovrTalent;
     }
 
     public int getWeakestPosition() {

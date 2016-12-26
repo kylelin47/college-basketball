@@ -46,7 +46,7 @@ public class CommitmentsListArrayAdapter extends ArrayAdapter<RecruitingActivity
 
         Team t = values.get(position).team;
         Player p = values.get(position).player;
-        top.setText(t.getName() + " received a commitment from...");
+        top.setText(t.getName());
         bot.setText(p.toString());
 
         return rowView;
