@@ -306,6 +306,23 @@ public class PlayerGen {
         for (int i = 0; i < numYearsAdvance; ++i) {
             advanceYearRatings(ratings);
         }
+
+        // Test for prestige test
+        /*
+        int testRating = (prestige + 100)/2;
+        ratings.potential = testRating;
+        ratings.bballIQ = testRating;
+        ratings.insideShooting = testRating;
+        ratings.midrangeShooting = testRating;
+        ratings.outsideShooting = testRating;
+        ratings.passing = testRating;
+        ratings.handling = testRating;
+        ratings.steal = testRating;
+        ratings.block = testRating;
+        ratings.insideDefense = testRating;
+        ratings.perimeterDefense = testRating;
+        ratings.rebounding = testRating;
+        */
         
         return new Player(name, ratings, null, currID++, year);
     }

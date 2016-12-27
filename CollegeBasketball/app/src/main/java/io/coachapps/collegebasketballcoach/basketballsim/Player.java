@@ -185,35 +185,40 @@ public class Player implements Serializable {
                 Math.pow(getStl(), 1.1) + Math.pow(getBlk(), 1.1) + Math.pow(getIntD(), 1.2) + Math.pow(getOutD(), 1.2) + Math.pow(getReb(), 1.2) );
         overall = (100*overall)/2500;
     }
+    public int fatigueCalc(int rating) {
+        if (gmStats != null) {
+            return (int) (rating * (1 - Math.pow(gmStats.secondsPlayed / 2400, 5)));
+        } else return rating;
+    }
     public int getIntS() {
-        return ratings.insideShooting;
+        return fatigueCalc(ratings.insideShooting);
     }
     public int getMidS() {
-        return ratings.midrangeShooting;
+        return fatigueCalc(ratings.midrangeShooting);
     }
     public int getOutS() {
-        return ratings.outsideShooting;
+        return fatigueCalc(ratings.outsideShooting);
     }
     public int getPass() {
-        return ratings.passing;
+        return fatigueCalc(ratings.passing);
     }
     public int getHand() {
-        return ratings.handling;
+        return fatigueCalc(ratings.handling);
     }
     public int getStl() {
-        return ratings.steal;
+        return fatigueCalc(ratings.steal);
     }
     public int getBlk() {
-        return ratings.block;
+        return fatigueCalc(ratings.block);
     }
     public int getIntD() {
-        return ratings.insideDefense;
+        return fatigueCalc(ratings.insideDefense);
     }
     public int getOutD() {
-        return ratings.perimeterDefense;
+        return fatigueCalc(ratings.perimeterDefense);
     }
     public int getReb() {
-        return ratings.rebounding;
+        return fatigueCalc(ratings.rebounding);
     }
     public int getUsage() {
         return ratings.usage;

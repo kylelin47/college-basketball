@@ -10,6 +10,7 @@ import android.widget.ListView;
 import java.util.ArrayList;
 import java.util.List;
 
+import io.coachapps.collegebasketballcoach.MainActivity;
 import io.coachapps.collegebasketballcoach.R;
 import io.coachapps.collegebasketballcoach.adapters.player.PlayerAwardsListArrayAdapter;
 import io.coachapps.collegebasketballcoach.db.LeagueResultsEntryDao;
@@ -94,7 +95,7 @@ public class PlayerAwardsFragment extends Fragment {
                 }
                 if (sb.length() != 0) {
                     playerAwardsCSV.add(leagueAwards.get(i).year + ":," + sb.toString().trim());
-                } else {
+                } else if (getEndYear() == ((MainActivity)getActivity()).getYear()) {
                     playerAwardsCSV.add(leagueAwards.get(i).year + ":,None");
                 }
             } catch (Exception e) {

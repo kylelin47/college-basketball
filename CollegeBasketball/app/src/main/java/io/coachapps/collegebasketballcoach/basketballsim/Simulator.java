@@ -213,7 +213,7 @@ public class Simulator {
         //Log.i("Simulator", offense.getName() + " talent: " + offense.getOvrTalent());
         //Log.i("Simulator", defense.getName() + " talent: " + defense.getOvrTalent());
         // Hack so that better teams perform better :^)
-        assBonus += (offense.getOvrTalent() - defense.getOvrTalent())/20;
+        assBonus += (offense.getOvrTalent() - defense.getOvrTalent())/10;
         
         double selShot = Math.random();
         //get intelligent tendencies based on mismatches

@@ -488,7 +488,7 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    private int getYear() {
+    public int getYear() {
         LeagueResultsEntryDao leagueResultsEntryDao = new LeagueResultsEntryDao(this);
         int currentYear = leagueResultsEntryDao.getCurrentYear();
         Log.i("MainActivity", "Current Year: " + currentYear);
@@ -1034,6 +1034,7 @@ public class MainActivity extends AppCompatActivity {
         final Spinner spinner = (Spinner) dialog.findViewById(R.id.spinner);
         final List<String> categoryList = new ArrayList<>();
         categoryList.add("Poll Votes");
+        categoryList.add("Prestige");
         for (String cat : DataDisplayer.getAllCategories()) {
             categoryList.add(DataDisplayer.getDescriptionCategory(cat));
         }
@@ -1051,12 +1052,18 @@ public class MainActivity extends AppCompatActivity {
                                             "Poll Votes", true);
                             listView.setAdapter(new TeamRankingsListArrayAdapter(MainActivity.this,
                                     teamRankingsCSV, playerTeam.getRankNameWLStr()));
-                        } else {
-                            boolean higherIsBetter = false;
-                            if (position <= 13) higherIsBetter = true;
+                        } else if (position == 1) {
                             ArrayList<String> teamRankingsCSV =
                                     DataDisplayer.getTeamRankingsCSVs(league, MainActivity.this, getYear(),
-                                            DataDisplayer.getAllCategories()[position - 1], higherIsBetter);
+                                            "Prestige", true);
+                            listView.setAdapter(new TeamRankingsListArrayAdapter(MainActivity.this,
+                                    teamRankingsCSV, playerTeam.getRankNameWLStr()));
+                        } else {
+                            boolean higherIsBetter = false;
+                            if (position <= 14) higherIsBetter = true;
+                            ArrayList<String> teamRankingsCSV =
+                                    DataDisplayer.getTeamRankingsCSVs(league, MainActivity.this, getYear(),
+                                            DataDisplayer.getAllCategories()[position - 2], higherIsBetter);
                             listView.setAdapter(new TeamRankingsListArrayAdapter(MainActivity.this,
                                     teamRankingsCSV, playerTeam.getRankNameWLStr()));
                         }
@@ -1090,7 +1097,14 @@ public class MainActivity extends AppCompatActivity {
         final List<String> leagueHistoryChoices = new ArrayList<>();
         leagueHistoryChoices.add("League History");
         leagueHistoryChoices.add(playerTeam.getName());
-        for (Team t : league.getAllTeams()) {
+        List<Team> listAllTeams = league.getAllTeams();
+        Collections.sort(listAllTeams, new Comparator<Team>() {
+            @Override
+            public int compare(Team a, Team b) {
+                return a.getName().compareTo(b.getName());
+            }
+        });
+        for (Team t : listAllTeams) {
             if (t != playerTeam) {
                 leagueHistoryChoices.add(t.getName());
             }

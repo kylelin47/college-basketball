@@ -349,6 +349,22 @@ public class DataDisplayer {
 
             return teamRankingsCSV;
 
+        } else if (category.equals("Prestige")) {
+            Collections.sort(sortedTeamList, new Comparator<Team>() {
+                @Override
+                public int compare(Team a, Team b) {
+                    return b.prestige - a.prestige;
+                }
+            });
+            ArrayList<String> teamRankingsCSV = new ArrayList<>();
+            for (int i = 0; i < sortedTeamList.size(); ++i) {
+                teamRankingsCSV.add(getRankStr(i+1) + "," +
+                        sortedTeamList.get(i).getNameWLStr() + "," +
+                        sortedTeamList.get(i).prestige);
+            }
+
+            return teamRankingsCSV;
+
         } else {
 
             if (higherIsBetter) {
