@@ -256,6 +256,9 @@ public class GameSimThread extends Thread {
                             .getYear(), lastGame.gameType));
                 }
 
+                home.beginNewGame();
+                away.beginNewGame();
+
                 // Update the button to say done
                 ((MainActivity) activity).tryToScheduleTournaments(true);
                 ((MainActivity) activity).updateUI();

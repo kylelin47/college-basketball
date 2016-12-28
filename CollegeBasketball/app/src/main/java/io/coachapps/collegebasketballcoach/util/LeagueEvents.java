@@ -217,6 +217,12 @@ public class LeagueEvents {
             }
         }
         saveGameResults(boxScores, gamesToSave, sim.context);
+        for (Game gm : games) {
+            if (simUserGame || !gm.hasTeam(userTeamName)) {
+                gm.getHome().beginNewGame();
+                gm.getAway().beginNewGame();
+            }
+        }
         return winners;
     }
 

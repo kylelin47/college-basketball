@@ -122,26 +122,41 @@ public class MainActivity extends AppCompatActivity {
         super.onResume();  // Always call the superclass method first
         System.out.println("Calling onResume() in MainActivity");
         if (playerTeam != null) {
-            PlayerDao playerDao = new PlayerDao(this);
-            try {
-                playerTeam.players = playerDao.getPlayers(playerTeam.getName());
+
+            // Check to see if in the middle of game, so don't reset players
+            boolean inGame = false;
+            if (playerTeam.players != null) {
                 for (Player p : playerTeam.players) {
-                    System.out.println(p.name + ", lineupPos = " + p.getLineupPosition());
-                }
-                Collections.sort(playerTeam.players, new Comparator<Player>() {
-                    @Override
-                    public int compare(Player left, Player right) {
-                        return right.getLineupPosition() < left.getLineupPosition() ?
-                                1 : left.getLineupPosition() == right.getLineupPosition() ? 0 : -1;
+                    if (p != null && p.gmStats != null && p.gmStats.secondsPlayed > 0) {
+                        inGame = true;
+                        break;
                     }
-                });
-                examineTeam(playerTeam.getName());
-                rosterListAdapter.clear();
-                rosterListAdapter.addAll(playerTeam.players);
-                rosterListAdapter.notifyDataSetChanged();
-            } catch (Exception e) {
-                // k
-                System.out.println("Resume failed!");
+                }
+            }
+
+            // Only reset players if not in middle of game
+            if (!inGame) {
+                PlayerDao playerDao = new PlayerDao(this);
+                try {
+                    playerTeam.players = playerDao.getPlayers(playerTeam.getName());
+                    for (Player p : playerTeam.players) {
+                        System.out.println(p.name + ", lineupPos = " + p.getLineupPosition());
+                    }
+                    Collections.sort(playerTeam.players, new Comparator<Player>() {
+                        @Override
+                        public int compare(Player left, Player right) {
+                            return right.getLineupPosition() < left.getLineupPosition() ?
+                                    1 : left.getLineupPosition() == right.getLineupPosition() ? 0 : -1;
+                        }
+                    });
+                    examineTeam(playerTeam.getName());
+                    rosterListAdapter.clear();
+                    rosterListAdapter.addAll(playerTeam.players);
+                    rosterListAdapter.notifyDataSetChanged();
+                } catch (Exception e) {
+                    // k
+                    System.out.println("Resume failed!");
+                }
             }
         }
     }
