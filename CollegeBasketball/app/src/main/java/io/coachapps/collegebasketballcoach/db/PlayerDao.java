@@ -47,7 +47,7 @@ public class PlayerDao {
         return players;
     }
 
-    public List<Player> getHoFPlayers() throws IOException, ClassNotFoundException {
+    public List<Player> getAllHoFPlayers() throws IOException, ClassNotFoundException {
         List<Player> players = new ArrayList<>();
         SQLiteDatabase db = DbHelper.getInstance(context).getReadableDatabase();
         String[] projection = {
@@ -61,6 +61,33 @@ public class PlayerDao {
         String orderBy = Schemas.PlayerEntry.TEAM + " ASC";
         try (Cursor c = db.query(Schemas.PlayerEntry.TABLE_NAME, projection, whereClause,
                 null, null, null, orderBy, null)) {
+            while (c.moveToNext()) {
+                Player p = createPlayer(c);
+                players.add(p);
+            }
+        } catch (Exception e) {
+            System.out.println(e.toString());
+        }
+        return players;
+    }
+
+    public List<Player> getHoFPlayers(String teamName) throws IOException, ClassNotFoundException {
+        List<Player> players = new ArrayList<>();
+        SQLiteDatabase db = DbHelper.getInstance(context).getReadableDatabase();
+        String[] projection = {
+                Schemas.PlayerEntry._ID,
+                Schemas.PlayerEntry.NAME,
+                Schemas.PlayerEntry.RATINGS,
+                Schemas.PlayerEntry.YEAR,
+                Schemas.PlayerEntry.TEAM
+        };
+        String whereClause = Schemas.PlayerEntry.YEAR + " = 7 AND " + Schemas.PlayerEntry.TEAM + " = ? ";
+        String[] whereArgs = {
+                teamName
+        };
+        String orderBy = Schemas.PlayerEntry.NAME + " ASC";
+        try (Cursor c = db.query(Schemas.PlayerEntry.TABLE_NAME, projection, whereClause,
+                whereArgs, null, null, orderBy, null)) {
             while (c.moveToNext()) {
                 Player p = createPlayer(c);
                 players.add(p);

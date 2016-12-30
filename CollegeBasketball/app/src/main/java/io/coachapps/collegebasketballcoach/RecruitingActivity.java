@@ -101,6 +101,8 @@ public class RecruitingActivity extends AppCompatActivity {
 
     List<TeamPlayerCommitment> commitments;
 
+    boolean canClickRecruit = true;
+
     public void onBackPressed() {
         endRecruiting();
     }
@@ -156,6 +158,7 @@ public class RecruitingActivity extends AppCompatActivity {
         recruitCostMap = new HashMap<>();
         recruitPersonalityMap = new HashMap<>();
         commitments = new ArrayList<>();
+
         for (Player p : availableRecruits) {
             if (p.getOverall() > 65) {
                 recruitCostMap.put(p, (int)(50 + Math.random()*50 + Math.pow(2*(p.getOverall() - 65), 1.75)));
@@ -165,23 +168,9 @@ public class RecruitingActivity extends AppCompatActivity {
             }
             if (recruitCostMap.get(p) < 50) recruitCostMap.put(p, 50);
         }
+
         for (Player p : availableRecruits) {
-            int personality = (int)(10*Math.random());
-            if (personality == 0) {
-                // Hometown discount
-                recruitPersonalityMap.put(p, "Grew up a fan of the " + playerTeamName + ".");
-                recruitCostMap.put(p, (recruitCostMap.get(p)*3)/4);
-            /*
-            } else if (personality == 1) {
-                // Wants to be a hero
-                recruitPersonalityMap.put(p, "Wants to be the star of his own team.");
-            } else if (personality == 2) {
-                // Wants to play for winner
-                recruitPersonalityMap.put(p, "Winning is the most important thing, wants to play for proven winner.");
-            */
-            } else {
-                recruitPersonalityMap.put(p, getRandomPersonality());
-            }
+            assignPersonality(p);
         }
 
         getSupportActionBar().setTitle(getYear() + " " + playerTeamName + " Recruiting");
@@ -339,9 +328,12 @@ public class RecruitingActivity extends AppCompatActivity {
         recruitingListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Player p = ((RecruitsListArrayAdapter) recruitingListView
-                        .getAdapter()).getItem(position);
-                showRecruitDialog(p);
+                if (canClickRecruit) {
+                    canClickRecruit = false;
+                    Player p = ((RecruitsListArrayAdapter) recruitingListView
+                            .getAdapter()).getItem(position);
+                    showRecruitDialog(p);
+                }
             }
         });
     }
@@ -536,6 +528,7 @@ public class RecruitingActivity extends AppCompatActivity {
                 new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
+                canClickRecruit = true;
                 dialog.dismiss();
             }
         });
@@ -555,6 +548,7 @@ public class RecruitingActivity extends AppCompatActivity {
                     Toast.makeText(RecruitingActivity.this, "Not enough money!",
                             Toast.LENGTH_LONG).show();
                 }
+                canClickRecruit = true;
             }
         });
         final AlertDialog dialog = builder.create();
@@ -597,122 +591,6 @@ public class RecruitingActivity extends AppCompatActivity {
 
         strengthsListView.setAdapter(new StrengthWeaknessListArrayAdapter(this, strengths, true));
         weaknessesListView.setAdapter(new StrengthWeaknessListArrayAdapter(this, weaknesses, false));
-    }
-
-    private List<String> getStrengths(Player p) {
-        List<String> list = new ArrayList<>();
-        int threshold = 90;
-        if (p.ratings.potential >= threshold) {
-            list.add("Has great potential, is likely to improve much during his college career");
-        }
-        if (p.ratings.bballIQ >= threshold) {
-            list.add("Is a student of the game, a very smart basketball player");
-        }
-        if (p.ratings.insideShooting >= threshold) {
-            list.add("Is a solid threat to drive to the basket for easy dunks and lay-ups");
-        }
-        if (p.ratings.midrangeShooting >= threshold) {
-            list.add("Has a silky smooth midrange jumper");
-        }
-        if (p.ratings.outsideShooting >= threshold) {
-            list.add("Is a great shooter from long range, will frustrate perimeter defenders");
-        }
-        if (p.ratings.passing >= threshold) {
-            list.add("A fantastic passer, finds the open man with ease");
-        }
-        if (p.ratings.handling >= threshold) {
-            list.add("Handles the ball very well, great dribbling skills");
-        }
-        if (p.ratings.steal >= threshold) {
-            list.add("A great pickpocket, has the ability to get steals on a nightly basis");
-        }
-        if (p.ratings.block >= threshold) {
-            list.add("Can block shots with the best of them");
-        }
-        if (p.ratings.insideDefense >= threshold) {
-            list.add("A true rim protector, plays interior defense at a high level");
-        }
-        if (p.ratings.perimeterDefense >= threshold) {
-            list.add("Great lateral quickness and defensive instincts, can shut down perimeter shooters");
-        }
-        if (p.ratings.rebounding >= threshold) {
-            list.add("Is a force on the boards, boxes out well and grabs rebounds");
-        }
-        return list;
-    }
-
-    private List<String> getWeaknesses(Player p) {
-        List<String> list = new ArrayList<>();
-        int threshold = 75;
-        if (p.ratings.potential <= threshold) {
-            list.add("Not much of a grower, isn't expected to improve much");
-        }
-        if (p.ratings.bballIQ <= threshold) {
-            list.add("He ain't come here to play school, doesn't have the best Basketball IQ");
-        }
-        if (p.ratings.insideShooting <= threshold) {
-            list.add("Not a great finisher at the rim");
-        }
-        if (p.ratings.midrangeShooting <= threshold) {
-            list.add("Doesn't have a midrange jumper to speak of");
-        }
-        if (p.ratings.outsideShooting <= threshold) {
-            list.add("Isn't a threat from downtown");
-        }
-        if (p.ratings.passing <= threshold) {
-            list.add("Doesn't have good court vision, isn't known as a passer");
-        }
-        if (p.ratings.handling <= threshold) {
-            list.add("Has bricks for hands, has a tendency to fumble the ball when dribbling");
-        }
-        /*
-        if (p.ratings.steal <= threshold) {
-            list.add("A great pickpocket, has the ability to get steals on a nightly basis");
-        }
-        if (p.ratings.block <= threshold) {
-            list.add("Can block shots with the best of them");
-        }
-        */
-        if (p.ratings.insideDefense <= threshold) {
-            list.add("Is a bit of a turnstile when defending the rim");
-        }
-        if (p.ratings.perimeterDefense <= threshold) {
-            list.add("Not known as a good perimeter defender");
-        }
-        if (p.ratings.rebounding <= threshold) {
-            list.add("Not a good rebounder");
-        }
-        return list;
-    }
-
-    private String getRandomPersonality() {
-        String[] personalities =
-                {
-                        "Known to be a joker in the locker room.",
-                        "He is all business on the court, takes the game very seriously.",
-                        "Grew up the son of an NBA player and has been around the game his whole life.",
-                        "Came from a very bad neighborhood, and used basketball to escape.",
-                        "Was a late bloomer in high school, didn't make the varsity team until his senior year.",
-                        "Was also a 5-star football prospect, but ultimately chose basketball.",
-                        "Tore his ACL in his junior year, but bounced back in a big way.",
-                        "Starred in a hit dunk highlight video (as the one being dunked on).",
-                        "Spends more time browsing reddit than watching film.",
-                        "Lost ten pounds in the last year.",
-                        "A great athlete and a great student. Had a 4.0 all through high school.",
-                        "He was 5'3\" until a growth spurt his junior year.",
-                        "Has a sweet tooth, eats candy bars during halftime.",
-                        "He wanted to be a track star but a foot injury kept him off that path.",
-                        "Is prolific on social media, has 50,000 Twitter followers.",
-                        "Wants to go to a school close to a Chik-Fil-A.",
-                        "Is known to play College Hoops Coach during class.",
-                        "Doesn't like to talk about practice.",
-                        "Has a burger named after him in his hometown.",
-                        "Shows tremendous flash and flair. Loves to put on a show.",
-                        "Likes to celebrate a lot on the court, and is very expressive.",
-                        "Started on his varsity team as a freshman.",
-                        "Has nerves of steel, good at making comebacks at the end of a game."
-                };
-        return personalities[(int)(Math.random()*personalities.length)];
     }
 
     public void finishRecruiting() {
@@ -834,6 +712,160 @@ public class RecruitingActivity extends AppCompatActivity {
             dialogLoading.dismiss();
             showImprovementsDialog();
         }
+    }
+
+    private List<String> getStrengths(Player p) {
+        List<String> list = new ArrayList<>();
+        int threshold = 90;
+        if (p.ratings.potential >= threshold) {
+            list.add("Has great potential, is likely to improve much during his college career");
+        }
+        if (p.ratings.bballIQ >= threshold) {
+            list.add("Is a student of the game, a very smart basketball player");
+        }
+        if (p.ratings.insideShooting >= threshold) {
+            list.add("Is a solid threat to drive to the basket for easy dunks and lay-ups");
+        }
+        if (p.ratings.midrangeShooting >= threshold) {
+            list.add("Has a silky smooth midrange jumper");
+        }
+        if (p.ratings.outsideShooting >= threshold) {
+            list.add("Is a great shooter from long range, will frustrate perimeter defenders");
+        }
+        if (p.ratings.passing >= threshold) {
+            list.add("A fantastic passer, finds the open man with ease");
+        }
+        if (p.ratings.handling >= threshold) {
+            list.add("Handles the ball very well, great dribbling skills");
+        }
+        if (p.ratings.steal >= threshold) {
+            list.add("A great pickpocket, has the ability to get steals on a nightly basis");
+        }
+        if (p.ratings.block >= threshold) {
+            list.add("Can block shots with the best of them");
+        }
+        if (p.ratings.insideDefense >= threshold) {
+            list.add("A true rim protector, plays interior defense at a high level");
+        }
+        if (p.ratings.perimeterDefense >= threshold) {
+            list.add("Great lateral quickness and defensive instincts, can shut down perimeter shooters");
+        }
+        if (p.ratings.rebounding >= threshold) {
+            list.add("Is a force on the boards, boxes out well and grabs rebounds");
+        }
+        return list;
+    }
+
+    private List<String> getWeaknesses(Player p) {
+        List<String> list = new ArrayList<>();
+        int threshold = 75;
+        if (p.ratings.potential <= threshold) {
+            list.add("Not much of a grower, isn't expected to improve much");
+        }
+        if (p.ratings.bballIQ <= threshold) {
+            list.add("He ain't come here to play school, doesn't have the best Basketball IQ");
+        }
+        if (p.ratings.insideShooting <= threshold) {
+            list.add("Not a great finisher at the rim");
+        }
+        if (p.ratings.midrangeShooting <= threshold) {
+            list.add("Doesn't have a midrange jumper to speak of");
+        }
+        if (p.ratings.outsideShooting <= threshold) {
+            list.add("Isn't a threat from downtown");
+        }
+        if (p.ratings.passing <= threshold) {
+            list.add("Doesn't have good court vision, isn't known as a passer");
+        }
+        if (p.ratings.handling <= threshold) {
+            list.add("Has bricks for hands, has a tendency to fumble the ball when dribbling");
+        }
+        if (p.ratings.insideDefense <= threshold) {
+            list.add("Is a bit of a turnstile when defending the rim");
+        }
+        if (p.ratings.perimeterDefense <= threshold) {
+            list.add("Not known as a good perimeter defender");
+        }
+        if (p.ratings.rebounding <= threshold) {
+            list.add("Not a good rebounder");
+        }
+        return list;
+    }
+
+    private void assignPersonality(Player p) {
+        int personality = (int)(15*Math.random());
+        if (personality == 0) {
+            // Hometown discount
+            recruitPersonalityMap.put(p, "Grew up a fan of the " + playerTeamName + ".");
+            recruitCostMap.put(p, (recruitCostMap.get(p)*3)/4);
+        } else if (personality == 1) {
+            // Hates your team
+            recruitPersonalityMap.put(p, "Has despised the " + playerTeamName + " since he was a child.");
+            recruitCostMap.put(p, (recruitCostMap.get(p)*4)/3);
+        } else if (personality > 7) {
+            recruitPersonalityMap.put(p, getAttributePersonality(p.ratings.getBestAttribute()));
+        } else {
+            recruitPersonalityMap.put(p, getRandomPersonality());
+        }
+    }
+
+    private String getAttributePersonality(String attribute) {
+        if (attribute.equals("Potential")) {
+            return "Has tremendous potential, is expected to improve greatly throughout his career.";
+        } else if (attribute.equals("BBall IQ")) {
+            return "Is an incredibly smart basketball player, the game comes naturally to him.";
+        } else if (attribute.equals("Inside Shooting")) {
+            return "Is a great threat inside the restricted area, known for acrobatic layups and high flying dunks.";
+        } else if (attribute.equals("Midrange Shooting")) {
+            return "Is money from midrange, 15 feet is his sweet spot.";
+        } else if (attribute.equals("Outside Shooting")) {
+            return "Made a name for himself as Dr. Splash, a long range assassin.";
+        } else if (attribute.equals("Passing")) {
+            return "He's no Magic Johnson, but his flashy passing certainly brings comparisons.";
+        } else if (attribute.equals("Stealing")) {
+            return "Watch your wallet, this player is known as the best pickpocket in his state.";
+        } else if (attribute.equals("Blocking")) {
+            return "Averaged 5 blocks and 3 finger wags per game as a senior.";
+        } else if (attribute.equals("Inside Defense")) {
+            return "Known simply as The Wall. Good luck laying the ball in against him.";
+        } else if (attribute.equals("Perimeter Defense")) {
+            return "A lock down perimeter defender, held 5 star prospects to season lows in high school.";
+        } else {
+            return getRandomPersonality();
+        }
+    }
+
+    private String getRandomPersonality() {
+        String[] personalities =
+                {
+                        "Known to be a joker in the locker room.",
+                        "He is all business on the court, takes the game very seriously.",
+                        "Grew up the son of an NBA player and has been around the game his whole life.",
+                        "Came from a very bad neighborhood, and used basketball to escape.",
+                        "Was a late bloomer in high school, didn't make the varsity team until his senior year.",
+                        "Was also a 5-star football prospect, but ultimately chose basketball.",
+                        "Tore his ACL in his junior year, but bounced back in a big way.",
+                        "Starred in a hit dunk highlight video (as the one being dunked on).",
+                        "Spends more time browsing reddit than watching film.",
+                        "Lost ten pounds in the last year.",
+                        "A great athlete and a great student. Had a 4.0 all through high school.",
+                        "He was 5'3\" until a growth spurt his junior year.",
+                        "Has a sweet tooth, eats candy bars during halftime.",
+                        "He wanted to be a track star but a foot injury kept him off that path.",
+                        "Is prolific on social media, has 50,000 Twitter followers.",
+                        "Wants to go to a school close to a Chik-Fil-A.",
+                        "Is known to play College Hoops Coach during class.",
+                        "Doesn't like to talk about practice.",
+                        "Has a burger named after him in his hometown.",
+                        "Shows tremendous flash and flair. Loves to put on a show.",
+                        "Likes to celebrate a lot on the court, and is very expressive.",
+                        "Started on his varsity team as a freshman.",
+                        "Has nerves of steel, good at making comebacks at the end of a game.",
+                        "Been dunking since the 8th grade, does windmills for fun.",
+                        "The son of Dwight Howard, wants to follow in his father's footsteps.",
+                        "Didn't play basketball until he was 15, but has been a natural ever since."
+                };
+        return personalities[(int)(Math.random()*personalities.length)];
     }
 
 }

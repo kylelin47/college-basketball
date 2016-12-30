@@ -17,6 +17,7 @@ import io.coachapps.collegebasketballcoach.MainActivity;
 import io.coachapps.collegebasketballcoach.R;
 import io.coachapps.collegebasketballcoach.basketballsim.Game;
 import io.coachapps.collegebasketballcoach.basketballsim.Team;
+import io.coachapps.collegebasketballcoach.util.DataDisplayer;
 
 /**
  * Adapter for displaying the list of games
@@ -60,7 +61,7 @@ public class GameScheduleListArrayAdapter extends ArrayAdapter<Game> {
             viewHolder = (ViewHolder) convertView.getTag();
         }
 
-        viewHolder.gameType.setText( gameSummary[0] );
+        viewHolder.gameType.setText( getGameTypeText(games.get(position).gameType, position) );
         viewHolder.viewGame.setText( gameSummary[1] );
         viewHolder.viewOpponent.setText( gameSummary[2] );
 
@@ -82,6 +83,8 @@ public class GameScheduleListArrayAdapter extends ArrayAdapter<Game> {
                 viewHolder.gameType.setTextColor(Color.parseColor("#347378"));
             } else if (games.get(position).gameType == Game.GameType.MARCH_MADNESS) {
                 viewHolder.gameType.setTextColor(Color.parseColor("#DD5600"));
+            } else {
+                viewHolder.gameType.setTextColor(Color.parseColor("#333333"));
             }
             viewHolder.gameType.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -117,6 +120,36 @@ public class GameScheduleListArrayAdapter extends ArrayAdapter<Game> {
         });
 
         return convertView;
+    }
+
+    private String getGameTypeText(Game.GameType gameType, int position) {
+        if (gameType.isConfTournament() && position >= 2) {
+            // Conferenct Tournament
+            if (games.get(position-1).gameType.isConfTournament() &&
+                    games.get(position-2).gameType.isConfTournament()) {
+                // Conference finals
+                return "Conf Finals";
+            } else if (games.get(position-1).gameType.isConfTournament()) {
+                // Conference semis
+                return "Conf Semis";
+            } else {
+                return "Conf Tourney";
+            }
+
+        } else if (gameType.isMarchMadness() && position >= 4) {
+            // March Madness
+            int round = 0;
+            for (int i = position; i > position - 5; i--) {
+                if (games.get(i).gameType.isMarchMadness()) {
+                    round++;
+                }
+            }
+            return DataDisplayer.getStringMarchMadnessRound(round);
+
+        } else {
+            // All others
+            return gameType.toString();
+        }
     }
 
     @Override

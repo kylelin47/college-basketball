@@ -497,7 +497,7 @@ public class Team {
         double chanceToSign = 0.25;
         if (!hasNeedsFilled) {
             for (Player p : recruits) {
-                if (getPosTotals(p.getPosition()) < 2) {
+                if (getPosTotals(p.getPosition()) < 2 && p.getOverall() < (prestige/2 + 50)) {
                     // Need this position
                     if (Math.random() < chanceToSign) {
                         // Choose him
@@ -508,7 +508,8 @@ public class Team {
         } else {
             for (Player p : recruits) {
                 if (getStrongestPosition() != p.getPosition() &&
-                        getPosTotals(p.getPosition()) < 3) {
+                        getPosTotals(p.getPosition()) < 3 &&
+                        p.getOverall() < (prestige/2 + 50)) {
                     // He could be useful
                     if (Math.random() < chanceToSign/2) {
                         // Choose him

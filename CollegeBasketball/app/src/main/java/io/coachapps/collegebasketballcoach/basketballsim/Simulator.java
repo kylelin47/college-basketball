@@ -11,13 +11,16 @@ import io.coachapps.collegebasketballcoach.util.LeagueEvents;
  * @author Achi Jones
  */
 public class Simulator {
+
+    private static final int HOME_COURT_FACTOR = 25;
+
     public Context context;
 
     public Simulator(Context c) {
         context = c;
     }
 
-    public FullGameResults playGame(Team home, Team away, int year, int week ) {
+    public FullGameResults playGame(Team home, Team away, int year, int week, Game.GameType gameType) {
         home.beginNewGame();
         away.beginNewGame();
         boolean poss_home = true;
@@ -40,16 +43,25 @@ public class Simulator {
         int[] matches_h = detectMismatch(home, away);
         int[] matches_a = detectMismatch(away, home);
 
+        Team homeAdvTeam = home;
+        double homeCourtAdvantage = 1;
+        if (gameType.isTournament()) {
+            if (home.pollScore < away.pollScore) {
+                homeAdvTeam = away;
+            }
+            homeCourtAdvantage = 0.3;
+        }
+
         double playTime = 0;
         while (playing) {
             if (poss_home) {
-                hscore += runPlay(home, away, matches_h, null);
+                hscore += runPlay(home, away, matches_h, null, homeAdvTeam, homeCourtAdvantage);
                 poss_away = true;
                 poss_home = false;
                 playTime = hspeed + 20 * Math.random();
                 matches_h = detectMismatch(home, away);
             } else if (poss_away) {
-                ascore += runPlay(away, home, matches_a, null);
+                ascore += runPlay(away, home, matches_a, null, homeAdvTeam, homeCourtAdvantage);
                 poss_away = false;
                 poss_home = true;
                 playTime = aspeed + 20 * Math.random();
@@ -97,7 +109,7 @@ public class Simulator {
      * @param matches array of mismatches, used to calculate who to pass the ball to
      * @return number of points scored by the offense (0, 2, or 3)
      */
-    public static int runPlay( Team offense, Team defense, int[] matches, StringBuilder gameLog ) {
+    public static int runPlay( Team offense, Team defense, int[] matches, StringBuilder gameLog, Team homeTeam, double homeCourtAdvantage ) {
         
         int off_tot_outd = offense.getPG().getOutD() + offense.getSG().getOutD() + offense.getSF().getOutD() + 
                            offense.getPF().getOutD() + offense.getC().getOutD();
@@ -153,7 +165,7 @@ public class Simulator {
                 }
             } else {
                 // whoPoss will shoot the ball
-                int points = takeShot(gameLog, whoPoss, whoDef, offense, defense, assister);
+                int points = takeShot(gameLog, whoPoss, whoDef, offense, defense, assister, homeTeam, homeCourtAdvantage);
                 if ( points > 0 ) {
                     // Made the shot!
                     if ( assister == whoPoss ) { // Can't pass to yourself
@@ -201,19 +213,28 @@ public class Simulator {
      * @param defender
      * @param defense
      * @param assister
+     * @param homeTeam
      * @return nubmer of points scored (0,2,3)
      */
-    private static int takeShot( StringBuilder gameLog, Player shooter, Player defender, Team offense, Team defense, Player assister ) {
-        int assBonus = 0;
+    private static int takeShot( StringBuilder gameLog, Player shooter, Player defender,
+                                 Team offense, Team defense, Player assister, Team homeTeam, double homecourtAdvantage ) {
+        double assBonus = 0;
         if ( assister != shooter ) {
             //shooter gets bonus for having a good passer
-            assBonus = (int)((float)(assister.getPass() - 75)/5);
+            assBonus = (double)(assister.getPass() - 75)/5;
         }
 
         //Log.i("Simulator", offense.getName() + " talent: " + offense.getOvrTalent());
         //Log.i("Simulator", defense.getName() + " talent: " + defense.getOvrTalent());
         // Hack so that better teams perform better :^)
-        assBonus += (offense.getOvrTalent() - defense.getOvrTalent())/10;
+        assBonus += (double)(offense.getOvrTalent() - defense.getOvrTalent())/15;
+
+        if (offense == homeTeam) {
+            //assBonus += (double)(offense.getPrestige() + HOME_COURT_FACTOR)/HOME_COURT_FACTOR;
+        } else {
+            // Only penalize so shooting percentages aren't bonkers
+            assBonus -= ((double)(offense.getPrestige() + HOME_COURT_FACTOR)/HOME_COURT_FACTOR) * homecourtAdvantage;
+        }
         
         double selShot = Math.random();
         //get intelligent tendencies based on mismatches
@@ -250,7 +271,7 @@ public class Simulator {
         } else if ( selShot < intelMidT && intelMidT >= 0 ) {
             //mid range shot
             int defMidD = (int)( defender.getOutD()*0.5 + defender.getIntD()*0.5 );
-            double chance = 30 + (float)shooter.getOutS()/3 + assBonus - (float)defMidD/7 +
+            double chance = 32 + (float)shooter.getOutS()/3 + assBonus - (float)defMidD/7 +
                     offense.getOffStrat().getMidrangeBonus() - defense.getDefStrat().getMidrangeBonus();
             if ( chance > Math.random()*100 ) {
                 //made the shot!
@@ -295,7 +316,7 @@ public class Simulator {
                 defenseBonus = (float)defense.getPF().getIntD()/25 + (float)defense.getC().getIntD()/25;
             }
 
-            double chance = 35 + (float)shooter.getIntS()/3 + assBonus - (float)defender.getIntD()/14 - defenseBonus +
+            double chance = 37 + (float)shooter.getIntS()/3 + assBonus - (float)defender.getIntD()/14 - defenseBonus +
                     offense.getOffStrat().getInsideBonus() - defense.getDefStrat().getInsideBonus();
             if ( chance > Math.random() * 100 ) {
                 //made the shot!

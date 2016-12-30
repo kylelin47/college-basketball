@@ -187,7 +187,9 @@ public class Player implements Serializable {
     }
     public int fatigueCalc(int rating) {
         if (gmStats != null) {
-            return (int) (rating * (1 - Math.pow(gmStats.secondsPlayed / 2400, 5)));
+            int fatRat = (int) (rating * (1 - Math.pow(gmStats.secondsPlayed / 2400, 5)));
+            if (fatRat < rating/2) fatRat = rating/2;
+            return fatRat;
         } else return rating;
     }
     public int getIntS() {

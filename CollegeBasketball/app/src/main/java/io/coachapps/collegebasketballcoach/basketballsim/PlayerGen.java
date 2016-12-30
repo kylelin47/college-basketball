@@ -53,7 +53,7 @@ public class PlayerGen {
     }
     
     public Player genPlayer( int position, int prestige, int year ) {
-        int def_rat    = 75;
+        int def_rat    = 70 + prestige/10;
         int height     = 78;
         int weight     = 200;
         int speed      = def_rat;

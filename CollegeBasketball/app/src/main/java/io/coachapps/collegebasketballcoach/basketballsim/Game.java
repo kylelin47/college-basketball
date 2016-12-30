@@ -28,6 +28,12 @@ public class Game {
         public boolean isTournament() {
             return (this == TOURNAMENT_GAME || this == MARCH_MADNESS);
         }
+        public boolean isConfTournament() {
+            return (this == TOURNAMENT_GAME);
+        }
+        public boolean isMarchMadness() {
+            return (this == MARCH_MADNESS);
+        }
     }
 
     private Team home;
@@ -161,7 +167,7 @@ public class Game {
     }
 
     public FullGameResults playGame(Simulator sim) {
-        FullGameResults result = sim.playGame(home, away, year, getWeek());
+        FullGameResults result = sim.playGame(home, away, year, getWeek(), gameType);
         homeScore = result.game.homeStats.stats.points;
         awayScore = result.game.awayStats.stats.points;
         beenPlayed = true;

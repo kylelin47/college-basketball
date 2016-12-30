@@ -349,6 +349,26 @@ public class DataDisplayer {
 
             return teamRankingsCSV;
 
+        } else if (category.equals("Conference Standings")) {
+            ArrayList<String> teamRankingsCSV = new ArrayList<>();
+            for (League.Conference conf : League.Conference.values()) {
+                List<Team> confTeams = league.getConference(conf);
+                Collections.sort(confTeams, new Comparator<Team>() {
+                    @Override
+                    public int compare(Team a, Team b) {
+                        return LeagueEvents.getRegularSeasonWins(b) - LeagueEvents.getRegularSeasonWins(a);
+                    }
+                });
+                teamRankingsCSV.add(" ," + conf.toString() + " Conference,Conf Wins");
+                for (int i = 0; i < confTeams.size(); ++i) {
+                    teamRankingsCSV.add(getRankStr(i+1) + "," +
+                            confTeams.get(i).getRankNameWLStr() + "," +
+                            LeagueEvents.getRegularSeasonWins(confTeams.get(i)));
+                }
+            }
+
+            return teamRankingsCSV;
+
         } else if (category.equals("Prestige")) {
             Collections.sort(sortedTeamList, new Comparator<Team>() {
                 @Override
@@ -537,5 +557,16 @@ public class DataDisplayer {
         BigDecimal bd = new BigDecimal(value);
         bd = bd.setScale(places, RoundingMode.HALF_UP);
         return bd.doubleValue();
+    }
+
+    public static String getStringMarchMadnessRound(int round) {
+        switch (round) {
+            case 1: return "March Madness";
+            case 2: return "Sweet Sixteen";
+            case 3: return "Elite Eight";
+            case 4: return "Final Four";
+            case 5: return "Championship";
+            default: return "March Madness";
+        }
     }
 }

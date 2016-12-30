@@ -28,6 +28,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.ViewFlipper;
 
+import java.io.EOFException;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -44,6 +45,7 @@ import io.coachapps.collegebasketballcoach.adapters.game.GameScheduleListArrayAd
 import io.coachapps.collegebasketballcoach.adapters.player.HallOfFameListArrayAdapter;
 import io.coachapps.collegebasketballcoach.adapters.player.LeagueLeadersListArrayAdapter;
 import io.coachapps.collegebasketballcoach.adapters.player.PlayerAwardTeamListArrayAdapter;
+import io.coachapps.collegebasketballcoach.adapters.player.PlayerAwardsListArrayAdapter;
 import io.coachapps.collegebasketballcoach.adapters.player.PlayerStatsListArrayAdapter;
 import io.coachapps.collegebasketballcoach.basketballsim.Game;
 import io.coachapps.collegebasketballcoach.basketballsim.GameSimThread;
@@ -996,40 +998,91 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void showHallOfFameDialog() {
-        try {
-            PlayerDao playerDao = new PlayerDao(this);
-            List<Player> hofPlayers = playerDao.getHoFPlayers();
+        final PlayerDao playerDao = new PlayerDao(this);
 
-            AlertDialog.Builder builder = new AlertDialog.Builder(this);
-            builder.setView(getLayoutInflater().inflate(R.layout.simple_list, null));
-            builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialog, int which) {
-                    dialog.dismiss();
-                }
-            });
-            builder.setTitle("Hall Of Fame");
-            final AlertDialog dialog = builder.create();
-            dialog.show();
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setView(getLayoutInflater().inflate(R.layout.spinner_list, null));
+        builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.dismiss();
+            }
+        });
+        builder.setTitle("Hall Of Fame");
+        final AlertDialog dialog = builder.create();
+        dialog.show();
 
-            final ListView listView = (ListView) dialog.findViewById(R.id.listView);
-            listView.setAdapter(new HallOfFameListArrayAdapter(this, hofPlayers,
-                    getYear(), playerTeam.getName()));
-            listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-                @Override
-                public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                    Player p = ((HallOfFameListArrayAdapter) listView
-                            .getAdapter()).getItem(position);
-                    YearlyPlayerStatsDao statsDao = new YearlyPlayerStatsDao(MainActivity.this);
-                    List<YearlyPlayerStats> stats = statsDao.getPlayerStatsFromYears(p.getId(), 2016, getYear());
-                    int year = getYear();
-                    if (stats.size() > 0) year = stats.get(stats.size() - 1).year;
-                    showPlayerDialog(p, p.teamName, year);
-                }
-            });
-        } catch (Exception e) {
-            Log.e("MainActivity", "Something went wrong when getting HoF");
+        final ListView listView = (ListView) dialog.findViewById(R.id.listView);
+        final Spinner spinner = (Spinner) dialog.findViewById(R.id.spinner);
+
+        final List<String> hofChoices = new ArrayList<>();
+        hofChoices.add("Hall of Fame");
+        hofChoices.add(playerTeam.getName());
+        List<Team> listAllTeams = league.getAllTeams();
+        Collections.sort(listAllTeams, new Comparator<Team>() {
+            @Override
+            public int compare(Team a, Team b) {
+                return a.getName().compareTo(b.getName());
+            }
+        });
+        for (Team t : listAllTeams) {
+            if (t != playerTeam) {
+                hofChoices.add(t.getName());
+            }
         }
+
+        ArrayAdapter<String> dataAdapter = new ArrayAdapter<>(this,
+                android.R.layout.simple_spinner_item, hofChoices);
+        dataAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spinner.setAdapter(dataAdapter);
+        spinner.setOnItemSelectedListener(
+                new AdapterView.OnItemSelectedListener() {
+                    public void onItemSelected(
+                            AdapterView<?> parent, View view, int position, long id) {
+                        // Look at the right category
+                        try {
+                            List<Player> hofPlayers;
+                            if (position == 0) {
+                                // All HoF Players
+                                hofPlayers = playerDao.getAllHoFPlayers();
+                            } else {
+                                // Just for one team
+                                hofPlayers = playerDao.getHoFPlayers(hofChoices.get(position));
+                            }
+
+                            if (hofPlayers.isEmpty()) {
+                                List<String> noPlayersList = new ArrayList<String>();
+                                noPlayersList.add("No players here yet!, ");
+                                listView.setAdapter(new PlayerAwardsListArrayAdapter(MainActivity.this, noPlayersList));
+                            } else {
+                                // Set adapter
+                                listView.setAdapter(new HallOfFameListArrayAdapter(MainActivity.this, hofPlayers,
+                                        getYear(), playerTeam.getName()));
+
+                                // Allow players to be clickable
+                                listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                                    @Override
+                                    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                                        Player p = ((HallOfFameListArrayAdapter) listView
+                                                .getAdapter()).getItem(position);
+                                        YearlyPlayerStatsDao statsDao = new YearlyPlayerStatsDao(MainActivity.this);
+                                        List<YearlyPlayerStats> stats = statsDao.getPlayerStatsFromYears(p.getId(), 2016, getYear());
+                                        int year = getYear();
+                                        if (stats.size() > 0)
+                                            year = stats.get(stats.size() - 1).year;
+                                        showPlayerDialog(p, p.teamName, year);
+                                    }
+                                });
+                            }
+                        } catch (Exception e) {
+                            Log.e("MainActivity", "Something went wrong when getting HoF");
+                        }
+                    }
+
+                    public void onNothingSelected(AdapterView<?> parent) {
+                        // do nothing
+                    }
+                });
     }
 
     public void showTeamRankingsDialog() {
@@ -1049,6 +1102,7 @@ public class MainActivity extends AppCompatActivity {
         final Spinner spinner = (Spinner) dialog.findViewById(R.id.spinner);
         final List<String> categoryList = new ArrayList<>();
         categoryList.add("Poll Votes");
+        categoryList.add("Conference Standings");
         categoryList.add("Prestige");
         for (String cat : DataDisplayer.getAllCategories()) {
             categoryList.add(DataDisplayer.getDescriptionCategory(cat));
@@ -1061,24 +1115,18 @@ public class MainActivity extends AppCompatActivity {
                 new AdapterView.OnItemSelectedListener() {
                     public void onItemSelected(
                             AdapterView<?> parent, View view, int position, long id) {
-                        if (position == 0) {
+                        if (position < 3) {
                             ArrayList<String> teamRankingsCSV =
                                     DataDisplayer.getTeamRankingsCSVs(league, MainActivity.this, getYear(),
-                                            "Poll Votes", true);
-                            listView.setAdapter(new TeamRankingsListArrayAdapter(MainActivity.this,
-                                    teamRankingsCSV, playerTeam.getRankNameWLStr()));
-                        } else if (position == 1) {
-                            ArrayList<String> teamRankingsCSV =
-                                    DataDisplayer.getTeamRankingsCSVs(league, MainActivity.this, getYear(),
-                                            "Prestige", true);
+                                            categoryList.get(position), true);
                             listView.setAdapter(new TeamRankingsListArrayAdapter(MainActivity.this,
                                     teamRankingsCSV, playerTeam.getRankNameWLStr()));
                         } else {
                             boolean higherIsBetter = false;
-                            if (position <= 14) higherIsBetter = true;
+                            if (position <= 15) higherIsBetter = true;
                             ArrayList<String> teamRankingsCSV =
                                     DataDisplayer.getTeamRankingsCSVs(league, MainActivity.this, getYear(),
-                                            DataDisplayer.getAllCategories()[position - 2], higherIsBetter);
+                                            DataDisplayer.getAllCategories()[position - 3], higherIsBetter);
                             listView.setAdapter(new TeamRankingsListArrayAdapter(MainActivity.this,
                                     teamRankingsCSV, playerTeam.getRankNameWLStr()));
                         }

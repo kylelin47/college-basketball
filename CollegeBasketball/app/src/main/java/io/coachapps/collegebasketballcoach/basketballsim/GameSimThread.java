@@ -160,18 +160,27 @@ public class GameSimThread extends Thread {
         gameEvents = new StringBuilder();
         gameLog = new StringBuilder();
 
+        Team homeAdvTeam = home;
+        double homeCourtAdvantage = 1;
+        if (gm.gameType.isTournament()) {
+            if (home.pollScore < away.pollScore) {
+                homeAdvTeam = away;
+            }
+            homeCourtAdvantage = 0.3;
+        }
+
         while (playing) {
             if (!isPaused) {
                 if (poss_home) {
                     matches_h = Simulator.detectMismatch(home, away);
-                    hscore += Simulator.runPlay(home, away, matches_h, gameEvents);
+                    hscore += Simulator.runPlay(home, away, matches_h, gameEvents, homeAdvTeam, homeCourtAdvantage);
                     poss_away = true;
                     poss_home = false;
 
                     playTime = hspeed + 20 * Math.random();
                 } else if (poss_away) {
                     matches_a = Simulator.detectMismatch(away, home);
-                    ascore += Simulator.runPlay(away, home, matches_a, gameEvents);
+                    ascore += Simulator.runPlay(away, home, matches_a, gameEvents, homeAdvTeam, homeCourtAdvantage);
                     poss_away = false;
                     poss_home = true;
 

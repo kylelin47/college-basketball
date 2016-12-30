@@ -37,4 +37,54 @@ public class PlayerRatings implements Serializable {
     public int getAggregateDefense() {
         return (block + insideDefense*3 + perimeterDefense*3 + steal)/8;
     }
+
+    public String getBestAttribute() {
+        int maxAttr = 94;
+        String strAttr = "";
+        if (potential > maxAttr) {
+            maxAttr = potential;
+            strAttr = "Potential";
+        }
+        if (bballIQ > maxAttr) {
+            maxAttr = bballIQ;
+            strAttr = "BBall IQ";
+        }
+        if (insideShooting > maxAttr) {
+            maxAttr = insideShooting;
+            strAttr = "Inside Shooting";
+        }
+        if (midrangeShooting > maxAttr) {
+            maxAttr = midrangeShooting;
+            strAttr = "Midrange Shooting";
+        }
+        if (outsideShooting > maxAttr) {
+            maxAttr = outsideShooting;
+            strAttr = "Outside Shooting";
+        }
+        if (passing > maxAttr) {
+            maxAttr = passing;
+            strAttr = "Passing";
+        }
+        if (steal > maxAttr) {
+            maxAttr = steal;
+            strAttr = "Stealing";
+        }
+        if (block > maxAttr) {
+            maxAttr = block;
+            strAttr = "Blocking";
+        }
+        if (insideDefense > maxAttr) {
+            maxAttr = insideDefense;
+            strAttr = "Inside Defense";
+        }
+        if (perimeterDefense > maxAttr) {
+            maxAttr = perimeterDefense;
+            strAttr = "Perimeter Defense";
+        }
+        if (rebounding > maxAttr) {
+            maxAttr = rebounding;
+            strAttr = "Rebounding";
+        }
+        return strAttr;
+    }
 }
