@@ -9,6 +9,7 @@
     <string name="action_league_history">League History</string>
     <string name="action_hall_of_fame">Hall Of Fame</string>
     <string name="action_season_awards">Season Awards</string>
+    <string name="action_filter">Filter Recruits</string>
     <string name="recruiting_loading_msg">
         "Finishing recruiting, signing walk-ons, and sending players to training camp. Please wait."
     </string>

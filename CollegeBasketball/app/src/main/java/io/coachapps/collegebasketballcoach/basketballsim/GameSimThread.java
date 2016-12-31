@@ -246,6 +246,18 @@ public class GameSimThread extends Thread {
         activity.runOnUiThread(new Runnable() {
             @Override
             public void run() {
+                // Update the button to say done
+                uiElements.buttonCallTimeout.setText("Done");
+                uiElements.buttonPause.setText("Done");
+            }
+        });
+
+    }
+
+    public void finishGame() {
+        activity.runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
                 if (hscore > ascore) {
                     home.wins++;
                     away.losses++;
@@ -268,14 +280,10 @@ public class GameSimThread extends Thread {
                 home.beginNewGame();
                 away.beginNewGame();
 
-                // Update the button to say done
                 ((MainActivity) activity).tryToScheduleTournaments(true);
                 ((MainActivity) activity).updateUI();
-                uiElements.buttonCallTimeout.setText("Done");
-                uiElements.buttonPause.setText("Done");
             }
         });
-
     }
 
     private List<Team> determineLatestWinners(List<Game> games) {

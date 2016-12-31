@@ -83,8 +83,6 @@ public class GameScheduleListArrayAdapter extends ArrayAdapter<Game> {
                 viewHolder.gameType.setTextColor(Color.parseColor("#347378"));
             } else if (games.get(position).gameType == Game.GameType.MARCH_MADNESS) {
                 viewHolder.gameType.setTextColor(Color.parseColor("#DD5600"));
-            } else {
-                viewHolder.gameType.setTextColor(Color.parseColor("#333333"));
             }
             viewHolder.gameType.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -92,6 +90,8 @@ public class GameScheduleListArrayAdapter extends ArrayAdapter<Game> {
                     mainAct.showBracketDialog(games.get(position).gameType);
                 }
             });
+        } else {
+            viewHolder.gameType.setTextColor(Color.parseColor("#333333"));
         }
 
         viewHolder.viewGame.setOnClickListener(new View.OnClickListener() {

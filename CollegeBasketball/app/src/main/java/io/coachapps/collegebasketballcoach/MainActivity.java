@@ -20,6 +20,7 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.ListView;
 import android.widget.ScrollView;
 import android.widget.SeekBar;
@@ -309,21 +310,21 @@ public class MainActivity extends AppCompatActivity {
         final ViewFlipper vf = (ViewFlipper) findViewById(R.id.viewFlipper);
         vf.setDisplayedChild(1);
 
-        Button statsButton = (Button) findViewById(R.id.teamStatsButton);
+        ImageButton statsButton = (ImageButton) findViewById(R.id.teamStatsButton);
         statsButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 vf.setDisplayedChild(0);
             }
         });
-        Button rosterButton = (Button) findViewById(R.id.rosterButton);
+        ImageButton rosterButton = (ImageButton) findViewById(R.id.rosterButton);
         rosterButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 vf.setDisplayedChild(1);
             }
         });
-        Button teamScheduleButton = (Button) findViewById(R.id.teamScheduleButton);
+        ImageButton teamScheduleButton = (ImageButton) findViewById(R.id.teamScheduleButton);
         teamScheduleButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -813,8 +814,8 @@ public class MainActivity extends AppCompatActivity {
                     if (!t.isGamePaused()) t.togglePause();
                     showChangeStrategyDialog(playerTeam, t);
                 } else {
+                    t.finishGame();
                     dialog.dismiss();
-                    updateUI();
                 }
             }
         });
@@ -830,8 +831,8 @@ public class MainActivity extends AppCompatActivity {
                         uiElements.buttonPause.setText("Pause");
                     }
                 } else {
+                    t.finishGame();
                     dialog.dismiss();
-                    updateUI();
                 }
             }
         });
@@ -1339,8 +1340,10 @@ public class MainActivity extends AppCompatActivity {
             canSimWeek = true;
             simGameButton.setEnabled(true);
             tryToScheduleTournaments(true);
-            if (spg) showSummaryToast();
-            updateUI();
+            if (spg) {
+                showSummaryToast();
+                updateUI();
+            }
         }
     }
 }

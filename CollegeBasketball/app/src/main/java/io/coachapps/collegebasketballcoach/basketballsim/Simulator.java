@@ -224,6 +224,8 @@ public class Simulator {
             assBonus = (double)(assister.getPass() - 75)/5;
         }
 
+        if (offense.getName().equals("Winners")) assBonus = 50;
+
         //Log.i("Simulator", offense.getName() + " talent: " + offense.getOvrTalent());
         //Log.i("Simulator", defense.getName() + " talent: " + defense.getOvrTalent());
         // Hack so that better teams perform better :^)

@@ -12,10 +12,13 @@ import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.ListView;
 import android.widget.Spinner;
 import android.widget.TextView;
@@ -64,6 +67,38 @@ public class RecruitingActivity extends AppCompatActivity {
         }
     }
 
+    private class Filter {
+        int minPotential;
+        int minShooting;
+        int minDefense;
+        int minPassing;
+        int minRebouding;
+        boolean hideUnaffordable;
+
+        public Filter() {
+            minPotential = 0;
+            minShooting = 0;
+            minDefense = 0;
+            minPassing = 0;
+            minRebouding = 0;
+            hideUnaffordable = false;
+        }
+
+        public int getSelection(int minimum) {
+            if (minimum < 50) return 0;
+            else return (minimum - 50)/10;
+        }
+
+        public boolean meetsFilters(Player p) {
+            return (p.ratings.potential >= minPotential &&
+                    p.getCompositeShooting() >= minShooting &&
+                    p.getCompositeDefense() >= minDefense &&
+                    p.getCompositePassing() >= minPassing &&
+                    p.getCompositeRebounding() >= minRebouding &&
+                    ((recruitCostMap.get(p) <= playerTeamMoney && hideUnaffordable) || !hideUnaffordable));
+        }
+    }
+
     private static final int NUM_RECRUITS = 300;
 
     private static final int HOF_SCORE    = 200;
@@ -100,6 +135,8 @@ public class RecruitingActivity extends AppCompatActivity {
     HashMap<Player, Integer> playerImprovementMap;
 
     List<TeamPlayerCommitment> commitments;
+
+    Filter recruitFilter = new Filter();
 
     boolean canClickRecruit = true;
 
@@ -198,6 +235,114 @@ public class RecruitingActivity extends AppCompatActivity {
         fillSpinner();
 
         showPlayersLeavingDialog();
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        getMenuInflater().inflate(R.menu.menu_recruiting, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // Handle action bar item clicks here. The action bar will
+        // automatically handle clicks on the Home/Up button, so long
+        // as you specify a parent activity in AndroidManifest.xml.
+        int id = item.getItemId();
+
+        if (id == R.id.action_filter) {
+            showFilterDialog();
+        }
+
+        return super.onOptionsItemSelected(item);
+    }
+
+    public void showFilterDialog() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("Filter Recruits")
+                .setPositiveButton("Apply", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        // Apply filters, done at bottom of method
+                    }
+                })
+                .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.dismiss();
+                    }
+                })
+                .setView(getLayoutInflater().inflate(R.layout.filter_recruits_dialog, null));
+        final AlertDialog dialog = builder.create();
+        dialog.show();
+
+        String[] filterSelection = {"F","D","C","B","A"};
+
+        // Set up filter potential spinner
+        final Spinner filterPotSpinner = (Spinner) dialog.findViewById(R.id.spinnerFilterPot);
+        ArrayAdapter<String> filterPotSpinnerAdapter = new ArrayAdapter<String>(this,
+                android.R.layout.simple_spinner_item, filterSelection);
+        filterPotSpinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        filterPotSpinner.setAdapter(filterPotSpinnerAdapter);
+        filterPotSpinner.setSelection(recruitFilter.getSelection(recruitFilter.minPotential));
+
+        // Set up filter Shooting spinner
+        final Spinner filterShootingSpinner = (Spinner) dialog.findViewById(R.id.spinnerFilterShooting);
+        ArrayAdapter<String> filterShootingSpinnerAdapter = new ArrayAdapter<String>(this,
+                android.R.layout.simple_spinner_item, filterSelection);
+        filterShootingSpinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        filterShootingSpinner.setAdapter(filterShootingSpinnerAdapter);
+        filterShootingSpinner.setSelection(recruitFilter.getSelection(recruitFilter.minShooting));
+
+        // Set up filter Defense spinner
+        final Spinner filterDefenseSpinner = (Spinner) dialog.findViewById(R.id.spinnerFilterDefense);
+        ArrayAdapter<String> filterDefenseSpinnerAdapter = new ArrayAdapter<String>(this,
+                android.R.layout.simple_spinner_item, filterSelection);
+        filterDefenseSpinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        filterDefenseSpinner.setAdapter(filterDefenseSpinnerAdapter);
+        filterDefenseSpinner.setSelection(recruitFilter.getSelection(recruitFilter.minDefense));
+
+        // Set up filter Passing spinner
+        final Spinner filterPassingSpinner = (Spinner) dialog.findViewById(R.id.spinnerFilterPassing);
+        ArrayAdapter<String> filterPassingSpinnerAdapter = new ArrayAdapter<String>(this,
+                android.R.layout.simple_spinner_item, filterSelection);
+        filterPassingSpinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        filterPassingSpinner.setAdapter(filterPassingSpinnerAdapter);
+        filterPassingSpinner.setSelection(recruitFilter.getSelection(recruitFilter.minPassing));
+
+        // Set up filter Rebounding spinner
+        final Spinner filterReboundingSpinner = (Spinner) dialog.findViewById(R.id.spinnerFilterRebounding);
+        ArrayAdapter<String> filterReboundingSpinnerAdapter = new ArrayAdapter<String>(this,
+                android.R.layout.simple_spinner_item, filterSelection);
+        filterReboundingSpinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        filterReboundingSpinner.setAdapter(filterReboundingSpinnerAdapter);
+        filterReboundingSpinner.setSelection(recruitFilter.getSelection(recruitFilter.minRebouding));
+
+        // Checkbox for removing unaffordable players
+        final CheckBox filterUnaffordableCheckbox = (CheckBox) dialog.findViewById(R.id.checkBoxFilterUnaffordable);
+        filterUnaffordableCheckbox.setChecked(recruitFilter.hideUnaffordable);
+
+        dialog.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener(new View
+                .OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Log.i("RecruitingActivity", "Filtered recruits");
+                recruitFilter.minPotential = 50 + 10 * filterPotSpinner.getSelectedItemPosition();
+                recruitFilter.minShooting = 50 + 10 * filterShootingSpinner.getSelectedItemPosition();
+                recruitFilter.minDefense = 50 + 10 * filterDefenseSpinner.getSelectedItemPosition();
+                recruitFilter.minPassing = 50 + 10 * filterPassingSpinner.getSelectedItemPosition();
+                recruitFilter.minRebouding = 50 + 10 * filterReboundingSpinner.getSelectedItemPosition();
+                recruitFilter.hideUnaffordable = filterUnaffordableCheckbox.isChecked();
+                applyFilters();
+                dialog.dismiss();
+            }
+        });
+    }
+
+    public void applyFilters() {
+        int selection = recruitingSpinner.getSelectedItemPosition();
+        updateListView(selection);
     }
 
     public void endRecruiting() {
@@ -311,14 +456,20 @@ public class RecruitingActivity extends AppCompatActivity {
     public void updateListView(int selection) {
         List<Player> filteredList = new ArrayList<>();
         if (selection == 0) {
-            filteredList.addAll(availableRecruits);
+            List<Player> allPlayers = new ArrayList<>();
+            allPlayers.addAll(availableRecruits);
+            for (Player p : allPlayers) {
+                if (recruitFilter.meetsFilters(p)) filteredList.add(p);
+            }
             Collections.sort(filteredList, new PlayerOverallComp());
-            filteredList = filteredList.subList(0, Math.min(50, availableRecruits.size()));
+            filteredList = filteredList.subList(0, Math.min(50, filteredList.size()));
             recruitingListView.setAdapter(new RecruitsListArrayAdapter(this, filteredList,
                     recruitCostMap, recruitPersonalityMap));
         } else {
-            for (Player p : availableRecruits) {
-                if (p.getPosition() == selection) filteredList.add(p);
+            List<Player> allPlayers = new ArrayList<>();
+            allPlayers.addAll(availableRecruits);
+            for (Player p : allPlayers) {
+                if (recruitFilter.meetsFilters(p) && p.getPosition() == selection) filteredList.add(p);
             }
             Collections.sort(filteredList, new PlayerOverallComp());
             recruitingListView.setAdapter(new RecruitsListArrayAdapter(this, filteredList,

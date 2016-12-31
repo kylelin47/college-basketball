@@ -429,8 +429,10 @@ public class LeagueEvents {
     public static int getRegularSeasonWins(Team team) {
         int regularSeasonWins = 0;
         for (Game game : team.gameSchedule) {
-            if (!(game.gameType.isTournament()) &&
-                    game.gameType == Game.GameType.REGULAR_SEASON && game.getWinner() == team) {
+            if (game != null && game.gameType != null &&
+                    !game.gameType.isTournament() &&
+                    game.gameType == Game.GameType.REGULAR_SEASON &&
+                    game.getWinner() == team) {
                 regularSeasonWins++;
             }
         }

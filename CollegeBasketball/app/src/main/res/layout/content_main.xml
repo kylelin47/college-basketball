@@ -47,31 +47,41 @@
             android:orientation="horizontal"
             android:gravity="center"
             android:paddingTop="5sp">
-            <Button
+            <ImageButton
                 android:text="Stats"
                 android:layout_width="0dip"
                 android:layout_weight="1"
                 android:layout_height="wrap_content"
-                android:id="@+id/teamStatsButton" />
-            <Button
-                android:text="Roster"
+                android:background="@drawable/button_shape_accent"
+                android:src="@drawable/ic_insert_chart_white_24dp"
+                android:id="@+id/teamStatsButton"
+                android:padding="5dp"/>
+            <ImageButton
                 android:layout_width="0dip"
                 android:layout_weight="1"
                 android:layout_height="wrap_content"
-                android:id="@+id/rosterButton" />
-            <Button
+                android:background="@drawable/button_shape_primary"
+                android:src="@drawable/ic_group_white_24dp"
+                android:id="@+id/rosterButton"
+                android:padding="5dp"
+                android:layout_marginStart="5dp"
+                android:layout_marginEnd="5dp"/>
+            <ImageButton
                 android:text="Games"
                 android:layout_width="0dip"
                 android:layout_weight="1"
                 android:layout_height="wrap_content"
-                android:id="@+id/teamScheduleButton" />
+                android:background="@drawable/button_shape_accent"
+                android:src="@drawable/ic_event_note_white_24dp"
+                android:id="@+id/teamScheduleButton"
+                android:padding="5dp" />
         </LinearLayout>
 
         <ViewFlipper xmlns:android="http://schemas.android.com/apk/res/android"
             android:id="@+id/viewFlipper"
             android:layout_width="match_parent"
             android:layout_height="0dip"
-            android:layout_weight="6">
+            android:layout_weight="7">
             <ListView
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
@@ -111,6 +121,7 @@
                     android:layout_height="match_parent"
                     android:id="@+id/playGameButton"
                     android:background="@drawable/button_shape_accent"
+                    android:drawableStart="@drawable/ic_play_arrow_white_24dp"
                     android:textColor="#ffffff"
                     android:layout_margin="5dp"/>
                 <Button
@@ -120,6 +131,7 @@
                     android:layout_height="match_parent"
                     android:id="@+id/simGameButton"
                     android:background="@drawable/button_shape_primary"
+                    android:drawableStart="@drawable/ic_computer_white_24dp"
                     android:textColor="#ffffff"
                     android:layout_margin="5dp"/>
             </LinearLayout>

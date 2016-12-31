@@ -134,6 +134,7 @@
                 android:text="Call Timeout"
                 android:id="@+id/buttonCallTimeout"
                 android:background="@drawable/button_shape_accent"
+                android:drawableStart="@drawable/ic_alarm_white_24dp"
                 android:textColor="#ffffff"
                 android:layout_margin="5dp"/>
             <Button
