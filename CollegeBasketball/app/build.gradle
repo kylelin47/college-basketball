@@ -9,8 +9,8 @@ android {
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
         minSdkVersion 19
         targetSdkVersion 24
-        versionCode 9
-        versionName "1.15"
+        versionCode 10
+        versionName "1.16"
     }
     buildTypes {
         release {

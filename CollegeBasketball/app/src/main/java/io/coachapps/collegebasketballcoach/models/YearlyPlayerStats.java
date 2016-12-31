@@ -28,8 +28,8 @@ public class YearlyPlayerStats {
 
     public int getMVPScore() {
         int games = gamesPlayed + 40;
-        return (int)((playerStats.points + playerStats.assists + playerStats.offensiveRebounds +
-                playerStats.defensiveRebounds)/games * getPG("FG%"));
+        return (int)((playerStats.points + playerStats.assists +
+                2*(playerStats.offensiveRebounds + playerStats.defensiveRebounds)/3)/games * getPG("FG%"));
     }
 
     public int getDPOYScore() {

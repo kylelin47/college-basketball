@@ -9,6 +9,11 @@
         android:title="@string/action_my_team"
         app:showAsAction="never" />
     <item
+        android:id="@+id/action_settings"
+        android:orderInCategory="100"
+        android:title="@string/action_settings"
+        app:showAsAction="never" />
+    <item
         android:id="@+id/action_set_lineup"
         android:orderInCategory="100"
         android:title="@string/action_set_lineup"

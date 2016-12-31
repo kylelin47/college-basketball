@@ -2,6 +2,7 @@
     <string name="app_name">College Hoops Coach</string>
     <string name="title_activity_main">MainActivity</string>
     <string name="action_my_team">Go To My Team</string>
+    <string name="action_settings">Settings</string>
     <string name="action_set_lineup">Set Lineup</string>
     <string name="action_set_strategy">Set Team Strategy</string>
     <string name="action_team_rankings">Team Rankings</string>

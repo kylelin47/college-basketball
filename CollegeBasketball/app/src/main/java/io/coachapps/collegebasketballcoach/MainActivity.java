@@ -19,6 +19,7 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ListView;
@@ -29,8 +30,13 @@ import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.ViewFlipper;
 
+import java.io.BufferedWriter;
 import java.io.EOFException;
+import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.OutputStreamWriter;
+import java.io.Writer;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -73,6 +79,7 @@ import io.coachapps.collegebasketballcoach.models.YearlyPlayerStats;
 import io.coachapps.collegebasketballcoach.models.YearlyTeamStats;
 import io.coachapps.collegebasketballcoach.util.DataDisplayer;
 import io.coachapps.collegebasketballcoach.util.LeagueEvents;
+import io.coachapps.collegebasketballcoach.util.Settings;
 
 public class MainActivity extends AppCompatActivity {
     Team playerTeam;
@@ -108,6 +115,8 @@ public class MainActivity extends AppCompatActivity {
 
     boolean shownMadeMissedConfDialog = false;
     boolean shownMadeMissedMarchDialog = false;
+
+    Settings settings;
 
     public void onBackPressed() {
         Intent myIntent = new Intent(MainActivity.this, StartActivity.class);
@@ -201,7 +210,7 @@ public class MainActivity extends AppCompatActivity {
             final Spinner spinnerConference = (Spinner) dialog.findViewById(R.id.spinnerConference);
             final EditText editTextTeamName = (EditText) dialog.findViewById(R.id.editTextTeamName);
 
-            List<String> difficultyList = new ArrayList<>();
+            final List<String> difficultyList = new ArrayList<>();
             difficultyList.add("Easy");
             difficultyList.add("Normal");
             difficultyList.add("Hard");
@@ -229,6 +238,17 @@ public class MainActivity extends AppCompatActivity {
                     Log.i("MainActivity", "Set team name");
                     String playerTeamName = editTextTeamName.getText().toString().trim();
                     if (playerTeamName.length() >= 3) {
+                        // Settings file, default settings
+                        File settingsFile = new File(getFilesDir(), "settings");
+                        try (Writer writer = new BufferedWriter(new OutputStreamWriter(
+                                new FileOutputStream(settingsFile), "utf-8"))) {
+                            writer.write("Difficulty " + spinnerDifficulty.getSelectedItemPosition() + "\n");
+                            writer.write("Toasts 1");
+                        } catch (Exception e) {
+                            System.out.println(e.toString());
+                        }
+                        settings = new Settings(settingsFile);
+
                         dialog.getButton(DialogInterface.BUTTON_POSITIVE).setEnabled(false);
                         league = new League(playerTeamName, MainActivity.this, playerGen,
                                 spinnerDifficulty.getSelectedItemPosition(),
@@ -246,46 +266,9 @@ public class MainActivity extends AppCompatActivity {
                 }
             });
 
-            /*
-            AlertDialog.Builder builder = new AlertDialog.Builder(this);
-            builder.setTitle("Input Your Team Name");
-            final EditText input = new EditText(this);
-            input.setHint("3 or more characters");
-            input.setInputType(InputType.TYPE_CLASS_TEXT);
-            builder.setView(input);
-            builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialog, int which) {
-                    // do nothing
-                }
-            });
-            builder.setCancelable(false);
-            final AlertDialog dialog = builder.show();
-            dialog.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener(new View
-                    .OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    Log.i("MainActivity", "Set team name");
-                    String playerTeamName = input.getText().toString().trim();
-                    if (playerTeamName.length() >= 3) {
-                        dialog.getButton(DialogInterface.BUTTON_POSITIVE).setEnabled(false);
-                        league = new League(playerTeamName, MainActivity.this, playerGen);
-                        currentConferenceTeamList = league.getPlayerConference();
-                        setEverythingUp();
-                        teamDao.saveTeams(league.getAllTeams(), playerTeamName);
-                        playerTeam.sortPlayersOvrPosition();
-                        PlayerDao pd = new PlayerDao(MainActivity.this);
-                        for (Player p : playerTeam.players) {
-                            pd.updatePlayerRatings(p.getId(), p.ratings);
-                        }
-                        dialog.dismiss();
-                    }
-                }
-            });
-            */
-
 
         } else {
+            settings = new Settings(new File(getFilesDir(), "settings"));
             playerTeam = league.getPlayerTeam();
             playerTeam.sortPlayersOvrPosition();
             PlayerDao playerDao = new PlayerDao(this);
@@ -445,11 +428,15 @@ public class MainActivity extends AppCompatActivity {
         } else if (id == R.id.action_season_awards) {
             if (doneWithSeason) {
                 showEndOfSeasonDialog();
+            } else {
+                showPOTYWatchDialog();
             }
         } else if (id == R.id.action_league_history) {
             showLeagueHistoryDialog();
         } else if (id == R.id.action_hall_of_fame) {
             showHallOfFameDialog();
+        } if (id == R.id.action_settings) {
+            showSettingsDialog();
         }
 
         return super.onOptionsItemSelected(item);
@@ -544,7 +531,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void showSummaryToast() {
-        if (playerTeam.getNumGamesPlayed() > numGamesPlayerTeam) {
+        if (settings.areToastsEnabled() && playerTeam.getNumGamesPlayed() > numGamesPlayerTeam) {
             Toast.makeText(MainActivity.this, playerTeam.getLastGameSummary(),
                     Toast.LENGTH_SHORT).show();
         }
@@ -1201,6 +1188,48 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
+    public void showPOTYWatchDialog() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setView(getLayoutInflater().inflate(R.layout.simple_list, null));
+        builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.dismiss();
+            }
+        });
+        builder.setTitle("Player of the Year Watch");
+        final AlertDialog dialog = builder.create();
+        dialog.show();
+
+        YearlyPlayerStatsDao yps = new YearlyPlayerStatsDao(this);
+        List<YearlyPlayerStats> playerStatsList = yps.getAllYearlyPlayerStats(getYear());
+        Collections.sort(playerStatsList, new Comparator<YearlyPlayerStats>() {
+            @Override
+            public int compare(YearlyPlayerStats a, YearlyPlayerStats b) {
+                return b.getMVPScore() - a.getMVPScore();
+            }
+        });
+        playerStatsList = playerStatsList.subList(0, Math.min(playerStatsList.size(), 5));
+
+        List<Player> awardWinners = new ArrayList<>();
+        for (YearlyPlayerStats stats : playerStatsList) {
+            awardWinners.add(playerMap.get(stats.playerId));
+        }
+
+        final ListView listView = (ListView) dialog.findViewById(R.id.listView);
+        listView.setAdapter(new PlayerAwardTeamListArrayAdapter(
+                MainActivity.this, awardWinners, playerTeamMap, getYear(),
+                playerTeam.getRankNameWLStr()));
+        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                Player p = ((PlayerAwardTeamListArrayAdapter) listView
+                        .getAdapter()).getItem(position);
+                showPlayerDialog(p);
+            }
+        });
+    }
+
     public void showEndOfSeasonDialog() {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setView(getLayoutInflater().inflate(R.layout.spinner_list, null));
@@ -1345,5 +1374,43 @@ public class MainActivity extends AppCompatActivity {
                 updateUI();
             }
         }
+    }
+
+    public void showSettingsDialog() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("Settings")
+                .setPositiveButton("Apply", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        // Apply filters, done at bottom of method
+                    }
+                })
+                .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.dismiss();
+                    }
+                })
+                .setView(getLayoutInflater().inflate(R.layout.settings_dialog, null));
+        final AlertDialog dialog = builder.create();
+        dialog.show();
+
+        String[] difficulties = {"Easy", "Normal", "Hard"};
+
+        TextView difficultyTextView = (TextView) dialog.findViewById(R.id.textViewDifficulty);
+        difficultyTextView.setText(difficulties[settings.getDifficulty()]);
+
+        final CheckBox enableToastsCheckBox = (CheckBox) dialog.findViewById(R.id.checkBoxEnableToasts);
+        enableToastsCheckBox.setChecked(settings.areToastsEnabled());
+
+        dialog.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener(new View
+                .OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                settings.setEnableToasts(enableToastsCheckBox.isChecked());
+                settings.saveSettings(new File(getFilesDir(), "settings"));
+                dialog.dismiss();
+            }
+        });
     }
 }
