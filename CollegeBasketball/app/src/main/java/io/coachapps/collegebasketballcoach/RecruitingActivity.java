@@ -702,6 +702,13 @@ public class RecruitingActivity extends AppCompatActivity {
                 canClickRecruit = true;
             }
         });
+        builder.setOnCancelListener(new DialogInterface.OnCancelListener() {
+            @Override
+            public void onCancel(DialogInterface dialog) {
+                //do whatever you want the back key to do
+                canClickRecruit = true;
+            }
+        });
         final AlertDialog dialog = builder.create();
         dialog.show();
 
