@@ -15,6 +15,7 @@ import java.util.List;
 import io.coachapps.collegebasketballcoach.basketballsim.Game;
 import io.coachapps.collegebasketballcoach.basketballsim.League;
 import io.coachapps.collegebasketballcoach.basketballsim.Team;
+import io.coachapps.collegebasketballcoach.db.LeagueResultsEntryDao;
 import io.coachapps.collegebasketballcoach.db.YearlyTeamStatsDao;
 import io.coachapps.collegebasketballcoach.models.LeagueResults;
 import io.coachapps.collegebasketballcoach.models.YearlyPlayerStats;
@@ -112,19 +113,19 @@ public class DataDisplayer {
         }
         Team team = league.getTeam(teamName);
         ArrayList<String> teamStatsCSVs = new ArrayList<>();
-        teamStatsCSVs.add(",,Rank");
+        teamStatsCSVs.add(" > >Rank");
         if (statsOfSelectedTeam == null)  {
-            teamStatsCSVs.add("0 - 0,Wins - Losses,N/A");
-            teamStatsCSVs.add("0.0,Points Per Game,N/A");
-            teamStatsCSVs.add("0.0,Assists Per Game,N/A");
-            teamStatsCSVs.add("0.0,Rebounds Per Game,N/A");
-            teamStatsCSVs.add("0.0,Steals Per Game,N/A");
-            teamStatsCSVs.add("0.0,Blocks Per Game,N/A");
-            teamStatsCSVs.add("0.0,Turnovers Per Game,N/A");
-            teamStatsCSVs.add("0.0,FGM Per Game,N/A");
-            teamStatsCSVs.add("0.0,FGA Per Game,N/A");
-            teamStatsCSVs.add("0.0,3FGM Per Game,N/A");
-            teamStatsCSVs.add("0.0,3FGA Per Game,N/A");
+            teamStatsCSVs.add("0 - 0>Wins - Losses>N/A");
+            teamStatsCSVs.add("0.0>Points Per Game>N/A");
+            teamStatsCSVs.add("0.0>Assists Per Game>N/A");
+            teamStatsCSVs.add("0.0>Rebounds Per Game>N/A");
+            teamStatsCSVs.add("0.0>Steals Per Game>N/A");
+            teamStatsCSVs.add("0.0>Blocks Per Game>N/A");
+            teamStatsCSVs.add("0.0>Turnovers Per Game>N/A");
+            teamStatsCSVs.add("0.0>FGM Per Game>N/A");
+            teamStatsCSVs.add("0.0>FGA Per Game>N/A");
+            teamStatsCSVs.add("0.0>3FGM Per Game>N/A");
+            teamStatsCSVs.add("0.0>3FGA Per Game>N/A");
             return teamStatsCSVs;
         }
         int highestIndex = currentTeamStats.indexOf(statsOfSelectedTeam);
@@ -132,12 +133,12 @@ public class DataDisplayer {
         while (highestIndex >= 0 && currentTeamStats.get(highestIndex).wins == statsOfSelectedTeam.wins) {
             highestIndex--;
         }
-        teamStatsCSVs.add(statsOfSelectedTeam.wins + " - " + statsOfSelectedTeam.losses + ",Wins " +
-                "- Losses," + getRankStr(highestIndex + 2));
+        teamStatsCSVs.add(statsOfSelectedTeam.wins + " - " + statsOfSelectedTeam.losses + ">Wins " +
+                "- Losses>" + getRankStr(highestIndex + 2));
 
         if (team != null) {
-            teamStatsCSVs.add(team.pollScore + ",Poll Votes," + getRankStr(team.pollRank));
-            teamStatsCSVs.add(team.prestige + ",Prestige," + getRankStr(league.getPrestigeRank(teamName)));
+            teamStatsCSVs.add(team.pollScore + ">Poll Votes>" + getRankStr(team.pollRank));
+            teamStatsCSVs.add(team.prestige + ">Prestige>" + getRankStr(league.getPrestigeRank(teamName)));
         }
 
 
@@ -149,7 +150,7 @@ public class DataDisplayer {
                 return right.points < left.points ? -1 : left.points == right.points ? 0 : 1;
             }
         });
-        teamStatsCSVs.add(statsOfSelectedTeam.getPGDisplay("PPG") + ",Points Per Game," +
+        teamStatsCSVs.add(statsOfSelectedTeam.getPGDisplay("PPG") + ">Points Per Game>" +
                 getRankStr(currentTeamStats.indexOf(statsOfSelectedTeam) + 1));
 
         Collections.sort(currentTeamStats, new Comparator<YearlyTeamStats>() {
@@ -158,7 +159,7 @@ public class DataDisplayer {
                 return right.opp_points < left.opp_points ? 1 : left.opp_points == right.opp_points ? 0 : -1;
             }
         });
-        teamStatsCSVs.add(statsOfSelectedTeam.getPGDisplay("OPPG") + ",Opp Points Per Game," +
+        teamStatsCSVs.add(statsOfSelectedTeam.getPGDisplay("OPPG") + ">Opp Points Per Game>" +
                 getRankStr(currentTeamStats.indexOf(statsOfSelectedTeam) + 1));
 
         Collections.sort(currentTeamStats, new Comparator<YearlyTeamStats>() {
@@ -167,7 +168,7 @@ public class DataDisplayer {
                 return right.assists < left.assists ? -1 : left.assists == right.assists ? 0 : 1;
             }
         });
-        teamStatsCSVs.add(statsOfSelectedTeam.getPGDisplay("APG") + ",Assists Per Game," +
+        teamStatsCSVs.add(statsOfSelectedTeam.getPGDisplay("APG") + ">Assists Per Game>" +
                 getRankStr(currentTeamStats.indexOf(statsOfSelectedTeam) + 1));
 
         Collections.sort(currentTeamStats, new Comparator<YearlyTeamStats>() {
@@ -176,7 +177,7 @@ public class DataDisplayer {
                 return right.rebounds < left.rebounds ? -1 : left.rebounds == right.rebounds ? 0 : 1;
             }
         });
-        teamStatsCSVs.add(statsOfSelectedTeam.getPGDisplay("RPG") + ",Rebounds Per Game," +
+        teamStatsCSVs.add(statsOfSelectedTeam.getPGDisplay("RPG") + ">Rebounds Per Game>" +
                 getRankStr(currentTeamStats.indexOf(statsOfSelectedTeam) + 1));
 
         Collections.sort(currentTeamStats, new Comparator<YearlyTeamStats>() {
@@ -185,7 +186,7 @@ public class DataDisplayer {
                 return right.steals < left.steals ? -1 : left.steals == right.steals ? 0 : 1;
             }
         });
-        teamStatsCSVs.add(statsOfSelectedTeam.getPGDisplay("SPG") + ",Steals Per Game," +
+        teamStatsCSVs.add(statsOfSelectedTeam.getPGDisplay("SPG") + ">Steals Per Game>" +
                 getRankStr(currentTeamStats.indexOf(statsOfSelectedTeam) + 1));
 
         Collections.sort(currentTeamStats, new Comparator<YearlyTeamStats>() {
@@ -194,7 +195,7 @@ public class DataDisplayer {
                 return right.blocks < left.blocks ? -1 : left.blocks == right.blocks ? 0 : 1;
             }
         });
-        teamStatsCSVs.add(statsOfSelectedTeam.getPGDisplay("BPG") + ",Blocks Per Game," +
+        teamStatsCSVs.add(statsOfSelectedTeam.getPGDisplay("BPG") + ">Blocks Per Game>" +
                 getRankStr(currentTeamStats.indexOf(statsOfSelectedTeam) + 1));
 
         Collections.sort(currentTeamStats, new Comparator<YearlyTeamStats>() {
@@ -203,7 +204,7 @@ public class DataDisplayer {
                 return right.turnovers < left.turnovers ? 1 : left.turnovers == right.turnovers ? 0 : -1;
             }
         });
-        teamStatsCSVs.add(statsOfSelectedTeam.getPGDisplay("TPG") + ",Turnovers Per Game," +
+        teamStatsCSVs.add(statsOfSelectedTeam.getPGDisplay("TPG") + ">Turnovers Per Game>" +
                 getRankStr(currentTeamStats.indexOf(statsOfSelectedTeam) + 1));
 
         Collections.sort(currentTeamStats, new Comparator<YearlyTeamStats>() {
@@ -212,7 +213,7 @@ public class DataDisplayer {
                 return right.fgm < left.fgm ? -1 : left.fgm == right.fgm ? 0 : 1;
             }
         });
-        teamStatsCSVs.add(statsOfSelectedTeam.getPGDisplay("FGMPG") + ",FGM Per Game," +
+        teamStatsCSVs.add(statsOfSelectedTeam.getPGDisplay("FGMPG") + ">FGM Per Game>" +
                 getRankStr(currentTeamStats.indexOf(statsOfSelectedTeam) + 1));
 
         Collections.sort(currentTeamStats, new Comparator<YearlyTeamStats>() {
@@ -221,7 +222,7 @@ public class DataDisplayer {
                 return right.fga < left.fga ? -1 : left.fga == right.fga ? 0 : 1;
             }
         });
-        teamStatsCSVs.add(statsOfSelectedTeam.getPGDisplay("FGAPG") + ",FGA Per Game," +
+        teamStatsCSVs.add(statsOfSelectedTeam.getPGDisplay("FGAPG") + ">FGA Per Game>" +
                 getRankStr(currentTeamStats.indexOf(statsOfSelectedTeam) + 1));
 
         Collections.sort(currentTeamStats, new Comparator<YearlyTeamStats>() {
@@ -230,7 +231,7 @@ public class DataDisplayer {
                 return right.getFGP() < left.getFGP() ? -1 : left.getFGP() == right.getFGP() ? 0 : 1;
             }
         });
-        teamStatsCSVs.add(statsOfSelectedTeam.getFGPStr() + "%,Field Goal Percentage," +
+        teamStatsCSVs.add(statsOfSelectedTeam.getFGPStr() + "%>Field Goal Percentage>" +
                 getRankStr(currentTeamStats.indexOf(statsOfSelectedTeam) + 1));
 
         Collections.sort(currentTeamStats, new Comparator<YearlyTeamStats>() {
@@ -239,7 +240,7 @@ public class DataDisplayer {
                 return right.threePM < left.threePM ? -1 : left.threePM == right.threePM ? 0 : 1;
             }
         });
-        teamStatsCSVs.add(statsOfSelectedTeam.getPGDisplay("3FGMPG") + ",3FGM Per Game," +
+        teamStatsCSVs.add(statsOfSelectedTeam.getPGDisplay("3FGMPG") + ">3FGM Per Game>" +
                 getRankStr(currentTeamStats.indexOf(statsOfSelectedTeam) + 1));
 
         Collections.sort(currentTeamStats, new Comparator<YearlyTeamStats>() {
@@ -248,7 +249,7 @@ public class DataDisplayer {
                 return right.threePA < left.threePA ? -1 : left.threePA == right.threePA ? 0 : 1;
             }
         });
-        teamStatsCSVs.add(statsOfSelectedTeam.getPGDisplay("3FGAPG") + ",3FGA Per Game," +
+        teamStatsCSVs.add(statsOfSelectedTeam.getPGDisplay("3FGAPG") + ">3FGA Per Game>" +
                 getRankStr(currentTeamStats.indexOf(statsOfSelectedTeam) + 1));
 
         Collections.sort(currentTeamStats, new Comparator<YearlyTeamStats>() {
@@ -257,7 +258,7 @@ public class DataDisplayer {
                 return right.get3FGP() < left.get3FGP() ? -1 : left.get3FGP() == right.get3FGP() ? 0 : 1;
             }
         });
-        teamStatsCSVs.add(statsOfSelectedTeam.get3FGPStr() + "%,3 Point Percentage," +
+        teamStatsCSVs.add(statsOfSelectedTeam.get3FGPStr() + "%>3 Point Percentage>" +
                 getRankStr(currentTeamStats.indexOf(statsOfSelectedTeam) + 1));
 
         /*
@@ -267,7 +268,7 @@ public class DataDisplayer {
                 return right.fgm < left.fgm ? 1 : left.fgm == right.fgm ? 0 : -1;
             }
         });
-        teamStatsCSVs.add(statsOfSelectedTeam.getPGDisplay("OFGMPG") + ",Opp FGM Per Game," +
+        teamStatsCSVs.add(statsOfSelectedTeam.getPGDisplay("OFGMPG") + ">Opp FGM Per Game>" +
                 getRankStr(currentTeamStats.indexOf(statsOfSelectedTeam) + 1));
 
         Collections.sort(currentTeamStats, new Comparator<YearlyTeamStats>() {
@@ -276,7 +277,7 @@ public class DataDisplayer {
                 return right.fga < left.fga ? 1 : left.fga == right.fga ? 0 : -1;
             }
         });
-        teamStatsCSVs.add(statsOfSelectedTeam.getPGDisplay("OFGAPG") + ",Opp FGA Per Game," +
+        teamStatsCSVs.add(statsOfSelectedTeam.getPGDisplay("OFGAPG") + ">Opp FGA Per Game>" +
                 getRankStr(currentTeamStats.indexOf(statsOfSelectedTeam) + 1));
         */
 
@@ -286,7 +287,7 @@ public class DataDisplayer {
                 return right.getOFGP() < left.getOFGP() ? 1 : left.getOFGP() == right.getOFGP() ? 0 : -1;
             }
         });
-        teamStatsCSVs.add(statsOfSelectedTeam.getOFGPStr() + "%,Opp Field Goal Percentage," +
+        teamStatsCSVs.add(statsOfSelectedTeam.getOFGPStr() + "%>Opp Field Goal Percentage>" +
                 getRankStr(currentTeamStats.indexOf(statsOfSelectedTeam) + 1));
 
         /*
@@ -296,7 +297,7 @@ public class DataDisplayer {
                 return right.threePM < left.threePM ? 1 : left.threePM == right.threePM ? 0 : -1;
             }
         });
-        teamStatsCSVs.add(statsOfSelectedTeam.getPGDisplay("O3FGMPG") + ",Opp 3FGM Per Game," +
+        teamStatsCSVs.add(statsOfSelectedTeam.getPGDisplay("O3FGMPG") + ">Opp 3FGM Per Game>" +
                 getRankStr(currentTeamStats.indexOf(statsOfSelectedTeam) + 1));
 
         Collections.sort(currentTeamStats, new Comparator<YearlyTeamStats>() {
@@ -305,7 +306,7 @@ public class DataDisplayer {
                 return right.threePA < left.threePA ? 1 : left.threePA == right.threePA ? 0 : -1;
             }
         });
-        teamStatsCSVs.add(statsOfSelectedTeam.getPGDisplay("O3FGAPG") + ",Opp 3FGA Per Game," +
+        teamStatsCSVs.add(statsOfSelectedTeam.getPGDisplay("O3FGAPG") + ">Opp 3FGA Per Game>" +
                 getRankStr(currentTeamStats.indexOf(statsOfSelectedTeam) + 1));
         */
 
@@ -315,7 +316,7 @@ public class DataDisplayer {
                 return right.getO3FGP() < left.getO3FGP() ? 1 : left.getO3FGP() == right.getO3FGP() ? 0 : -1;
             }
         });
-        teamStatsCSVs.add(statsOfSelectedTeam.getO3FGPStr() + "%,Opp 3 Point Percentage," +
+        teamStatsCSVs.add(statsOfSelectedTeam.getO3FGPStr() + "%>Opp 3 Point Percentage>" +
                 getRankStr(currentTeamStats.indexOf(statsOfSelectedTeam) + 1));
 
         return teamStatsCSVs;
@@ -432,19 +433,48 @@ public class DataDisplayer {
 
         if (homeStats != null && awayStats != null) {
             ArrayList<String> stats = new ArrayList<>();
-            stats.add(gm.getAway().getName() + ", ," + gm.getHome().getName());
-            stats.add(awayStats.getPGDisplay("PPG") + ",Points Per Game," + homeStats.getPGDisplay("PPG"));
-            stats.add(awayStats.getPGDisplay("OPPG") + ",Opp Points Per Game," + homeStats.getPGDisplay("OPPG"));
-            stats.add(awayStats.getPGDisplay("FG%") + ",Field Goal Percentage," + homeStats.getPGDisplay("FG%"));
-            stats.add(awayStats.getPGDisplay("OFG%") + ",Opp Field Goal Percentage," + homeStats.getPGDisplay("OFG%"));
-            stats.add(awayStats.getPGDisplay("3FG%") + ",3 Point Percentage," + homeStats.getPGDisplay("3FG%"));
-            stats.add(awayStats.getPGDisplay("O3FG%") + ",Opp 3 Point Percentage," + homeStats.getPGDisplay("O3FG%"));
-            stats.add(awayStats.getPGDisplay("RPG") + ",Rebounds Per Game," + homeStats.getPGDisplay("RPG"));
-            stats.add(awayStats.getPGDisplay("APG") + ",Assists Per Game," + homeStats.getPGDisplay("APG"));
+            stats.add(gm.getAway().getName() + "> >" + gm.getHome().getName());
+            stats.add(awayStats.getPGDisplay("PPG") + ">Points Per Game>" + homeStats.getPGDisplay("PPG"));
+            stats.add(awayStats.getPGDisplay("OPPG") + ">Opp Points Per Game>" + homeStats.getPGDisplay("OPPG"));
+            stats.add(awayStats.getPGDisplay("FG%") + ">Field Goal Percentage>" + homeStats.getPGDisplay("FG%"));
+            stats.add(awayStats.getPGDisplay("OFG%") + ">Opp Field Goal Percentage>" + homeStats.getPGDisplay("OFG%"));
+            stats.add(awayStats.getPGDisplay("3FG%") + ">3 Point Percentage>" + homeStats.getPGDisplay("3FG%"));
+            stats.add(awayStats.getPGDisplay("O3FG%") + ">Opp 3 Point Percentage>" + homeStats.getPGDisplay("O3FG%"));
+            stats.add(awayStats.getPGDisplay("RPG") + ">Rebounds Per Game>" + homeStats.getPGDisplay("RPG"));
+            stats.add(awayStats.getPGDisplay("APG") + ">Assists Per Game>" + homeStats.getPGDisplay("APG"));
             return stats;
         } else {
             return new ArrayList<>();
         }
+    }
+
+    public static ArrayList<String> getChampTeamRankingsCSV(LeagueResultsEntryDao historyDao, int year) {
+        final HashMap<String, Integer> teamChamps = new HashMap<>();
+        List<LeagueResults> allResults =  historyDao.getLeagueResults(2016, year);
+        for (LeagueResults results : allResults) {
+            if (teamChamps.containsKey(results.championTeamName)) {
+                teamChamps.put(results.championTeamName,
+                        teamChamps.get(results.championTeamName) + 1);
+            } else {
+                teamChamps.put(results.championTeamName, 1);
+            }
+        }
+
+        ArrayList<String> listTeams = new ArrayList<>(teamChamps.keySet());
+        Collections.sort(listTeams, new Comparator<String>() {
+            @Override
+            public int compare(String a, String b) {
+                return teamChamps.get(b) - teamChamps.get(a);
+            }
+        });
+
+        ArrayList<String> ranksCSV = new ArrayList<>();
+        for (int i = 0; i < listTeams.size(); ++i) {
+            ranksCSV.add(getRankStr(i+1) + "," + listTeams.get(i) + "," + teamChamps.get(listTeams.get(i)));
+        }
+        ranksCSV.add(getRankStr(listTeams.size()+1) + ",All Other Teams,0");
+
+        return ranksCSV;
     }
 
     public static List<String> getCSVChampions(LeagueResults leagueResults, League league) {

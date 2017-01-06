@@ -85,14 +85,30 @@ public class HallOfFameListArrayAdapter extends ArrayAdapter<Player> {
         List<YearlyPlayerStats> playerStats = yearlyPlayerStatsDao.getPlayerStatsFromYears(
                 p.getId(), 2016, currentYear);
         if (playerStats.size() != 0) {
-            YearlyPlayerStats currentStats = playerStats.get(playerStats.size() - 1);
-            viewHolder.playerPPG.setText(currentStats.getPGDisplay("PPG"));
-            viewHolder.playerRPG.setText(currentStats.getPGDisplay("RPG"));
-            viewHolder.playerAPG.setText(currentStats.getPGDisplay("APG"));
-            viewHolder.playerFGP.setText(currentStats.getPGDisplay("FG%")+
-                    "/"+currentStats.getPGDisplay("3P%"));
+            int totalPoints = 0;
+            int totalRebounds = 0;
+            int totalAssists = 0;
+            int totalFGM = 0;
+            int totalFGA = 0;
+            int total3GM = 0;
+            int total3GA = 0;
+            int totalGames = 0;
+            for (YearlyPlayerStats currentStats : playerStats) {
+                totalPoints += currentStats.playerStats.points;
+                totalRebounds += currentStats.playerStats.defensiveRebounds + currentStats.playerStats.offensiveRebounds;
+                totalAssists += currentStats.playerStats.assists;
+                totalFGM += currentStats.playerStats.fieldGoalsMade;
+                totalFGA += currentStats.playerStats.fieldGoalsAttempted;
+                total3GM += currentStats.playerStats.threePointsMade;
+                total3GA += currentStats.playerStats.threePointsAttempted;
+                if (currentStats.playerStats.points > 0) totalGames += currentStats.gamesPlayed;
+            }
+            viewHolder.playerPPG.setText(String.valueOf(DataDisplayer.round((double)totalPoints/totalGames, 1)));
+            viewHolder.playerRPG.setText(String.valueOf(DataDisplayer.round((double)totalRebounds/totalGames, 1)));
+            viewHolder.playerAPG.setText(String.valueOf(DataDisplayer.round((double)totalAssists/totalGames, 1)));
+            viewHolder.playerFGP.setText((totalFGM*100)/totalFGA + "/" + (total3GM*100)/total3GA);
 
-            viewHolder.playerOvrPot.setText(String.valueOf(currentStats.year));
+            viewHolder.playerOvrPot.setText(String.valueOf(playerStats.get(playerStats.size()-1).year));
         }
 
         return convertView;

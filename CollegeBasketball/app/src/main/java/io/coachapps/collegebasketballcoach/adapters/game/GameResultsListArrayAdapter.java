@@ -16,6 +16,7 @@ import io.coachapps.collegebasketballcoach.basketballsim.Team;
 
 /**
  * Adapter to show the results of games.
+ * THIS CLASS IS NOT USED.
  * Created by jojones on 10/24/16.
  */
 

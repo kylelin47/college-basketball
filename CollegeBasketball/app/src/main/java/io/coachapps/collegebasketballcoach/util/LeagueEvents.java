@@ -138,13 +138,30 @@ public class LeagueEvents {
             try {
                 for (Team t : league.getAllTeams()) {
                     int diff = t.getPrestigeDiff();
-                    if (champs[0].equals(t.getName())) {
-                        if (diff < 0) diff = 0;
-                        diff += 10;
-                    }
+
+                    int numMarchMadnessWins = t.getNumMarchMadnessGamesWon();
+                    if (numMarchMadnessWins >= 3 && diff < 0) diff = 0;
+                    if (numMarchMadnessWins == 5) diff += 10;
+                    else if (numMarchMadnessWins == 4) diff += 8;
+                    else if (numMarchMadnessWins == 3) diff += 6;
+                    else if (numMarchMadnessWins == 2) diff += 3;
+
                     for (int i = 1; i < 7; ++i) {
                         if (champs[i].equals(t.getName())) diff += 4;
                     }
+
+                    if (!t.isPlayer()) {
+                        if (Math.random() < 0.25) {
+                            // Randomly set prestiges higher or lower
+                            if (t.prestige > 80) diff -= 50;
+                            else if (t.prestige < 25) diff += 50;
+                        }
+                    }
+
+                    if (t.isPlayer()) {
+                        t.oldPrestige = t.prestige;
+                    }
+
                     t.prestige += diff;
                     if (t.prestige < 5) t.prestige = 5;
                     if (t.prestige > 95) t.prestige = 95;

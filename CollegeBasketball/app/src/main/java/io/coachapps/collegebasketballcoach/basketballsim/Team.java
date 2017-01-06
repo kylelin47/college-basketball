@@ -24,6 +24,7 @@ public class Team {
 
     public String name;
     private boolean isUserTeam;
+    public int oldPrestige = 0;
     public int prestige;
     public int pollScore;
     public int pollRank;
@@ -34,7 +35,7 @@ public class Team {
     public volatile Strategy defStrat;
 
     private static final int PRO_OVERALL = 90;
-    private static final double PRO_CHANCE_USER = 0.5;
+    private static final double PRO_CHANCE_USER = 0.4;
     private static final double PRO_CHANCE_CPU = 0.2;
 
     public Team( String name, List<Player> players, int prestige, boolean isUserTeam, String conference ) {
@@ -375,6 +376,16 @@ public class Team {
             if (g.hasPlayed()) num++;
         }
         return num;
+    }
+
+    public int getNumMarchMadnessGamesWon() {
+        int marchMadnessGamesWon = 0;
+        for (Game g : gameSchedule) {
+            if (g != null && g.gameType == Game.GameType.MARCH_MADNESS && g.getWinner() == this) {
+                marchMadnessGamesWon++;
+            }
+        }
+        return marchMadnessGamesWon;
     }
 
     public String getLastGameSummary() {

@@ -31,7 +31,7 @@ public class YearlyPlayerStats {
         if (gamesPlayed < 15) games = gamesPlayed;
         else games = gamesPlayed + 40;
         return (int)((playerStats.points + playerStats.assists +
-                2*(playerStats.offensiveRebounds + playerStats.defensiveRebounds)/3)/games * getPG("FG%"));
+                2*(playerStats.offensiveRebounds + playerStats.defensiveRebounds)/3)/games * (double)(getPG("FG%")+200)/300);
     }
 
     public int getDPOYScore() {

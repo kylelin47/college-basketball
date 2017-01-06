@@ -55,6 +55,7 @@ import io.coachapps.collegebasketballcoach.util.PlayerOverallComp;
 import io.coachapps.collegebasketballcoach.basketballsim.Team;
 import io.coachapps.collegebasketballcoach.db.LeagueResultsEntryDao;
 import io.coachapps.collegebasketballcoach.db.TeamDao;
+import io.coachapps.collegebasketballcoach.util.Settings;
 
 public class RecruitingActivity extends AppCompatActivity {
 
@@ -111,6 +112,7 @@ public class RecruitingActivity extends AppCompatActivity {
     private static final int ALL_CONF_2nd = 25;
     private static final int ALL_CONF_3rd = 10;
 
+    Settings settings;
     PlayerDao playerDao;
     TeamDao teamDao;
 
@@ -179,12 +181,22 @@ public class RecruitingActivity extends AppCompatActivity {
             // PROBABLY JUST CRASH
         }
 
+        // Get settings for difficulty
+        settings = new Settings(new File(getFilesDir(), "settings"));
+
         // Find user team
         playerTeamName = teamDao.getPlayerTeamName();
         for (Team t : teamList) {
             if (t.getName().equals(playerTeamName)) {
                 playerTeam = t;
-                playerTeamMoney = playerTeam.getPrestige()*15;
+                if (settings.getDifficulty() == 0) {
+                    playerTeamMoney = playerTeam.getPrestige()*20;
+                }
+                else if (settings.getDifficulty() == 1) {
+                    playerTeamMoney = playerTeam.getPrestige()*15;
+                } else {
+                    playerTeamMoney = playerTeam.getPrestige()*10;
+                }
                 break;
             }
         }
@@ -522,23 +534,25 @@ public class RecruitingActivity extends AppCompatActivity {
         Collections.sort(playersLeavingEarly, new PlayerOverallComp());
 
         // Add money for players that leave early
-        int bonusMoney = playersLeavingEarly.size() * 200;
+        int bonusMoney = playersLeavingEarly.size() * 300;
         playerTeamMoney += bonusMoney;
-        if (bonusMoney == 0) {
-            Toast.makeText(RecruitingActivity.this, "None of your players left early for the pros.",
-                    Toast.LENGTH_SHORT).show();
-        } else {
-            Toast.makeText(RecruitingActivity.this, playersLeavingEarly.size() +
-                    " of your players left early for the pros, granting you $" + bonusMoney + " extra recruiting budget.",
-                    Toast.LENGTH_LONG).show();
-        }
+
+        int gradMoney = playerTeamSeniors.size() * 100;
+        playerTeamMoney += gradMoney;
+
+        int totalPlayersLost = playersLeavingEarly.size() + playerTeamSeniors.size();
+        int extraMoney = bonusMoney + gradMoney;
+
+        Toast.makeText(RecruitingActivity.this, "You lost " + totalPlayersLost +
+                " players this offseason, granting you $" + extraMoney + " extra recruiting budget.",
+                Toast.LENGTH_LONG).show();
         updateTextView();
 
         final ListView listView = (ListView) dialog.findViewById(R.id.listView);
         final Spinner spinner = (Spinner) dialog.findViewById(R.id.spinner);
         final List<String> categoryList = new ArrayList<>();
-        categoryList.add("Players Leaving For Pros");
-        categoryList.add("Players Graduating");
+        categoryList.add("Players Leaving For Pros (+$" + bonusMoney + ")");
+        categoryList.add("Players Graduating (+$" + gradMoney + ")");
         ArrayAdapter<String> spinnerAdapter = new ArrayAdapter<>(this,
                 android.R.layout.simple_spinner_item, categoryList);
         spinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);

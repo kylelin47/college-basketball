@@ -179,30 +179,30 @@ public class GameSummaryFragment extends DialogFragment {
 
     private TeamStatsListArrayAdapter getTeamStatsAdapter() {
         ArrayList<String> teamStatsList = new ArrayList<>();
-        teamStatsList.add(gameModel.awayTeam + ",@," + gameModel.homeTeam);
-        teamStatsList.add(gameModel.awayStats.stats.points + ",Points," + gameModel.homeStats.stats.points);
+        teamStatsList.add(gameModel.awayTeam + ">@>" + gameModel.homeTeam);
+        teamStatsList.add(gameModel.awayStats.stats.points + ">Points>" + gameModel.homeStats.stats.points);
         teamStatsList.add((gameModel.awayStats.stats.defensiveRebounds+gameModel.awayStats.stats.offensiveRebounds) +
-                ",Rebounds," + (gameModel.homeStats.stats.defensiveRebounds+gameModel.homeStats.stats.offensiveRebounds));
-        teamStatsList.add(gameModel.awayStats.stats.assists + ",Assists," + gameModel.homeStats.stats.assists);
-        teamStatsList.add(gameModel.awayStats.stats.steals + ",Steals," + gameModel.homeStats.stats.steals);
-        teamStatsList.add(gameModel.awayStats.stats.blocks + ",Blocks," + gameModel.homeStats.stats.blocks);
-        teamStatsList.add(gameModel.awayStats.stats.turnovers + ",Turnovers," + gameModel.homeStats.stats.turnovers);
+                ">Rebounds>" + (gameModel.homeStats.stats.defensiveRebounds+gameModel.homeStats.stats.offensiveRebounds));
+        teamStatsList.add(gameModel.awayStats.stats.assists + ">Assists>" + gameModel.homeStats.stats.assists);
+        teamStatsList.add(gameModel.awayStats.stats.steals + ">Steals>" + gameModel.homeStats.stats.steals);
+        teamStatsList.add(gameModel.awayStats.stats.blocks + ">Blocks>" + gameModel.homeStats.stats.blocks);
+        teamStatsList.add(gameModel.awayStats.stats.turnovers + ">Turnovers>" + gameModel.homeStats.stats.turnovers);
 
         teamStatsList.add(gameModel.awayStats.stats.fieldGoalsMade + "/" + gameModel.awayStats.stats.fieldGoalsAttempted +
-                ",FGM/FGA," + gameModel.homeStats.stats.fieldGoalsMade + "/" + gameModel.homeStats.stats.fieldGoalsAttempted);
+                ">FGM/FGA>" + gameModel.homeStats.stats.fieldGoalsMade + "/" + gameModel.homeStats.stats.fieldGoalsAttempted);
         String awayFGP = DataDisplayer.getFieldGoalPercentage(
                 gameModel.awayStats.stats.fieldGoalsMade, gameModel.awayStats.stats.fieldGoalsAttempted);
         String homeFGP = DataDisplayer.getFieldGoalPercentage(
                 gameModel.homeStats.stats.fieldGoalsMade, gameModel.homeStats.stats.fieldGoalsAttempted);
-        teamStatsList.add(awayFGP + "%,FG%," + homeFGP + "%");
+        teamStatsList.add(awayFGP + "%>FG%>" + homeFGP + "%");
 
         teamStatsList.add(gameModel.awayStats.stats.threePointsMade + "/" + gameModel.awayStats.stats.threePointsAttempted +
-                ",3FGM/3FGA," + gameModel.homeStats.stats.threePointsMade + "/" + gameModel.homeStats.stats.threePointsAttempted);
+                ">3FGM/3FGA>" + gameModel.homeStats.stats.threePointsMade + "/" + gameModel.homeStats.stats.threePointsAttempted);
         String away3GP = DataDisplayer.getFieldGoalPercentage(
                 gameModel.awayStats.stats.threePointsMade, gameModel.awayStats.stats.threePointsAttempted);
         String home3GP = DataDisplayer.getFieldGoalPercentage(
                 gameModel.homeStats.stats.threePointsMade, gameModel.homeStats.stats.threePointsAttempted);
-        teamStatsList.add(away3GP + "%,3FG%," + home3GP + "%");
+        teamStatsList.add(away3GP + "%>3FG%>" + home3GP + "%");
 
         return new TeamStatsListArrayAdapter(getActivity(), teamStatsList, true);
     }

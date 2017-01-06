@@ -44,7 +44,7 @@ public class TeamStatsListArrayAdapter extends ArrayAdapter<String> {
         TextView textCenter = (TextView) rowView.findViewById(R.id.textTeamStatsCenter);
         TextView textRight = (TextView) rowView.findViewById(R.id.textTeamStatsRight);
 
-        String[] teamStat = values.get(position).split(",");
+        String[] teamStat = values.get(position).split(">");
         textLeft.setText(teamStat[0]);
         textCenter.setText(teamStat[1]);
         textRight.setText(teamStat[2]);

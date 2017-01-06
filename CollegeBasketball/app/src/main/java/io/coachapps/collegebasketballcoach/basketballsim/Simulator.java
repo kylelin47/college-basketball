@@ -229,7 +229,7 @@ public class Simulator {
         //Log.i("Simulator", offense.getName() + " talent: " + offense.getOvrTalent());
         //Log.i("Simulator", defense.getName() + " talent: " + defense.getOvrTalent());
         // Hack so that better teams perform better :^)
-        assBonus += (double)(offense.getOvrTalent() - defense.getOvrTalent())/15;
+        assBonus += (double)(offense.getOvrTalent() - defense.getOvrTalent())/18;
 
         if (offense == homeTeam) {
             //assBonus += (double)(offense.getPrestige() + HOME_COURT_FACTOR)/HOME_COURT_FACTOR;
@@ -255,7 +255,9 @@ public class Simulator {
             //3 point shot
             double chance = 22 + (float)shooter.getOutS()/3 + assBonus - (float)defender.getOutD()/6 +
                     offense.getOffStrat().getOutsideBonus() - defense.getDefStrat().getOutsideBonus();
-            chance = chance * ((double)(shooter.getOutS()+200)/300);
+            int bonusChance = shooter.getOutS();
+            if (bonusChance > 100) bonusChance = 100;
+            chance = chance * ((double)(bonusChance+200)/300);
             if ( chance > Math.random()*100 ) {
                 //made the shot!
                 addToLog(gameLog, getCommentary3ptMake(shooter, defender));

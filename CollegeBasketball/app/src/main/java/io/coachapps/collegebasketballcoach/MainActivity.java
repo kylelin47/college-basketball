@@ -40,6 +40,7 @@ import java.io.Writer;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 
@@ -587,35 +588,43 @@ public class MainActivity extends AppCompatActivity {
 
     public String getSeasonSummaryStr() {
         boolean wonConfChamp = false;
-        boolean wonNatChamp = false;
-
         League.Conference playerConf = league.getTeamConference(playerTeam.getName());
         if (league.getConfChampionshipGame(playerConf).getWinner().getName().equals(playerTeam.getName())) {
             wonConfChamp = true;
         }
-        if (LeagueEvents.getChampions(league) != null && LeagueEvents.getChampions(league)[0].equals(playerTeam.getName())) {
-            wonNatChamp = true;
-        }
+
+        int marchMadnessGamesWon = playerTeam.getNumMarchMadnessGamesWon();
+
         StringBuilder sb = new StringBuilder();
         String str = "Your team, the " + playerTeam.getName() + ", finished the season ranked #" + playerTeam.pollRank +
                 " with " + playerTeam.wins + " wins and " + playerTeam.losses + " losses.\n\n";
         sb.append(str);
 
-        int diff = playerTeam.getPrestigeDiff();
+        int diff = (3*playerTeam.wins - playerTeam.oldPrestige)/3;
         if (diff > 0) {
-            sb.append("You exceeded expectations this year and have been awarded with +" + diff + " prestige!\n\n");
-        } else if (diff == 0 || wonNatChamp) {
-            sb.append("You met expectations, and didn't gain or lose prestige.\n\n");
+            sb.append("You exceeded win expectations this year and have gained prestige!\n\n");
+        } else if (diff == 0 || marchMadnessGamesWon >= 3) {
+            sb.append("You met win expectations, and didn't gain or lose prestige.\n\n");
         } else {
-            sb.append("You fell short of expectations, and recruits took notice. You lost " + Math.abs(diff) + " prestige.\n\n");
+            sb.append("You fell short of win expectations, and recruits took notice. You lost some prestige.\n\n");
         }
 
         if (wonConfChamp) {
             sb.append("You won your conference championship! Your fans and boosters are pleased, and you are awarded with +4 prestige.\n\n");
         }
-        if (wonNatChamp) {
+        if (marchMadnessGamesWon == 5) {
             sb.append("You won the National Championship! Great job! Fans, boosters, and recruits are impressed with your coaching. You are awarded with +10 prestige!\n\n");
+        } else if (marchMadnessGamesWon == 4) {
+            sb.append("Even though you didn't win the National Championship, you still made it to the finals. You are awarded with +8 prestige!\n\n");
+        } else if (marchMadnessGamesWon == 3) {
+            sb.append("Making the Final Four is a big accomplishment, and your fans are pleased. You are awarded with +6 prestige!\n\n");
+        } else if (marchMadnessGamesWon == 2) {
+            sb.append("Though your boosters wanted more, making the Elite Eight is still a good season. You are awarded with +3 prestige.\n\n");
         }
+
+        sb.append("Old Prestige: " + playerTeam.oldPrestige + ", New Prestige: " + playerTeam.prestige);
+        if (playerTeam.prestige == 95) sb.append(" (MAX)");
+        if (playerTeam.prestige == 5) sb.append(" (MIN)");
 
         return sb.toString();
     }
@@ -1147,6 +1156,7 @@ public class MainActivity extends AppCompatActivity {
         final Spinner spinner = (Spinner) dialog.findViewById(R.id.spinner);
         final List<String> leagueHistoryChoices = new ArrayList<>();
         leagueHistoryChoices.add("League History");
+        leagueHistoryChoices.add("Number Of Championships");
         leagueHistoryChoices.add(playerTeam.getName());
         List<Team> listAllTeams = league.getAllTeams();
         Collections.sort(listAllTeams, new Comparator<Team>() {
@@ -1170,9 +1180,15 @@ public class MainActivity extends AppCompatActivity {
                             AdapterView<?> parent, View view, int position, long id) {
                         // Look at the right category
                         if (position == 0) {
+                            // League history
                             listView.setAdapter(new LeagueHistoryListArrayAdapter(MainActivity.this,
                                     historyDao.getLeagueResults(2016, getYear()), playerTeam.getName()));
+                        } else if (position == 1) {
+                            // Champ rankings
+                            listView.setAdapter(new TeamRankingsListArrayAdapter(MainActivity.this,
+                                    DataDisplayer.getChampTeamRankingsCSV(historyDao, getYear()), playerTeam.getName()));
                         } else {
+                            // Team histories
                             List<YearlyTeamStats> teamStatsList =
                                     teamStatsDao.getTeamStatsFromYears(
                                             leagueHistoryChoices.get(position), 2016, getYear());
