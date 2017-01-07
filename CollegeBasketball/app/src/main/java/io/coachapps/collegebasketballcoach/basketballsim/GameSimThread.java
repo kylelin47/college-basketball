@@ -172,19 +172,47 @@ public class GameSimThread extends Thread {
         while (playing) {
             if (!isPaused) {
                 if (poss_home) {
-                    matches_h = Simulator.detectMismatch(home, away);
-                    hscore += Simulator.runPlay(home, away, matches_h, gameEvents, homeAdvTeam, homeCourtAdvantage);
-                    poss_away = true;
-                    poss_home = false;
-
-                    playTime = hspeed + 20 * Math.random();
+                    if (hscore < ascore && Math.abs(hscore - ascore) < 6 &&
+                            ((Math.abs(hscore - ascore) > 3 && maxGameTime - gameTime < 60) ||
+                                    (Math.abs(hscore - ascore) <= 3 && maxGameTime - gameTime < 30))) {
+                        // Intentional foul
+                        Player p = home.players.get((int)(Math.random()*5));
+                        Simulator.addToLog(gameEvents, Simulator.getCommentaryIntentionalFoul(p));
+                        hscore += Simulator.takeFreeThrows(2, p, null);
+                        poss_away = true;
+                        poss_home = false;
+                        playTime = hspeed + 5 * Math.random();
+                    } else {
+                        matches_h = Simulator.detectMismatch(home, away);
+                        hscore += Simulator.runPlay(home, away, matches_h, gameEvents, homeAdvTeam, homeCourtAdvantage);
+                        poss_away = true;
+                        poss_home = false;
+                        if (hscore < ascore && maxGameTime - gameTime < 150) {
+                            playTime = hspeed + 5 * Math.random();
+                        }
+                        else playTime = hspeed + 20 * Math.random();
+                    }
                 } else if (poss_away) {
-                    matches_a = Simulator.detectMismatch(away, home);
-                    ascore += Simulator.runPlay(away, home, matches_a, gameEvents, homeAdvTeam, homeCourtAdvantage);
-                    poss_away = false;
-                    poss_home = true;
-
-                    playTime = aspeed + 20 * Math.random();
+                    if (hscore < ascore && Math.abs(hscore - ascore) < 6 &&
+                            ((Math.abs(hscore - ascore) > 3 && maxGameTime - gameTime < 60) ||
+                                    (Math.abs(hscore - ascore) <= 3 && maxGameTime - gameTime < 30))) {
+                        // Intentional foul
+                        Player p = away.players.get((int)(Math.random()*5));
+                        Simulator.addToLog(gameEvents, Simulator.getCommentaryIntentionalFoul(p));
+                        ascore += Simulator.takeFreeThrows(2, p, null);
+                        poss_away = false;
+                        poss_home = true;
+                        playTime = hspeed + 5 * Math.random();
+                    } else {
+                        matches_a = Simulator.detectMismatch(away, home);
+                        ascore += Simulator.runPlay(away, home, matches_a, gameEvents, homeAdvTeam, homeCourtAdvantage);
+                        poss_away = false;
+                        poss_home = true;
+                        if (ascore < hscore && maxGameTime - gameTime < 150) {
+                            playTime = aspeed + 5 * Math.random();
+                        }
+                        else playTime = aspeed + 20 * Math.random();
+                    }
                 }
 
                 gameTime += (int) playTime;

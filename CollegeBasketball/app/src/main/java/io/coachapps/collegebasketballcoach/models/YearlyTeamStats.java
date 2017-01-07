@@ -124,6 +124,8 @@ public class YearlyTeamStats {
                 return getPG(ftm);
             case "FTAPG":
                 return getPG(fta);
+            case "FT%":
+                return (float)(DataDisplayer.round(getFTP()*100, 2));
             case "OPPG":
                 return getPG(opp_points);
             case "OAPG":
@@ -163,6 +165,10 @@ public class YearlyTeamStats {
         return (fga == 0 ? 0 : (double)fgm/fga);
     }
 
+    public double getFTP() {
+        return (fta == 0 ? 0 : (double)ftm/fta);
+    }
+
     public double get3FGP() {
         return (threePA == 0 ? 0 : (double)threePM/threePA);
     }
@@ -181,6 +187,10 @@ public class YearlyTeamStats {
 
     public String get3FGPStr() {
         return (threePA == 0 ? "0" : String.format("%.1f", 100*((double)threePM/threePA)));
+    }
+
+    public String getFTPStr() {
+        return (fta == 0 ? "0" : String.format("%.1f", 100*((double)ftm/fta)));
     }
 
     public String getOFGPStr() {

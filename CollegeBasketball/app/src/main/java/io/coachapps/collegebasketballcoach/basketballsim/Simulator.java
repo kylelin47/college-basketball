@@ -14,6 +14,10 @@ public class Simulator {
 
     private static final int HOME_COURT_FACTOR = 25;
 
+    private static final double CHANCE_FOUL_OUTSIDE = 0.08;
+    private static final double CHANCE_FOUL_MIDRANGE = 0.12;
+    private static final double CHANCE_FOUL_INSIDE = 0.18;
+
     public Context context;
 
     public Simulator(Context c) {
@@ -55,17 +59,45 @@ public class Simulator {
         double playTime = 0;
         while (playing) {
             if (poss_home) {
-                hscore += runPlay(home, away, matches_h, null, homeAdvTeam, homeCourtAdvantage);
-                poss_away = true;
-                poss_home = false;
-                playTime = hspeed + 20 * Math.random();
-                matches_h = detectMismatch(home, away);
+                if (hscore < ascore && Math.abs(hscore - ascore) < 6 &&
+                        ((Math.abs(hscore - ascore) > 3 && max_gametime - gametime < 60) ||
+                         (Math.abs(hscore - ascore) <= 3 && max_gametime - gametime < 30))) {
+                    // Intentional foul
+                    hscore += takeFreeThrows(2, home.players.get((int)(Math.random()*5)), null);
+                    poss_away = true;
+                    poss_home = false;
+                    playTime = hspeed + 5 * Math.random();
+                    matches_h = detectMismatch(home, away);
+                } else {
+                    hscore += runPlay(home, away, matches_h, null, homeAdvTeam, homeCourtAdvantage);
+                    poss_away = true;
+                    poss_home = false;
+                    if (hscore < ascore && max_gametime - gametime < 150) {
+                        playTime = hspeed + 5 * Math.random();
+                    }
+                    else playTime = hspeed + 20 * Math.random();
+                    matches_h = detectMismatch(home, away);
+                }
             } else if (poss_away) {
-                ascore += runPlay(away, home, matches_a, null, homeAdvTeam, homeCourtAdvantage);
-                poss_away = false;
-                poss_home = true;
-                playTime = aspeed + 20 * Math.random();
-                matches_a = detectMismatch(away, home);
+                if (ascore < hscore && Math.abs(hscore - ascore) < 6 &&
+                        ((Math.abs(hscore - ascore) > 3 && max_gametime - gametime < 60) ||
+                                (Math.abs(hscore - ascore) <= 3 && max_gametime - gametime < 30))) {
+                    // Intentional foul
+                    ascore += takeFreeThrows(2, away.players.get((int)(Math.random()*5)), null);
+                    poss_away = false;
+                    poss_home = true;
+                    playTime = aspeed + 5 * Math.random();
+                    matches_a = detectMismatch(away, home);
+                } else {
+                    ascore += runPlay(away, home, matches_a, null, homeAdvTeam, homeCourtAdvantage);
+                    poss_away = false;
+                    poss_home = true;
+                    if (ascore < hscore && max_gametime - gametime < 150) {
+                        playTime = aspeed + 5 * Math.random();
+                    }
+                    else playTime = aspeed + 20 * Math.random();
+                    matches_a = detectMismatch(away, home);
+                }
             }
 
             away.addTimePlayed((int) playTime);
@@ -252,8 +284,15 @@ public class Simulator {
         }
 
         if ( selShot < intelOutT && intelOutT >= 0 && shooter.getOutS() > 50 ) {
+
+            if (Math.random() < CHANCE_FOUL_OUTSIDE && Math.random() < (double)(shooter.getBBallIQ()+100)/200) {
+                // FOUL!
+                addToLog(gameLog, getCommentaryOutsideShotFreeThrows(shooter));
+                return takeFreeThrows(3, shooter, gameLog);
+            }
+
             //3 point shot
-            double chance = 22 + (float)shooter.getOutS()/3 + assBonus - (float)defender.getOutD()/6 +
+            double chance = 22 + (float)shooter.getOutS()/3 + assBonus * 0.5 - (float)defender.getOutD()/6 +
                     offense.getOffStrat().getOutsideBonus() - defense.getDefStrat().getOutsideBonus();
             int bonusChance = shooter.getOutS();
             if (bonusChance > 100) bonusChance = 100;
@@ -273,6 +312,13 @@ public class Simulator {
                 return 0;
             }
         } else if ( selShot < intelMidT && intelMidT >= 0 ) {
+
+            if (Math.random() < CHANCE_FOUL_MIDRANGE && Math.random() < (double)(shooter.getBBallIQ()+100)/200) {
+                // FOUL!
+                addToLog(gameLog, getCommentaryMidrangeShotFreeThrows(shooter));
+                return takeFreeThrows(2, shooter, gameLog);
+            }
+
             //mid range shot
             int defMidD = (int)( defender.getOutD()*0.5 + defender.getIntD()*0.5 );
             double chance = 32 + (float)shooter.getOutS()/3 + assBonus - (float)defMidD/7 +
@@ -311,6 +357,12 @@ public class Simulator {
                 } 
             }
 
+            if (Math.random() < CHANCE_FOUL_INSIDE && Math.random() < (double)(shooter.getBBallIQ()+100)/200) {
+                // FOUL!
+                addToLog(gameLog, getCommentaryInsideShotFreeThrows(shooter));
+                return takeFreeThrows(2, shooter, gameLog);
+            }
+
             // Add a defense bonus if a non PF/C is laying up.
             // There is help defense from the opposing PF/C so the shot is harder.
             float defenseBonus = 0;
@@ -338,6 +390,23 @@ public class Simulator {
                 return 0;
             }
         } 
+    }
+
+    public static int takeFreeThrows(int numShots, Player shooter, StringBuilder gameLog) {
+        int numPoints = 0;
+        for (int i = 0; i < numShots; ++i) {
+            if (Math.random() < (double)(shooter.getMidS()-35)/140 + 0.45 && Math.random() < 0.92) {
+                numPoints++;
+                shooter.addFTM();
+            }
+            shooter.addFTA();
+        }
+
+        shooter.addPts(numPoints);
+
+        addToLog(gameLog, shooter.name + " makes " + numPoints + " of " + numShots + " free throws. ");
+
+        return numPoints;
     }
 
     /**
@@ -479,10 +548,26 @@ public class Simulator {
      * @param gameLog stringbuilder of the log
      * @param event what happened
      */
-    private static void addToLog(StringBuilder gameLog, String event) {
+    public static void addToLog(StringBuilder gameLog, String event) {
         if (gameLog != null) {
             gameLog.append(event);
         }
+    }
+
+    public static String getCommentaryIntentionalFoul(Player shooter) {
+        return shooter.name + " is fouled intentionally. ";
+    }
+
+    private static String getCommentaryOutsideShotFreeThrows(Player shooter) {
+        return shooter.name + " is fouled when taking a 3 pointer! ";
+    }
+
+    private static String getCommentaryMidrangeShotFreeThrows(Player shooter) {
+        return shooter.name + " is fouled on the quick midrange jumper! ";
+    }
+
+    private static String getCommentaryInsideShotFreeThrows(Player shooter) {
+        return shooter.name + " is fouled on the driving layup! ";
     }
 
     private static String getCommentary3ptMake(Player shooter, Player defender) {

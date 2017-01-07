@@ -258,6 +258,12 @@ public class Player implements Serializable {
     public void add3GM() {
         gmStats.threePointsMade++;
     }
+    public void addFTA() {
+        gmStats.freeThrowsAttempted++;
+    }
+    public void addFTM() {
+        gmStats.freeThrowsMade++;
+    }
     public void addAss() {
         gmStats.assists++;
     }

@@ -48,7 +48,10 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/textViewGameSummary">
+        android:layout_below="@+id/textViewGameSummary"
+        android:paddingStart="10dp"
+        android:paddingEnd="10dp"
+        android:id="@+id/linearLayoutTop">
 
         <RelativeLayout
             android:layout_width="0dip"
@@ -61,13 +64,13 @@
                 android:layout_marginEnd="3dp"
                 android:text="27"
                 android:textColor="#000"
-                android:textSize="15sp"
+                android:textSize="14sp"
                 android:id="@+id/textViewPTS"
                 />
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="PT"
+                android:text="PTS"
                 android:textColor="#999"
                 android:textSize="12sp"
                 android:layout_toEndOf="@+id/textViewPTS"
@@ -86,13 +89,13 @@
                 android:layout_marginEnd="3dp"
                 android:text="6"
                 android:textColor="#000"
-                android:textSize="15sp"
+                android:textSize="14sp"
                 android:id="@+id/textViewREB"
                 />
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="RB"
+                android:text="REB"
                 android:textColor="#999"
                 android:textSize="12sp"
                 android:layout_toEndOf="@+id/textViewREB"
@@ -111,67 +114,17 @@
                 android:layout_marginEnd="3dp"
                 android:text="8"
                 android:textColor="#000"
-                android:textSize="15sp"
+                android:textSize="14sp"
                 android:id="@+id/textViewAST"
                 />
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="AS"
+                android:text="AST"
                 android:textColor="#999"
                 android:textSize="12sp"
                 android:layout_toEndOf="@+id/textViewAST"
                 android:layout_alignBottom="@+id/textViewAST"
-                />
-        </RelativeLayout>
-
-        <RelativeLayout
-            android:layout_width="0dip"
-            android:layout_weight="1.5"
-            android:layout_height="wrap_content"
-            android:gravity="center">
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginEnd="3dp"
-                android:text="15/22"
-                android:textColor="#000"
-                android:textSize="15sp"
-                android:id="@+id/textViewFGMA"
-                />
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="FG"
-                android:textColor="#999"
-                android:textSize="12sp"
-                android:layout_toEndOf="@+id/textViewFGMA"
-                android:layout_alignBottom="@+id/textViewFGMA"
-                />
-        </RelativeLayout>
-
-        <RelativeLayout
-            android:layout_width="0dip"
-            android:layout_weight="1.5"
-            android:layout_height="wrap_content"
-            android:gravity="center">
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginEnd="3dp"
-                android:text="5/7"
-                android:textColor="#000"
-                android:textSize="15sp"
-                android:id="@+id/textView3GMA"
-                />
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="3FG"
-                android:textColor="#999"
-                android:textSize="12sp"
-                android:layout_toEndOf="@+id/textView3GMA"
-                android:layout_alignBottom="@+id/textView3GMA"
                 />
         </RelativeLayout>
 
@@ -186,7 +139,7 @@
                 android:layout_marginEnd="3dp"
                 android:text="2"
                 android:textColor="#000"
-                android:textSize="15sp"
+                android:textSize="14sp"
                 android:id="@+id/textViewBLK"
                 />
             <TextView
@@ -211,7 +164,7 @@
                 android:layout_marginEnd="3dp"
                 android:text="0"
                 android:textColor="#000"
-                android:textSize="15sp"
+                android:textSize="14sp"
                 android:id="@+id/textViewSTL"
                 />
             <TextView
@@ -222,6 +175,91 @@
                 android:textSize="12sp"
                 android:layout_toEndOf="@+id/textViewSTL"
                 android:layout_alignBottom="@+id/textViewSTL"
+                />
+        </RelativeLayout>
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/linearLayoutTop"
+        android:paddingStart="20dp"
+        android:paddingEnd="20dp"
+        android:id="@+id/linearLayoutBottom">
+
+        <RelativeLayout
+            android:layout_width="0dip"
+            android:layout_weight="1.7"
+            android:layout_height="wrap_content"
+            android:gravity="center">
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="3dp"
+                android:text="15/22"
+                android:textColor="#000"
+                android:textSize="14sp"
+                android:id="@+id/textViewFGMA"
+                />
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="FG"
+                android:textColor="#999"
+                android:textSize="12sp"
+                android:layout_toEndOf="@+id/textViewFGMA"
+                android:layout_alignBottom="@+id/textViewFGMA"
+                />
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:layout_width="0dip"
+            android:layout_weight="1.7"
+            android:layout_height="wrap_content"
+            android:gravity="center">
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="3dp"
+                android:text="5/7"
+                android:textColor="#000"
+                android:textSize="14sp"
+                android:id="@+id/textView3GMA"
+                />
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="3FG"
+                android:textColor="#999"
+                android:textSize="12sp"
+                android:layout_toEndOf="@+id/textView3GMA"
+                android:layout_alignBottom="@+id/textView3GMA"
+                />
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:layout_width="0dip"
+            android:layout_weight="1.7"
+            android:layout_height="wrap_content"
+            android:gravity="center">
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="3dp"
+                android:text="8/12"
+                android:textColor="#000"
+                android:textSize="14sp"
+                android:id="@+id/textViewFTMA"
+                />
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="FT"
+                android:textColor="#999"
+                android:textSize="12sp"
+                android:layout_toEndOf="@+id/textViewFTMA"
+                android:layout_alignBottom="@+id/textViewFTMA"
                 />
         </RelativeLayout>
 

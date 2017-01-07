@@ -209,7 +209,11 @@ public class Team {
     }
 
     public int getPrestigeDiff() {
-        return (3*wins - prestige)/3;
+        if (isPlayer()) {
+            return (3 * (wins+5) - prestige) / 3;
+        } else {
+            return (3 * wins - prestige) / 3;
+        }
     }
     
     public void addPlayer( Player player ) {

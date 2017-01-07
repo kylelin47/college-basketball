@@ -261,6 +261,33 @@ public class DataDisplayer {
         teamStatsCSVs.add(statsOfSelectedTeam.get3FGPStr() + "%>3 Point Percentage>" +
                 getRankStr(currentTeamStats.indexOf(statsOfSelectedTeam) + 1));
 
+        Collections.sort(currentTeamStats, new Comparator<YearlyTeamStats>() {
+            @Override
+            public int compare(YearlyTeamStats left, YearlyTeamStats right) {
+                return right.ftm < left.ftm ? -1 : left.ftm == right.ftm ? 0 : 1;
+            }
+        });
+        teamStatsCSVs.add(statsOfSelectedTeam.getPGDisplay("FTMPG") + ">FTM Per Game>" +
+                getRankStr(currentTeamStats.indexOf(statsOfSelectedTeam) + 1));
+
+        Collections.sort(currentTeamStats, new Comparator<YearlyTeamStats>() {
+            @Override
+            public int compare(YearlyTeamStats left, YearlyTeamStats right) {
+                return right.fta < left.fta ? -1 : left.fta == right.fta ? 0 : 1;
+            }
+        });
+        teamStatsCSVs.add(statsOfSelectedTeam.getPGDisplay("FTAPG") + ">FTA Per Game>" +
+                getRankStr(currentTeamStats.indexOf(statsOfSelectedTeam) + 1));
+
+        Collections.sort(currentTeamStats, new Comparator<YearlyTeamStats>() {
+            @Override
+            public int compare(YearlyTeamStats left, YearlyTeamStats right) {
+                return right.getFTP() < left.getFTP() ? -1 : left.getFTP() == right.getFTP() ? 0 : 1;
+            }
+        });
+        teamStatsCSVs.add(statsOfSelectedTeam.getFTPStr() + "%>Free Throw Percentage>" +
+                getRankStr(currentTeamStats.indexOf(statsOfSelectedTeam) + 1));
+
         /*
         Collections.sort(currentTeamStats, new Comparator<YearlyTeamStats>() {
             @Override
@@ -492,7 +519,7 @@ public class DataDisplayer {
     public static String[] getAllCategories() {
         return new String[]{
             "PPG", "APG", "RPG", "SPG", "BPG", "TPG", "FGMPG", "FGAPG", "FG%",
-                    "3FGMPG", "3FGAPG", "3FG%", "FGAPG", //"FTMPG", "FTAPG",
+                    "3FGMPG", "3FGAPG", "3FG%", "FTMPG", "FTAPG", "FT%",
             "OPPG", "OAPG", "ORPG", "OSPG", "OBPG", "OTPG", "OFGMPG", "OFGAPG", "OFG%",
                     "O3FGMPG", "O3FGAPG", "O3FG%", "OFTMPG", "OFTAPG"};
     }
@@ -527,6 +554,8 @@ public class DataDisplayer {
                 return "Free Throws Made Per Game";
             case "FTAPG":
                 return "Free Throw Attempts Per Game";
+            case "FT%":
+                return "Free Throw Percentage";
             case "OPPG":
                 return "Opp Points Per Game";
             case "OAPG":

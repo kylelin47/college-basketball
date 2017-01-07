@@ -600,7 +600,7 @@ public class MainActivity extends AppCompatActivity {
                 " with " + playerTeam.wins + " wins and " + playerTeam.losses + " losses.\n\n";
         sb.append(str);
 
-        int diff = (3*playerTeam.wins - playerTeam.oldPrestige)/3;
+        int diff = (3*(playerTeam.wins+5) - playerTeam.oldPrestige)/3;
         if (diff > 0) {
             sb.append("You exceeded win expectations this year and have gained prestige!\n\n");
         } else if (diff == 0 || marchMadnessGamesWon >= 3) {
@@ -1120,7 +1120,7 @@ public class MainActivity extends AppCompatActivity {
                                     teamRankingsCSV, playerTeam.getRankNameWLStr()));
                         } else {
                             boolean higherIsBetter = false;
-                            if (position <= 15) higherIsBetter = true;
+                            if (position <= 18) higherIsBetter = true;
                             ArrayList<String> teamRankingsCSV =
                                     DataDisplayer.getTeamRankingsCSVs(league, MainActivity.this, getYear(),
                                             DataDisplayer.getAllCategories()[position - 3], higherIsBetter);

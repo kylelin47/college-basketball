@@ -49,6 +49,7 @@ public class PlayerBoxScoreListArrayAdapter extends ArrayAdapter<BoxScore> {
         TextView playerAST  = (TextView) rowView.findViewById(R.id.textViewAST);
         TextView playerFGMA = (TextView) rowView.findViewById(R.id.textViewFGMA);
         TextView player3GMA = (TextView) rowView.findViewById(R.id.textView3GMA);
+        TextView playerFTMA = (TextView) rowView.findViewById(R.id.textViewFTMA);
         TextView playerBLK  = (TextView) rowView.findViewById(R.id.textViewBLK);
         TextView playerSTL  = (TextView) rowView.findViewById(R.id.textViewSTL);
 
@@ -66,6 +67,7 @@ public class PlayerBoxScoreListArrayAdapter extends ArrayAdapter<BoxScore> {
         playerREB.setText(String.valueOf(gmStats.defensiveRebounds+gmStats.offensiveRebounds));
         playerAST.setText(String.valueOf(gmStats.assists));
         playerFGMA.setText(String.valueOf(gmStats.fieldGoalsMade)+"/"+String.valueOf(gmStats.fieldGoalsAttempted));
+        playerFTMA.setText(String.valueOf(gmStats.freeThrowsMade)+"/"+String.valueOf(gmStats.freeThrowsAttempted));
         player3GMA.setText(String.valueOf(gmStats.threePointsMade)+"/"+String.valueOf(gmStats.threePointsAttempted));
         playerBLK.setText(String.valueOf(gmStats.blocks));
         playerSTL.setText(String.valueOf(gmStats.steals));

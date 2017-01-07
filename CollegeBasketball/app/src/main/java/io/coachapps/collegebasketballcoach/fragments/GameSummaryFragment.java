@@ -204,6 +204,14 @@ public class GameSummaryFragment extends DialogFragment {
                 gameModel.homeStats.stats.threePointsMade, gameModel.homeStats.stats.threePointsAttempted);
         teamStatsList.add(away3GP + "%>3FG%>" + home3GP + "%");
 
+        teamStatsList.add(gameModel.awayStats.stats.freeThrowsMade + "/" + gameModel.awayStats.stats.freeThrowsAttempted +
+                ">FTM/FTA>" + gameModel.homeStats.stats.freeThrowsMade + "/" + gameModel.homeStats.stats.freeThrowsAttempted);
+        String awayFTP = DataDisplayer.getFieldGoalPercentage(
+                gameModel.awayStats.stats.freeThrowsMade, gameModel.awayStats.stats.freeThrowsAttempted);
+        String homeFTP = DataDisplayer.getFieldGoalPercentage(
+                gameModel.homeStats.stats.freeThrowsMade, gameModel.homeStats.stats.freeThrowsAttempted);
+        teamStatsList.add(awayFTP + "%>FT%>" + homeFTP + "%");
+
         return new TeamStatsListArrayAdapter(getActivity(), teamStatsList, true);
     }
 

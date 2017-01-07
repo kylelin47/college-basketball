@@ -43,6 +43,7 @@ public class PlayerGameStatsListArrayAdapter extends ArrayAdapter<Player> {
         TextView playerAST  = (TextView) rowView.findViewById(R.id.textViewAST);
         TextView playerFGMA = (TextView) rowView.findViewById(R.id.textViewFGMA);
         TextView player3GMA = (TextView) rowView.findViewById(R.id.textView3GMA);
+        TextView playerFTMA = (TextView) rowView.findViewById(R.id.textViewFTMA);
         TextView playerBLK  = (TextView) rowView.findViewById(R.id.textViewBLK);
         TextView playerSTL  = (TextView) rowView.findViewById(R.id.textViewSTL);
 
@@ -67,6 +68,7 @@ public class PlayerGameStatsListArrayAdapter extends ArrayAdapter<Player> {
         playerREB.setText(String.valueOf(p.gmStats.defensiveRebounds+p.gmStats.offensiveRebounds));
         playerAST.setText(String.valueOf(p.gmStats.assists));
         playerFGMA.setText(String.valueOf(p.gmStats.fieldGoalsMade)+"/"+String.valueOf(p.gmStats.fieldGoalsAttempted));
+        playerFTMA.setText(String.valueOf(p.gmStats.freeThrowsMade)+"/"+String.valueOf(p.gmStats.freeThrowsAttempted));
         player3GMA.setText(String.valueOf(p.gmStats.threePointsMade)+"/"+String.valueOf(p.gmStats.threePointsAttempted));
         playerBLK.setText(String.valueOf(p.gmStats.blocks));
         playerSTL.setText(String.valueOf(p.gmStats.steals));
