@@ -178,7 +178,7 @@ public class GameSimThread extends Thread {
                         // Intentional foul
                         Player p = home.players.get((int)(Math.random()*5));
                         Simulator.addToLog(gameEvents, Simulator.getCommentaryIntentionalFoul(p));
-                        hscore += Simulator.takeFreeThrows(2, p, null);
+                        hscore += Simulator.takeFreeThrows(2, p, gameEvents);
                         poss_away = true;
                         poss_home = false;
                         playTime = hspeed + 5 * Math.random();
@@ -199,7 +199,7 @@ public class GameSimThread extends Thread {
                         // Intentional foul
                         Player p = away.players.get((int)(Math.random()*5));
                         Simulator.addToLog(gameEvents, Simulator.getCommentaryIntentionalFoul(p));
-                        ascore += Simulator.takeFreeThrows(2, p, null);
+                        ascore += Simulator.takeFreeThrows(2, p, gameEvents);
                         poss_away = false;
                         poss_home = true;
                         playTime = hspeed + 5 * Math.random();
