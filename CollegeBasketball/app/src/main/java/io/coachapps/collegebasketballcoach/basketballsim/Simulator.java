@@ -342,8 +342,8 @@ public class Simulator {
             //inside shot, layup, dunk
             
             //check for block
-            if ( Math.random() < 0.35 ) {
-                int blk = defender.getBlk()-75;
+            if ( Math.random() < 0.33 ) {
+                int blk = defender.getBlk()-68;
                 if (blk < 0) {
                     blk = 0;
                 }

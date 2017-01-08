@@ -12,28 +12,14 @@
         android:id="@+id/textViewRank"
         android:textAppearance="?android:attr/textAppearanceLarge"
         android:textSize="15sp"
+        android:textStyle="bold"
         android:text="#1"
-        android:gravity="center_vertical" />
+        android:gravity="center_vertical|center_horizontal" />
 
     <RelativeLayout
         android:layout_width="0dip"
-        android:layout_weight="11"
+        android:layout_weight="10"
         android:layout_height="match_parent">
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textAppearance="?android:attr/textAppearanceLarge"
-            android:text="Lebron James [Sr]"
-            android:textSize="16sp"
-            android:textStyle="bold"
-            android:id="@+id/textViewName"
-            android:layout_alignParentTop="true"
-            android:layout_marginStart="15dp"
-            android:layout_marginLeft="15dp"
-            android:layout_toRightOf="@+id/textViewPosition"
-            android:layout_toEndOf="@+id/textViewPosition" />
-
 
         <TextView
             android:layout_width="wrap_content"
@@ -52,132 +38,77 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textAppearance="?android:attr/textAppearanceLarge"
-            android:text="99 / A"
-            android:textColor="#999"
+            android:text="Lebron James [Sr]"
             android:textSize="16sp"
             android:textStyle="bold"
-            android:id="@+id/textViewOvrPot"
+            android:id="@+id/textViewName"
             android:layout_alignParentTop="true"
+            android:layout_marginStart="15dp"
+            android:layout_marginLeft="15dp"
+            android:layout_toRightOf="@+id/textViewPosition"
+            android:layout_toEndOf="@+id/textViewPosition" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:text="#1 Ohio State Orangutans (36-0)"
+            android:textSize="15sp"
+            android:textStyle="italic"
+            android:id="@+id/textViewTeamName"
+            android:layout_below="@+id/textViewPosition"
+            android:layout_marginStart="5dp"
+            android:layout_marginLeft="5dp" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:text=""
+            android:textColor="#000"
+            android:textSize="13sp"
+            android:textStyle="italic"
+            android:id="@+id/textViewTotalLabel"
             android:layout_alignParentRight="true"
             android:layout_alignParentEnd="true" />
 
-        <LinearLayout
-            android:layout_width="match_parent"
+        <TextView
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_below="@+id/textViewName">
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:text="1146"
+            android:textColor="#000"
+            android:textSize="20sp"
+            android:textStyle="bold"
+            android:id="@+id/textViewTotal"
+            android:layout_alignParentTop="true"
+            android:layout_toStartOf="@+id/textViewTotalLabel"/>
 
-            <RelativeLayout
-                android:layout_width="0dip"
-                android:layout_weight="1"
-                android:layout_height="wrap_content"
-                android:gravity="center">
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginEnd="3dp"
-                    android:text="0.0"
-                    android:textColor="#000"
-                    android:textSize="16sp"
-                    android:textStyle="bold"
-                    android:id="@+id/textViewPPG"
-                    />
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="PPG"
-                    android:textColor="#999"
-                    android:textSize="13sp"
-                    android:layout_toEndOf="@+id/textViewPPG"
-                    android:layout_alignBottom="@+id/textViewPPG"
-                    android:id="@+id/textViewPPGlabel"
-                    />
-            </RelativeLayout>
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:text=" PG"
+            android:textColor="#000"
+            android:textSize="13sp"
+            android:textStyle="italic"
+            android:id="@+id/textViewPerGameLabel"
+            android:layout_alignParentBottom="true"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentEnd="true" />
 
-            <RelativeLayout
-                android:layout_width="0dip"
-                android:layout_weight="1"
-                android:layout_height="wrap_content"
-                android:gravity="center">
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginEnd="3dp"
-                    android:text="0.0"
-                    android:textColor="#000"
-                    android:textSize="16sp"
-                    android:textStyle="bold"
-                    android:id="@+id/textViewRPG"
-                    />
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="RPG"
-                    android:textColor="#999"
-                    android:textSize="13sp"
-                    android:layout_toEndOf="@+id/textViewRPG"
-                    android:layout_alignBottom="@+id/textViewRPG"
-                    android:id="@+id/textViewRPGlabel"
-                    />
-            </RelativeLayout>
-
-            <RelativeLayout
-                android:layout_width="0dip"
-                android:layout_weight="1"
-                android:layout_height="wrap_content"
-                android:gravity="center">
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginEnd="3dp"
-                    android:text="0.0"
-                    android:textColor="#000"
-                    android:textSize="16sp"
-                    android:textStyle="bold"
-                    android:id="@+id/textViewAPG"
-                    />
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="APG"
-                    android:textColor="#999"
-                    android:textSize="13sp"
-                    android:layout_toEndOf="@+id/textViewAPG"
-                    android:layout_alignBottom="@+id/textViewAPG"
-                    android:id="@+id/textViewAPGlabel"
-                    />
-            </RelativeLayout>
-
-            <RelativeLayout
-                android:layout_width="0dip"
-                android:layout_weight="1.2"
-                android:layout_height="wrap_content"
-                android:gravity="center">
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginEnd="3dp"
-                    android:text="0/0"
-                    android:textColor="#000"
-                    android:textSize="16sp"
-                    android:textStyle="bold"
-                    android:id="@+id/textViewFGP"
-                    />
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="FG%"
-                    android:textColor="#999"
-                    android:textSize="13sp"
-                    android:layout_toEndOf="@+id/textViewFGP"
-                    android:layout_alignBottom="@+id/textViewFGP"
-                    android:id="@+id/textViewFGPlabel"
-                    />
-            </RelativeLayout>
-
-        </LinearLayout>
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:text="22.6"
+            android:textColor="#000"
+            android:textSize="15sp"
+            android:textStyle="bold"
+            android:id="@+id/textViewPerGame"
+            android:layout_below="@+id/textViewTotal"
+            android:layout_toStartOf="@+id/textViewPerGameLabel" />
 
     </RelativeLayout>
-
-
 
 </LinearLayout>

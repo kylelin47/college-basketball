@@ -91,6 +91,7 @@ public class YearlyPlayerStats {
                 return 0;
         }
     }
+
     private float getPG(float total) {
         return gamesPlayed == 0 ? 0 : total/gamesPlayed;
     }

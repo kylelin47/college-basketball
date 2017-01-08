@@ -14,6 +14,7 @@ import java.util.List;
 import io.coachapps.collegebasketballcoach.R;
 import io.coachapps.collegebasketballcoach.basketballsim.Player;
 import io.coachapps.collegebasketballcoach.basketballsim.Team;
+import io.coachapps.collegebasketballcoach.db.Schemas;
 import io.coachapps.collegebasketballcoach.models.YearlyPlayerStats;
 import io.coachapps.collegebasketballcoach.util.DataDisplayer;
 
@@ -27,9 +28,10 @@ public class LeagueLeadersListArrayAdapter extends ArrayAdapter<Player> {
     public final List<YearlyPlayerStats> stats;
     private final SparseArray<Team> playerTeamMap;
     private final String playerTeamName;
+    private final String stat;
 
-    public LeagueLeadersListArrayAdapter(Context context,
-                                         List<Player> players, List<YearlyPlayerStats> stats,
+    public LeagueLeadersListArrayAdapter(Context context, List<Player> players,
+                                         List<YearlyPlayerStats> stats, String stat,
                                          SparseArray<Team> playerTeamMap, String playerTeamName) {
         super(context, R.layout.league_leaders_list_item, players);
         this.context = context;
@@ -37,6 +39,7 @@ public class LeagueLeadersListArrayAdapter extends ArrayAdapter<Player> {
         this.stats = stats;
         this.playerTeamMap = playerTeamMap;
         this.playerTeamName = playerTeamName;
+        this.stat = stat;
     }
 
     @Override
@@ -54,31 +57,53 @@ public class LeagueLeadersListArrayAdapter extends ArrayAdapter<Player> {
         TextView rank = (TextView) rowView.findViewById(R.id.textViewRank);
         TextView playerName = (TextView) rowView.findViewById(R.id.textViewName);
         TextView playerPosition = (TextView) rowView.findViewById(R.id.textViewPosition);
-        TextView playerOvrPot = (TextView) rowView.findViewById(R.id.textViewOvrPot);
+        TextView teamName = (TextView) rowView.findViewById(R.id.textViewTeamName);
 
-        TextView playerPPG = (TextView) rowView.findViewById(R.id.textViewPPG);
-        TextView playerRPG = (TextView) rowView.findViewById(R.id.textViewRPG);
-        TextView playerAPG = (TextView) rowView.findViewById(R.id.textViewAPG);
-        TextView playerFGP = (TextView) rowView.findViewById(R.id.textViewFGP);
+        TextView statTotal = (TextView) rowView.findViewById(R.id.textViewTotal);
+        TextView statPerGame = (TextView) rowView.findViewById(R.id.textViewPerGame);
 
         Player p = players.get(position);
         if (playerTeamMap.get(p.getId()).getName().equals(playerTeamName)) {
             playerName.setTextColor(Color.parseColor("#DD5600"));
+            playerPosition.setTextColor(Color.parseColor("#DD5600"));
+            teamName.setTextColor(Color.parseColor("#DD5600"));
         } else {
             playerName.setTextColor(Color.parseColor("#000000"));
+            playerPosition.setTextColor(Color.parseColor("#888888"));
+            teamName.setTextColor(Color.parseColor("#000000"));
         }
 
         playerName.setText(p.name + " [" + DataDisplayer.getYearAbbreviation(p.year) + "]");
         playerPosition.setText(p.getLineupPositionStr());
-        playerOvrPot.setText(String.valueOf(p.getOverall()) + " / " +
-                DataDisplayer.getLetterGrade(p.getPotential()));
+        teamName.setText(playerTeamMap.get(p.getId()).getRankNameWLStr());
 
         YearlyPlayerStats currentStats = stats.get(position);
-        playerPPG.setText(currentStats.getPGDisplay("PPG"));
-        playerRPG.setText(currentStats.getPGDisplay("RPG"));
-        playerAPG.setText(currentStats.getPGDisplay("APG"));
-        playerFGP.setText(currentStats.getPGDisplay("FG%")+
-                "/"+currentStats.getPGDisplay("3P%"));
+
+        if (stat.equals(Schemas.YearlyPlayerStatsEntry.POINTS)) {
+            statTotal.setText(String.valueOf(currentStats.playerStats.points));
+            statPerGame.setText(String.valueOf(currentStats.getPGDisplay("PPG")));
+        } else if (stat.equals(Schemas.YearlyPlayerStatsEntry.DEFENSIVE_REBOUNDS)) {
+            statTotal.setText(String.valueOf(currentStats.playerStats.defensiveRebounds));
+            statPerGame.setText(String.valueOf(currentStats.getPGDisplay("RPG")));
+        } else if (stat.equals(Schemas.YearlyPlayerStatsEntry.ASSISTS)) {
+            statTotal.setText(String.valueOf(currentStats.playerStats.assists));
+            statPerGame.setText(String.valueOf(currentStats.getPGDisplay("APG")));
+        } else if (stat.equals(Schemas.YearlyPlayerStatsEntry.BLOCKS)) {
+            statTotal.setText(String.valueOf(currentStats.playerStats.blocks));
+            statPerGame.setText(String.valueOf(currentStats.getPGDisplay("BPG")));
+        } else if (stat.equals(Schemas.YearlyPlayerStatsEntry.STEALS)) {
+            statTotal.setText(String.valueOf(currentStats.playerStats.steals));
+            statPerGame.setText(String.valueOf(currentStats.getPGDisplay("SPG")));
+        } else if (stat.equals(Schemas.YearlyPlayerStatsEntry.FGM)) {
+            statTotal.setText(String.valueOf(currentStats.playerStats.fieldGoalsMade));
+            statPerGame.setText(String.valueOf(currentStats.getPGDisplay("FGM")));
+        } else if (stat.equals(Schemas.YearlyPlayerStatsEntry.THREE_POINTS_MADE)) {
+            statTotal.setText(String.valueOf(currentStats.playerStats.threePointsMade));
+            statPerGame.setText(String.valueOf(currentStats.getPGDisplay("3PM")));
+        } else if (stat.equals(Schemas.YearlyPlayerStatsEntry.FTM)) {
+            statTotal.setText(String.valueOf(currentStats.playerStats.freeThrowsMade));
+            statPerGame.setText(String.valueOf(currentStats.getPGDisplay("FTM")));
+        }
 
         rank.setText(String.valueOf(position+1));
 

@@ -953,13 +953,19 @@ public class MainActivity extends AppCompatActivity {
         categoryList.add("Total Points");
         categoryList.add("Total Rebounds");
         categoryList.add("Total Assists");
+        categoryList.add("Total Blocks");
+        categoryList.add("Total Steals");
         categoryList.add("Field Goals Made");
         categoryList.add("Three Pointers Made");
+        categoryList.add("Free Throws Made");
         schemaCategoryList.add(Schemas.YearlyPlayerStatsEntry.POINTS);
         schemaCategoryList.add(Schemas.YearlyPlayerStatsEntry.DEFENSIVE_REBOUNDS);
         schemaCategoryList.add(Schemas.YearlyPlayerStatsEntry.ASSISTS);
+        schemaCategoryList.add(Schemas.YearlyPlayerStatsEntry.BLOCKS);
+        schemaCategoryList.add(Schemas.YearlyPlayerStatsEntry.STEALS);
         schemaCategoryList.add(Schemas.YearlyPlayerStatsEntry.FGM);
         schemaCategoryList.add(Schemas.YearlyPlayerStatsEntry.THREE_POINTS_MADE);
+        schemaCategoryList.add(Schemas.YearlyPlayerStatsEntry.FTM);
         ArrayAdapter<String> stratDefSpinnerAdapter = new ArrayAdapter<>(this,
                 android.R.layout.simple_spinner_item, categoryList);
         stratDefSpinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
@@ -977,7 +983,8 @@ public class MainActivity extends AppCompatActivity {
                             }
                         }
                         listView.setAdapter(new LeagueLeadersListArrayAdapter(
-                                MainActivity.this, players, leaders, playerTeamMap, playerTeam.getName()));
+                                MainActivity.this, players, leaders, schemaCategoryList.get(position),
+                                playerTeamMap, playerTeam.getName()));
                         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                             @Override
                             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
