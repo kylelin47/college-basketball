@@ -20,6 +20,7 @@ import io.coachapps.collegebasketballcoach.db.YearlyTeamStatsDao;
 import io.coachapps.collegebasketballcoach.models.LeagueResults;
 import io.coachapps.collegebasketballcoach.models.YearlyPlayerStats;
 import io.coachapps.collegebasketballcoach.models.YearlyTeamStats;
+import io.coachapps.collegebasketballcoach.models.YearlyTeamWL;
 
 public class DataDisplayer {
     private static final String[] grades = {"F", "F+", "D", "D+", "C", "C+", "B", "B+", "A", "A+"};
@@ -500,6 +501,38 @@ public class DataDisplayer {
             ranksCSV.add(getRankStr(i+1) + "," + listTeams.get(i) + "," + teamChamps.get(listTeams.get(i)));
         }
         ranksCSV.add(getRankStr(listTeams.size()+1) + ",All Other Teams,0");
+
+        return ranksCSV;
+    }
+
+    public static ArrayList<String> getWinPercentageRankingsCSV(YearlyTeamStatsDao teamStatsDao) {
+        final HashMap<String, YearlyTeamWL> totalTeamWL = new HashMap<>();
+        List<YearlyTeamWL> allResults =  teamStatsDao.getAllTeamStatsWL();
+        for (YearlyTeamWL results : allResults) {
+            if (totalTeamWL.containsKey(results.team)) {
+                YearlyTeamWL teamWL = totalTeamWL.get(results.team);
+                teamWL.wins += results.wins;
+                teamWL.losses += results.losses;
+            } else {
+                totalTeamWL.put(results.team, new YearlyTeamWL(
+                        results.team, results.wins, results.losses));
+            }
+        }
+
+        ArrayList<String> listTeams = new ArrayList<>(totalTeamWL.keySet());
+        Collections.sort(listTeams, new Comparator<String>() {
+            @Override
+            public int compare(String a, String b) {
+                return (int)(1000*totalTeamWL.get(b).getWinPercentage()) -
+                        (int)(1000*totalTeamWL.get(a).getWinPercentage());
+            }
+        });
+
+        ArrayList<String> ranksCSV = new ArrayList<>();
+        for (int i = 0; i < listTeams.size(); ++i) {
+            ranksCSV.add(getRankStr(i+1) + "," + listTeams.get(i) + "," +
+                    DataDisplayer.round(totalTeamWL.get(listTeams.get(i)).getWinPercentage(), 3));
+        }
 
         return ranksCSV;
     }

@@ -16,7 +16,7 @@ public class Simulator {
 
     private static final double CHANCE_FOUL_OUTSIDE = 0.08;
     private static final double CHANCE_FOUL_MIDRANGE = 0.12;
-    private static final double CHANCE_FOUL_INSIDE = 0.18;
+    private static final double CHANCE_FOUL_INSIDE = 0.2;
 
     public Context context;
 
@@ -285,7 +285,7 @@ public class Simulator {
 
         if ( selShot < intelOutT && intelOutT >= 0 && shooter.getOutS() > 50 ) {
 
-            if (Math.random() < CHANCE_FOUL_OUTSIDE && Math.random() < (double)(shooter.getBBallIQ()+100)/200) {
+            if (Math.random() < CHANCE_FOUL_OUTSIDE + assBonus/250 && Math.random() < (double)(shooter.getBBallIQ()+100)/200) {
                 // FOUL!
                 addToLog(gameLog, getCommentaryOutsideShotFreeThrows(shooter));
                 return takeFreeThrows(3, shooter, gameLog);
@@ -313,7 +313,7 @@ public class Simulator {
             }
         } else if ( selShot < intelMidT && intelMidT >= 0 ) {
 
-            if (Math.random() < CHANCE_FOUL_MIDRANGE && Math.random() < (double)(shooter.getBBallIQ()+100)/200) {
+            if (Math.random() < CHANCE_FOUL_MIDRANGE + assBonus/250 && Math.random() < (double)(shooter.getBBallIQ()+100)/200) {
                 // FOUL!
                 addToLog(gameLog, getCommentaryMidrangeShotFreeThrows(shooter));
                 return takeFreeThrows(2, shooter, gameLog);
@@ -357,7 +357,7 @@ public class Simulator {
                 } 
             }
 
-            if (Math.random() < CHANCE_FOUL_INSIDE && Math.random() < (double)(shooter.getBBallIQ()+100)/200) {
+            if (Math.random() < CHANCE_FOUL_INSIDE + assBonus/250 && Math.random() < (double)(shooter.getBBallIQ()+100)/200) {
                 // FOUL!
                 addToLog(gameLog, getCommentaryInsideShotFreeThrows(shooter));
                 return takeFreeThrows(2, shooter, gameLog);
@@ -395,7 +395,7 @@ public class Simulator {
     public static int takeFreeThrows(int numShots, Player shooter, StringBuilder gameLog) {
         int numPoints = 0;
         for (int i = 0; i < numShots; ++i) {
-            if (Math.random() < (double)(shooter.getMidS()-35)/140 + 0.45 && Math.random() < 0.92) {
+            if (Math.random() < (double)(shooter.getMidS()-35)/150 + 0.43 && Math.random() < 0.92) {
                 numPoints++;
                 shooter.addFTM();
             }

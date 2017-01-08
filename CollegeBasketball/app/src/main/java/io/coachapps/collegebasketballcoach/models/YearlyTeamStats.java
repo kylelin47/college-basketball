@@ -77,7 +77,7 @@ public class YearlyTeamStats {
         this.threePM = stats.stats.threePointsMade;
         this.threePA = stats.stats.threePointsAttempted;
         this.ftm = stats.stats.freeThrowsMade;
-        this.fta = stats.stats.fieldGoalsAttempted;
+        this.fta = stats.stats.freeThrowsAttempted;
         this.opp_points = stats.oppStats.points;
         this.opp_assists = stats.oppStats.assists;
         this.opp_rebounds = stats.oppStats.defensiveRebounds + stats.oppStats.offensiveRebounds;

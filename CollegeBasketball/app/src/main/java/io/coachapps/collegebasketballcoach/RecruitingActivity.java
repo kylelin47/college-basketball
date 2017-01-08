@@ -74,6 +74,7 @@ public class RecruitingActivity extends AppCompatActivity {
         int minDefense;
         int minPassing;
         int minRebouding;
+        int maxPrice;
         boolean hideUnaffordable;
 
         public Filter() {
@@ -82,6 +83,7 @@ public class RecruitingActivity extends AppCompatActivity {
             minDefense = 0;
             minPassing = 0;
             minRebouding = 0;
+            maxPrice = 10000;
             hideUnaffordable = false;
         }
 
@@ -90,12 +92,18 @@ public class RecruitingActivity extends AppCompatActivity {
             else return (minimum - 50)/10;
         }
 
+        public int getPriceSelection(int price) {
+            if (price == 10000) return 0;
+            else return ((2100 - price)/100);
+        }
+
         public boolean meetsFilters(Player p) {
             return (p.ratings.potential >= minPotential &&
                     p.getCompositeShooting() >= minShooting &&
                     p.getCompositeDefense() >= minDefense &&
                     p.getCompositePassing() >= minPassing &&
                     p.getCompositeRebounding() >= minRebouding &&
+                    recruitCostMap.get(p) <= maxPrice &&
                     ((recruitCostMap.get(p) <= playerTeamMoney && hideUnaffordable) || !hideUnaffordable));
         }
     }
@@ -290,6 +298,11 @@ public class RecruitingActivity extends AppCompatActivity {
         dialog.show();
 
         String[] filterSelection = {"F","D","C","B","A"};
+        String[] priceSelection = new String[21];
+        priceSelection[0] = "No Max";
+        for (int i = 1; i < priceSelection.length; ++i) {
+            priceSelection[i] = "$" + (2100-100*i);
+        }
 
         // Set up filter potential spinner
         final Spinner filterPotSpinner = (Spinner) dialog.findViewById(R.id.spinnerFilterPot);
@@ -331,6 +344,14 @@ public class RecruitingActivity extends AppCompatActivity {
         filterReboundingSpinner.setAdapter(filterReboundingSpinnerAdapter);
         filterReboundingSpinner.setSelection(recruitFilter.getSelection(recruitFilter.minRebouding));
 
+        // Set up filter Max Price spinner
+        final Spinner filterMaxPriceSpinner = (Spinner) dialog.findViewById(R.id.spinnerFilterMaxPrice);
+        ArrayAdapter<String> filterMaxPriceSpinnerAdapter = new ArrayAdapter<String>(this,
+                android.R.layout.simple_spinner_item, priceSelection);
+        filterMaxPriceSpinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        filterMaxPriceSpinner.setAdapter(filterMaxPriceSpinnerAdapter);
+        filterMaxPriceSpinner.setSelection(recruitFilter.getPriceSelection(recruitFilter.maxPrice));
+
         // Checkbox for removing unaffordable players
         final CheckBox filterUnaffordableCheckbox = (CheckBox) dialog.findViewById(R.id.checkBoxFilterUnaffordable);
         filterUnaffordableCheckbox.setChecked(recruitFilter.hideUnaffordable);
@@ -345,6 +366,9 @@ public class RecruitingActivity extends AppCompatActivity {
                 recruitFilter.minDefense = 50 + 10 * filterDefenseSpinner.getSelectedItemPosition();
                 recruitFilter.minPassing = 50 + 10 * filterPassingSpinner.getSelectedItemPosition();
                 recruitFilter.minRebouding = 50 + 10 * filterReboundingSpinner.getSelectedItemPosition();
+                int priceSelection = filterMaxPriceSpinner.getSelectedItemPosition();
+                if (priceSelection == 0) recruitFilter.maxPrice = 10000;
+                else recruitFilter.maxPrice = 2100 - 100 * priceSelection;
                 recruitFilter.hideUnaffordable = filterUnaffordableCheckbox.isChecked();
                 applyFilters();
                 dialog.dismiss();

@@ -13,6 +13,7 @@ import java.util.List;
 
 import io.coachapps.collegebasketballcoach.R;
 import io.coachapps.collegebasketballcoach.models.YearlyTeamStats;
+import io.coachapps.collegebasketballcoach.util.DataDisplayer;
 
 /**
  * Adapter for displaying a team's history.
@@ -85,7 +86,8 @@ public class TeamHistoryListArrayAdapter extends ArrayAdapter<YearlyTeamStats> {
                     }
                 }
             }
-            textViewTop.setText("Total W-L: " + totalWins + "-" + totalLoss);
+            textViewTop.setText("Total W-L: " + totalWins + "-" + totalLoss + " (" +
+                    DataDisplayer.round((double)(totalWins)/(totalWins + totalLoss), 3) + ")");
             textViewMiddle.setText("Conference Championships: " + totalCCs);
             textViewBottom.setText("Final Fours: " + totalFFs + "\nNational Championships: " + totalNCs);
             textViewTop.setTextColor(Color.parseColor("#000000"));

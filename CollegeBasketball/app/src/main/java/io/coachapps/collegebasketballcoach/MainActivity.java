@@ -1164,6 +1164,7 @@ public class MainActivity extends AppCompatActivity {
         final List<String> leagueHistoryChoices = new ArrayList<>();
         leagueHistoryChoices.add("League History");
         leagueHistoryChoices.add("Number Of Championships");
+        leagueHistoryChoices.add("All Time Win Percentage");
         leagueHistoryChoices.add(playerTeam.getName());
         List<Team> listAllTeams = league.getAllTeams();
         Collections.sort(listAllTeams, new Comparator<Team>() {
@@ -1194,6 +1195,10 @@ public class MainActivity extends AppCompatActivity {
                             // Champ rankings
                             listView.setAdapter(new TeamRankingsListArrayAdapter(MainActivity.this,
                                     DataDisplayer.getChampTeamRankingsCSV(historyDao, getYear()), playerTeam.getName()));
+                        } else if (position == 2) {
+                            // Win Percentage
+                            listView.setAdapter(new TeamRankingsListArrayAdapter(MainActivity.this,
+                                    DataDisplayer.getWinPercentageRankingsCSV(teamStatsDao), playerTeam.getName()));
                         } else {
                             // Team histories
                             List<YearlyTeamStats> teamStatsList =

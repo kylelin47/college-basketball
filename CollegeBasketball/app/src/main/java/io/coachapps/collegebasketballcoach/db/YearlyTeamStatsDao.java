@@ -11,6 +11,7 @@ import java.util.List;
 import io.coachapps.collegebasketballcoach.models.Stats;
 import io.coachapps.collegebasketballcoach.models.TeamStats;
 import io.coachapps.collegebasketballcoach.models.YearlyTeamStats;
+import io.coachapps.collegebasketballcoach.models.YearlyTeamWL;
 
 
 public class YearlyTeamStatsDao {
@@ -225,6 +226,38 @@ public class YearlyTeamStatsDao {
                 stats.add(fetchYearlyTeamStats(cursor, team));
             }
         }
+        return stats;
+    }
+
+    public List<YearlyTeamWL> getAllTeamStatsWL() {
+        List<YearlyTeamWL> stats = new ArrayList<>();
+        SQLiteDatabase db = DbHelper.getInstance(context).getReadableDatabase();
+        String[] projection = {
+                Schemas.YearlyTeamStatsEntry.WINS,
+                Schemas.YearlyTeamStatsEntry.LOSSES,
+                Schemas.YearlyTeamStatsEntry.YEAR,
+                Schemas.YearlyTeamStatsEntry.TEAM
+        };
+        String orderBy = Schemas.YearlyTeamStatsEntry.TEAM + " ASC";
+        try (Cursor cursor = db.query(Schemas.YearlyTeamStatsEntry.TABLE_NAME, projection,
+                null, null, null, null, orderBy, null)) {
+            while (cursor.moveToNext()) {
+                stats.add(fetchYearlyTeamWL(cursor));
+            }
+        }
+        return stats;
+    }
+
+    private YearlyTeamWL fetchYearlyTeamWL(Cursor cursor) {
+        YearlyTeamWL stats = new YearlyTeamWL();
+        stats.wins = cursor.getInt(cursor.getColumnIndexOrThrow(Schemas
+                .YearlyTeamStatsEntry.WINS));
+        stats.losses = cursor.getInt(cursor.getColumnIndexOrThrow(Schemas
+                .YearlyTeamStatsEntry.LOSSES));
+        stats.year = cursor.getInt(cursor.getColumnIndexOrThrow(Schemas
+                .YearlyTeamStatsEntry.YEAR));
+        stats.team = cursor.getString(cursor.getColumnIndexOrThrow(Schemas
+                .YearlyTeamStatsEntry.TEAM));
         return stats;
     }
 

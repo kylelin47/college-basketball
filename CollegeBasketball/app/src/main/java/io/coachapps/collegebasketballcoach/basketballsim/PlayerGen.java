@@ -353,6 +353,10 @@ public class PlayerGen {
             ratings.perimeterDefense += (int)(Math.random()*potBonus)/div;
             ratings.rebounding       += (int)(Math.random()*potBonus)/div;
         }
+
+        ratings.usage = (int) (Math.round( Math.pow(ratings.insideShooting, 2) +
+                Math.pow(ratings.midrangeShooting, 2) +
+                Math.pow(ratings.outsideShooting, 2)))/1000;
     }
     
 }

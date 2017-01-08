@@ -193,7 +193,7 @@ public class GameSimThread extends Thread {
                         else playTime = hspeed + 20 * Math.random();
                     }
                 } else if (poss_away) {
-                    if (hscore < ascore && Math.abs(hscore - ascore) < 6 &&
+                    if (ascore < hscore && Math.abs(hscore - ascore) < 6 &&
                             ((Math.abs(hscore - ascore) > 3 && maxGameTime - gameTime < 60) ||
                                     (Math.abs(hscore - ascore) <= 3 && maxGameTime - gameTime < 30))) {
                         // Intentional foul
