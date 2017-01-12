@@ -73,6 +73,7 @@ public class TeamDao {
      */
     public List<Team> getAllTeams(int year, PlayerGen playerGen) throws IOException, ClassNotFoundException {
         // inner joins would give better performance
+        playerGen.setCurrIDFillPosition(year);
         PlayerDao playerDao = new PlayerDao(context);
         List<Team> teams = new ArrayList<>();
         SQLiteDatabase db = DbHelper.getInstance(context).getReadableDatabase();
@@ -154,16 +155,12 @@ public class TeamDao {
 
     public void fillPositions(Team team, PlayerGen playerGen, PlayerDao playerDao) {
         for (int i = 1; i < 6; ++i) {
-            int count = 0;
-            for (Player p : team.players) {
-                if (p.getPosition() == i) {
-                    count++;
-                }
-            }
-            if (count < 2) {
+            int count = team.getPosTotals(i);
+            while (count < 2) {
                 Player p = playerGen.genPlayer(i, 50, 1);
                 team.players.add(p);
                 playerDao.save(new PlayerModel(p, team.getName()));
+                count = team.getPosTotals(i);
             }
         }
 

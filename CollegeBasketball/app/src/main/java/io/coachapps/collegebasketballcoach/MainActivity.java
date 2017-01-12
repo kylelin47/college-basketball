@@ -251,6 +251,7 @@ public class MainActivity extends AppCompatActivity {
                         settings = new Settings(settingsFile);
 
                         dialog.getButton(DialogInterface.BUTTON_POSITIVE).setEnabled(false);
+                        playerGen.resetCurrID(2016);
                         league = new League(playerTeamName, MainActivity.this, playerGen,
                                 spinnerDifficulty.getSelectedItemPosition(),
                                 spinnerConference.getSelectedItemPosition());

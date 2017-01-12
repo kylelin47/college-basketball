@@ -210,6 +210,7 @@ public class RecruitingActivity extends AppCompatActivity {
         }
 
         // Make recruits
+        playerGen.resetCurrID(getYear());
         availableRecruits = playerGen.genRecruits(NUM_RECRUITS);
         Collections.sort(availableRecruits, new PlayerOverallComp());
         recruitCostMap = new HashMap<>();

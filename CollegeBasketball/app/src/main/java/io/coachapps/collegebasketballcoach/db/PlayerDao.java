@@ -4,6 +4,7 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.util.Log;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -169,7 +170,11 @@ public class PlayerDao {
         values.put(Schemas.PlayerEntry.TEAM, player.team);
         values.put(Schemas.PlayerEntry.YEAR, player.year);
         values.put(Schemas.PlayerEntry.RATINGS, SerializationUtil.serialize(player.ratings));
-        db.insert(Schemas.PlayerEntry.TABLE_NAME, null, values);
+        if (db.insert(Schemas.PlayerEntry.TABLE_NAME, null, values) == -1) {
+            Log.i("PlayerDao", "No rows were inserted when inserting player " + player.id + " from " + player.team);
+        } else {
+            Log.i("PlayerDao", "Inserted " + player.id + " from " + player.team);
+        }
     }
 
     private Player createPlayer(Cursor cursor) {

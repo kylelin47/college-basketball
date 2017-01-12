@@ -59,7 +59,7 @@ public class Simulator {
         double playTime = 0;
         while (playing) {
             if (poss_home) {
-                if (hscore < ascore && Math.abs(hscore - ascore) < 6 &&
+                if (ascore < hscore && Math.abs(hscore - ascore) < 6 &&
                         ((Math.abs(hscore - ascore) > 3 && max_gametime - gametime < 60) ||
                          (Math.abs(hscore - ascore) <= 3 && max_gametime - gametime < 30))) {
                     // Intentional foul
@@ -79,7 +79,7 @@ public class Simulator {
                     matches_h = detectMismatch(home, away);
                 }
             } else if (poss_away) {
-                if (ascore < hscore && Math.abs(hscore - ascore) < 6 &&
+                if (hscore < ascore && Math.abs(hscore - ascore) < 6 &&
                         ((Math.abs(hscore - ascore) > 3 && max_gametime - gametime < 60) ||
                                 (Math.abs(hscore - ascore) <= 3 && max_gametime - gametime < 30))) {
                     // Intentional foul

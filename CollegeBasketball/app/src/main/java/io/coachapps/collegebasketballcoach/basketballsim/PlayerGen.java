@@ -21,6 +21,14 @@ public class PlayerGen {
         listLastNames = lastCSV.split(",");
         currID = 5000 * (year - 2016) + 1;
     }
+
+    public void setCurrIDFillPosition(int year) {
+        currID = 1500000000 + 5000 * (year - 2016) + 1;
+    }
+
+    public void resetCurrID(int year) {
+        currID = 5000 * (year - 2016) + 1;
+    }
     
     private String getRandName() {
         // get random name from list and remove it so it won't be used again
