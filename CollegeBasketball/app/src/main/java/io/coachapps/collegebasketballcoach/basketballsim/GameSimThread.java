@@ -215,9 +215,9 @@ public class GameSimThread extends Thread {
                     }
                 }
 
-                gameTime += (int) playTime;
-                away.addTimePlayed((int) playTime);
-                home.addTimePlayed((int) playTime);
+                gameTime += (int) Math.abs(playTime);
+                away.addTimePlayed((int) Math.abs(playTime));
+                home.addTimePlayed((int) Math.abs(playTime));
                 if ((gameTime > 200 && Math.random() < 0.25) || (maxGameTime - gameTime < 120)) {
                     away.subPlayers(maxGameTime - gameTime);
                     home.subPlayers(maxGameTime - gameTime);

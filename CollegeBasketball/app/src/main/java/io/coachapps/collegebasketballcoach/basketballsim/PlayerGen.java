@@ -296,6 +296,7 @@ public class PlayerGen {
         ratings.potential = 50 + (int)(Math.random()*50);
         ratings.bballIQ = 50 + (int)(Math.random()*50);
         ratings.position = position;
+        ratings.lineupPosition = position;
         ratings.insideShooting = int_s;
         ratings.midrangeShooting = mid_s;
         ratings.outsideShooting = out_s;

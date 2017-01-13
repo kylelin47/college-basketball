@@ -401,6 +401,12 @@ public class MainActivity extends AppCompatActivity {
         });
 
         populateMaps();
+
+        if (playerTeam.gameSchedule.get(0) != null &&
+                !playerTeam.gameSchedule.get(0).hasPlayed() && getYear() != 2016) {
+            // Not played first game of the season, do recruit class rankings
+            showRecruitClassRankings();
+        }
     }
 
     @Override
@@ -929,6 +935,26 @@ public class MainActivity extends AppCompatActivity {
         FragmentTransaction ft = getFragmentManager().beginTransaction();
         DialogFragment newFragment = SetLineupFragment.newInstance(playerTeam.name);
         newFragment.show(ft, "lineup dialog");
+    }
+
+    public void showRecruitClassRankings() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setView(getLayoutInflater().inflate(R.layout.simple_list, null));
+        builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.dismiss();
+            }
+        });
+        builder.setTitle("Recruit Class Rankings");
+        final AlertDialog dialog = builder.create();
+        dialog.show();
+
+        ArrayList<String> rankingsCSV = DataDisplayer.getRecruitClassRankingsCSV(league);
+        final ListView listView = (ListView) dialog.findViewById(R.id.listView);
+        listView.setAdapter(new TeamRankingsListArrayAdapter(MainActivity.this,
+                rankingsCSV, playerTeam.getName()));
+
     }
 
     public void showLeagueLeadersDialog() {

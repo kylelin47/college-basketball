@@ -44,7 +44,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textAppearance="?android:attr/textAppearanceLarge"
-        android:text="99 / A+"
+        android:text="119 / A+"
         android:textSize="50sp"
         android:textStyle="bold"
         android:id="@+id/textViewOvrPot"

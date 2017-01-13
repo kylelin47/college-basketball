@@ -14,6 +14,7 @@ import java.util.List;
 
 import io.coachapps.collegebasketballcoach.basketballsim.Game;
 import io.coachapps.collegebasketballcoach.basketballsim.League;
+import io.coachapps.collegebasketballcoach.basketballsim.Player;
 import io.coachapps.collegebasketballcoach.basketballsim.Team;
 import io.coachapps.collegebasketballcoach.db.LeagueResultsEntryDao;
 import io.coachapps.collegebasketballcoach.db.YearlyTeamStatsDao;
@@ -474,6 +475,34 @@ public class DataDisplayer {
         } else {
             return new ArrayList<>();
         }
+    }
+
+    public static ArrayList<String> getRecruitClassRankingsCSV(League league) {
+        final HashMap<String, Integer> classRankings = new HashMap<>();
+        for (Team t : league.getAllTeams()) {
+            int classRating = 0;
+            for (Player p : t.players) {
+                if (p.year == 1) {
+                    classRating += (int)(Math.pow(p.getOverall() - 50, 2));
+                }
+            }
+            classRankings.put(t.getName(), classRating);
+        }
+
+        ArrayList<String> teamNames = new ArrayList<>(classRankings.keySet());
+        Collections.sort(teamNames, new Comparator<String>() {
+            @Override
+            public int compare(String a, String b) {
+                return classRankings.get(b) - classRankings.get(a);
+            }
+        });
+
+        ArrayList<String> ranksCSV = new ArrayList<>();
+        for (int i = 0; i < teamNames.size(); ++i) {
+            ranksCSV.add(getRankStr(i+1) + "," + teamNames.get(i) + "," + classRankings.get(teamNames.get(i)));
+        }
+
+        return ranksCSV;
     }
 
     public static ArrayList<String> getChampTeamRankingsCSV(LeagueResultsEntryDao historyDao, int year) {

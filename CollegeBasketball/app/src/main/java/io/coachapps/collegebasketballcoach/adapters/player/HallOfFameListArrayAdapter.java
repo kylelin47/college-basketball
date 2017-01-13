@@ -103,6 +103,8 @@ public class HallOfFameListArrayAdapter extends ArrayAdapter<Player> {
                 total3GA += currentStats.playerStats.threePointsAttempted;
                 if (currentStats.playerStats.points > 0) totalGames += currentStats.gamesPlayed;
             }
+            if (totalFGA == 0) totalFGA = 1;
+            if (total3GA == 0) total3GA = 1;
             viewHolder.playerPPG.setText(String.valueOf(DataDisplayer.round((double)totalPoints/totalGames, 1)));
             viewHolder.playerRPG.setText(String.valueOf(DataDisplayer.round((double)totalRebounds/totalGames, 1)));
             viewHolder.playerAPG.setText(String.valueOf(DataDisplayer.round((double)totalAssists/totalGames, 1)));

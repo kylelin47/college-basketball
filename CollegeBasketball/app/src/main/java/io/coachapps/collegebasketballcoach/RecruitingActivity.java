@@ -199,8 +199,7 @@ public class RecruitingActivity extends AppCompatActivity {
                 playerTeam = t;
                 if (settings.getDifficulty() == 0) {
                     playerTeamMoney = playerTeam.getPrestige()*20;
-                }
-                else if (settings.getDifficulty() == 1) {
+                } else if (settings.getDifficulty() == 1) {
                     playerTeamMoney = playerTeam.getPrestige()*15;
                 } else {
                     playerTeamMoney = playerTeam.getPrestige()*10;
@@ -417,6 +416,7 @@ public class RecruitingActivity extends AppCompatActivity {
 
         Intent intent = new Intent(this, MainActivity.class);
         startActivity(intent);
+        finish();
     }
 
     public void recruitPlayer(Team team, Player player) {

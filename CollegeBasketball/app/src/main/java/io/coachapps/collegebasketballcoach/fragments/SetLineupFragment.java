@@ -102,6 +102,8 @@ public class SetLineupFragment extends DialogFragment {
 
         players.get(a).setLineupPosition(b);
         players.get(b).setLineupPosition(a);
+        players.get(a).updateOverall();
+        players.get(b).updateOverall();
         playerDao.updatePlayerRatings(players.get(a).getId(),
                 players.get(a).ratings);
         playerDao.updatePlayerRatings(players.get(b).getId(),
