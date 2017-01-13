@@ -46,6 +46,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 import io.coachapps.collegebasketballcoach.adapters.ChampionsListArrayAdapter;
 import io.coachapps.collegebasketballcoach.adapters.LeagueHistoryListArrayAdapter;
+import io.coachapps.collegebasketballcoach.adapters.LeagueRecordsListArrayAdapter;
 import io.coachapps.collegebasketballcoach.adapters.TeamHistoryListArrayAdapter;
 import io.coachapps.collegebasketballcoach.adapters.TeamRankingsListArrayAdapter;
 import io.coachapps.collegebasketballcoach.adapters.TeamStatsListArrayAdapter;
@@ -80,6 +81,7 @@ import io.coachapps.collegebasketballcoach.models.YearlyPlayerStats;
 import io.coachapps.collegebasketballcoach.models.YearlyTeamStats;
 import io.coachapps.collegebasketballcoach.util.DataDisplayer;
 import io.coachapps.collegebasketballcoach.util.LeagueEvents;
+import io.coachapps.collegebasketballcoach.util.LeagueRecords;
 import io.coachapps.collegebasketballcoach.util.Settings;
 
 public class MainActivity extends AppCompatActivity {
@@ -118,6 +120,7 @@ public class MainActivity extends AppCompatActivity {
     boolean shownMadeMissedMarchDialog = false;
 
     Settings settings;
+    LeagueRecords leagueRecords;
 
     public void onBackPressed() {
         Intent myIntent = new Intent(MainActivity.this, StartActivity.class);
@@ -250,6 +253,10 @@ public class MainActivity extends AppCompatActivity {
                         }
                         settings = new Settings(settingsFile);
 
+                        // Records file, hacky hack
+                        leagueRecords = new LeagueRecords(null);
+                        leagueRecords.saveRecords(new File(getFilesDir(), "records"));
+
                         dialog.getButton(DialogInterface.BUTTON_POSITIVE).setEnabled(false);
                         playerGen.resetCurrID(2016);
                         league = new League(playerTeamName, MainActivity.this, playerGen,
@@ -282,6 +289,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void setEverythingUp() {
+        leagueRecords = new LeagueRecords(new File(getFilesDir(), "records"));
         playerTeam = league.getPlayerTeam();
         league.assignPollRanks(this, getYear());
         getSupportActionBar().setTitle(getYear() + " " + playerTeam.name);
@@ -1192,6 +1200,7 @@ public class MainActivity extends AppCompatActivity {
         leagueHistoryChoices.add("League History");
         leagueHistoryChoices.add("Number Of Championships");
         leagueHistoryChoices.add("All Time Win Percentage");
+        leagueHistoryChoices.add("League Records");
         leagueHistoryChoices.add(playerTeam.getName());
         List<Team> listAllTeams = league.getAllTeams();
         Collections.sort(listAllTeams, new Comparator<Team>() {
@@ -1226,6 +1235,22 @@ public class MainActivity extends AppCompatActivity {
                             // Win Percentage
                             listView.setAdapter(new TeamRankingsListArrayAdapter(MainActivity.this,
                                     DataDisplayer.getWinPercentageRankingsCSV(teamStatsDao), playerTeam.getName()));
+                        } else if (position == 3) {
+                            // League Records
+                            listView.setAdapter(new LeagueRecordsListArrayAdapter(MainActivity.this,
+                                    leagueRecords.getAllRecords(), playerTeam.getName()));
+                            listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                                @Override
+                                public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                                    LeagueRecords.Record r = ((LeagueRecordsListArrayAdapter) listView
+                                            .getAdapter()).getItem(position);
+                                    if (r.isPlayerRecord()) {
+                                        PlayerDao pd = new PlayerDao(MainActivity.this);
+                                        Player player = pd.getPlayer(Integer.parseInt(r.getHolder()));
+                                        showPlayerDialog(player, player.teamName, r.getYear());
+                                    }
+                                }
+                            });
                         } else {
                             // Team histories
                             List<YearlyTeamStats> teamStatsList =
@@ -1285,6 +1310,50 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
+    public List<LeagueRecords.Record> checkSeasonRecords() {
+        YearlyTeamStatsDao yearlyTeamStatsDao = new YearlyTeamStatsDao(this);
+        List<YearlyTeamStats> teamStats = yearlyTeamStatsDao.getTeamStatsOfYear(getYear());
+        Log.i("MainActivity", "teamStats size = " + teamStats.size());
+        for (YearlyTeamStats yts : teamStats) {
+            leagueRecords.checkRecord(LeagueRecords.TEAM_SEASON_PPG, yts.team, yts.year, yts.getPG("PPG"));
+            leagueRecords.checkRecord(LeagueRecords.TEAM_SEASON_OPPG, yts.team, yts.year, yts.getPG("OPPG"));
+            leagueRecords.checkRecord(LeagueRecords.TEAM_SEASON_FGP, yts.team, yts.year, yts.getPG("FG%"));
+            leagueRecords.checkRecord(LeagueRecords.TEAM_SEASON_OFGP, yts.team, yts.year, yts.getPG("OFG%"));
+            leagueRecords.checkRecord(LeagueRecords.TEAM_SEASON_APG, yts.team, yts.year, yts.getPG("APG"));
+            leagueRecords.checkRecord(LeagueRecords.TEAM_SEASON_RPG, yts.team, yts.year, yts.getPG("RPG"));
+            leagueRecords.checkRecord(LeagueRecords.TEAM_SEASON_BPG, yts.team, yts.year, yts.getPG("BPG"));
+            leagueRecords.checkRecord(LeagueRecords.TEAM_SEASON_SPG, yts.team, yts.year, yts.getPG("SPG"));
+        }
+
+        YearlyPlayerStatsDao yearlyPlayerStatsDao = new YearlyPlayerStatsDao(this);
+        List<YearlyPlayerStats> playerStats = yearlyPlayerStatsDao.getAllYearlyPlayerStats(getYear());
+        Log.i("MainActivity", "playerStats size = " + playerStats.size());
+        for (YearlyPlayerStats yps : playerStats) {
+            leagueRecords.checkRecord(LeagueRecords.PLAYER_SEASON_POINTS, String.valueOf(yps.playerId), yps.year, yps.playerStats.points);
+            leagueRecords.checkRecord(LeagueRecords.PLAYER_SEASON_ASSISTS, String.valueOf(yps.playerId), yps.year, yps.playerStats.assists);
+            leagueRecords.checkRecord(LeagueRecords.PLAYER_SEASON_REBOUNDS, String.valueOf(yps.playerId), yps.year, yps.playerStats.defensiveRebounds);
+            leagueRecords.checkRecord(LeagueRecords.PLAYER_SEASON_STEALS, String.valueOf(yps.playerId), yps.year, yps.playerStats.steals);
+            leagueRecords.checkRecord(LeagueRecords.PLAYER_SEASON_BLOCKS, String.valueOf(yps.playerId), yps.year, yps.playerStats.blocks);
+            leagueRecords.checkRecord(LeagueRecords.PLAYER_SEASON_FGM, String.valueOf(yps.playerId), yps.year, yps.playerStats.fieldGoalsMade);
+            leagueRecords.checkRecord(LeagueRecords.PLAYER_SEASON_3GM, String.valueOf(yps.playerId), yps.year, yps.playerStats.threePointsMade);
+            leagueRecords.checkRecord(LeagueRecords.PLAYER_SEASON_FGP, String.valueOf(yps.playerId), yps.year, yps.getPG("FG%"));
+            leagueRecords.checkRecord(LeagueRecords.PLAYER_SEASON_3FGP, String.valueOf(yps.playerId), yps.year, yps.getPG("3P%"));
+        }
+
+        List<LeagueRecords.Record> recordsBroken = new ArrayList<>();
+        for (String record : LeagueRecords.ALL_RECORDS) {
+            LeagueRecords.Record r = leagueRecords.getRecord(record);
+            if (r != null && r.getYear() == getYear()) {
+                // Broken this year
+                recordsBroken.add(r);
+            }
+        }
+
+        leagueRecords.saveRecords(new File(getFilesDir(), "records"));
+
+        return recordsBroken;
+    }
+
     public void showEndOfSeasonDialog() {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setView(getLayoutInflater().inflate(R.layout.spinner_list, null));
@@ -1305,6 +1374,8 @@ public class MainActivity extends AppCompatActivity {
         final LeagueResults leagueResults = leagueResultsDao.getLeagueResults(
                 leagueResultsDao.getCurrentYear()-1, leagueResultsDao.getCurrentYear()-1).get(0);
 
+        final List<LeagueRecords.Record> recordsBroken = checkSeasonRecords();
+
         final ListView listView = (ListView) dialog.findViewById(R.id.listView);
 
         final Spinner spinner = (Spinner) dialog.findViewById(R.id.spinner);
@@ -1321,8 +1392,22 @@ public class MainActivity extends AppCompatActivity {
                         if (position == 0) {
                             listView.setAdapter(new ChampionsListArrayAdapter(MainActivity.this,
                                     DataDisplayer.getCSVChampions(leagueResults, league)));
-                        }
-                        else if (position < 3) {
+                        } else if (position == 1) {
+                            listView.setAdapter(new LeagueRecordsListArrayAdapter(MainActivity.this,
+                                    recordsBroken, playerTeam.getName()));
+                            listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                                @Override
+                                public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                                    LeagueRecords.Record r = ((LeagueRecordsListArrayAdapter) listView
+                                            .getAdapter()).getItem(position);
+                                    if (r.isPlayerRecord()) {
+                                        PlayerDao pd = new PlayerDao(MainActivity.this);
+                                        Player player = pd.getPlayer(Integer.parseInt(r.getHolder()));
+                                        showPlayerDialog(player, player.teamName, r.getYear());
+                                    }
+                                }
+                            });
+                        } else if (position < 4) {
                             // MVP or DPOY
                             if (position == 1) awardWinners.add(playerMap.get(leagueResults.mvpId));
                             else awardWinners.add(playerMap.get(leagueResults.dpoyId));

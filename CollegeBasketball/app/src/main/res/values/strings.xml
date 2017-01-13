@@ -7,7 +7,7 @@
     <string name="action_set_strategy">Set Team Strategy</string>
     <string name="action_team_rankings">Team Rankings</string>
     <string name="action_league_leaders">League Leaders</string>
-    <string name="action_league_history">League History</string>
+    <string name="action_league_history">League History/Records</string>
     <string name="action_hall_of_fame">Hall Of Fame</string>
     <string name="action_season_awards">Season Awards</string>
     <string name="action_filter">Filter Recruits</string>
@@ -29,6 +29,7 @@
     </string-array>
     <string-array name="season_awards_choices">
         <item>Tournament Results</item>
+        <item>Records Broken</item>
         <item>Player of the Year</item>
         <item>Defensive Player of the Year</item>
         <item>All Americans</item>

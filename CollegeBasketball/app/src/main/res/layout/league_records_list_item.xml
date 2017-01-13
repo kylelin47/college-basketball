@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal"
+    android:gravity="center"
+    android:padding="5dp">
+    <TextView
+        android:text="123.10"
+        android:id="@+id/textTeamStatsLeft"
+        android:textAppearance="?android:attr/textAppearanceSmall"
+        android:textAlignment="gravity"
+        android:textSize="15sp"
+        android:gravity="center"
+        android:layout_width="0dip"
+        android:layout_height="wrap_content"
+        android:layout_weight="0.75" />
+    <TextView
+        android:text="Points Per Game"
+        android:id="@+id/textTeamStatsCenter"
+        android:textAppearance="?android:attr/textAppearanceSmall"
+        android:textAlignment="gravity"
+        android:textStyle="bold"
+        android:textColor="#000"
+        android:textSize="15sp"
+        android:gravity="center"
+        android:layout_width="0dip"
+        android:layout_height="wrap_content"
+        android:layout_weight="1.0" />
+
+    <TextView
+        android:text="1st"
+        android:id="@+id/textTeamStatsRight"
+        android:textAppearance="?android:attr/textAppearanceSmall"
+        android:textAlignment="gravity"
+        android:textSize="15sp"
+        android:gravity="center"
+        android:layout_width="0dip"
+        android:layout_height="wrap_content"
+        android:layout_weight="1.0" />
+</LinearLayout>

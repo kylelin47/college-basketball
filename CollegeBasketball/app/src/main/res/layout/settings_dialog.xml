@@ -32,7 +32,7 @@
         <CheckBox
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Show toast after each game"
+            android:text="Show pop-up after each game"
             android:id="@+id/checkBoxEnableToasts"
             android:layout_centerHorizontal="true"/>
     </RelativeLayout>

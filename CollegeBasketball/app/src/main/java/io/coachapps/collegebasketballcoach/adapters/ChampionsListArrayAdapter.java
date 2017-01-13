@@ -24,7 +24,7 @@ public class ChampionsListArrayAdapter extends ArrayAdapter<String> {
         super(context, R.layout.champions_list_item, values);
         this.context = context;
         this.values = values;
-        }
+    }
 
     @Override
     public View getView(final int position, View convertView, ViewGroup parent) {
@@ -40,5 +40,5 @@ public class ChampionsListArrayAdapter extends ArrayAdapter<String> {
         textViewBottom.setText(values.get(position).split(",")[1]);
 
         return convertView;
-        }
+    }
 }
