@@ -1,6 +1,7 @@
 package io.coachapps.collegebasketballcoach.adapters;
 
 import android.content.Context;
+import android.graphics.Color;
 import android.graphics.Typeface;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
@@ -46,10 +47,22 @@ public class LeagueRecordsListArrayAdapter extends ArrayAdapter<LeagueRecords.Re
         textCenter.setText(r.getDescription());
         if (r.getDescription().contains("Team")) {
             textRight.setText(r.getHolder() + " (" + r.getYear() + ")");
+            if (playerTeamName.equals(r.getHolder())) {
+                // User Team, highlight using accent color
+                textLeft.setTextColor(Color.parseColor("#DD5600"));
+                textCenter.setTextColor(Color.parseColor("#DD5600"));
+                textRight.setTextColor(Color.parseColor("#DD5600"));
+            }
         } else {
             // Player
             Player player = playerDao.getPlayer(Integer.parseInt(r.getHolder()));
             textRight.setText(player.name + " (" + r.getYear() + ")");
+            if (playerTeamName.equals(player.teamName)) {
+                // User Team, highlight using accent color
+                textLeft.setTextColor(Color.parseColor("#DD5600"));
+                textCenter.setTextColor(Color.parseColor("#DD5600"));
+                textRight.setTextColor(Color.parseColor("#DD5600"));
+            }
         }
 
         return rowView;

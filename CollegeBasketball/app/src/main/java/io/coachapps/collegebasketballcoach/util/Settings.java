@@ -15,6 +15,10 @@ import java.io.Writer;
 
 public class Settings {
 
+    public static final String SETTINGS_FILE_NAME = "settings";
+    public static final String RECORDS_FILE_NAME = "records";
+    public static final String TEAM_RECORDS_FILE_NAME = "team_records";
+
     // Difficulty, 0 easy, 1 normal, 2 hard
     private int difficulty;
     public boolean enableToasts;

@@ -488,6 +488,13 @@ public class Team {
         return walkOns;
     }
 
+    public boolean hasPlayer(Player p) {
+        for (Player player : players) {
+            if (player.getId() == p.getId()) return true;
+        }
+        return false;
+    }
+
     /**
      * Recruits a player from a list of the recruits.
      * Assumes that the recruit list is sorted by overall rating.

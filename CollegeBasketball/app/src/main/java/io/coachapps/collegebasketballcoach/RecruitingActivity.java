@@ -34,6 +34,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 
 import io.coachapps.collegebasketballcoach.adapters.recruiting.CommitmentsListArrayAdapter;
@@ -46,11 +47,14 @@ import io.coachapps.collegebasketballcoach.basketballsim.PlayerGen;
 import io.coachapps.collegebasketballcoach.db.DbHelper;
 import io.coachapps.collegebasketballcoach.db.PlayerDao;
 import io.coachapps.collegebasketballcoach.db.Schemas;
+import io.coachapps.collegebasketballcoach.db.YearlyPlayerStatsDao;
 import io.coachapps.collegebasketballcoach.fragments.PlayerDialogFragment;
 import io.coachapps.collegebasketballcoach.models.LeagueResults;
 import io.coachapps.collegebasketballcoach.models.PlayerModel;
 import io.coachapps.collegebasketballcoach.models.ThreeAwardTeams;
+import io.coachapps.collegebasketballcoach.models.YearlyPlayerStats;
 import io.coachapps.collegebasketballcoach.util.DataDisplayer;
+import io.coachapps.collegebasketballcoach.util.LeagueRecords;
 import io.coachapps.collegebasketballcoach.util.PlayerOverallComp;
 import io.coachapps.collegebasketballcoach.basketballsim.Team;
 import io.coachapps.collegebasketballcoach.db.LeagueResultsEntryDao;
@@ -121,6 +125,8 @@ public class RecruitingActivity extends AppCompatActivity {
     private static final int ALL_CONF_3rd = 10;
 
     Settings settings;
+    LeagueRecords leagueRecords;
+    LeagueRecords teamRecords;
     PlayerDao playerDao;
     TeamDao teamDao;
 
@@ -139,6 +145,7 @@ public class RecruitingActivity extends AppCompatActivity {
 
     List<Player> existingPlayers;
     HashMap<Player, Team> existingPlayersTeamMap;
+    HashSet<Integer> existingPlayersUserTeam;
     List<Player> availableRecruits;
     HashMap<Player, Integer> recruitCostMap;
     HashMap<Player, String> recruitPersonalityMap;
@@ -167,6 +174,7 @@ public class RecruitingActivity extends AppCompatActivity {
         playerDao = new PlayerDao(this);
         teamDao = new TeamDao(this);
         existingPlayers = new ArrayList<>();
+        existingPlayersUserTeam = new HashSet<>();
         existingPlayersTeamMap = new HashMap<>();
         playerImprovementMap = new HashMap<>();
         try {
@@ -180,6 +188,9 @@ public class RecruitingActivity extends AppCompatActivity {
             for (Team t : teamList) {
                 for (Player p : t.players) {
                     existingPlayersTeamMap.put(p, t);
+                    if (t.isPlayer()) {
+                        existingPlayersUserTeam.add(p.getId());
+                    }
                 }
                 existingPlayers.addAll(t.players);
                 t.removeSeniorsAndAddYear();
@@ -190,7 +201,12 @@ public class RecruitingActivity extends AppCompatActivity {
         }
 
         // Get settings for difficulty
-        settings = new Settings(new File(getFilesDir(), "settings"));
+        settings = new Settings(new File(getFilesDir(), Settings.SETTINGS_FILE_NAME));
+
+        // Get league records
+        leagueRecords = new LeagueRecords(new File(getFilesDir(), Settings.RECORDS_FILE_NAME));
+        // Get team records
+        teamRecords = new LeagueRecords(new File(getFilesDir(), Settings.TEAM_RECORDS_FILE_NAME));
 
         // Find user team
         playerTeamName = teamDao.getPlayerTeamName();
@@ -726,10 +742,10 @@ public class RecruitingActivity extends AppCompatActivity {
                 new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                if (playerTeamMoney >= recruitCostMap.get(p)) {
+                if (playerTeamMoney >= recruitCostMap.get(p) && !playerTeam.hasPlayer(p)) {
                     playerTeamMoney -= recruitCostMap.get(p);
-                    updateTextView();
                     recruitPlayer(playerTeam, p);
+                    updateTextView();
                     letComputerTeamsRecruit(true);
                     dialog.dismiss();
                     Toast.makeText(RecruitingActivity.this, "Recruited " + p.name,
@@ -806,6 +822,8 @@ public class RecruitingActivity extends AppCompatActivity {
         LeagueResultsEntryDao leagueResultsEntryDao = new LeagueResultsEntryDao(this);
         List<LeagueResults> leagueResultsList = leagueResultsEntryDao.getLeagueResults(getYear()-4, getYear());
 
+        YearlyPlayerStatsDao playerStatsDao = new YearlyPlayerStatsDao(this);
+
         SQLiteDatabase db = DbHelper.getInstance(this).getReadableDatabase();
         db.beginTransaction();
         try {
@@ -825,6 +843,8 @@ public class RecruitingActivity extends AppCompatActivity {
                     if (getHallOfFameScore(leagueResultsList, p) >= HOF_SCORE) {
                         p.year = 7;
                     }
+                    // Retired players, check career records
+                    checkCareerRecords(playerStatsDao, p.getId());
                 } else {
                     int oldOverall = p.getOverall();
                     PlayerGen.advanceYearRatings(p.ratings);
@@ -835,6 +855,10 @@ public class RecruitingActivity extends AppCompatActivity {
 
                 playerDao.updatePlayer(new PlayerModel(p, existingPlayersTeamMap.get(p).getName()));
             }
+
+            leagueRecords.saveRecords(new File(getFilesDir(), Settings.RECORDS_FILE_NAME));
+            teamRecords.saveRecords(new File(getFilesDir(), Settings.TEAM_RECORDS_FILE_NAME));
+
             db.delete(Schemas.BoxScoreEntry.TABLE_NAME, null, null);
             db.setTransactionSuccessful();
         } finally {
@@ -893,6 +917,37 @@ public class RecruitingActivity extends AppCompatActivity {
         }
         return 0;
     }
+
+    public void checkCareerRecords(YearlyPlayerStatsDao playerStatsDao, int playerId) {
+        YearlyPlayerStats yps = playerStatsDao.getCareerStats(playerId);
+        leagueRecords.checkRecord(LeagueRecords.PLAYER_CAREER_POINTS, String.valueOf(yps.playerId), yps.year, yps.playerStats.points);
+        leagueRecords.checkRecord(LeagueRecords.PLAYER_CAREER_ASSISTS, String.valueOf(yps.playerId), yps.year, yps.playerStats.assists);
+        leagueRecords.checkRecord(LeagueRecords.PLAYER_CAREER_REBOUNDS, String.valueOf(yps.playerId), yps.year, yps.playerStats.defensiveRebounds);
+        leagueRecords.checkRecord(LeagueRecords.PLAYER_CAREER_STEALS, String.valueOf(yps.playerId), yps.year, yps.playerStats.steals);
+        leagueRecords.checkRecord(LeagueRecords.PLAYER_CAREER_BLOCKS, String.valueOf(yps.playerId), yps.year, yps.playerStats.blocks);
+        leagueRecords.checkRecord(LeagueRecords.PLAYER_CAREER_FGM, String.valueOf(yps.playerId), yps.year, yps.playerStats.fieldGoalsMade);
+        leagueRecords.checkRecord(LeagueRecords.PLAYER_CAREER_3GM, String.valueOf(yps.playerId), yps.year, yps.playerStats.threePointsMade);
+        if (yps.playerStats.fieldGoalsMade > 100)
+            leagueRecords.checkRecord(LeagueRecords.PLAYER_CAREER_FGP, String.valueOf(yps.playerId), yps.year, yps.getPG("FG%"));
+        if (yps.playerStats.threePointsMade > 100)
+            leagueRecords.checkRecord(LeagueRecords.PLAYER_CAREER_3FGP, String.valueOf(yps.playerId), yps.year, yps.getPG("3P%"));
+
+        if (existingPlayersUserTeam.contains(playerId)) {
+            // Is on player team
+            teamRecords.checkRecord(LeagueRecords.PLAYER_CAREER_POINTS, String.valueOf(yps.playerId), yps.year, yps.playerStats.points);
+            teamRecords.checkRecord(LeagueRecords.PLAYER_CAREER_ASSISTS, String.valueOf(yps.playerId), yps.year, yps.playerStats.assists);
+            teamRecords.checkRecord(LeagueRecords.PLAYER_CAREER_REBOUNDS, String.valueOf(yps.playerId), yps.year, yps.playerStats.defensiveRebounds);
+            teamRecords.checkRecord(LeagueRecords.PLAYER_CAREER_STEALS, String.valueOf(yps.playerId), yps.year, yps.playerStats.steals);
+            teamRecords.checkRecord(LeagueRecords.PLAYER_CAREER_BLOCKS, String.valueOf(yps.playerId), yps.year, yps.playerStats.blocks);
+            teamRecords.checkRecord(LeagueRecords.PLAYER_CAREER_FGM, String.valueOf(yps.playerId), yps.year, yps.playerStats.fieldGoalsMade);
+            teamRecords.checkRecord(LeagueRecords.PLAYER_CAREER_3GM, String.valueOf(yps.playerId), yps.year, yps.playerStats.threePointsMade);
+            if (yps.playerStats.fieldGoalsMade > 100)
+                teamRecords.checkRecord(LeagueRecords.PLAYER_CAREER_FGP, String.valueOf(yps.playerId), yps.year, yps.getPG("FG%"));
+            if (yps.playerStats.threePointsMade > 100)
+                teamRecords.checkRecord(LeagueRecords.PLAYER_CAREER_3FGP, String.valueOf(yps.playerId), yps.year, yps.getPG("3P%"));
+        }
+    }
+
 
     /**
      * Class responsible for finishing up recruiting

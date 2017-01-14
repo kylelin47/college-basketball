@@ -121,6 +121,7 @@ public class MainActivity extends AppCompatActivity {
 
     Settings settings;
     LeagueRecords leagueRecords;
+    LeagueRecords teamRecords;
 
     public void onBackPressed() {
         Intent myIntent = new Intent(MainActivity.this, StartActivity.class);
@@ -243,7 +244,7 @@ public class MainActivity extends AppCompatActivity {
                     String playerTeamName = editTextTeamName.getText().toString().trim();
                     if (playerTeamName.length() >= 3) {
                         // Settings file, default settings
-                        File settingsFile = new File(getFilesDir(), "settings");
+                        File settingsFile = new File(getFilesDir(), Settings.SETTINGS_FILE_NAME);
                         try (Writer writer = new BufferedWriter(new OutputStreamWriter(
                                 new FileOutputStream(settingsFile), "utf-8"))) {
                             writer.write("Difficulty " + spinnerDifficulty.getSelectedItemPosition() + "\n");
@@ -255,7 +256,11 @@ public class MainActivity extends AppCompatActivity {
 
                         // Records file, hacky hack
                         leagueRecords = new LeagueRecords(null);
-                        leagueRecords.saveRecords(new File(getFilesDir(), "records"));
+                        leagueRecords.saveRecords(new File(getFilesDir(), Settings.RECORDS_FILE_NAME));
+
+                        // Records file, hacky hack
+                        teamRecords = new LeagueRecords(null);
+                        teamRecords.saveRecords(new File(getFilesDir(), Settings.TEAM_RECORDS_FILE_NAME));
 
                         dialog.getButton(DialogInterface.BUTTON_POSITIVE).setEnabled(false);
                         playerGen.resetCurrID(2016);
@@ -277,7 +282,7 @@ public class MainActivity extends AppCompatActivity {
 
 
         } else {
-            settings = new Settings(new File(getFilesDir(), "settings"));
+            settings = new Settings(new File(getFilesDir(), Settings.SETTINGS_FILE_NAME));
             playerTeam = league.getPlayerTeam();
             playerTeam.sortPlayersOvrPosition();
             PlayerDao playerDao = new PlayerDao(this);
@@ -289,7 +294,8 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void setEverythingUp() {
-        leagueRecords = new LeagueRecords(new File(getFilesDir(), "records"));
+        leagueRecords = new LeagueRecords(new File(getFilesDir(), Settings.RECORDS_FILE_NAME));
+        teamRecords = new LeagueRecords(new File(getFilesDir(), Settings.TEAM_RECORDS_FILE_NAME));
         playerTeam = league.getPlayerTeam();
         league.assignPollRanks(this, getYear());
         getSupportActionBar().setTitle(getYear() + " " + playerTeam.name);
@@ -696,6 +702,16 @@ public class MainActivity extends AppCompatActivity {
         DialogFragment newFragment =
                 PlayerDialogFragment.newInstance(p, teamName, year);
         newFragment.show(ft, "player dialog");
+    }
+
+    public void showPlayerDialogFromRecord(LeagueRecords.Record r) {
+        if (r.isPlayerRecord()) {
+            PlayerDao pd = new PlayerDao(MainActivity.this);
+            Player player = pd.getPlayer(Integer.parseInt(r.getHolder()));
+            YearlyPlayerStatsDao playerStatsDao = new YearlyPlayerStatsDao(MainActivity.this);
+            YearlyPlayerStats careerStats = playerStatsDao.getCareerStats(player.getId());
+            showPlayerDialog(player, player.teamName, careerStats.year);
+        }
     }
 
     public void showBracketDialog(Game.GameType gameType) {
@@ -1201,6 +1217,7 @@ public class MainActivity extends AppCompatActivity {
         leagueHistoryChoices.add("Number Of Championships");
         leagueHistoryChoices.add("All Time Win Percentage");
         leagueHistoryChoices.add("League Records");
+        leagueHistoryChoices.add("My Team Records");
         leagueHistoryChoices.add(playerTeam.getName());
         List<Team> listAllTeams = league.getAllTeams();
         Collections.sort(listAllTeams, new Comparator<Team>() {
@@ -1244,11 +1261,19 @@ public class MainActivity extends AppCompatActivity {
                                 public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                                     LeagueRecords.Record r = ((LeagueRecordsListArrayAdapter) listView
                                             .getAdapter()).getItem(position);
-                                    if (r.isPlayerRecord()) {
-                                        PlayerDao pd = new PlayerDao(MainActivity.this);
-                                        Player player = pd.getPlayer(Integer.parseInt(r.getHolder()));
-                                        showPlayerDialog(player, player.teamName, r.getYear());
-                                    }
+                                    showPlayerDialogFromRecord(r);
+                                }
+                            });
+                        } else if (position == 4) {
+                            // Team Records
+                            listView.setAdapter(new LeagueRecordsListArrayAdapter(MainActivity.this,
+                                    teamRecords.getAllRecords(), "XXX"));
+                            listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                                @Override
+                                public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                                    LeagueRecords.Record r = ((LeagueRecordsListArrayAdapter) listView
+                                            .getAdapter()).getItem(position);
+                                    showPlayerDialogFromRecord(r);
                                 }
                             });
                         } else {
@@ -1323,6 +1348,17 @@ public class MainActivity extends AppCompatActivity {
             leagueRecords.checkRecord(LeagueRecords.TEAM_SEASON_RPG, yts.team, yts.year, yts.getPG("RPG"));
             leagueRecords.checkRecord(LeagueRecords.TEAM_SEASON_BPG, yts.team, yts.year, yts.getPG("BPG"));
             leagueRecords.checkRecord(LeagueRecords.TEAM_SEASON_SPG, yts.team, yts.year, yts.getPG("SPG"));
+
+            if (yts.team.equals(playerTeam.getName())) {
+                teamRecords.checkRecord(LeagueRecords.TEAM_SEASON_PPG, yts.team, yts.year, yts.getPG("PPG"));
+                teamRecords.checkRecord(LeagueRecords.TEAM_SEASON_OPPG, yts.team, yts.year, yts.getPG("OPPG"));
+                teamRecords.checkRecord(LeagueRecords.TEAM_SEASON_FGP, yts.team, yts.year, yts.getPG("FG%"));
+                teamRecords.checkRecord(LeagueRecords.TEAM_SEASON_OFGP, yts.team, yts.year, yts.getPG("OFG%"));
+                teamRecords.checkRecord(LeagueRecords.TEAM_SEASON_APG, yts.team, yts.year, yts.getPG("APG"));
+                teamRecords.checkRecord(LeagueRecords.TEAM_SEASON_RPG, yts.team, yts.year, yts.getPG("RPG"));
+                teamRecords.checkRecord(LeagueRecords.TEAM_SEASON_BPG, yts.team, yts.year, yts.getPG("BPG"));
+                teamRecords.checkRecord(LeagueRecords.TEAM_SEASON_SPG, yts.team, yts.year, yts.getPG("SPG"));
+            }
         }
 
         YearlyPlayerStatsDao yearlyPlayerStatsDao = new YearlyPlayerStatsDao(this);
@@ -1336,12 +1372,28 @@ public class MainActivity extends AppCompatActivity {
             leagueRecords.checkRecord(LeagueRecords.PLAYER_SEASON_BLOCKS, String.valueOf(yps.playerId), yps.year, yps.playerStats.blocks);
             leagueRecords.checkRecord(LeagueRecords.PLAYER_SEASON_FGM, String.valueOf(yps.playerId), yps.year, yps.playerStats.fieldGoalsMade);
             leagueRecords.checkRecord(LeagueRecords.PLAYER_SEASON_3GM, String.valueOf(yps.playerId), yps.year, yps.playerStats.threePointsMade);
-            leagueRecords.checkRecord(LeagueRecords.PLAYER_SEASON_FGP, String.valueOf(yps.playerId), yps.year, yps.getPG("FG%"));
-            leagueRecords.checkRecord(LeagueRecords.PLAYER_SEASON_3FGP, String.valueOf(yps.playerId), yps.year, yps.getPG("3P%"));
+            if (yps.playerStats.fieldGoalsMade > 50)
+                leagueRecords.checkRecord(LeagueRecords.PLAYER_SEASON_FGP, String.valueOf(yps.playerId), yps.year, yps.getPG("FG%"));
+            if (yps.playerStats.threePointsMade > 50)
+                leagueRecords.checkRecord(LeagueRecords.PLAYER_SEASON_3FGP, String.valueOf(yps.playerId), yps.year, yps.getPG("3P%"));
+
+            if (playerTeamMap.get(yps.playerId) == playerTeam) {
+                teamRecords.checkRecord(LeagueRecords.PLAYER_SEASON_POINTS, String.valueOf(yps.playerId), yps.year, yps.playerStats.points);
+                teamRecords.checkRecord(LeagueRecords.PLAYER_SEASON_ASSISTS, String.valueOf(yps.playerId), yps.year, yps.playerStats.assists);
+                teamRecords.checkRecord(LeagueRecords.PLAYER_SEASON_REBOUNDS, String.valueOf(yps.playerId), yps.year, yps.playerStats.defensiveRebounds);
+                teamRecords.checkRecord(LeagueRecords.PLAYER_SEASON_STEALS, String.valueOf(yps.playerId), yps.year, yps.playerStats.steals);
+                teamRecords.checkRecord(LeagueRecords.PLAYER_SEASON_BLOCKS, String.valueOf(yps.playerId), yps.year, yps.playerStats.blocks);
+                teamRecords.checkRecord(LeagueRecords.PLAYER_SEASON_FGM, String.valueOf(yps.playerId), yps.year, yps.playerStats.fieldGoalsMade);
+                teamRecords.checkRecord(LeagueRecords.PLAYER_SEASON_3GM, String.valueOf(yps.playerId), yps.year, yps.playerStats.threePointsMade);
+                if (yps.playerStats.fieldGoalsMade > 50)
+                    teamRecords.checkRecord(LeagueRecords.PLAYER_SEASON_FGP, String.valueOf(yps.playerId), yps.year, yps.getPG("FG%"));
+                if (yps.playerStats.threePointsMade > 50)
+                    teamRecords.checkRecord(LeagueRecords.PLAYER_SEASON_3FGP, String.valueOf(yps.playerId), yps.year, yps.getPG("3P%"));
+            }
         }
 
         List<LeagueRecords.Record> recordsBroken = new ArrayList<>();
-        for (String record : LeagueRecords.ALL_RECORDS) {
+        for (String record : LeagueRecords.ALL_SEASON_ECORDS) {
             LeagueRecords.Record r = leagueRecords.getRecord(record);
             if (r != null && r.getYear() == getYear()) {
                 // Broken this year
@@ -1349,7 +1401,8 @@ public class MainActivity extends AppCompatActivity {
             }
         }
 
-        leagueRecords.saveRecords(new File(getFilesDir(), "records"));
+        leagueRecords.saveRecords(new File(getFilesDir(), Settings.RECORDS_FILE_NAME));
+        teamRecords.saveRecords(new File(getFilesDir(), Settings.TEAM_RECORDS_FILE_NAME));
 
         return recordsBroken;
     }
@@ -1400,16 +1453,12 @@ public class MainActivity extends AppCompatActivity {
                                 public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                                     LeagueRecords.Record r = ((LeagueRecordsListArrayAdapter) listView
                                             .getAdapter()).getItem(position);
-                                    if (r.isPlayerRecord()) {
-                                        PlayerDao pd = new PlayerDao(MainActivity.this);
-                                        Player player = pd.getPlayer(Integer.parseInt(r.getHolder()));
-                                        showPlayerDialog(player, player.teamName, r.getYear());
-                                    }
+                                    showPlayerDialogFromRecord(r);
                                 }
                             });
                         } else if (position < 4) {
                             // MVP or DPOY
-                            if (position == 1) awardWinners.add(playerMap.get(leagueResults.mvpId));
+                            if (position == 2) awardWinners.add(playerMap.get(leagueResults.mvpId));
                             else awardWinners.add(playerMap.get(leagueResults.dpoyId));
 
                             listView.setAdapter(new PlayerAwardTeamListArrayAdapter(
@@ -1548,7 +1597,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 settings.setEnableToasts(enableToastsCheckBox.isChecked());
-                settings.saveSettings(new File(getFilesDir(), "settings"));
+                settings.saveSettings(new File(getFilesDir(), Settings.SETTINGS_FILE_NAME));
                 dialog.dismiss();
             }
         });

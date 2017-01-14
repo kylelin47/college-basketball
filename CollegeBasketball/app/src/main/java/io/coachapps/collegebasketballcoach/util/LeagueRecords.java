@@ -66,8 +66,38 @@ public class LeagueRecords {
             PLAYER_SEASON_FGM,
             PLAYER_SEASON_3GM,
             PLAYER_SEASON_FGP,
+            PLAYER_SEASON_3FGP,
+            PLAYER_CAREER_POINTS,
+            PLAYER_CAREER_ASSISTS,
+            PLAYER_CAREER_REBOUNDS,
+            PLAYER_CAREER_STEALS,
+            PLAYER_CAREER_BLOCKS,
+            PLAYER_CAREER_FGM,
+            PLAYER_CAREER_3GM,
+            PLAYER_CAREER_FGP,
+            PLAYER_CAREER_3FGP
+    };
+
+    public static final String[] ALL_SEASON_ECORDS = {
+            TEAM_SEASON_PPG,
+            TEAM_SEASON_OPPG,
+            TEAM_SEASON_FGP,
+            TEAM_SEASON_OFGP,
+            TEAM_SEASON_APG,
+            TEAM_SEASON_RPG,
+            TEAM_SEASON_SPG,
+            TEAM_SEASON_BPG,
+            PLAYER_SEASON_POINTS,
+            PLAYER_SEASON_ASSISTS,
+            PLAYER_SEASON_REBOUNDS,
+            PLAYER_SEASON_STEALS,
+            PLAYER_SEASON_BLOCKS,
+            PLAYER_SEASON_FGM,
+            PLAYER_SEASON_3GM,
+            PLAYER_SEASON_FGP,
             PLAYER_SEASON_3FGP
     };
+
 
     public class Record {
         String description; // Should be one of the above
