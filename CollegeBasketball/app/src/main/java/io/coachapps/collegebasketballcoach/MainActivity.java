@@ -1474,7 +1474,7 @@ public class MainActivity extends AppCompatActivity {
                             });
                         } else {
                             // Award Teams
-                            ThreeAwardTeams awardTeams = leagueResults.getTeam(position-3);
+                            ThreeAwardTeams awardTeams = leagueResults.getTeam(position-4);
                             for (int t = 0; t < 3; ++t) {
                                 for (int pos = 1; pos < 6; pos++) {
                                     int pid = awardTeams.get(t).getIdPosition(pos);
