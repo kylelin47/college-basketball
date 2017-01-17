@@ -1445,6 +1445,12 @@ public class MainActivity extends AppCompatActivity {
                         if (position == 0) {
                             listView.setAdapter(new ChampionsListArrayAdapter(MainActivity.this,
                                     DataDisplayer.getCSVChampions(leagueResults, league)));
+                            listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                                @Override
+                                public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                                    // Do nothing
+                                }
+                            });
                         } else if (position == 1) {
                             listView.setAdapter(new LeagueRecordsListArrayAdapter(MainActivity.this,
                                     recordsBroken, playerTeam.getName()));

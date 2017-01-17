@@ -113,10 +113,15 @@ public class GameSimThread extends Thread {
         home.resetLineup();
         away.resetLineup();
 
-        uiElements.textViewHomeAbbr.setText(home.getAbbr());
-        uiElements.textViewAwayAbbr.setText(away.getAbbr());
-        uiElements.textViewHomeScore.setText("0");
-        uiElements.textViewAwayScore.setText("0");
+        activity.runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                uiElements.textViewHomeAbbr.setText(home.getAbbr());
+                uiElements.textViewAwayAbbr.setText(away.getAbbr());
+                uiElements.textViewHomeScore.setText("0");
+                uiElements.textViewAwayScore.setText("0");
+            }
+        });
 
         gameSpeed = 0;
         uiElements.seekBarGameSpeed.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
