@@ -43,26 +43,32 @@ public class LeagueRecordsListArrayAdapter extends ArrayAdapter<LeagueRecords.Re
         TextView textRight = (TextView) rowView.findViewById(R.id.textTeamStatsRight);
 
         LeagueRecords.Record r = values.get(position);
-        textLeft.setText(getRoundedNumber(r));
-        textCenter.setText(r.getDescription());
-        if (r.getDescription().contains("Team")) {
-            textRight.setText(r.getHolder() + " (" + r.getYear() + ")");
-            if (playerTeamName.equals(r.getHolder())) {
-                // User Team, highlight using accent color
-                textLeft.setTextColor(Color.parseColor("#DD5600"));
-                textCenter.setTextColor(Color.parseColor("#DD5600"));
-                textRight.setTextColor(Color.parseColor("#DD5600"));
+        if (r != null) {
+            textLeft.setText(getRoundedNumber(r));
+            textCenter.setText(r.getDescription());
+            if (r.getDescription().contains("Team")) {
+                textRight.setText(r.getHolder() + " (" + r.getYear() + ")");
+                if (playerTeamName.equals(r.getHolder())) {
+                    // User Team, highlight using accent color
+                    textLeft.setTextColor(Color.parseColor("#DD5600"));
+                    textCenter.setTextColor(Color.parseColor("#DD5600"));
+                    textRight.setTextColor(Color.parseColor("#DD5600"));
+                }
+            } else {
+                // Player
+                Player player = playerDao.getPlayer(Integer.parseInt(r.getHolder()));
+                textRight.setText(player.name + " (" + r.getYear() + ")");
+                if (playerTeamName.equals(player.teamName)) {
+                    // User Team, highlight using accent color
+                    textLeft.setTextColor(Color.parseColor("#DD5600"));
+                    textCenter.setTextColor(Color.parseColor("#DD5600"));
+                    textRight.setTextColor(Color.parseColor("#DD5600"));
+                }
             }
         } else {
-            // Player
-            Player player = playerDao.getPlayer(Integer.parseInt(r.getHolder()));
-            textRight.setText(player.name + " (" + r.getYear() + ")");
-            if (playerTeamName.equals(player.teamName)) {
-                // User Team, highlight using accent color
-                textLeft.setTextColor(Color.parseColor("#DD5600"));
-                textCenter.setTextColor(Color.parseColor("#DD5600"));
-                textRight.setTextColor(Color.parseColor("#DD5600"));
-            }
+            textLeft.setText(" ");
+            textCenter.setText(" ");
+            textRight.setText(" ");
         }
 
         return rowView;

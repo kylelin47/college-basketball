@@ -5,61 +5,83 @@
     android:layout_height="match_parent"
     android:padding="8sp">
 
-    <LinearLayout
+    <Spinner
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:paddingTop="5dp"
-        android:paddingBottom="5dp">
-        <TextView
-            android:layout_width="0dip"
-            android:text="Offense:"
-            android:textAppearance="?android:attr/textAppearanceMedium"
-            android:textAlignment="center"
-            android:layout_weight="2"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_vertical"/>
-        <Spinner
-            android:layout_width="0dip"
-            android:layout_weight="3"
-            android:layout_height="wrap_content"
-            android:id="@+id/spinnerOffenseStrategy" />
-    </LinearLayout>
+        android:layout_marginBottom="15dp"
+        android:layout_marginTop="15dp"
+        android:id="@+id/spinnerStrategyDialog"/>
 
-    <TextView
+    <ListView
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:textAppearance="?android:attr/textAppearanceSmall"
-        android:paddingStart="10sp"
-        android:paddingEnd="10sp"
-        android:id="@+id/textOffenseStrategy" />
+        android:layout_height="match_parent"
+        android:id="@+id/listViewUsages"
+        android:visibility="gone"/>
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:paddingTop="15dp"
-        android:paddingBottom="5dp">
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:id="@+id/linLayoutStrategies">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingTop="5dp"
+            android:paddingBottom="5dp">
+            <TextView
+                android:layout_width="0dip"
+                android:text="Offense:"
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:textAlignment="center"
+                android:layout_weight="2"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"/>
+            <Spinner
+                android:layout_width="0dip"
+                android:layout_weight="3"
+                android:layout_height="wrap_content"
+                android:id="@+id/spinnerOffenseStrategy" />
+        </LinearLayout>
+
         <TextView
-            android:layout_width="0dip"
-            android:text="Defense:"
-            android:textAppearance="?android:attr/textAppearanceMedium"
-            android:textAlignment="center"
-            android:layout_weight="2"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_gravity="center_vertical"/>
-        <Spinner
-            android:layout_width="0dip"
-            android:layout_weight="3"
+            android:textAppearance="?android:attr/textAppearanceSmall"
+            android:paddingStart="10sp"
+            android:paddingEnd="10sp"
+            android:id="@+id/textOffenseStrategy" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:id="@+id/spinnerDefenseStrategy" />
+            android:paddingTop="15dp"
+            android:paddingBottom="5dp">
+            <TextView
+                android:layout_width="0dip"
+                android:text="Defense:"
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:textAlignment="center"
+                android:layout_weight="2"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"/>
+            <Spinner
+                android:layout_width="0dip"
+                android:layout_weight="3"
+                android:layout_height="wrap_content"
+                android:id="@+id/spinnerDefenseStrategy" />
+        </LinearLayout>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceSmall"
+            android:paddingStart="10sp"
+            android:paddingEnd="10sp"
+            android:paddingBottom="15sp"
+            android:id="@+id/textDefenseStrategy" />
+
     </LinearLayout>
 
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:textAppearance="?android:attr/textAppearanceSmall"
-        android:paddingStart="10sp"
-        android:paddingEnd="10sp"
-        android:paddingBottom="15sp"
-        android:id="@+id/textDefenseStrategy" />
 
 </LinearLayout>

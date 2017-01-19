@@ -282,14 +282,6 @@ public class PlayerGen {
         int_d      += prestigeFactor*Math.random();
         out_d      += prestigeFactor*Math.random();
         rebounding += prestigeFactor*Math.random();
-        
-        int usage = (int) (Math.round( Math.pow(int_s, 2) + Math.pow(mid_s, 2) + Math.pow(out_s, 2) ) + extra_usage)/1000;
-        /*
-        double factor = 1.8;
-        int ins_t = (int) (1000*Math.pow(int_s, factor) / (Math.pow(int_s, factor) + Math.pow(mid_s, factor) + Math.pow(out_s, factor)) );
-        int mid_t = (int) (1000*Math.pow(mid_s, factor) / (Math.pow(int_s, factor) + Math.pow(mid_s, factor) + Math.pow(out_s, factor)) );
-        int out_t = (int) (1000*Math.pow(out_s, factor) / (Math.pow(int_s, factor) + Math.pow(mid_s, factor) + Math.pow(out_s, factor)) );
-        */
 
         PlayerRatings ratings = new PlayerRatings();
 
@@ -307,7 +299,7 @@ public class PlayerGen {
         ratings.insideDefense = int_d;
         ratings.perimeterDefense = out_d;
         ratings.rebounding = rebounding;
-        ratings.usage = usage;
+        ratings.usage = usageCalc(ratings);
         ratings.weightInPounds = weight;
         ratings.heightInInches = height;
 
@@ -346,7 +338,11 @@ public class PlayerGen {
             ratings.rebounding       += (int)(Math.random()*potBonus)/div;
         }
 
-        ratings.usage = (int) (Math.round( Math.pow(ratings.insideShooting, 2) +
+        ratings.usage = usageCalc(ratings);
+    }
+
+    public static int usageCalc(PlayerRatings ratings) {
+        return (int) (Math.round( Math.pow(ratings.insideShooting, 2) +
                 Math.pow(ratings.midrangeShooting, 2) +
                 Math.pow(ratings.outsideShooting, 2)))/1000;
     }

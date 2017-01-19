@@ -75,7 +75,7 @@ public class Simulator {
                     if (hscore < ascore && max_gametime - gametime < 150) {
                         playTime = hspeed + 5 * Math.random();
                     }
-                    else playTime = hspeed + 20 * Math.random();
+                    else playTime = hspeed + 25 * Math.random();
                     matches_h = detectMismatch(home, away);
                 }
             } else if (poss_away) {
@@ -95,7 +95,7 @@ public class Simulator {
                     if (ascore < hscore && max_gametime - gametime < 150) {
                         playTime = aspeed + 5 * Math.random();
                     }
-                    else playTime = aspeed + 20 * Math.random();
+                    else playTime = aspeed + 25 * Math.random();
                     matches_a = detectMismatch(away, home);
                 }
             }

@@ -1,0 +1,151 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="5dp">
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:text="SF"
+        android:textColor="#999"
+        android:textSize="16sp"
+        android:textStyle="bold"
+        android:id="@+id/textViewPosition"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:text="Lebron James [Sr]"
+        android:textSize="16sp"
+        android:textStyle="bold"
+        android:id="@+id/textViewName"
+        android:layout_alignParentTop="true"
+        android:layout_toEndOf="@+id/textViewPosition"
+        android:layout_marginStart="5dp"
+        android:layout_marginLeft="5dp" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:text="99 / A"
+        android:textColor="#999"
+        android:textSize="16sp"
+        android:textStyle="bold"
+        android:id="@+id/textViewOvrPot"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true"
+        android:layout_marginRight="10dp"
+        android:layout_marginEnd="10dp"/>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/linLayoutMiddle"
+        android:layout_below="@+id/textViewName"
+        android:layout_marginTop="10dp">
+
+        <RelativeLayout
+            android:layout_width="0dip"
+            android:layout_weight="1"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:gravity="center">
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="3dp"
+                android:text="120"
+                android:textColor="#000"
+                android:textSize="18sp"
+                android:textStyle="bold"
+                android:gravity="center_vertical"
+                android:id="@+id/textViewInside"
+                />
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Ins"
+                android:textColor="#999"
+                android:textSize="14sp"
+                android:textStyle="bold"
+                android:layout_toEndOf="@+id/textViewInside"
+                android:layout_alignBottom="@+id/textViewInside"
+                />
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:layout_width="0dip"
+            android:layout_weight="1"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:gravity="center">
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="3dp"
+                android:text="108"
+                android:textColor="#000"
+                android:textSize="18sp"
+                android:textStyle="bold"
+                android:id="@+id/textViewMidrange"
+                />
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Mid"
+                android:textColor="#999"
+                android:textSize="14sp"
+                android:textStyle="bold"
+                android:layout_toEndOf="@+id/textViewMidrange"
+                android:layout_alignBottom="@+id/textViewMidrange"
+                />
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:layout_width="0dip"
+            android:layout_weight="1"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:gravity="center">
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="3dp"
+                android:text="120"
+                android:textColor="#000"
+                android:textSize="18sp"
+                android:textStyle="bold"
+                android:id="@+id/textViewOutside"
+                />
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Out"
+                android:textColor="#999"
+                android:textSize="14sp"
+                android:textStyle="bold"
+                android:layout_toEndOf="@+id/textViewOutside"
+                android:layout_alignBottom="@+id/textViewOutside"
+                />
+        </RelativeLayout>
+
+        <Spinner
+            android:layout_width="0dip"
+            android:layout_height="wrap_content"
+            android:layout_weight="1.5"
+            android:layout_gravity="center_vertical"
+            android:gravity="center"
+            android:id="@+id/spinnerUsage"/>
+
+    </LinearLayout>
+
+</RelativeLayout>

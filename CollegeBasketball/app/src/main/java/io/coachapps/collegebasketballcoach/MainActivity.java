@@ -22,6 +22,7 @@ import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.ScrollView;
 import android.widget.SeekBar;
@@ -56,6 +57,7 @@ import io.coachapps.collegebasketballcoach.adapters.player.LeagueLeadersListArra
 import io.coachapps.collegebasketballcoach.adapters.player.PlayerAwardTeamListArrayAdapter;
 import io.coachapps.collegebasketballcoach.adapters.player.PlayerAwardsListArrayAdapter;
 import io.coachapps.collegebasketballcoach.adapters.player.PlayerStatsListArrayAdapter;
+import io.coachapps.collegebasketballcoach.adapters.player.SetUsageListArrayAdapter;
 import io.coachapps.collegebasketballcoach.basketballsim.Game;
 import io.coachapps.collegebasketballcoach.basketballsim.GameSimThread;
 import io.coachapps.collegebasketballcoach.basketballsim.League;
@@ -705,7 +707,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void showPlayerDialogFromRecord(LeagueRecords.Record r) {
-        if (r.isPlayerRecord()) {
+        if (r != null && r.isPlayerRecord()) {
             PlayerDao pd = new PlayerDao(MainActivity.this);
             Player player = pd.getPlayer(Integer.parseInt(r.getHolder()));
             YearlyPlayerStatsDao playerStatsDao = new YearlyPlayerStatsDao(MainActivity.this);
@@ -766,6 +768,9 @@ public class MainActivity extends AppCompatActivity {
         textAwayRank.setText("#" + gm.getAway().pollRank);
 
         ArrayList<String> teamComparison = DataDisplayer.getGamePreviewComparison(this, getYear(), gm);
+        for (int i = 0; i < 5; ++i) {
+            teamComparison.add(" > > ");
+        }
 
         listView.setAdapter(new TeamStatsListArrayAdapter(this, teamComparison, true));
     }
@@ -869,8 +874,7 @@ public class MainActivity extends AppCompatActivity {
 
     public void showChangeStrategyDialog(final Team userTeam, final GameSimThread t) {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setTitle("Team Strategy")
-                .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+        builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         //do nothing?
@@ -887,6 +891,45 @@ public class MainActivity extends AppCompatActivity {
                 .setView(getLayoutInflater().inflate(R.layout.team_strategy_dialog, null));
         AlertDialog dialog = builder.create();
         dialog.show();
+
+        final LinearLayout linearLayoutStrats = (LinearLayout) dialog.findViewById(R.id.linLayoutStrategies);
+        final ListView listViewUsages = (ListView) dialog.findViewById(R.id.listViewUsages);
+        listViewUsages.setAdapter(new SetUsageListArrayAdapter(this, playerTeam.players, playerTeam.getName()));
+        listViewUsages.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                Player p = ((SetUsageListArrayAdapter) listViewUsages
+                        .getAdapter()).getItem(position);
+                showPlayerDialog(p);
+            }
+        });
+
+        Spinner spinner = (Spinner) dialog.findViewById(R.id.spinnerStrategyDialog);
+        final List<String> stratDialogChoices = new ArrayList<>();
+        stratDialogChoices.add("Team Strategy");
+        if (t == null) stratDialogChoices.add("Player Usages");
+        ArrayAdapter<String> dataAdapter = new ArrayAdapter<>(this,
+                android.R.layout.simple_spinner_item, stratDialogChoices);
+        dataAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spinner.setAdapter(dataAdapter);
+        spinner.setOnItemSelectedListener(
+                new AdapterView.OnItemSelectedListener() {
+                    public void onItemSelected(
+                            AdapterView<?> parent, View view, int position, long id) {
+                        if (position == 0) {
+                            linearLayoutStrats.setVisibility(View.VISIBLE);
+                            listViewUsages.setVisibility(View.GONE);
+                        } else {
+                            linearLayoutStrats.setVisibility(View.GONE);
+                            listViewUsages.setVisibility(View.VISIBLE);
+                        }
+                    }
+
+                    public void onNothingSelected(AdapterView<?> parent) {
+                        // do nothing
+                    }
+                });
+
 
         // Get the options for team strategies in both offense and defense
         final Strategy.Strats[] tsOff = Strategy.Strats.getOffStrats();
@@ -1428,6 +1471,9 @@ public class MainActivity extends AppCompatActivity {
                 leagueResultsDao.getCurrentYear()-1, leagueResultsDao.getCurrentYear()-1).get(0);
 
         final List<LeagueRecords.Record> recordsBroken = checkSeasonRecords();
+        for (int i = 0; i < 5; ++i) {
+            recordsBroken.add(null);
+        }
 
         final ListView listView = (ListView) dialog.findViewById(R.id.listView);
 
