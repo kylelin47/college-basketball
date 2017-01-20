@@ -48,11 +48,22 @@
         android:textColor="#ffffff"
         android:layout_margin="5dp"/>
 
+    <Button
+        android:text="FAQ"
+        android:layout_width="300dp"
+        android:layout_height="wrap_content"
+        android:id="@+id/buttonFAQ"
+        android:layout_below="@+id/buttonContinue"
+        android:layout_centerHorizontal="true"
+        android:background="@drawable/button_shape_primary"
+        android:textColor="#ffffff"
+        android:layout_margin="5dp"/>
+
     <LinearLayout
         android:layout_width="300dp"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        android:layout_below="@+id/buttonContinue"
+        android:layout_below="@+id/buttonFAQ"
         android:layout_centerHorizontal="true">
         <Button
             android:text="Rate App"

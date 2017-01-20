@@ -83,6 +83,18 @@ public class StartActivity extends AppCompatActivity {
                 startActivity(intent);
             }
         });
+
+        Button faqButton = (Button) findViewById(R.id.buttonFAQ);
+        faqButton.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                // Perform action on click
+                Intent intent = new Intent();
+                intent.setAction(Intent.ACTION_VIEW);
+                intent.addCategory(Intent.CATEGORY_BROWSABLE);
+                intent.setData(Uri.parse("http://m.reddit.com/r/hoopscoach/wiki/faq"));
+                startActivity(intent);
+            }
+        });
     }
 
     public void confirmNewGame() {

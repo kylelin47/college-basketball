@@ -302,6 +302,18 @@ public class Team {
             players.get(i).onCourt = (i < 5);
         }
     }
+
+    public Player getHighestUsagePlayerOnCourt() {
+        int maxUsage = players.get(0).getUsage();
+        Player maxUsagePlayer = players.get(0);
+        for (int i = 1; i < 5; ++i) {
+            if (players.get(i).getUsage() > maxUsage) {
+                maxUsage = players.get(i).getUsage();
+                maxUsagePlayer = players.get(i);
+            }
+        }
+        return maxUsagePlayer;
+    }
     
     public void selectPlayer(List<Player> players) {
         //assumes arraylist is sorted by overall

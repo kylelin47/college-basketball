@@ -1287,14 +1287,32 @@ public class MainActivity extends AppCompatActivity {
                             // League history
                             listView.setAdapter(new LeagueHistoryListArrayAdapter(MainActivity.this,
                                     historyDao.getLeagueResults(2016, getYear()), playerTeam.getName()));
+                            listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                                @Override
+                                public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                                    // Do nothing
+                                }
+                            });
                         } else if (position == 1) {
                             // Champ rankings
                             listView.setAdapter(new TeamRankingsListArrayAdapter(MainActivity.this,
                                     DataDisplayer.getChampTeamRankingsCSV(historyDao, getYear()), playerTeam.getName()));
+                            listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                                @Override
+                                public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                                    // Do nothing
+                                }
+                            });
                         } else if (position == 2) {
                             // Win Percentage
                             listView.setAdapter(new TeamRankingsListArrayAdapter(MainActivity.this,
                                     DataDisplayer.getWinPercentageRankingsCSV(teamStatsDao), playerTeam.getName()));
+                            listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                                @Override
+                                public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                                    // Do nothing
+                                }
+                            });
                         } else if (position == 3) {
                             // League Records
                             listView.setAdapter(new LeagueRecordsListArrayAdapter(MainActivity.this,
@@ -1326,6 +1344,12 @@ public class MainActivity extends AppCompatActivity {
                                             leagueHistoryChoices.get(position), 2016, getYear());
                             teamStatsList.add(0, null);
                             listView.setAdapter(new TeamHistoryListArrayAdapter(MainActivity.this, teamStatsList));
+                            listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                                @Override
+                                public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                                    // Do nothing
+                                }
+                            });
                         }
                     }
 

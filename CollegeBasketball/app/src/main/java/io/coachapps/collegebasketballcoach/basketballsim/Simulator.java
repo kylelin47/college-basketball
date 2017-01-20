@@ -3,6 +3,8 @@ package io.coachapps.collegebasketballcoach.basketballsim;
 import android.content.Context;
 import android.util.Log;
 
+import java.util.Random;
+
 import io.coachapps.collegebasketballcoach.models.FullGameResults;
 import io.coachapps.collegebasketballcoach.util.LeagueEvents;
 
@@ -13,10 +15,13 @@ import io.coachapps.collegebasketballcoach.util.LeagueEvents;
 public class Simulator {
 
     private static final int HOME_COURT_FACTOR = 25;
+    public static final int GAME_PACE = 23;
 
     private static final double CHANCE_FOUL_OUTSIDE = 0.08;
     private static final double CHANCE_FOUL_MIDRANGE = 0.12;
     private static final double CHANCE_FOUL_INSIDE = 0.2;
+
+    private static final double HIGH_USAGE_PENALTY_FACTOR = 1.5;
 
     public Context context;
 
@@ -75,7 +80,7 @@ public class Simulator {
                     if (hscore < ascore && max_gametime - gametime < 150) {
                         playTime = hspeed + 5 * Math.random();
                     }
-                    else playTime = hspeed + 25 * Math.random();
+                    else playTime = hspeed + GAME_PACE * Math.random();
                     matches_h = detectMismatch(home, away);
                 }
             } else if (poss_away) {
@@ -95,7 +100,7 @@ public class Simulator {
                     if (ascore < hscore && max_gametime - gametime < 150) {
                         playTime = aspeed + 5 * Math.random();
                     }
-                    else playTime = aspeed + 25 * Math.random();
+                    else playTime = aspeed + GAME_PACE * Math.random();
                     matches_a = detectMismatch(away, home);
                 }
             }
@@ -246,7 +251,7 @@ public class Simulator {
      * @param defense
      * @param assister
      * @param homeTeam
-     * @return nubmer of points scored (0,2,3)
+     * @return number of points scored (0,2,3)
      */
     private static int takeShot( StringBuilder gameLog, Player shooter, Player defender,
                                  Team offense, Team defense, Player assister, Team homeTeam, double homecourtAdvantage ) {
@@ -258,8 +263,6 @@ public class Simulator {
 
         if (offense.getName().equals("Winners")) assBonus = 50;
 
-        //Log.i("Simulator", offense.getName() + " talent: " + offense.getOvrTalent());
-        //Log.i("Simulator", defense.getName() + " talent: " + defense.getOvrTalent());
         // Hack so that better teams perform better :^)
         assBonus += (double)(offense.getOvrTalent() - defense.getOvrTalent())/18;
 
@@ -269,6 +272,20 @@ public class Simulator {
             // Only penalize so shooting percentages aren't bonkers
             assBonus -= ((double)(offense.getPrestige() + HOME_COURT_FACTOR)/HOME_COURT_FACTOR) * homecourtAdvantage;
         }
+
+        // Handle high usage players getting better defended
+        if (shooter.gmStats.fieldGoalsAttempted >= 20) {
+            assBonus -= HIGH_USAGE_PENALTY_FACTOR * (shooter.gmStats.fieldGoalsAttempted - 20);
+        }
+
+        // Handle Double Team strategy
+        if (defense.defStrat.strat == Strategy.Strats.DOUBLE_TEAM) {
+            if (shooter == offense.getHighestUsagePlayerOnCourt()) {
+                assBonus -= Strategy.DOUBLE_TEAM_PENALTY;
+            } else {
+                assBonus += Strategy.DOUBLE_TEAM_BONUS;
+            }
+        }
         
         double selShot = Math.random();
         //get intelligent tendencies based on mismatches
@@ -276,11 +293,11 @@ public class Simulator {
         double intelMidT = shooter.getMidT();
         int mismMid = shooter.getMidS() - (int)( (float)defender.getOutD()/2 + (float)defender.getIntD()/2 );
         if ( Math.abs(mismMid) > 30 ) {
-            intelMidT += (double)mismMid / 300;
+            intelMidT += (double)mismMid / 600;
         }
         int mismOut = shooter.getOutS() - defender.getOutD();
         if ( Math.abs(mismOut) > 30 ) {
-            intelOutT += (double)mismOut / 300;
+            intelOutT += (double)mismOut / 600;
         }
 
         if ( selShot < intelOutT && intelOutT >= 0 && shooter.getOutS() > 50 ) {
@@ -297,7 +314,7 @@ public class Simulator {
             int bonusChance = shooter.getOutS();
             if (bonusChance > 100) bonusChance = 100;
             chance = chance * ((double)(bonusChance+200)/300);
-            if ( chance > Math.random()*100 ) {
+            if ( chance > getShotChance() ) {
                 //made the shot!
                 addToLog(gameLog, getCommentary3ptMake(shooter, defender));
                 shooter.make3ptShot();
@@ -323,7 +340,7 @@ public class Simulator {
             int defMidD = (int)( defender.getOutD()*0.5 + defender.getIntD()*0.5 );
             double chance = 32 + (float)shooter.getOutS()/3 + assBonus - (float)defMidD/7 +
                     offense.getOffStrat().getMidrangeBonus() - defense.getDefStrat().getMidrangeBonus();
-            if ( chance > Math.random()*100 ) {
+            if ( chance > getShotChance() ) {
                 //made the shot!
                 addToLog(gameLog, getCommentaryMidrangeMake(shooter, defender));
                 shooter.addPts(2);
@@ -374,7 +391,7 @@ public class Simulator {
 
             double chance = 37 + (float)shooter.getIntS()/3 + assBonus - (float)defender.getIntD()/14 - defenseBonus +
                     offense.getOffStrat().getInsideBonus() - defense.getDefStrat().getInsideBonus();
-            if ( chance > Math.random() * 100 ) {
+            if ( chance > getShotChance() ) {
                 //made the shot!
                 addToLog(gameLog, getCommentaryInsideMake(shooter, defender));
                 shooter.addPts(2);
@@ -652,6 +669,10 @@ public class Simulator {
             default:
                 return shooter.name + " misses the inside shot attempt. ";
         }
+    }
+
+    private static double getShotChance() {
+        return 100 * Math.random();
     }
     
 }

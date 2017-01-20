@@ -195,7 +195,7 @@ public class GameSimThread extends Thread {
                         if (hscore < ascore && maxGameTime - gameTime < 150) {
                             playTime = hspeed + 5 * Math.random();
                         }
-                        else playTime = hspeed + 25 * Math.random();
+                        else playTime = hspeed + Simulator.GAME_PACE * Math.random();
                     }
                 } else if (poss_away) {
                     if (hscore < ascore && Math.abs(hscore - ascore) < 6 &&
@@ -216,7 +216,7 @@ public class GameSimThread extends Thread {
                         if (ascore < hscore && maxGameTime - gameTime < 150) {
                             playTime = aspeed + 5 * Math.random();
                         }
-                        else playTime = aspeed + 25 * Math.random();
+                        else playTime = aspeed + Simulator.GAME_PACE * Math.random();
                     }
                 }
 

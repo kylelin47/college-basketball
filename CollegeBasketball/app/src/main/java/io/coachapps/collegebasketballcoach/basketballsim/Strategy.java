@@ -7,6 +7,9 @@ package io.coachapps.collegebasketballcoach.basketballsim;
 
 public class Strategy {
 
+    public static final double DOUBLE_TEAM_BONUS = 4;
+    public static final double DOUBLE_TEAM_PENALTY = 10;
+
     public enum Strats {
         DRIBBLE_DRIVE("Dribble Drive",
                 "Encourages your PG to drive and pass out to his teammates for open shots. Relies on good passing from your PG."),
@@ -21,7 +24,9 @@ public class Strategy {
         ONE_THREE_ONE_ZONE("1-3-1 Zone",
                 "Riskier defense that encourages trapping and getting steals. However, with only one man on the inside, it can give up easy dunks and lay-ups."),
         TWO_THREE_ZONE("2-3 Zone",
-                "The most common zone defense, which places emphasis on interior defense at the risk of giving up perimeter shots.");
+                "The most common zone defense, which places emphasis on interior defense at the risk of giving up perimeter shots."),
+        DOUBLE_TEAM("Double Team",
+                               "Double team the opposing team's highest usage player. Good for a team with only one superstar. Will prevent him from getting off good shots, but give his teammates easier ones.");
 
         private String name;
         private String description;
@@ -44,7 +49,7 @@ public class Strategy {
         }
 
         public static Strats[] getDefStrats() {
-            return new Strats[]{MAN_TO_MAN, ONE_THREE_ONE_ZONE, TWO_THREE_ZONE};
+            return new Strats[]{MAN_TO_MAN, ONE_THREE_ONE_ZONE, TWO_THREE_ZONE, DOUBLE_TEAM};
         }
 
     }
@@ -103,15 +108,23 @@ public class Strategy {
                 stealBonus = 0;
                 break;
             case ONE_THREE_ONE_ZONE:
-                insideBonus = -6;
-                midrangeBonus = 1;
-                outsideBonus = 2;
+                insideBonus = -8;
+                midrangeBonus = 2;
+                outsideBonus = 4;
                 stealBonus = 20;
                 break;
             case TWO_THREE_ZONE:
-                insideBonus = 5;
+                insideBonus = 8;
                 midrangeBonus = 0;
-                outsideBonus = -4;
+                outsideBonus = -6;
+                stealBonus = 0;
+                break;
+            case DOUBLE_TEAM:
+                // Only is applied to high usage dude, else gives 1/3 bonus
+                // See DOUBLE_TEAM_BONUS and DOUBLE_TEAM_PENALTY
+                insideBonus = 0;
+                midrangeBonus = 0;
+                outsideBonus = 0;
                 stealBonus = 0;
                 break;
 
