@@ -302,6 +302,14 @@ public class GameSimThread extends Thread {
                     away.wins++;
                 }
 
+                LeagueEvents.checkGameRecords(leagueRecords, gm, gm.getHome());
+                LeagueEvents.checkGameRecords(leagueRecords, gm, gm.getAway());
+                if (gm.getHome().isPlayer()) LeagueEvents.checkGameRecords(teamRecords, gm, gm.getHome());
+                if (gm.getAway().isPlayer()) LeagueEvents.checkGameRecords(teamRecords, gm, gm.getAway());
+
+                leagueRecords.saveRecords(new File(activity.getFilesDir(), Settings.RECORDS_FILE_NAME));
+                teamRecords.saveRecords(new File(activity.getFilesDir(), Settings.TEAM_RECORDS_FILE_NAME));
+
                 GameModel gameResult =
                         LeagueEvents.saveGameResult(context, home, away, gm.getYear(), gm.getWeek(), numOT);
                 gm.setGameModel(gameResult);
@@ -312,14 +320,6 @@ public class GameSimThread extends Thread {
                     tournamentGames.addAll(tournamentScheduler.scheduleTournament(winners, lastGame
                             .getYear(), lastGame.gameType));
                 }
-
-                LeagueEvents.checkGameRecords(leagueRecords, gm, gm.getHome());
-                LeagueEvents.checkGameRecords(leagueRecords, gm, gm.getAway());
-                if (gm.getHome().isPlayer()) LeagueEvents.checkGameRecords(teamRecords, gm, gm.getHome());
-                if (gm.getAway().isPlayer()) LeagueEvents.checkGameRecords(teamRecords, gm, gm.getAway());
-
-                leagueRecords.saveRecords(new File(activity.getFilesDir(), Settings.RECORDS_FILE_NAME));
-                teamRecords.saveRecords(new File(activity.getFilesDir(), Settings.TEAM_RECORDS_FILE_NAME));
 
                 home.beginNewGame();
                 away.beginNewGame();
