@@ -7,6 +7,8 @@ import android.database.sqlite.SQLiteDatabase;
 import android.util.Log;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 import io.coachapps.collegebasketballcoach.models.GameModel;
@@ -121,7 +123,6 @@ public class GameDao {
     }
 
     public GameModel getGame(int year, int week, String team) {
-        System.out.println("Getting game : " + year + "yr, " + week + "wk, team = " + team);
         GameModel game = null;
         SQLiteDatabase db = DbHelper.getInstance(context).getReadableDatabase();
         String[] projection = {
@@ -153,6 +154,46 @@ public class GameDao {
         }
 
         return game;
+    }
+
+    public List<GameModel> getRecentMatchups(String teamA, String teamB, int numMatchups) {
+        List<GameModel> games = new ArrayList<>();
+        SQLiteDatabase db = DbHelper.getInstance(context).getReadableDatabase();
+        String[] projection = {
+                Schemas.GameEntry.AWAY_STATS,
+                Schemas.GameEntry.AWAY_TEAM,
+                Schemas.GameEntry.YEAR,
+                Schemas.GameEntry.WEEK,
+                Schemas.GameEntry.HOME_STATS,
+                Schemas.GameEntry.HOME_TEAM,
+                Schemas.GameEntry.NUM_OT
+        };
+        String whereClause =
+                "(" + Schemas.GameEntry.HOME_TEAM + "=? AND " + Schemas.GameEntry.AWAY_TEAM + " =?) OR (" +
+                Schemas.GameEntry.AWAY_TEAM + "=? AND " + Schemas.GameEntry.HOME_TEAM + " =?)";
+        String[] whereArgs = {
+                String.valueOf(teamA),
+                String.valueOf(teamB),
+                String.valueOf(teamA),
+                String.valueOf(teamB)
+        };
+        String orderBy = Schemas.GameEntry.YEAR + " DESC";
+        try (Cursor cursor = db.query(Schemas.GameEntry.TABLE_NAME, projection,
+                whereClause, whereArgs, null, null, orderBy, String.valueOf(numMatchups))) {
+            while (cursor.moveToNext()) {
+                games.add(fetchGame(cursor));
+            }
+        }
+
+        Collections.sort(games, new Comparator<GameModel>() {
+            @Override
+            public int compare(GameModel g1, GameModel g2) {
+                if (g1.year != g2.year) return g2.year - g1.year;
+                return g2.week - g1.week;
+            }
+        });
+
+        return games;
     }
 
     private GameModel fetchGame(Cursor cursor) {

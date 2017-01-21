@@ -211,7 +211,7 @@ public class PlayerStatsFragment extends Fragment {
         chart.getXAxis().setValueFormatter(new MyXAxisValueFormatter());
         chart.getXAxis().setGranularity(1f);
         chart.getLegend().setYOffset(20);
-        chart.setDescription("Player stats");
+        chart.setDescription("Player " + name);
         chart.setDrawBorders(false);
         chart.invalidate();
     }

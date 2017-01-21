@@ -18,6 +18,7 @@ import io.coachapps.collegebasketballcoach.basketballsim.Player;
 import io.coachapps.collegebasketballcoach.basketballsim.Team;
 import io.coachapps.collegebasketballcoach.db.LeagueResultsEntryDao;
 import io.coachapps.collegebasketballcoach.db.YearlyTeamStatsDao;
+import io.coachapps.collegebasketballcoach.models.GameModel;
 import io.coachapps.collegebasketballcoach.models.LeagueResults;
 import io.coachapps.collegebasketballcoach.models.YearlyPlayerStats;
 import io.coachapps.collegebasketballcoach.models.YearlyTeamStats;
@@ -25,9 +26,27 @@ import io.coachapps.collegebasketballcoach.models.YearlyTeamWL;
 
 public class DataDisplayer {
     private static final String[] grades = {"F", "F+", "D", "D+", "C", "C+", "B", "B+", "A", "A+"};
+
+    public static final String[] GAME_TITLES = {
+            "Conference Quarterfinals",
+            "Conference Semifinals",
+            "Conference Finals",
+            "Round of 32",
+            "Sweet Sixteen",
+            "Elite Eight",
+            "Final Four",
+            "Tournament Final"
+    };
+
+    public static String getGameTitle(GameModel game) {
+        if (game.week < 28) return game.year + " Regular Season";
+        else return game.year + " " + GAME_TITLES[game.week - 28];
+    }
+
     public static String getHeight(int heightInInches) {
         return heightInInches/12 + "'" + heightInInches % 12 + "\"";
     }
+
     public static String getYear(int year) {
         switch (year) {
             case 0: return "Recruit";
@@ -41,6 +60,7 @@ public class DataDisplayer {
             default: return "Unknown";
         }
     }
+
     public static String getYearAbbreviation(int year) {
         switch (year) {
             case 0: return "Re";
@@ -54,9 +74,11 @@ public class DataDisplayer {
             default: return "Unknown";
         }
     }
+
     public static String getWeight(int weightInPounds) {
         return weightInPounds + " lbs.";
     }
+
     public static String getPosition(int position) {
         switch (position) {
             case 1: return "Point Guard";
@@ -67,6 +89,7 @@ public class DataDisplayer {
             default: return "Unknown";
         }
     }
+
     public static String getPositionAbbreviation(int position) {
         switch (position) {
             case 1: return "PG";
@@ -77,15 +100,18 @@ public class DataDisplayer {
             default: return "N/A";
         }
     }
+
     public static String getFieldGoalPercentage(int fgm, int fga) {
         return String.format("%.1f", (double)(100*fgm)/fga);
     }
+
     public static String getLetterGrade(int num) {
         int ind = (num-50)/5;
         if (ind > 9) ind = 9;
         if (ind < 0) ind = 0;
         return grades[ind];
     }
+
     public static String getRankStr(int num) {
         if (num == 11) {
             return "11th";
@@ -103,6 +129,7 @@ public class DataDisplayer {
             return num + "th";
         }
     }
+
     public static ArrayList<String> getTeamStatsCSVs(String teamName, League league, Context context, int year) {
         YearlyTeamStatsDao yearlyTeamStatsDao = new YearlyTeamStatsDao(context);
         List<YearlyTeamStats> currentTeamStats = yearlyTeamStatsDao.getTeamStatsOfYear(year);

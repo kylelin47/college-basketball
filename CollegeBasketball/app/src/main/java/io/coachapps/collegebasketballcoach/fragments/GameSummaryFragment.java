@@ -101,15 +101,18 @@ public class GameSummaryFragment extends DialogFragment {
         View view = inflater.inflate(R.layout.game_summary, container, false);
 
         TextView textOT = (TextView) view.findViewById(R.id.textViewOT);
+        String strOT;
         if (gameModel.numOT == 0) {
-            textOT.setVisibility(View.GONE);
+            strOT = "";
         } else {
             if (gameModel.numOT == 1) {
-                textOT.setText("OT");
+                strOT = " (OT)";
             } else {
-                textOT.setText(gameModel.numOT + "OT");
+                strOT = " (" + gameModel.numOT + "OT)";
             }
         }
+        String gameTitle = DataDisplayer.getGameTitle(gameModel) + strOT;
+        textOT.setText(gameTitle);
 
         TextView textHomeName = (TextView) view.findViewById(R.id.textViewHomeTeamName);
         TextView textHomeWL = (TextView) view.findViewById(R.id.textViewHomeTeamWL);

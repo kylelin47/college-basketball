@@ -10,9 +10,9 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal"
         android:textAppearance="?android:attr/textAppearanceLarge"
-        android:text="OT"
-        android:textSize="20sp"
-        android:textStyle="bold"
+        android:text="Regular Season (2OT)"
+        android:textSize="16sp"
+        android:textStyle="italic"
         android:id="@+id/textViewOT" />
 
     <RelativeLayout

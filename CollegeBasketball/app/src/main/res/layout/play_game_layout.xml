@@ -6,8 +6,7 @@
 
     <LinearLayout
         android:layout_width="fill_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1"
+        android:layout_height="wrap_content"
         android:orientation="horizontal"
         android:paddingTop="10dp"
         android:paddingStart="10dp"
@@ -85,7 +84,8 @@
 
     <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="350dp"
+        android:layout_height="0dip"
+        android:layout_weight="1"
         android:paddingStart="10dp"
         android:paddingEnd="10dp"
         android:id="@+id/scrollViewGameLog">
@@ -100,7 +100,8 @@
 
     <ListView
         android:layout_width="match_parent"
-        android:layout_height="350dp"
+        android:layout_height="0dip"
+        android:layout_weight="1"
         android:id="@+id/listViewGameDialogStats"
         android:visibility="gone">
     </ListView>
@@ -120,8 +121,7 @@
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="0dip"
-        android:layout_weight="1"
+        android:layout_height="wrap_content"
         android:gravity="center|bottom"
         android:orientation="vertical" >
         <LinearLayout

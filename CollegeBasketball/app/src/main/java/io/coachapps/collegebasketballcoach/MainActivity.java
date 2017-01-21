@@ -52,6 +52,7 @@ import io.coachapps.collegebasketballcoach.adapters.TeamHistoryListArrayAdapter;
 import io.coachapps.collegebasketballcoach.adapters.TeamRankingsListArrayAdapter;
 import io.coachapps.collegebasketballcoach.adapters.TeamStatsListArrayAdapter;
 import io.coachapps.collegebasketballcoach.adapters.game.GameScheduleListArrayAdapter;
+import io.coachapps.collegebasketballcoach.adapters.game.PastMatchupsListArrayAdapter;
 import io.coachapps.collegebasketballcoach.adapters.player.HallOfFameListArrayAdapter;
 import io.coachapps.collegebasketballcoach.adapters.player.LeagueLeadersListArrayAdapter;
 import io.coachapps.collegebasketballcoach.adapters.player.PlayerAwardTeamListArrayAdapter;
@@ -67,6 +68,7 @@ import io.coachapps.collegebasketballcoach.basketballsim.Simulator;
 import io.coachapps.collegebasketballcoach.basketballsim.Strategy;
 import io.coachapps.collegebasketballcoach.basketballsim.Team;
 import io.coachapps.collegebasketballcoach.db.DbHelper;
+import io.coachapps.collegebasketballcoach.db.GameDao;
 import io.coachapps.collegebasketballcoach.db.LeagueResultsEntryDao;
 import io.coachapps.collegebasketballcoach.db.PlayerDao;
 import io.coachapps.collegebasketballcoach.db.Schemas;
@@ -77,6 +79,7 @@ import io.coachapps.collegebasketballcoach.fragments.BracketDialogFragment;
 import io.coachapps.collegebasketballcoach.fragments.GameSummaryFragment;
 import io.coachapps.collegebasketballcoach.fragments.PlayerDialogFragment;
 import io.coachapps.collegebasketballcoach.fragments.SetLineupFragment;
+import io.coachapps.collegebasketballcoach.models.GameModel;
 import io.coachapps.collegebasketballcoach.models.LeagueResults;
 import io.coachapps.collegebasketballcoach.models.ThreeAwardTeams;
 import io.coachapps.collegebasketballcoach.models.YearlyPlayerStats;
@@ -750,7 +753,7 @@ public class MainActivity extends AppCompatActivity {
         final AlertDialog dialog = builder.create();
         dialog.show();
 
-        ListView listView = (ListView) dialog.findViewById(R.id.listViewGamePreview);
+        final ListView listView = (ListView) dialog.findViewById(R.id.listViewGamePreview);
 
         TextView textHomeName = (TextView) dialog.findViewById(R.id.textViewHomeTeamName);
         TextView textHomeWL = (TextView) dialog.findViewById(R.id.textViewHomeTeamWL);
@@ -767,12 +770,46 @@ public class MainActivity extends AppCompatActivity {
         textHomeRank.setText("#" + gm.getHome().pollRank);
         textAwayRank.setText("#" + gm.getAway().pollRank);
 
-        ArrayList<String> teamComparison = DataDisplayer.getGamePreviewComparison(this, getYear(), gm);
+        final ArrayList<String> noMatchups = new ArrayList<>();
+        noMatchups.add(" > No matchups found! > ");
+        noMatchups.add(" > > ");
+
+        final ArrayList<String> teamComparison = DataDisplayer.getGamePreviewComparison(this, getYear(), gm);
         for (int i = 0; i < 5; ++i) {
             teamComparison.add(" > > ");
         }
 
-        listView.setAdapter(new TeamStatsListArrayAdapter(this, teamComparison, true));
+        GameDao gameDao = new GameDao(this);
+        final List<GameModel> recentMatchups = gameDao.getRecentMatchups(
+                gm.getHome().getName(), gm.getAway().getName(), 50);
+        recentMatchups.add(0, null);
+
+        Spinner dialogSpinner = (Spinner) dialog.findViewById(R.id.spinnerGamePreview);
+        ArrayList<String> spinnerStrList = new ArrayList<>();
+        spinnerStrList.add("Team Stats Comparison");
+        spinnerStrList.add("Recent Matchups");
+        ArrayAdapter<String> dataAdapter = new ArrayAdapter<>(this,
+                android.R.layout.simple_spinner_item, spinnerStrList);
+        dataAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        dialogSpinner.setAdapter(dataAdapter);
+        dialogSpinner.setOnItemSelectedListener(
+                new AdapterView.OnItemSelectedListener() {
+                    public void onItemSelected(
+                            AdapterView<?> parent, View view, int position, long id) {
+                        if (position == 0) {
+                            listView.setAdapter(new TeamStatsListArrayAdapter(MainActivity.this, teamComparison, true));
+                        } else if (recentMatchups.size() > 1){
+                            listView.setAdapter(new PastMatchupsListArrayAdapter(MainActivity.this, recentMatchups));
+                        } else {
+                            listView.setAdapter(new TeamStatsListArrayAdapter(MainActivity.this, noMatchups, true));
+                        }
+                    }
+
+                    public void onNothingSelected(AdapterView<?> parent) {
+                        // do nothing
+                    }
+                });
+
     }
 
     public void showGameSimDialog(final Game gm) {
@@ -846,7 +883,7 @@ public class MainActivity extends AppCompatActivity {
                     if (!t.isGamePaused()) t.togglePause();
                     showChangeStrategyDialog(playerTeam, t);
                 } else {
-                    t.finishGame();
+                    t.finishGame(leagueRecords, teamRecords);
                     dialog.dismiss();
                 }
             }
@@ -863,7 +900,7 @@ public class MainActivity extends AppCompatActivity {
                         uiElements.buttonPause.setText("Pause");
                     }
                 } else {
-                    t.finishGame();
+                    t.finishGame(leagueRecords, teamRecords);
                     dialog.dismiss();
                 }
             }
@@ -1460,7 +1497,7 @@ public class MainActivity extends AppCompatActivity {
         }
 
         List<LeagueRecords.Record> recordsBroken = new ArrayList<>();
-        for (String record : LeagueRecords.ALL_SEASON_ECORDS) {
+        for (String record : LeagueRecords.ALL_SEASON_RECORDS) {
             LeagueRecords.Record r = leagueRecords.getRecord(record);
             if (r != null && r.getYear() == getYear()) {
                 // Broken this year
@@ -1625,8 +1662,10 @@ public class MainActivity extends AppCompatActivity {
         @Override
         protected Void doInBackground(Boolean... simPlayerGame) {
             spg = simPlayerGame[0];
-            LeagueEvents.playRegularSeasonGame(league.getAllTeams(), bballSim, spg, playerTeam.name);
-            LeagueEvents.playTournamentRound(league, bballSim, spg, playerTeam.name);
+            LeagueEvents.playRegularSeasonGame(league.getAllTeams(), bballSim, spg, playerTeam.name, leagueRecords, teamRecords);
+            LeagueEvents.playTournamentRound(league, bballSim, spg, playerTeam.name, leagueRecords, teamRecords);
+            leagueRecords.saveRecords(new File(getFilesDir(), Settings.RECORDS_FILE_NAME));
+            teamRecords.saveRecords(new File(getFilesDir(), Settings.TEAM_RECORDS_FILE_NAME));
             return null;
         }
         @Override

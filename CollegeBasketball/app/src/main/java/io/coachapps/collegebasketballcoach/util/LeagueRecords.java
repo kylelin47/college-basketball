@@ -29,6 +29,14 @@ public class LeagueRecords {
     public static final String TEAM_SEASON_SPG = "Team Steals Per Game";
     public static final String TEAM_SEASON_BPG = "Team Blocks Per Game";
 
+    public static final String PLAYER_GAME_POINTS = "Game Points";
+    public static final String PLAYER_GAME_ASSISTS = "Game Assists";
+    public static final String PLAYER_GAME_REBOUNDS = "Game Rebounds";
+    public static final String PLAYER_GAME_STEALS = "Game Steals";
+    public static final String PLAYER_GAME_BLOCKS = "Game Blocks";
+    public static final String PLAYER_GAME_FGM = "Game Field Goals";
+    public static final String PLAYER_GAME_3GM = "Game 3 Pointers";
+
     public static final String PLAYER_SEASON_POINTS = "Season Total Points";
     public static final String PLAYER_SEASON_ASSISTS = "Season Total Assists";
     public static final String PLAYER_SEASON_REBOUNDS = "Season Total Rebounds";
@@ -58,6 +66,13 @@ public class LeagueRecords {
             TEAM_SEASON_RPG,
             TEAM_SEASON_SPG,
             TEAM_SEASON_BPG,
+            PLAYER_GAME_POINTS,
+            PLAYER_GAME_ASSISTS,
+            PLAYER_GAME_REBOUNDS,
+            PLAYER_GAME_STEALS,
+            PLAYER_GAME_BLOCKS,
+            PLAYER_GAME_FGM,
+            PLAYER_GAME_3GM,
             PLAYER_SEASON_POINTS,
             PLAYER_SEASON_ASSISTS,
             PLAYER_SEASON_REBOUNDS,
@@ -78,7 +93,7 @@ public class LeagueRecords {
             PLAYER_CAREER_3FGP
     };
 
-    public static final String[] ALL_SEASON_ECORDS = {
+    public static final String[] ALL_SEASON_RECORDS = {
             TEAM_SEASON_PPG,
             TEAM_SEASON_OPPG,
             TEAM_SEASON_FGP,
@@ -87,6 +102,13 @@ public class LeagueRecords {
             TEAM_SEASON_RPG,
             TEAM_SEASON_SPG,
             TEAM_SEASON_BPG,
+            PLAYER_GAME_POINTS,
+            PLAYER_GAME_ASSISTS,
+            PLAYER_GAME_REBOUNDS,
+            PLAYER_GAME_STEALS,
+            PLAYER_GAME_BLOCKS,
+            PLAYER_GAME_FGM,
+            PLAYER_GAME_3GM,
             PLAYER_SEASON_POINTS,
             PLAYER_SEASON_ASSISTS,
             PLAYER_SEASON_REBOUNDS,

@@ -83,13 +83,13 @@ public class LeagueEvents {
     }
 
     public static void playTournamentRound(League league, Simulator sim, boolean
-            simUserGame, String userTeamName) {
+            simUserGame, String userTeamName, LeagueRecords leagueRecords, LeagueRecords teamRecords) {
         TournamentScheduler tournamentScheduler = new TournamentScheduler(sim.context);
         League.Conference playerConference = League.Conference.valueOf(league.getPlayerTeam()
                 .conference);
         if (league.conferenceTournamentFinished()) {
             List<Game> tournamentGames = league.getMarchMadnessGames();
-            List<Team> winners = playGames(tournamentGames, sim, simUserGame, userTeamName);
+            List<Team> winners = playGames(tournamentGames, sim, simUserGame, userTeamName, leagueRecords, teamRecords);
             Game lastGame = tournamentGames.get(tournamentGames.size() - 1);
             if (simUserGame) {
                 tournamentGames.addAll(
@@ -100,7 +100,7 @@ public class LeagueEvents {
             for (League.Conference conference : League.Conference.values()) {
                 List<Game> tournamentGames = league.getTournamentGames(conference);
                 if (tournamentGames == null) return;
-                List<Team> winners = playGames(tournamentGames, sim, simUserGame, userTeamName);
+                List<Team> winners = playGames(tournamentGames, sim, simUserGame, userTeamName, leagueRecords, teamRecords);
                 Game lastGame = tournamentGames.get(tournamentGames.size() - 1);
                 if (simUserGame || playerConference != conference) {
                     tournamentGames.addAll(
@@ -208,7 +208,8 @@ public class LeagueEvents {
     }
 
     public static boolean playRegularSeasonGame(List<Team> teams, Simulator sim,
-                                                boolean simUserGame, String userTeamName) {
+                                                boolean simUserGame, String userTeamName,
+                                                LeagueRecords leagueRecords, LeagueRecords teamRecords) {
         int week = determineLastUnplayedRegularSeasonWeek(teams);
         Log.i("LeagueEvents","Week = " + week);
         if (week == Integer.MAX_VALUE) return false;
@@ -216,12 +217,12 @@ public class LeagueEvents {
         for (Team t : teams) {
             games.add(t.gameSchedule.get(week));
         }
-        playGames(games, sim, simUserGame, userTeamName);
+        playGames(games, sim, simUserGame, userTeamName, leagueRecords, teamRecords);
         return true;
     }
 
     private static List<Team> playGames(List<Game> games, Simulator sim, boolean simUserGame,
-                                        String userTeamName) {
+                                        String userTeamName, LeagueRecords leagueRecords, LeagueRecords teamRecords) {
         List<BoxScore> boxScores = new ArrayList<>();
         List<GameModel> gamesToSave = new ArrayList<>();
         List<Team> winners = new ArrayList<>();
@@ -235,6 +236,13 @@ public class LeagueEvents {
         }
         saveGameResults(boxScores, gamesToSave, sim.context);
         for (Game gm : games) {
+
+            // Check records
+            checkGameRecords(leagueRecords, gm, gm.getHome());
+            checkGameRecords(leagueRecords, gm, gm.getAway());
+            if (gm.getHome().isPlayer()) checkGameRecords(teamRecords, gm, gm.getHome());
+            if (gm.getAway().isPlayer()) checkGameRecords(teamRecords, gm, gm.getAway());
+
             if (simUserGame || !gm.hasTeam(userTeamName)) {
                 gm.getHome().beginNewGame();
                 gm.getAway().beginNewGame();
@@ -249,6 +257,18 @@ public class LeagueEvents {
         gd.save(games);
         BoxScoreDao bsd = new BoxScoreDao(context);
         bsd.save(boxScores);
+    }
+
+    public static void checkGameRecords(LeagueRecords records, Game game, Team t) {
+        for (Player p : t.players) {
+            records.checkRecord(LeagueRecords.PLAYER_GAME_POINTS, String.valueOf(p.getId()), game.getYear(), p.gmStats.points);
+            records.checkRecord(LeagueRecords.PLAYER_GAME_REBOUNDS, String.valueOf(p.getId()), game.getYear(), p.gmStats.defensiveRebounds);
+            records.checkRecord(LeagueRecords.PLAYER_GAME_ASSISTS, String.valueOf(p.getId()), game.getYear(), p.gmStats.assists);
+            records.checkRecord(LeagueRecords.PLAYER_GAME_BLOCKS, String.valueOf(p.getId()), game.getYear(), p.gmStats.blocks);
+            records.checkRecord(LeagueRecords.PLAYER_GAME_STEALS, String.valueOf(p.getId()), game.getYear(), p.gmStats.steals);
+            records.checkRecord(LeagueRecords.PLAYER_GAME_FGM, String.valueOf(p.getId()), game.getYear(), p.gmStats.fieldGoalsMade);
+            records.checkRecord(LeagueRecords.PLAYER_GAME_3GM, String.valueOf(p.getId()), game.getYear(), p.gmStats.threePointsMade);
+        }
     }
 
     public static FullGameResults getGameResult(Team home, Team away, int year, int week, int numOT) {

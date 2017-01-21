@@ -9,6 +9,7 @@ import android.widget.ScrollView;
 import android.widget.SeekBar;
 import android.widget.TextView;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -16,6 +17,8 @@ import io.coachapps.collegebasketballcoach.MainActivity;
 import io.coachapps.collegebasketballcoach.adapters.player.PlayerGameStatsListArrayAdapter;
 import io.coachapps.collegebasketballcoach.models.GameModel;
 import io.coachapps.collegebasketballcoach.util.LeagueEvents;
+import io.coachapps.collegebasketballcoach.util.LeagueRecords;
+import io.coachapps.collegebasketballcoach.util.Settings;
 import io.coachapps.collegebasketballcoach.util.TournamentScheduler;
 
 /**
@@ -287,7 +290,7 @@ public class GameSimThread extends Thread {
 
     }
 
-    public void finishGame() {
+    public void finishGame(final LeagueRecords leagueRecords, final LeagueRecords teamRecords) {
         activity.runOnUiThread(new Runnable() {
             @Override
             public void run() {
@@ -309,6 +312,14 @@ public class GameSimThread extends Thread {
                     tournamentGames.addAll(tournamentScheduler.scheduleTournament(winners, lastGame
                             .getYear(), lastGame.gameType));
                 }
+
+                LeagueEvents.checkGameRecords(leagueRecords, gm, gm.getHome());
+                LeagueEvents.checkGameRecords(leagueRecords, gm, gm.getAway());
+                if (gm.getHome().isPlayer()) LeagueEvents.checkGameRecords(teamRecords, gm, gm.getHome());
+                if (gm.getAway().isPlayer()) LeagueEvents.checkGameRecords(teamRecords, gm, gm.getAway());
+
+                leagueRecords.saveRecords(new File(activity.getFilesDir(), Settings.RECORDS_FILE_NAME));
+                teamRecords.saveRecords(new File(activity.getFilesDir(), Settings.TEAM_RECORDS_FILE_NAME));
 
                 home.beginNewGame();
                 away.beginNewGame();
