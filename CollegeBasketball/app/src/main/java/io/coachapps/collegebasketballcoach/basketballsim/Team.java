@@ -28,6 +28,7 @@ public class Team {
     public int prestige;
     public int pollScore;
     public int pollRank;
+    public int tourneySeed = 0;
     public int ovrTalent;
     public boolean[] startersIn;
 
@@ -100,6 +101,14 @@ public class Team {
     }
 
     public String getRankNameWLStr() {
+        if (tourneySeed == 0) {
+            return "#" + pollRank + " " + name + " (" + wins + "-" + losses + ")";
+        } else {
+            return  "[" + tourneySeed + "] " + name + " (" + wins + "-" + losses + ")";
+        }
+    }
+
+    public String getPollRankNameWLStr() {
         return "#" + pollRank + " " + name + " (" + wins + "-" + losses + ")";
     }
 
@@ -357,9 +366,17 @@ public class Team {
         }
 
         if (game.getHome() == this) {
-            sum[2] = "vs #" + game.getAway().pollRank + " " + game.getAway().getAbbr();
+            if (game.gameType == Game.GameType.MARCH_MADNESS) {
+                sum[2] = "vs [" + game.getAway().tourneySeed + "] " + game.getAway().getAbbr();
+            } else {
+                sum[2] = "vs #" + game.getAway().pollRank + " " + game.getAway().getAbbr();
+            }
         } else {
-            sum[2] = "@ #" + game.getHome().pollRank + " " + game.getHome().getAbbr();
+            if (game.gameType == Game.GameType.MARCH_MADNESS) {
+                sum[2] = "vs [" + game.getHome().tourneySeed + "] " + game.getHome().getAbbr();
+            } else {
+                sum[2] = "vs #" + game.getHome().pollRank + " " + game.getHome().getAbbr();
+            }
         }
         return sum;
     }

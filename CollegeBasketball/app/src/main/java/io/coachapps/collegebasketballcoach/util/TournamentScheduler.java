@@ -132,6 +132,9 @@ public class TournamentScheduler {
         }
         ArrayList<Team> listTeams = new ArrayList<>(marchMadnessTeams);
         Collections.sort(listTeams, seeder);
+        for (int i = 0; i < listTeams.size(); ++i) {
+            listTeams.get(i).tourneySeed = i/4 + 1;
+        }
         return listTeams;
     }
 

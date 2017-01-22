@@ -309,7 +309,7 @@ public class Simulator {
             }
 
             //3 point shot
-            double chance = 22 + (float)shooter.getOutS()/3 + assBonus * 0.5 - (float)defender.getOutD()/6 +
+            double chance = 20 + (float)shooter.getOutS()/3 + assBonus * 0.5 - (float)defender.getOutD()/6 +
                     offense.getOffStrat().getOutsideBonus() - defense.getDefStrat().getOutsideBonus();
             int bonusChance = shooter.getOutS();
             if (bonusChance > 100) bonusChance = 100;

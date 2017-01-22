@@ -734,9 +734,18 @@ public class MainActivity extends AppCompatActivity {
 
     public void showGameSummaryDialog(final Game gm) {
         FragmentTransaction ft = getFragmentManager().beginTransaction();
+        String homeWLStr;
+        String awayWLStr;
+        if (gm.gameType == Game.GameType.MARCH_MADNESS) {
+            homeWLStr = gm.getHome().getRankNameWLStr();
+            awayWLStr = gm.getAway().getRankNameWLStr();
+        } else {
+            homeWLStr = gm.getHome().getPollRankNameWLStr();
+            awayWLStr = gm.getAway().getPollRankNameWLStr();
+        }
         DialogFragment newFragment = GameSummaryFragment.newInstance(
                 gm.getYear(), gm.getWeek(), gm.getHome().getName(), gm.getAway().getName(),
-                gm.getHome().getRankNameWLStr(), gm.getAway().getRankNameWLStr());
+                homeWLStr, awayWLStr);
         newFragment.show(ft, "game dialog");
     }
 
@@ -767,8 +776,13 @@ public class MainActivity extends AppCompatActivity {
         textAwayName.setText(gm.getAway().getName());
         textHomeWL.setText("(" + gm.getHome().wins + "-" + gm.getHome().losses + ")");
         textAwayWL.setText("(" + gm.getAway().wins + "-" + gm.getAway().losses + ")");
-        textHomeRank.setText("#" + gm.getHome().pollRank);
-        textAwayRank.setText("#" + gm.getAway().pollRank);
+        if (gm.gameType == Game.GameType.MARCH_MADNESS) {
+            textHomeRank.setText("[" + gm.getHome().tourneySeed + "]");
+            textAwayRank.setText("[" + gm.getAway().tourneySeed + "]");
+        } else {
+            textHomeRank.setText("#" + gm.getHome().pollRank);
+            textAwayRank.setText("#" + gm.getAway().pollRank);
+        }
 
         final ArrayList<String> noMatchups = new ArrayList<>();
         noMatchups.add(" > No matchups found! > ");
