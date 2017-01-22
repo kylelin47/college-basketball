@@ -375,7 +375,7 @@ public class Team {
             if (game.gameType == Game.GameType.MARCH_MADNESS) {
                 sum[2] = "vs [" + game.getHome().tourneySeed + "] " + game.getHome().getAbbr();
             } else {
-                sum[2] = "vs #" + game.getHome().pollRank + " " + game.getHome().getAbbr();
+                sum[2] = "@ #" + game.getHome().pollRank + " " + game.getHome().getAbbr();
             }
         }
         return sum;
