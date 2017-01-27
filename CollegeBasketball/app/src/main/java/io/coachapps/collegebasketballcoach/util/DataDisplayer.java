@@ -448,6 +448,7 @@ public class DataDisplayer {
             Collections.sort(sortedTeamList, new Comparator<Team>() {
                 @Override
                 public int compare(Team a, Team b) {
+                    if (b.getSOS() - a.getSOS() == 0) return 0;
                     return (b.getSOS() - a.getSOS() < 0 ? -1 : 1);
                 }
             });

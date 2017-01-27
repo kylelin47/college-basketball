@@ -1273,7 +1273,7 @@ public class MainActivity extends AppCompatActivity {
                                     teamRankingsCSV, playerTeam.getRankNameWLStr()));
                         } else {
                             boolean higherIsBetter = false;
-                            if (position <= 19) higherIsBetter = true;
+                            if (position <= 18) higherIsBetter = true;
                             ArrayList<String> teamRankingsCSV =
                                     DataDisplayer.getTeamRankingsCSVs(league, MainActivity.this, getYear(),
                                             DataDisplayer.getAllCategories()[position - 4], higherIsBetter);
