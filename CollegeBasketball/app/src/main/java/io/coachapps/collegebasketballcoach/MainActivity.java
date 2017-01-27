@@ -443,6 +443,7 @@ public class MainActivity extends AppCompatActivity {
         int id = item.getItemId();
 
         if (id == R.id.action_set_lineup) {
+            examineTeam(playerTeam.getName());
             showSetLineupDialog();
         } else if (id == R.id.action_league_leaders) {
             showLeagueLeadersDialog();
