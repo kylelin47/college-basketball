@@ -168,6 +168,8 @@ public class DataDisplayer {
         if (team != null) {
             teamStatsCSVs.add(team.pollScore + ">Poll Votes>" + getRankStr(team.pollRank));
             teamStatsCSVs.add(team.prestige + ">Prestige>" + getRankStr(league.getPrestigeRank(teamName)));
+            teamStatsCSVs.add((double)((int)(team.getSOS()*1000))/1000 + ">Strength of Schedule>" +
+                    getRankStr(league.getSOSRank(teamName)));
         }
 
 
@@ -436,8 +438,24 @@ public class DataDisplayer {
             ArrayList<String> teamRankingsCSV = new ArrayList<>();
             for (int i = 0; i < sortedTeamList.size(); ++i) {
                 teamRankingsCSV.add(getRankStr(i+1) + "," +
-                        sortedTeamList.get(i).getNameWLStr() + "," +
+                        sortedTeamList.get(i).getRankNameWLStr() + "," +
                         sortedTeamList.get(i).prestige);
+            }
+
+            return teamRankingsCSV;
+
+        } else if (category.equals("Strength of Schedule")) {
+            Collections.sort(sortedTeamList, new Comparator<Team>() {
+                @Override
+                public int compare(Team a, Team b) {
+                    return (b.getSOS() - a.getSOS() < 0 ? -1 : 1);
+                }
+            });
+            ArrayList<String> teamRankingsCSV = new ArrayList<>();
+            for (int i = 0; i < sortedTeamList.size(); ++i) {
+                teamRankingsCSV.add(getRankStr(i+1) + "," +
+                        sortedTeamList.get(i).getRankNameWLStr() + "," +
+                        (double)((int)(sortedTeamList.get(i).getSOS()*1000))/1000);
             }
 
             return teamRankingsCSV;

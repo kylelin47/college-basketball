@@ -224,6 +224,30 @@ public class Team {
             return (3 * wins - prestige) / 3;
         }
     }
+
+    public double getSOS() {
+        double totalWinPercentage = 0;
+        int totalOpponents = 0;
+        for (Game g : gameSchedule) {
+            if (g != null && g.hasPlayed()) {
+                Team opp;
+                if (g.getAway() == this) {
+                    opp = g.getHome();
+                } else {
+                    opp = g.getAway();
+                }
+
+                if (g.getWinner() == this) {
+                    totalWinPercentage += (double) opp.wins / Math.max(opp.wins + opp.losses, 1);
+                } else {
+                    totalWinPercentage += (double) (opp.wins-1) / Math.max(opp.wins-1 + opp.losses, 1);
+                }
+                totalOpponents++;
+            }
+        }
+
+        return totalWinPercentage/totalOpponents;
+    }
     
     public void addPlayer( Player player ) {
         //add player (used by AI)

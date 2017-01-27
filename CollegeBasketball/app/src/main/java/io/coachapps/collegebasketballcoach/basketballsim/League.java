@@ -219,6 +219,24 @@ public class League {
         return -1;
     }
 
+    public int getSOSRank(String teamName) {
+        Team t = getTeam(teamName);
+        if (t != null) {
+            List<Team> sortedTeamList = new ArrayList<>();
+            sortedTeamList.addAll(getAllTeams());
+            Collections.sort(sortedTeamList, new Comparator<Team>() {
+                @Override
+                public int compare(Team a, Team b) {
+                    return (b.getSOS() - a.getSOS() < 0 ? -1 : 1);
+                }
+            });
+            for (int i = 0; i < sortedTeamList.size(); ++i) {
+                if (sortedTeamList.get(i).getName().equals(teamName)) return i+1;
+            }
+        }
+        return -1;
+    }
+
     private void assignPollRanks(List<YearlyTeamStats> currentTeamStats) {
         HashMap<String, Team> nameMap = new HashMap<>();
         List<Team> sortedTeamList = new ArrayList<>();

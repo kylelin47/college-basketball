@@ -1253,6 +1253,7 @@ public class MainActivity extends AppCompatActivity {
         categoryList.add("Poll Votes");
         categoryList.add("Conference Standings");
         categoryList.add("Prestige");
+        categoryList.add("Strength of Schedule");
         for (String cat : DataDisplayer.getAllCategories()) {
             categoryList.add(DataDisplayer.getDescriptionCategory(cat));
         }
@@ -1264,7 +1265,7 @@ public class MainActivity extends AppCompatActivity {
                 new AdapterView.OnItemSelectedListener() {
                     public void onItemSelected(
                             AdapterView<?> parent, View view, int position, long id) {
-                        if (position < 3) {
+                        if (position < 4) {
                             ArrayList<String> teamRankingsCSV =
                                     DataDisplayer.getTeamRankingsCSVs(league, MainActivity.this, getYear(),
                                             categoryList.get(position), true);
@@ -1272,10 +1273,10 @@ public class MainActivity extends AppCompatActivity {
                                     teamRankingsCSV, playerTeam.getRankNameWLStr()));
                         } else {
                             boolean higherIsBetter = false;
-                            if (position <= 18) higherIsBetter = true;
+                            if (position <= 19) higherIsBetter = true;
                             ArrayList<String> teamRankingsCSV =
                                     DataDisplayer.getTeamRankingsCSVs(league, MainActivity.this, getYear(),
-                                            DataDisplayer.getAllCategories()[position - 3], higherIsBetter);
+                                            DataDisplayer.getAllCategories()[position - 4], higherIsBetter);
                             listView.setAdapter(new TeamRankingsListArrayAdapter(MainActivity.this,
                                     teamRankingsCSV, playerTeam.getRankNameWLStr()));
                         }
